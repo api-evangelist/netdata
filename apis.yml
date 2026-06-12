@@ -1,0 +1,105 @@
+---
+aid: netdata
+name: Netdata
+description: >-
+  Netdata is a real-time infrastructure monitoring and observability platform
+  that collects per-second metrics from physical servers, virtual machines,
+  cloud deployments, Kubernetes clusters, and IoT devices. It provides a
+  REST API for querying metrics, alerts, and configuration on individual nodes
+  (Agent API) as well as a Cloud API for programmatic access to Netdata Cloud
+  resources including spaces, rooms, and nodes across distributed
+  infrastructure. Authentication uses Bearer tokens generated from the Netdata
+  Cloud account settings, with scopes controlling access to agent UI, Grafana
+  plugin, MCP, and full API access. The platform includes AI-powered
+  troubleshooting, role-based access control, and supports both cloud-hosted
+  and on-premises deployments.
+type: Index
+image: https://kinlane-productions.s3.amazonaws.com/apis-json/apis-json-logo.jpg
+tags:
+  - Monitoring
+  - Observability
+  - Infrastructure
+  - Metrics
+  - Alerts
+  - Real-Time
+  - APM
+  - DevOps
+url: https://raw.githubusercontent.com/api-evangelist/netdata/refs/heads/main/apis.yml
+created: '2026-06-12'
+modified: '2026-06-12'
+specificationVersion: '0.19'
+apis:
+  - aid: netdata:agent-api
+    name: Netdata Agent API
+    description: >-
+      The Netdata Agent REST API provides access to metrics, alerts, and
+      configuration on individual monitoring nodes. It supports v1, v2, and v3
+      endpoints for querying time-series data, health status, contexts, and
+      system management. The API is documented via an OpenAPI/Swagger
+      specification maintained in the official GitHub repository.
+    humanURL: https://learn.netdata.cloud/docs/developer-and-contributor-corner/rest-api
+    baseURL: http://localhost:19999
+    tags:
+      - Monitoring
+      - Metrics
+      - Alerts
+      - Nodes
+    properties:
+      - type: Documentation
+        url: https://learn.netdata.cloud/docs/developer-and-contributor-corner/rest-api
+      - type: OpenAPI
+        url: https://raw.githubusercontent.com/netdata/netdata/master/src/web/api/netdata-swagger.yaml
+      - type: SwaggerUI
+        url: https://learn.netdata.cloud/api
+  - aid: netdata:cloud-api
+    name: Netdata Cloud API
+    description: >-
+      The Netdata Cloud REST API provides programmatic access to Cloud
+      resources including spaces, rooms, and nodes across distributed
+      infrastructure. Authentication uses Bearer tokens generated from Netdata
+      Cloud account settings with configurable scopes. The API base URL is
+      https://app.netdata.cloud/api/v2/ and an interactive explorer is
+      available at app.netdata.cloud/api/docs/.
+    humanURL: https://learn.netdata.cloud/docs/rest-api/api
+    baseURL: https://app.netdata.cloud/api/v2
+    tags:
+      - Cloud
+      - Spaces
+      - Rooms
+      - Nodes
+      - Management
+    properties:
+      - type: Documentation
+        url: https://learn.netdata.cloud/docs/rest-api/api
+      - type: SwaggerUI
+        url: https://app.netdata.cloud/api/docs/
+      - type: Authentication
+        url: https://learn.netdata.cloud/docs/netdata-cloud/authentication-&-authorization/api-tokens
+common:
+  - type: Website
+    url: https://www.netdata.cloud/
+  - type: Documentation
+    url: https://learn.netdata.cloud/docs/developer-and-contributor-corner/rest-api
+  - type: GitHubOrganization
+    url: https://github.com/netdata
+  - type: LinkedIn
+    url: https://www.linkedin.com/company/netdata-cloud
+  - type: X
+    url: https://x.com/netdatahq
+  - type: Blog
+    url: https://www.netdata.cloud/blog/
+  - type: Changelog
+    url: https://learn.netdata.cloud/docs/netdata-agent/changelog
+  - type: Pricing
+    url: https://www.netdata.cloud/pricing/
+  - type: StatusPage
+    url: https://status.netdata.cloud/
+  - type: Plans
+    url: plans/netdata-plans-pricing.yml
+  - type: RateLimits
+    url: rate-limits/netdata-rate-limits.yml
+  - type: FinOps
+    url: finops/netdata-finops.yml
+maintainers:
+  - FN: Kin Lane
+    email: kin@apievangelist.com

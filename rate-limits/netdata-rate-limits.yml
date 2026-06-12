@@ -1,0 +1,37 @@
+---
+specification: API Commons Rate Limits
+specificationVersion: '0.1'
+schema: https://raw.githubusercontent.com/api-evangelist/interface-research/main/schema/api-commons.yml#/$defs/RateLimits
+provider: Netdata
+providerId: netdata
+created: '2026-06-12'
+modified: '2026-06-12'
+reconciled: true
+tags:
+  - Rate Limiting
+  - Monitoring
+  - Observability
+description: >-
+  Netdata does not publicly document specific rate limits for either the Agent
+  API or the Cloud API as of June 2026. The Agent API runs on individual nodes
+  and inherits resource limits from the local system. The Cloud API uses Bearer
+  token authentication with no stated per-token rate limits in public
+  documentation. Standard HTTP 429 responses are used if throttling occurs.
+sources:
+  - https://learn.netdata.cloud/docs/netdata-cloud/authentication-&-authorization/api-tokens
+  - https://learn.netdata.cloud/docs/rest-api/api
+headers:
+  retryAfter: Retry-After
+responseCodes:
+  throttled: 429
+limits:
+  - name: Netdata Cloud API
+    scope: key
+    metric: requests_per_minute
+    limit: -1
+    timeFrame: minute
+  - name: Netdata Agent API
+    scope: ip
+    metric: requests_per_minute
+    limit: -1
+    timeFrame: minute

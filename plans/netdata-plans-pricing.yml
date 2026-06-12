@@ -1,0 +1,181 @@
+---
+specification: API Commons Plans
+specificationVersion: '0.1'
+schema: https://raw.githubusercontent.com/api-evangelist/interface-research/main/schema/api-commons.yml#/$defs/Plans
+provider: Netdata
+providerId: netdata
+created: '2026-06-12'
+modified: '2026-06-12'
+reconciled: true
+tags:
+  - Monitoring
+  - Observability
+  - Infrastructure
+  - SaaS
+description: >-
+  Netdata offers three tiers: a free Community plan supporting up to 5 active
+  nodes, a Business plan at $4.50/node/month (billed annually) with unlimited
+  metrics, AI-powered troubleshooting, RBAC, and SSO, and an Enterprise
+  On-Premise plan with custom pricing for 200+ node deployments with
+  on-premises and air-gapped support. A 14-day Business trial is available
+  upon signup.
+sources:
+  - https://www.netdata.cloud/pricing/
+plans:
+  - id: netdata-community
+    name: Community
+    type: free
+    description: >-
+      Free forever plan for individuals and small teams. Supports up to 5
+      active connected nodes with 1 custom dashboard per room. No Netdata AI,
+      RBAC, SSO, or audit logs.
+    entries:
+      - label: Active Nodes
+        name: active_nodes
+        type: quota
+        metric: nodes
+        limit: 5
+        timeFrame: month
+        geo: global
+        unit: 1
+        price: '0.00'
+        userMultiplied: false
+      - label: Custom Dashboards
+        name: custom_dashboards
+        type: quota
+        metric: dashboards_per_room
+        limit: 1
+        timeFrame: month
+        geo: global
+        unit: 1
+        price: '0.00'
+        userMultiplied: false
+      - label: Netdata AI
+        name: netdata_ai
+        type: boolean
+        metric: feature
+        limit: 0
+        timeFrame: month
+        geo: global
+        unit: 1
+        price: '0.00'
+        userMultiplied: false
+      - label: RBAC
+        name: rbac
+        type: boolean
+        metric: feature
+        limit: 0
+        timeFrame: month
+        geo: global
+        unit: 1
+        price: '0.00'
+        userMultiplied: false
+  - id: netdata-business
+    name: Business
+    type: paid
+    description: >-
+      Paid plan billed per node per month (annually). Includes unlimited
+      metrics and logs, unlimited custom dashboards, unlimited data retention,
+      Netdata AI for automated troubleshooting and investigations, RBAC, SSO,
+      SCIM, centralized configuration management, enterprise notification
+      integrations, and audit logs. 14-day free trial available.
+    entries:
+      - label: Price Per Node (Annual)
+        name: price_per_node_annual
+        type: metered
+        metric: node_per_month
+        limit: -1
+        timeFrame: month
+        geo: global
+        unit: 1
+        price: '4.50'
+        userMultiplied: false
+      - label: Active Nodes
+        name: active_nodes
+        type: quota
+        metric: nodes
+        limit: -1
+        timeFrame: month
+        geo: global
+        unit: 1
+        price: '0.00'
+        userMultiplied: true
+      - label: Netdata AI
+        name: netdata_ai
+        type: boolean
+        metric: feature
+        limit: 1
+        timeFrame: month
+        geo: global
+        unit: 1
+        price: '0.00'
+        userMultiplied: false
+      - label: RBAC
+        name: rbac
+        type: boolean
+        metric: feature
+        limit: 1
+        timeFrame: month
+        geo: global
+        unit: 1
+        price: '0.00'
+        userMultiplied: false
+      - label: SSO
+        name: sso
+        type: boolean
+        metric: feature
+        limit: 1
+        timeFrame: month
+        geo: global
+        unit: 1
+        price: '0.00'
+        userMultiplied: false
+      - label: Data Retention
+        name: data_retention
+        type: quota
+        metric: days
+        limit: -1
+        timeFrame: month
+        geo: global
+        unit: 1
+        price: '0.00'
+        userMultiplied: false
+  - id: netdata-enterprise-on-premise
+    name: Enterprise On-Premise
+    type: enterprise
+    description: >-
+      Custom-priced plan for large organizations requiring on-premises
+      deployment, including air-gapped facility support, all Business plan
+      features, priority customer support, and custom organization
+      requirements. Minimum 200 node licenses required.
+    entries:
+      - label: Minimum Nodes
+        name: minimum_nodes
+        type: quota
+        metric: nodes
+        limit: 200
+        timeFrame: month
+        geo: global
+        unit: 1
+        price: 'custom'
+        userMultiplied: false
+      - label: On-Premises Deployment
+        name: on_premises
+        type: boolean
+        metric: feature
+        limit: 1
+        timeFrame: month
+        geo: global
+        unit: 1
+        price: '0.00'
+        userMultiplied: false
+      - label: Air-Gapped Support
+        name: air_gapped
+        type: boolean
+        metric: feature
+        limit: 1
+        timeFrame: month
+        geo: global
+        unit: 1
+        price: '0.00'
+        userMultiplied: false
