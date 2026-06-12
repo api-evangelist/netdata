@@ -1,0 +1,38 @@
+{
+  "hostname": "prod-server-01",
+  "latest_alarm_log_unique_id": 42,
+  "status": true,
+  "now": 1749756000,
+  "alarms": {
+    "disk_space_usage": {
+      "id": 1,
+      "name": "disk_space_usage",
+      "chart": "disk_space._",
+      "family": "disk",
+      "status": "WARNING",
+      "value": 82.5,
+      "units": "%",
+      "info": "disk / space usage",
+      "summary": "Disk space usage is high",
+      "last_status_change": 1749752000,
+      "last_updated": 1749756000,
+      "node_id": "a1b2c3d4-0001-0001-0001-000000000001",
+      "hostname": "prod-server-01"
+    },
+    "ram_usage": {
+      "id": 2,
+      "name": "ram_usage",
+      "chart": "system.ram",
+      "family": "ram",
+      "status": "CLEAR",
+      "value": 62.1,
+      "units": "%",
+      "info": "system memory usage",
+      "summary": "RAM usage normal",
+      "last_status_change": 1749700000,
+      "last_updated": 1749756000,
+      "node_id": "a1b2c3d4-0001-0001-0001-000000000001",
+      "hostname": "prod-server-01"
+    }
+  }
+}

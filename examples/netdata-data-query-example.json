@@ -1,0 +1,91 @@
+{
+  "api": 1,
+  "id": "system.cpu",
+  "name": "system.cpu",
+  "view_update_every": 1,
+  "update_every": 1,
+  "first_entry": 1749752400,
+  "last_entry": 1749756000,
+  "after": 1749755940,
+  "before": 1749756000,
+  "dimension_names": [
+    "user",
+    "system",
+    "iowait",
+    "softirq",
+    "steal",
+    "nice",
+    "guest",
+    "idle"
+  ],
+  "dimension_ids": [
+    "user",
+    "system",
+    "iowait",
+    "softirq",
+    "steal",
+    "nice",
+    "guest",
+    "idle"
+  ],
+  "latest_values": [
+    4.5,
+    1.2,
+    0.1,
+    0.2,
+    0.0,
+    0.0,
+    0.0,
+    94.0
+  ],
+  "view_latest_values": [
+    4.5,
+    1.2,
+    0.1,
+    0.2,
+    0.0,
+    0.0,
+    0.0,
+    94.0
+  ],
+  "dimensions": 8,
+  "points": 60,
+  "format": "json",
+  "data": [
+    [
+      1749755941,
+      4.0,
+      1.1,
+      0.1,
+      0.2,
+      0,
+      0,
+      0,
+      94.6
+    ],
+    [
+      1749755942,
+      4.2,
+      1.2,
+      0.0,
+      0.1,
+      0,
+      0,
+      0,
+      94.5
+    ],
+    [
+      1749755943,
+      4.5,
+      1.2,
+      0.1,
+      0.2,
+      0,
+      0,
+      0,
+      94.0
+    ]
+  ],
+  "min": 0,
+  "max": 100
+}

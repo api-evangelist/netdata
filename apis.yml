@@ -27,6 +27,7 @@ tags:
 url: https://raw.githubusercontent.com/api-evangelist/netdata/refs/heads/main/apis.yml
 created: '2026-06-12'
 modified: '2026-06-12'
+
 specificationVersion: '0.19'
 apis:
   - aid: netdata:agent-api
@@ -49,6 +50,20 @@ apis:
         url: https://learn.netdata.cloud/docs/developer-and-contributor-corner/rest-api
       - type: OpenAPI
         url: https://raw.githubusercontent.com/netdata/netdata/master/src/web/api/netdata-swagger.yaml
+      - type: OpenAPI
+        url: openapi/netdata-agent-api-openapi.yml
+      - type: JSONSchema
+        url: json-schema/netdata-chart-schema.json
+      - type: JSONSchema
+        url: json-schema/netdata-alert-schema.json
+      - type: JSONSchema
+        url: json-schema/netdata-node-schema.json
+      - type: Example
+        url: examples/netdata-charts-list-example.json
+      - type: Example
+        url: examples/netdata-alerts-example.json
+      - type: Example
+        url: examples/netdata-data-query-example.json
       - type: SwaggerUI
         url: https://learn.netdata.cloud/api
   - aid: netdata:cloud-api
@@ -71,6 +86,10 @@ apis:
     properties:
       - type: Documentation
         url: https://learn.netdata.cloud/docs/rest-api/api
+      - type: OpenAPI
+        url: openapi/netdata-cloud-api-openapi.yml
+      - type: Example
+        url: examples/netdata-node-info-example.json
       - type: SwaggerUI
         url: https://app.netdata.cloud/api/docs/
       - type: Authentication
@@ -94,6 +113,12 @@ common:
     url: https://www.netdata.cloud/pricing/
   - type: StatusPage
     url: https://status.netdata.cloud/
+  - type: Vocabulary
+    url: vocabulary/netdata-vocabulary.yml
+  - type: JSONLDContext
+    url: json-ld/netdata-context.jsonld
+  - type: Blog
+    url: blogs/blogs.json
   - type: Plans
     url: plans/netdata-plans-pricing.yml
   - type: RateLimits

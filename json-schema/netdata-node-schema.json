@@ -1,0 +1,86 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/netdata/main/json-schema/netdata-node-schema.json",
+  "title": "Netdata Node",
+  "description": "A Netdata monitoring node (agent instance)",
+  "type": "object",
+  "properties": {
+    "node_id": {
+      "type": "string",
+      "description": "Unique node UUID"
+    },
+    "claim_id": {
+      "type": "string",
+      "description": "Claim ID for Netdata Cloud association"
+    },
+    "hostname": {
+      "type": "string",
+      "description": "Node hostname"
+    },
+    "hops": {
+      "type": "integer",
+      "description": "Network hops from Cloud (0 = direct)"
+    },
+    "reachable": {
+      "type": "boolean",
+      "description": "Whether the node is currently reachable"
+    },
+    "version": {
+      "type": "string",
+      "description": "Netdata agent version"
+    },
+    "os": {
+      "type": "string",
+      "description": "Operating system name"
+    },
+    "os_name": {
+      "type": "string",
+      "description": "OS display name"
+    },
+    "os_version": {
+      "type": "string",
+      "description": "OS version string"
+    },
+    "kernel_name": {
+      "type": "string",
+      "description": "Kernel name"
+    },
+    "kernel_version": {
+      "type": "string",
+      "description": "Kernel version"
+    },
+    "architecture": {
+      "type": "string",
+      "description": "CPU architecture"
+    },
+    "cpus": {
+      "type": "integer",
+      "description": "Number of CPU cores"
+    },
+    "memory": {
+      "type": "integer",
+      "description": "Total memory in bytes"
+    },
+    "disk_space": {
+      "type": "integer",
+      "description": "Total disk space in bytes"
+    },
+    "timezone": {
+      "type": "string",
+      "description": "System timezone"
+    },
+    "last_seen": {
+      "type": "integer",
+      "description": "Unix timestamp last seen by Cloud"
+    },
+    "created_at": {
+      "type": "integer",
+      "description": "Unix timestamp node was first seen"
+    }
+  },
+  "required": [
+    "node_id",
+    "hostname",
+    "reachable"
+  ]
+}

@@ -1,0 +1,167 @@
+{
+  "@context": {
+    "@version": 1.1,
+    "xsd": "http://www.w3.org/2001/XMLSchema#",
+    "schema": "https://schema.org/",
+    "netdata": "https://learn.netdata.cloud/vocab#",
+
+    "Agent": "netdata:Agent",
+    "Chart": "netdata:Chart",
+    "Dimension": "netdata:Dimension",
+    "Node": "netdata:Node",
+    "Space": "netdata:Space",
+    "Room": "netdata:Room",
+    "Alert": "netdata:Alert",
+    "AlertTransition": "netdata:AlertTransition",
+    "Context": "netdata:Context",
+    "Family": "netdata:Family",
+    "Collector": "netdata:Collector",
+    "StreamPath": "netdata:StreamPath",
+    "SilencingRule": "netdata:SilencingRule",
+
+    "id": "@id",
+    "type": "@type",
+
+    "node_id": {
+      "@id": "netdata:nodeId",
+      "@type": "xsd:string"
+    },
+    "claim_id": {
+      "@id": "netdata:claimId",
+      "@type": "xsd:string"
+    },
+    "hostname": {
+      "@id": "schema:name",
+      "@type": "xsd:string"
+    },
+    "hops": {
+      "@id": "netdata:hops",
+      "@type": "xsd:integer"
+    },
+    "reachable": {
+      "@id": "netdata:reachable",
+      "@type": "xsd:boolean"
+    },
+    "version": {
+      "@id": "schema:version",
+      "@type": "xsd:string"
+    },
+    "os": {
+      "@id": "schema:operatingSystem",
+      "@type": "xsd:string"
+    },
+    "cpus": {
+      "@id": "netdata:cpuCount",
+      "@type": "xsd:integer"
+    },
+    "memory": {
+      "@id": "netdata:totalMemory",
+      "@type": "xsd:integer"
+    },
+    "architecture": {
+      "@id": "netdata:architecture",
+      "@type": "xsd:string"
+    },
+    "last_seen": {
+      "@id": "netdata:lastSeen",
+      "@type": "xsd:integer"
+    },
+    "created_at": {
+      "@id": "schema:dateCreated",
+      "@type": "xsd:integer"
+    },
+
+    "chart_id": {
+      "@id": "netdata:chartId",
+      "@type": "xsd:string"
+    },
+    "context": {
+      "@id": "netdata:context",
+      "@type": "xsd:string"
+    },
+    "family": {
+      "@id": "netdata:family",
+      "@type": "xsd:string"
+    },
+    "units": {
+      "@id": "netdata:units",
+      "@type": "xsd:string"
+    },
+    "dimensions": {
+      "@id": "netdata:hasDimension",
+      "@container": "@index"
+    },
+    "update_every": {
+      "@id": "netdata:updateInterval",
+      "@type": "xsd:integer"
+    },
+    "last_updated": {
+      "@id": "netdata:lastUpdated",
+      "@type": "xsd:integer"
+    },
+
+    "alert_id": {
+      "@id": "netdata:alertId",
+      "@type": "xsd:integer"
+    },
+    "status": {
+      "@id": "netdata:alertStatus",
+      "@type": "xsd:string"
+    },
+    "value": {
+      "@id": "netdata:metricValue",
+      "@type": "xsd:double"
+    },
+    "info": {
+      "@id": "schema:description",
+      "@type": "xsd:string"
+    },
+    "summary": {
+      "@id": "schema:abstract",
+      "@type": "xsd:string"
+    },
+    "last_status_change": {
+      "@id": "netdata:lastStatusChange",
+      "@type": "xsd:integer"
+    },
+
+    "space_id": {
+      "@id": "netdata:spaceId",
+      "@type": "xsd:string"
+    },
+    "room_ids": {
+      "@id": "netdata:belongsToRoom",
+      "@type": "xsd:string",
+      "@container": "@set"
+    },
+
+    "name": {
+      "@id": "schema:name",
+      "@type": "xsd:string"
+    },
+    "description": {
+      "@id": "schema:description",
+      "@type": "xsd:string"
+    },
+    "title": {
+      "@id": "schema:headline",
+      "@type": "xsd:string"
+    },
+    "url": {
+      "@id": "schema:url",
+      "@type": "@id"
+    },
+    "priority": {
+      "@id": "netdata:priority",
+      "@type": "xsd:integer"
+    },
+    "plugin": {
+      "@id": "netdata:plugin",
+      "@type": "xsd:string"
+    },
+    "module": {
+      "@id": "netdata:module",
+      "@type": "xsd:string"
+    }
+  }
+}

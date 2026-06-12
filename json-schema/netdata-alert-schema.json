@@ -1,0 +1,78 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/netdata/main/json-schema/netdata-alert-schema.json",
+  "title": "Netdata Alert",
+  "description": "A Netdata health alert/alarm instance",
+  "type": "object",
+  "properties": {
+    "id": {
+      "type": "integer",
+      "description": "Unique alert identifier"
+    },
+    "name": {
+      "type": "string",
+      "description": "Alert name as defined in health configuration"
+    },
+    "chart": {
+      "type": "string",
+      "description": "Chart the alert applies to"
+    },
+    "family": {
+      "type": "string",
+      "description": "Chart family"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "UNDEFINED",
+        "UNINITIALIZED",
+        "CLEAR",
+        "WARNING",
+        "CRITICAL",
+        "REMOVED"
+      ],
+      "description": "Current alert status"
+    },
+    "value": {
+      "type": [
+        "number",
+        "null"
+      ],
+      "description": "Current metric value"
+    },
+    "units": {
+      "type": "string",
+      "description": "Value units"
+    },
+    "info": {
+      "type": "string",
+      "description": "Human-readable description"
+    },
+    "summary": {
+      "type": "string",
+      "description": "Short summary"
+    },
+    "last_status_change": {
+      "type": "integer",
+      "description": "Unix timestamp of last status change"
+    },
+    "last_updated": {
+      "type": "integer",
+      "description": "Unix timestamp of last evaluation"
+    },
+    "node_id": {
+      "type": "string",
+      "description": "ID of the node owning this alert"
+    },
+    "hostname": {
+      "type": "string",
+      "description": "Hostname of the monitored node"
+    }
+  },
+  "required": [
+    "id",
+    "name",
+    "chart",
+    "status"
+  ]
+}

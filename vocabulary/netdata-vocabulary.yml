@@ -1,0 +1,141 @@
+---
+vocabulary:
+  source: Netdata
+  url: https://learn.netdata.cloud/docs
+  description: >-
+    Domain vocabulary for the Netdata monitoring and observability platform,
+    covering both the Agent REST API and the Netdata Cloud API.
+  terms:
+    - term: Agent
+      definition: >-
+        The open-source Netdata daemon that runs on a host and collects
+        per-second metrics from the local system, containers, and applications.
+        Exposes the Agent REST API on port 19999 by default.
+      related: [Node, Collector, Streaming]
+
+    - term: Alert
+      definition: >-
+        A health check rule that evaluates a metric against configurable
+        thresholds. Transitions through statuses: CLEAR, WARNING, CRITICAL,
+        REMOVED. Defined in .conf health configuration files or via
+        dynamic configuration.
+      related: [AlertTransition, HealthConfig, Alarm]
+
+    - term: AlertTransition
+      definition: >-
+        A recorded state change event for an alert, capturing when the status
+        changed, the previous and new status, the triggering value, and the
+        notification recipients.
+      related: [Alert]
+
+    - term: Chart
+      definition: >-
+        A logical grouping of related metrics (dimensions) that share a common
+        context, units, and visualization type. Charts are identified by a
+        unique ID such as "system.cpu" or "net.eth0".
+      related: [Dimension, Context, Family]
+
+    - term: Claim
+      definition: >-
+        The process of associating a Netdata Agent instance with a Netdata
+        Cloud space via a claim token and claim ID, enabling centralized
+        monitoring and control.
+      related: [Space, Node, ClaimID]
+
+    - term: Collector
+      definition: >-
+        A Netdata plugin or module that gathers metrics from a specific data
+        source (e.g., /proc/stat, MySQL, Kubernetes). Written in C, Python,
+        Go, or shell.
+      related: [Plugin, Chart, Agent]
+
+    - term: Context
+      definition: >-
+        A canonical metric category that groups charts of the same type across
+        multiple nodes (e.g., "system.cpu" identifies all CPU-usage charts
+        regardless of hostname). Used for cross-node aggregation in v2/v3 APIs.
+      related: [Chart, Dimension]
+
+    - term: Dimension
+      definition: >-
+        A single data series within a chart. For example, the "system.cpu"
+        chart has dimensions "user", "system", "iowait", "idle", etc. Each
+        dimension is a named time-series within the parent chart.
+      related: [Chart, Context]
+
+    - term: Family
+      definition: >-
+        A grouping label for charts that represent the same physical or logical
+        subsystem (e.g., "cpu", "disk", "net"). Used for UI organization.
+      related: [Chart]
+
+    - term: Function
+      definition: >-
+        A callable data-collection extension on an Agent that produces
+        structured output (e.g., top-like process tables, network connection
+        maps). Discoverable via /api/v3/functions.
+      related: [Agent, Chart]
+
+    - term: HealthConfig
+      definition: >-
+        The alert/alarm definition file format used by the Netdata Agent to
+        specify warning/critical thresholds, hysteresis, notification channels,
+        and escalation rules. Managed via Dynamic Configuration (Dyncfg) in
+        newer agents.
+      related: [Alert, DynamicConfiguration]
+
+    - term: MetricsExporter
+      definition: >-
+        A Netdata connector that streams or exports metrics to external systems
+        such as Prometheus remote write, InfluxDB, Graphite, OpenTSDB, or
+        Kafka via the /api/v1/allmetrics endpoint or exporting configuration.
+      related: [Chart, Dimension, AllMetrics]
+
+    - term: Node
+      definition: >-
+        An individual Netdata Agent instance associated with a Netdata Cloud
+        space. Identified by a UUID (node_id) and claim_id. May be reachable
+        directly or via a parent streaming node.
+      related: [Agent, Space, Room, Claim]
+
+    - term: Parent
+      definition: >-
+        A Netdata Agent configured to receive streamed metrics from one or more
+        Child agents. Acts as a proxy and data store for the children. Sometimes
+        called "streaming receiver" or "central collector".
+      related: [Streaming, Child, Agent]
+
+    - term: Room
+      definition: >-
+        A logical grouping of nodes within a Netdata Cloud Space, used for
+        organizing infrastructure by environment, team, or application.
+        Accessible via the Cloud API at /api/v2/spaces/{spaceID}/rooms.
+      related: [Space, Node]
+
+    - term: Silencing Rule
+      definition: >-
+        A Cloud API object that suppresses alert notifications for a specified
+        time range (supporting iCal RRULE scheduling). Created, listed, and
+        deleted via /api/v2/spaces/{spaceID}/notifications/silencing/rule.
+      related: [Alert, Notification, RRULE]
+
+    - term: Space
+      definition: >-
+        The top-level organizational unit in Netdata Cloud. A space contains
+        rooms and nodes, and is associated with a subscription tier. Accessed
+        via the Cloud API with a spaceID path parameter.
+      related: [Room, Node, Claim]
+
+    - term: Streaming
+      definition: >-
+        The Netdata mechanism by which a Child Agent streams its collected
+        metrics in real time to a Parent Agent over a TCP connection using the
+        Netdata streaming protocol.
+      related: [Parent, Child, StreamPath]
+
+    - term: StreamPath
+      definition: >-
+        The topology of streaming connections between agents, describing which
+        Child agents feed which Parent agents. Queryable via
+        /api/v3/stream_path.
+      related: [Streaming, Node]

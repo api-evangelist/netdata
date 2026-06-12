@@ -1,0 +1,76 @@
+{
+  "version": "1",
+  "release_channel": "stable",
+  "uid": "a1b2c3d4-0001-0001-0001-000000000001",
+  "hostname": "prod-server-01",
+  "os": "linux",
+  "timezone": "America/New_York",
+  "charts": {
+    "system.cpu": {
+      "id": "system.cpu",
+      "name": "system.cpu",
+      "family": "cpu",
+      "context": "system.cpu",
+      "title": "Total CPU utilization (SYSTEM)",
+      "priority": 100,
+      "plugin": "proc.plugin",
+      "module": "/proc/stat",
+      "units": "percentage",
+      "type": "stacked",
+      "update_every": 1,
+      "last_updated": 1749756000,
+      "dimensions": {
+        "user": {
+          "name": "user",
+          "value": 4.5
+        },
+        "system": {
+          "name": "system",
+          "value": 1.2
+        },
+        "iowait": {
+          "name": "iowait",
+          "value": 0.1
+        },
+        "idle": {
+          "name": "idle",
+          "value": 94.2
+        }
+      }
+    },
+    "system.ram": {
+      "id": "system.ram",
+      "name": "system.ram",
+      "family": "ram",
+      "context": "system.ram",
+      "title": "System RAM Usage",
+      "priority": 200,
+      "plugin": "proc.plugin",
+      "module": "/proc/meminfo",
+      "units": "MiB",
+      "type": "stacked",
+      "update_every": 1,
+      "last_updated": 1749756000,
+      "dimensions": {
+        "used": {
+          "name": "used",
+          "value": 3200.0
+        },
+        "cached": {
+          "name": "cached",
+          "value": 1800.0
+        },
+        "buffers": {
+          "name": "buffers",
+          "value": 256.0
+        },
+        "free": {
+          "name": "free",
+          "value": 2744.0
+        }
+      }
+    }
+  },
+  "charts_count": 2,
+  "dimensions_count": 6
+}

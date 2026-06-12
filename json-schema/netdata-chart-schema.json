@@ -1,0 +1,86 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/netdata/main/json-schema/netdata-chart-schema.json",
+  "title": "Netdata Chart",
+  "description": "Metadata and structure of a single Netdata chart (time-series metric set)",
+  "type": "object",
+  "properties": {
+    "id": {
+      "type": "string",
+      "description": "Unique chart identifier (e.g. system.cpu)"
+    },
+    "name": {
+      "type": "string",
+      "description": "Human-readable chart name"
+    },
+    "family": {
+      "type": "string",
+      "description": "Chart family grouping"
+    },
+    "context": {
+      "type": "string",
+      "description": "Chart context (metric type)"
+    },
+    "title": {
+      "type": "string",
+      "description": "Display title"
+    },
+    "priority": {
+      "type": "integer",
+      "description": "Display priority (lower = higher)"
+    },
+    "plugin": {
+      "type": "string",
+      "description": "Netdata plugin providing this chart"
+    },
+    "module": {
+      "type": "string",
+      "description": "Module within the plugin"
+    },
+    "units": {
+      "type": "string",
+      "description": "Units of the chart dimensions"
+    },
+    "type": {
+      "type": "string",
+      "enum": [
+        "line",
+        "area",
+        "stacked"
+      ],
+      "description": "Visualization type"
+    },
+    "dimensions": {
+      "type": "object",
+      "description": "Map of dimension ID to dimension metadata",
+      "additionalProperties": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "value": {
+            "type": [
+              "number",
+              "null"
+            ]
+          }
+        }
+      }
+    },
+    "last_updated": {
+      "type": "integer",
+      "description": "Unix timestamp of last update"
+    },
+    "update_every": {
+      "type": "integer",
+      "description": "Seconds between updates"
+    }
+  },
+  "required": [
+    "id",
+    "name",
+    "context",
+    "units"
+  ]
+}
