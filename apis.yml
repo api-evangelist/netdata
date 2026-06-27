@@ -58,11 +58,11 @@ apis:
         url: json-schema/netdata-alert-schema.json
       - type: JSONSchema
         url: json-schema/netdata-node-schema.json
-      - type: Example
+      - type: Examples
         url: examples/netdata-charts-list-example.json
-      - type: Example
+      - type: Examples
         url: examples/netdata-alerts-example.json
-      - type: Example
+      - type: Examples
         url: examples/netdata-data-query-example.json
       - type: SwaggerUI
         url: https://learn.netdata.cloud/api
@@ -88,7 +88,7 @@ apis:
         url: https://learn.netdata.cloud/docs/rest-api/api
       - type: OpenAPI
         url: openapi/netdata-cloud-api-openapi.yml
-      - type: Example
+      - type: Examples
         url: examples/netdata-node-info-example.json
       - type: SwaggerUI
         url: https://app.netdata.cloud/api/docs/
@@ -107,7 +107,7 @@ common:
     url: https://x.com/netdatahq
   - type: Blog
     url: https://www.netdata.cloud/blog/
-  - type: Changelog
+  - type: ChangeLog
     url: https://learn.netdata.cloud/docs/netdata-agent/changelog
   - type: Pricing
     url: https://www.netdata.cloud/pricing/
