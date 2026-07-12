@@ -95,6 +95,12 @@ apis:
       - type: Authentication
         url: https://learn.netdata.cloud/docs/netdata-cloud/authentication-&-authorization/api-tokens
 common:
+  - type: TrustCenter
+    url: security/netdata-trust-center.yml
+  - type: DomainSecurity
+    url: security/netdata-domain-security.yml
+  - type: Authentication
+    url: authentication/netdata-authentication.yml
   - type: Website
     url: https://www.netdata.cloud/
   - type: Documentation

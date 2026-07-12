@@ -1,0 +1,53 @@
+generated: '2026-07-11'
+method: derived
+source: openapi/netdata-agent-api-openapi.yml, openapi/netdata-cloud-api-openapi.yml
+summary:
+  types:
+  - apiKey
+  - http
+  api_key_in:
+  - header
+schemes:
+- name: bearerAuth
+  type: http
+  scheme: bearer
+  description: |-
+    Bearer token authentication for API access when bearer protection is enabled.
+
+    **How to obtain a token:**
+    1. Token must be obtained via `/api/v3/bearer_get_token` endpoint
+    2. This endpoint is ACLK-only (requires Netdata Cloud access)
+    3. Token includes role-based access control and expiration time
+
+    **How to use:**
+    ```
+    Authorization: Bearer <token>
+    ```
+
+    **When required:**
+    - When bearer protection is
+  sources:
+  - openapi/netdata-agent-api-openapi.yml
+  - openapi/netdata-cloud-api-openapi.yml
+- name: ipAcl
+  type: apiKey
+  in: header
+  parameter: X-Forwarded-For
+  description: |-
+    IP-based Access Control List restrictions (informational only).
+
+    **Configuration:**
+    APIs are subject to IP-based ACL restrictions configured in `netdata.conf`:
+
+    ```conf
+    [web]
+        allow dashboard from = *
+        allow badges from = *
+        allow management from = localhost
+    ```
+
+    **ACL Categories:**
+    - `allow dashboard from` - Controls access to metrics, alerts, nodes, functions, config APIs
+    - `allow badge
+  sources:
+  - openapi/netdata-agent-api-openapi.yml
