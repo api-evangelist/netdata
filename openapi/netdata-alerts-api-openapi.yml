@@ -1,0 +1,3520 @@
+openapi: 3.0.0
+info:
+  title: Netdata agent alerts API
+  description: 'Real-time performance and health monitoring.
+
+
+    ## API Versions
+
+
+    Netdata provides three API versions:
+
+    - **v1**: The original API, focused on single-node operations
+
+    - **v2**: Multi-node API with advanced grouping and aggregation capabilities
+
+    - **v3**: The latest API version that combines v1 and v2 endpoints and may include additional features
+
+
+    ### v3 API Endpoints
+
+
+    The v3 API provides the current, actively maintained endpoints:
+
+    - `/api/v3/data` - Multi-dimensional data queries
+
+    - `/api/v3/weights` - Metric scoring/correlation
+
+    - `/api/v3/contexts` - Context metadata
+
+    - `/api/v3/nodes` - Node information
+
+    - `/api/v3/q` - Full-text search
+
+    - `/api/v3/alerts` - Alert information
+
+    - `/api/v3/alert_transitions` - Alert state transitions
+
+    - `/api/v3/alert_config` - Alert configuration
+
+    - `/api/v3/functions` - Available functions
+
+    - `/api/v3/function` - Execute functions
+
+    - `/api/v3/info` - Agent information
+
+    - `/api/v3/node_instances` - Node instance information
+
+    - `/api/v3/stream_path` - Streaming topology
+
+    - `/api/v3/versions` - Version information
+
+    - `/api/v3/badge.svg` - Dynamic badges
+
+    - `/api/v3/allmetrics` - Export metrics
+
+    - `/api/v3/context` - Single context info
+
+    - `/api/v3/variable` - Variable information
+
+    - `/api/v3/config` - Dynamic configuration
+
+    - `/api/v3/settings` - Agent settings
+
+    - `/api/v3/me` - Current user information
+
+    - `/api/v3/claim` - Agent claiming
+
+    - Additional management and streaming endpoints
+
+
+    **Note:** V1 and V2 APIs are deprecated and maintained for backwards compatibility only. New integrations should use V3 exclusively.
+
+    '
+  version: v1-rolling
+  contact:
+    name: Netdata Agent API
+    email: info@netdata.cloud
+    url: https://netdata.cloud
+  license:
+    name: GPL v3+
+    url: https://github.com/netdata/netdata/blob/master/LICENSE
+servers:
+- url: https://registry.my-netdata.io
+- url: http://registry.my-netdata.io
+- url: http://localhost:19999
+tags:
+- name: alerts
+  description: Everything related to alerts
+paths:
+  /api/v3/alerts:
+    get:
+      operationId: alerts3
+      tags:
+      - alerts
+      summary: Current Alert Status - Multi-node Alert Information - Latest API
+      description: 'Returns the current status of all alerts across all nodes monitored by this Netdata agent.
+
+
+        This is the latest version (v3) of the alerts API. It provides the same functionality as v2 but may include additional features in the future.
+
+
+        **What This API Provides:**
+
+        - Current state of all active, warning, and critical alerts
+
+        - Alert values and thresholds
+
+        - Alert configuration summaries
+
+        - Multi-node alert aggregation
+
+        - Filtering by alert name, context, node, or status
+
+
+        **Use Cases:**
+
+        - Dashboard alert widgets showing current system health
+
+        - Alert management interfaces
+
+        - Integration with external alerting systems
+
+        - Monitoring alert coverage across infrastructure
+
+        - Finding all alerts in specific states (warning/critical)
+
+
+        **Response Content:**
+
+        The response includes comprehensive information about alerts including their current values, configured thresholds, time in current state, and associated context/chart information.
+
+
+        **Security & Access Control:**
+
+        - 📊 **Public Data API** - Bearer token optional, IP-based ACL restrictions apply
+
+        - **Default Access:** Public (no authentication required)
+
+        - **Bearer Protection:** When enabled via `/api/v3/bearer_protection`, requires bearer token
+
+        - **IP Restrictions:** Subject to `allow dashboard from` in netdata.conf
+
+        - **Access Methods:** Direct HTTP/HTTPS, Netdata Cloud, external tools
+
+        '
+      security:
+      - {}
+      - bearerAuth: []
+      parameters:
+      - $ref: '#/components/parameters/scopeNodes'
+      - $ref: '#/components/parameters/scopeContexts'
+      - $ref: '#/components/parameters/filterNodes'
+      - $ref: '#/components/parameters/filterContexts'
+      - name: alert
+        in: query
+        description: 'Filter alerts by alert name pattern. Uses Netdata simple pattern matching.
+
+
+          **Pattern Syntax:**
+
+          - Exact match: `cpu_usage`
+
+          - Wildcard: `cpu_*` (all CPU-related alerts)
+
+          - Multiple patterns: `cpu_* ram_*` (space-separated)
+
+          - Negation: `!cpu_usage` (all except this alert)
+
+
+          **Common Alert Names:**
+
+          - `ram_in_use` - RAM utilization
+
+          - `disk_space_usage` - Disk space
+
+          - `10min_cpu_usage` - CPU usage over 10 minutes
+
+          - `tcp_listen_overflows` - TCP connection queue overflows
+
+          - `disk_backlog` - Disk I/O backlog
+
+
+          When not specified, all alerts are included.
+
+
+          **Examples:**
+
+          - `alert=ram_in_use` - Only RAM usage alert
+
+          - `alert=*cpu*` - All CPU-related alerts
+
+          - `alert=* !*_critical` - All alerts except those ending with _critical
+
+          '
+        required: false
+        schema:
+          type: string
+        examples:
+          single:
+            value: ram_in_use
+            summary: Single alert
+          pattern:
+            value: '*cpu*'
+            summary: All CPU alerts
+      - name: status
+        in: query
+        description: 'Filter alerts by their current status. Can specify multiple statuses.
+
+
+          **Alert Statuses:**
+
+          - `CRITICAL` - Alert is in critical state (highest severity)
+
+          - `WARNING` - Alert is in warning state
+
+          - `CLEAR` - Alert is in normal state (not triggered)
+
+          - `UNDEFINED` - Alert could not be evaluated (e.g., division by zero, missing data)
+
+          - `UNINITIALIZED` - Alert has not been evaluated yet (no data collected)
+
+
+          **Multiple Statuses:**
+
+          To show multiple statuses, separate them with commas: `status=CRITICAL,WARNING`
+
+
+          **Use Cases:**
+
+          - `status=CRITICAL` - Show only critical alerts requiring immediate attention
+
+          - `status=CRITICAL,WARNING` - Show all alerts that need attention
+
+          - `status=CLEAR` - Show alerts that are currently in normal state
+
+          - Not specified - Show alerts in all states
+
+
+          **Default:** When not specified, typically returns only alerts in WARNING or CRITICAL state (this depends on options parameter).
+
+          '
+        required: false
+        schema:
+          type: string
+        examples:
+          critical_only:
+            value: CRITICAL
+            summary: Only critical alerts
+          needs_attention:
+            value: CRITICAL,WARNING
+            summary: All alerts needing attention
+          all_states:
+            value: CRITICAL,WARNING,CLEAR,UNDEFINED,UNINITIALIZED
+            summary: All alert states
+      - name: options
+        in: query
+        description: 'Comma or pipe-separated list of options to control response content.
+
+
+          **Alert-Specific Options:**
+
+          - `summary` - Include summary counters (total alerts, by status, by type)
+
+
+          **General Options:**
+
+          - `contexts` - Include context information
+
+          - `instances` - Include alert instance details
+
+          - `values` - Include current alert values
+
+          - `configurations` - Include alert configuration details
+
+
+          **Examples:**
+
+          - `options=summary` - Include alert count summaries
+
+          - `options=summary,values` - Summaries and current values
+
+          - `options=summary|configurations` - Summaries and configs (pipe separator)
+
+
+          When not specified, returns basic alert information without detailed configs or summaries.
+
+          '
+        required: false
+        schema:
+          type: string
+        examples:
+          basic:
+            value: summary
+            summary: With summary counters
+          detailed:
+            value: summary,values,configurations
+            summary: Complete alert information
+      - $ref: '#/components/parameters/after'
+      - $ref: '#/components/parameters/before'
+      - name: timeout
+        in: query
+        description: 'Maximum time in milliseconds to wait for the query to complete.
+
+
+          This is useful for preventing long-running queries from blocking when querying large infrastructures with many nodes and alerts.
+
+
+          **Format:** Integer (milliseconds)
+
+
+          **Default:** Server default timeout (typically 30000ms = 30 seconds)
+
+
+          **Examples:**
+
+          - `timeout=5000` - 5 second timeout
+
+          - `timeout=60000` - 60 second timeout
+
+
+          When the timeout is exceeded, the server returns a partial result with whatever data was collected before the timeout.
+
+          '
+        required: false
+        schema:
+          type: integer
+          format: int64
+          minimum: 1000
+        example: 30000
+      - name: cardinality
+        in: query
+        description: 'Limit the number of alert instances returned to prevent response explosion.
+
+
+          When monitoring large infrastructures, some alert types may have hundreds or thousands of instances (e.g., disk space alerts for every disk on every node).
+
+
+          This parameter limits the number of unique alert instances in the response.
+
+
+          **Format:** Integer (maximum number of alert instances)
+
+
+          **Default:** No limit
+
+
+          **Use Cases:**
+
+          - Preventing huge responses when there are many alert instances
+
+          - Getting a sample of alerts rather than complete list
+
+          - Dashboard widgets with limited display space
+
+
+          **Example:**
+
+          - `cardinality=100` - Return at most 100 alert instances
+
+
+          **Alias:** Can also be specified as `cardinality_limit`
+
+
+          When the limit is exceeded, the response may indicate how many alerts were omitted.
+
+          '
+        required: false
+        schema:
+          type: integer
+          minimum: 1
+        example: 100
+      responses:
+        '200':
+          description: 'Success. Returns current alert status information.
+
+
+            **Response Structure:**
+
+            - Summary counters (when options=summary): counts by status, type, classification
+
+            - Alert instances with their current states
+
+            - Alert values and thresholds (when options=values)
+
+            - Alert configurations (when options=configurations)
+
+            - Node and context associations
+
+
+            The response is grouped by contexts and includes metadata about each alert including its current status, value, time in current state, and associated chart/dimension.
+
+
+            **Response Characteristics:**
+
+            - JSON format
+
+            - Not cacheable (alerts change frequently)
+
+            - May include partial results if timeout is exceeded
+
+            - Cardinality-limited if specified
+
+            '
+          content:
+            application/json:
+              schema:
+                type: object
+                description: Multi-node alert status information
+        '400':
+          description: 'Bad request. Common causes:
+
+            - Invalid parameter values
+
+            - Malformed filter patterns
+
+            - Invalid status values
+
+            - Invalid timeout or cardinality values
+
+            '
+        '500':
+          description: Internal server error. Usually indicates the server is out of memory.
+  /api/v3/alert_transitions:
+    get:
+      operationId: alert_transitions_v3
+      tags:
+      - alerts
+      summary: Retrieve alert state transition history across all nodes with advanced filtering
+      description: 'Returns the historical record of alert state changes (transitions) across the monitored infrastructure. This endpoint provides detailed information about when alerts changed state (e.g., from CLEAR to WARNING to CRITICAL), allowing you to analyze alert patterns, investigate incidents, and understand system behavior over time.
+
+
+        **What is an Alert Transition?**
+
+        An alert transition is a record of an alert changing from one state to another. Each transition includes:
+
+        - Previous and new alert status (CLEAR, WARNING, CRITICAL, etc.)
+
+        - When the transition occurred
+
+        - How long the alert stayed in the previous state (duration)
+
+        - Alert value at the time of transition
+
+        - Complete alert metadata (name, context, node, etc.)
+
+
+        **Key Features:**
+
+        - **Multi-Node Support:** Query transitions across entire infrastructure
+
+        - **Advanced Filtering:** Filter by status, type, component, role, node, alert name, context
+
+        - **Faceted Search:** Use multiple filter facets simultaneously (e.g., "CRITICAL status on database nodes")
+
+        - **Pagination:** Navigate through large result sets using anchor_gi
+
+        - **Time Range:** Specify exact time windows for historical analysis
+
+
+        **Use Cases:**
+
+        - Incident investigation: "What alerts fired during the outage?"
+
+        - Alert pattern analysis: "How often does this alert transition to CRITICAL?"
+
+        - Alert tuning: "Which alerts flap between states most frequently?"
+
+        - Compliance reporting: "Show all CRITICAL alerts in the last 30 days"
+
+        - Root cause analysis: "What changed before this alert fired?"
+
+
+        **Faceted Filtering:**
+
+        This endpoint supports 9 different facets for precise filtering:
+
+        - f_status: Filter by alert status (CRITICAL, WARNING, etc.)
+
+        - f_type: Filter by alert type (e.g., "System", "Database", "Network")
+
+        - f_role: Filter by recipient role (who should be notified)
+
+        - f_class: Filter by alert classification
+
+        - f_component: Filter by system component
+
+        - f_node: Filter by specific node hostname
+
+        - f_alert: Filter by alert name
+
+        - f_instance: Filter by chart instance name
+
+        - f_context: Filter by metric context
+
+
+        **Examples:**
+
+        1. Recent critical transitions: `?last=100&f_status=CRITICAL`
+
+        2. Database alerts: `?f_component=Database&after=-86400`
+
+        3. Specific alert history: `?f_alert=disk_space_usage&last=50`
+
+        4. Node-specific transitions: `?f_node=web-server-01&after=-604800`
+
+
+        **Response Format:**
+
+        Returns a JSON array of transition records, ordered by time (newest first by default). Each record includes complete transition metadata, alert details, and timing information.
+
+
+        **Performance Considerations:**
+
+        - Use time ranges (after/before) to limit query scope
+
+        - Use cardinality limits for large result sets
+
+        - Timeout parameter prevents long-running queries
+
+        - Pagination via anchor_gi for processing large datasets
+
+
+        **Security & Access Control:**
+
+        - 📊 **Public Data API** - Bearer token optional, IP-based ACL restrictions apply
+
+        - **Default Access:** Public (no authentication required)
+
+        - **Bearer Protection:** When enabled via `/api/v3/bearer_protection`, requires bearer token
+
+        - **IP Restrictions:** Subject to `allow dashboard from` in netdata.conf
+
+        - **Access Methods:** Direct HTTP/HTTPS, Netdata Cloud, external tools
+
+        '
+      security:
+      - {}
+      - bearerAuth: []
+      parameters:
+      - name: scope_nodes
+        in: query
+        description: 'Filter transitions to only include specific nodes using simple pattern matching.
+
+
+          This parameter defines which nodes to include in the search using Netdata''s simple pattern syntax (not regex).
+
+
+          **Pattern Syntax:**
+
+          - `*` matches any number of characters (including none)
+
+          - `node1 node2` space-separated list matches any of the nodes
+
+          - `!node3` exclude specific nodes (prefix with !)
+
+          - Can combine inclusion and exclusion: `web* !web-test*`
+
+
+          **Examples:**
+
+          - `scope_nodes=web*` - All nodes starting with "web"
+
+          - `scope_nodes=web* db*` - All web and database nodes
+
+          - `scope_nodes=* !test*` - All nodes except test nodes
+
+          - `scope_nodes=prod-web-01` - Specific node only
+
+
+          **Use Cases:**
+
+          - Focus on specific node groups (production vs staging)
+
+          - Exclude test/development nodes from analysis
+
+          - Investigate issues on specific infrastructure tiers
+
+
+          When not specified, transitions from all nodes are included.
+
+          '
+        required: false
+        schema:
+          type: string
+        examples:
+          all_web_nodes:
+            value: web*
+            summary: All web servers
+          prod_only:
+            value: '* !test* !dev*'
+            summary: Production nodes only
+      - name: nodes
+        in: query
+        description: 'Filter transitions to specific nodes by their exact names.
+
+
+          Unlike `scope_nodes` which supports patterns, this parameter requires exact node names. Multiple nodes are separated by comma or pipe.
+
+
+          **Format:** Comma or pipe-separated list of exact node names
+
+
+          **Examples:**
+
+          - `nodes=web-server-01` - Single specific node
+
+          - `nodes=web-server-01,web-server-02,db-server-01` - Multiple specific nodes
+
+          - `nodes=web-server-01|web-server-02` - Pipe separator also works
+
+
+          **Difference from scope_nodes:**
+
+          - `scope_nodes`: Pattern matching, filters at query time
+
+          - `nodes`: Exact names, more efficient for known node names
+
+
+          **Best Practice:** Use `nodes` when you know exact node names, use `scope_nodes` for pattern-based filtering.
+
+
+          When not specified, transitions from all nodes matching scope_nodes (or all nodes if scope_nodes is also not specified) are included.
+
+          '
+        required: false
+        schema:
+          type: string
+        example: web-server-01,db-server-01
+      - name: scope_contexts
+        in: query
+        description: 'Filter transitions to only include alerts from specific metric contexts using pattern matching.
+
+
+          Contexts group similar metrics across instances (e.g., `system.cpu` groups CPU metrics from all nodes, `disk.io` groups disk I/O from all disks).
+
+
+          **Pattern Syntax:**
+
+          - `*` matches any number of characters
+
+          - `context1 context2` space-separated list matches any of the contexts
+
+          - `!context3` exclude specific contexts
+
+          - Can combine: `system.* !system.io*`
+
+
+          **Common Context Patterns:**
+
+          - `system.*` - All system-level metrics
+
+          - `disk.*` - All disk-related metrics
+
+          - `net.*` - All network-related metrics
+
+          - `mysql.*` - All MySQL metrics
+
+          - `nginx.*` - All Nginx metrics
+
+
+          **Examples:**
+
+          - `scope_contexts=system.cpu` - Only CPU alerts
+
+          - `scope_contexts=disk.* net.*` - All disk and network alerts
+
+          - `scope_contexts=* !system.ip*` - All contexts except IP-related
+
+
+          **Use Cases:**
+
+          - Focus on specific subsystem (e.g., storage, network)
+
+          - Exclude noisy alert types
+
+          - Component-specific incident investigation
+
+
+          When not specified, transitions from all contexts are included.
+
+          '
+        required: false
+        schema:
+          type: string
+        examples:
+          disk_alerts:
+            value: disk.*
+            summary: All disk-related alerts
+          critical_systems:
+            value: system.* disk.* net.*
+            summary: System, disk, and network alerts
+      - name: contexts
+        in: query
+        description: 'Filter transitions to specific contexts by their exact names.
+
+
+          Unlike `scope_contexts` which supports patterns, this parameter requires exact context names.
+
+
+          **Format:** Comma or pipe-separated list of exact context names
+
+
+          **Examples:**
+
+          - `contexts=system.cpu` - Single specific context
+
+          - `contexts=system.cpu,system.load,system.ram` - Multiple contexts
+
+          - `contexts=disk.space|disk.inodes` - Pipe separator
+
+
+          **Difference from scope_contexts:**
+
+          - `scope_contexts`: Pattern matching for flexible filtering
+
+          - `contexts`: Exact names for precise filtering
+
+
+          When not specified, transitions from all contexts matching scope_contexts are included.
+
+          '
+        required: false
+        schema:
+          type: string
+        example: system.cpu,system.ram,disk.space
+      - name: alert
+        in: query
+        description: 'Filter transitions to a specific alert by its exact name.
+
+
+          Alert names are unique identifiers for specific alert configurations.
+
+
+          **Format:** Exact alert name (case-sensitive)
+
+
+          **Examples:**
+
+          - `alert=disk_space_usage` - Transitions for disk space alert
+
+          - `alert=cpu_usage` - Transitions for CPU usage alert
+
+          - `alert=ram_in_use` - Transitions for RAM usage alert
+
+
+          **Use Cases:**
+
+          - Analyze history of a specific alert
+
+          - Tune alert thresholds based on historical behavior
+
+          - Investigate alert flapping (rapid state changes)
+
+          - Track alert effectiveness
+
+
+          **Tip:** To find available alert names, query `/api/v3/alerts` first or use the `/api/v3/alert_config` endpoint.
+
+
+          When not specified, transitions for all alerts are included.
+
+          '
+        required: false
+        schema:
+          type: string
+        example: disk_space_usage
+      - name: transition
+        in: query
+        description: 'Filter to a specific transition by its unique identifier.
+
+
+          Each transition has a unique ID (UUID). This parameter is rarely used but can retrieve exact transition records.
+
+
+          **Format:** UUID string
+
+
+          **Use Case:** Retrieve exact transition details when you have the transition ID from another query or notification.
+
+
+          When not specified, all transitions matching other filters are included.
+
+          '
+        required: false
+        schema:
+          type: string
+        example: 550e8400-e29b-41d4-a716-446655440000
+      - name: last
+        in: query
+        description: 'Limit the number of transition records returned.
+
+
+          This controls how many transition records to include in the response, ordered by time (most recent first).
+
+
+          **Format:** Positive integer
+
+
+          **Default:** 1 (returns only the most recent transition)
+
+
+          **Examples:**
+
+          - `last=1` - Most recent transition only (default)
+
+          - `last=100` - Last 100 transitions
+
+          - `last=1000` - Last 1000 transitions
+
+
+          **Use Cases:**
+
+          - Dashboard widgets showing recent N alerts
+
+          - API clients with pagination
+
+          - Limiting response size for performance
+
+
+          **Pagination:**
+
+          For datasets larger than `last`, use the `anchor_gi` parameter to navigate to the next page:
+
+          1. Make request with `last=100`
+
+          2. Note the `global_id` of the last transition in response
+
+          3. Make next request with `last=100&anchor_gi=<global_id>`
+
+
+          **Performance Note:** Smaller values of `last` result in faster queries and smaller responses.
+
+
+          **IMPORTANT:** This parameter is required. If not specified, defaults to 1.
+
+          '
+        required: true
+        schema:
+          type: integer
+          minimum: 1
+          default: 1
+        example: 100
+      - name: anchor_gi
+        in: query
+        description: 'Global ID anchor for pagination through large result sets.
+
+
+          Each transition has a unique global_id (an incrementing number). Use this parameter to paginate through results by specifying the global_id of the last transition from the previous page.
+
+
+          **How Pagination Works:**
+
+          1. First request: `?last=100` - Returns first 100 transitions
+
+          2. Extract `global_id` of the 100th (last) transition from response
+
+          3. Next request: `?last=100&anchor_gi=<global_id>` - Returns next 100 transitions
+
+
+          **Format:** Positive integer (global_id from previous response)
+
+
+          **Examples:**
+
+          - `anchor_gi=12345` - Start from transition with global_id 12345
+
+          - Combined with last: `last=100&anchor_gi=12345` - Get 100 transitions starting after global_id 12345
+
+
+          **Use Cases:**
+
+          - Processing large alert history datasets
+
+          - Implementing "load more" in UIs
+
+          - Batch processing of transition records
+
+          - Exporting complete alert history
+
+
+          **Direction:**
+
+          - Results are ordered by global_id (which correlates with time)
+
+          - Anchor specifies "start after this ID"
+
+          - Each page contains `last` number of records
+
+
+          When not specified, pagination starts from the most recent transition.
+
+          '
+        required: false
+        schema:
+          type: integer
+          format: int64
+          minimum: 0
+        example: 12345678
+      - name: f_status
+        in: query
+        description: '**Facet Filter:** Filter transitions by their NEW status (the status the alert transitioned TO).
+
+
+          **Available Status Values:**
+
+          - `CRITICAL` - Alert in critical state (highest severity)
+
+          - `WARNING` - Alert in warning state
+
+          - `CLEAR` - Alert returned to normal state
+
+          - `UNDEFINED` - Alert evaluation failed (e.g., metric missing, division by zero)
+
+          - `UNINITIALIZED` - Alert not yet evaluated (no data yet)
+
+          - `REMOVED` - Alert was removed (plugin stopped, configuration changed)
+
+
+          **Format:** Comma-separated list of status values
+
+
+          **Examples:**
+
+          - `f_status=CRITICAL` - Only transitions TO critical state
+
+          - `f_status=CRITICAL,WARNING` - Transitions to critical or warning
+
+          - `f_status=CLEAR` - When alerts cleared (returned to normal)
+
+
+          **Use Cases:**
+
+          - Find when alerts became critical: `f_status=CRITICAL`
+
+          - Track alert recovery: `f_status=CLEAR`
+
+          - Find alert failures: `f_status=UNDEFINED`
+
+          - Incident timeline: `f_status=CRITICAL,WARNING`
+
+
+          **Note:** This filters by the NEW status. To see transitions FROM a status to another, you''ll need to examine the old_status field in the response.
+
+
+          When not specified, transitions to all statuses are included.
+
+          '
+        required: false
+        schema:
+          type: string
+        examples:
+          critical_only:
+            value: CRITICAL
+            summary: Only critical transitions
+          problems:
+            value: CRITICAL,WARNING
+            summary: Problem states
+          recoveries:
+            value: CLEAR
+            summary: Alert recoveries
+      - name: f_type
+        in: query
+        description: '**Facet Filter:** Filter transitions by alert type.
+
+
+          Alert types categorize alerts by what they monitor (e.g., "System", "Database", "Web Server").
+
+
+          **Format:** Comma-separated list of alert type names
+
+
+          **Common Alert Types:**
+
+          - `System` - System-level alerts (CPU, RAM, load)
+
+          - `Database` - Database monitoring alerts
+
+          - `Web Server` - Web server alerts (Nginx, Apache)
+
+          - `Network` - Network-related alerts
+
+          - `Storage` - Storage and disk alerts
+
+
+          **Examples:**
+
+          - `f_type=System` - Only system alerts
+
+          - `f_type=Database,Web Server` - Database and web server alerts
+
+
+          **Use Cases:**
+
+          - Focus on specific infrastructure component types
+
+          - Filter by technology stack (databases, web servers, etc.)
+
+          - Team-specific alert filtering
+
+
+          **Note:** The exact type values depend on your alert configurations. Query `/api/v3/alerts` to see available types in your installation.
+
+
+          When not specified, transitions of all types are included.
+
+          '
+        required: false
+        schema:
+          type: string
+        example: System,Database
+      - name: f_role
+        in: query
+        description: '**Facet Filter:** Filter transitions by recipient role.
+
+
+          Roles define who should be notified about alerts (e.g., "sysadmin", "dba", "webmaster").
+
+
+          **Format:** Comma-separated list of role names
+
+
+          **Common Roles:**
+
+          - `sysadmin` - System administrators
+
+          - `dba` - Database administrators
+
+          - `webmaster` - Web server administrators
+
+          - `devops` - DevOps team
+
+          - `security` - Security team
+
+
+          **Examples:**
+
+          - `f_role=sysadmin` - Alerts for sysadmin role
+
+          - `f_role=sysadmin,dba` - Alerts for sysadmins and DBAs
+
+
+          **Use Cases:**
+
+          - Team-specific alert filtering
+
+          - Role-based alert analysis
+
+          - Notification audit trails
+
+
+          **Note:** Roles are defined in your alert configurations. The exact role values depend on your Netdata setup.
+
+
+          When not specified, transitions for all roles are included.
+
+          '
+        required: false
+        schema:
+          type: string
+        example: sysadmin,dba
+      - name: f_class
+        in: query
+        description: '**Facet Filter:** Filter transitions by alert classification.
+
+
+          Alert classifications categorize alerts by their nature (e.g., "Errors", "Latency", "Utilization").
+
+
+          **Format:** Comma-separated list of classification names
+
+
+          **Common Classifications:**
+
+          - `Errors` - Error-related alerts
+
+          - `Latency` - Performance/latency alerts
+
+          - `Utilization` - Resource utilization alerts
+
+          - `Availability` - Availability/uptime alerts
+
+          - `Workload` - Workload-related alerts
+
+
+          **Examples:**
+
+          - `f_class=Errors` - Only error-related transitions
+
+          - `f_class=Latency,Utilization` - Performance and utilization alerts
+
+
+          **Use Cases:**
+
+          - Focus on specific problem categories
+
+          - SLA/SLO tracking by classification
+
+          - Alert categorization analysis
+
+
+          When not specified, transitions of all classifications are included.
+
+          '
+        required: false
+        schema:
+          type: string
+        example: Errors,Latency
+      - name: f_component
+        in: query
+        description: '**Facet Filter:** Filter transitions by system component.
+
+
+          Components identify which part of the system the alert relates to (e.g., "Network", "Disk", "Memory").
+
+
+          **Format:** Comma-separated list of component names
+
+
+          **Common Components:**
+
+          - `Network` - Network-related alerts
+
+          - `Disk` - Disk/storage alerts
+
+          - `Memory` - Memory alerts
+
+          - `CPU` - CPU alerts
+
+          - `Database` - Database component alerts
+
+
+          **Examples:**
+
+          - `f_component=Disk` - Only disk-related transitions
+
+          - `f_component=Network,Disk` - Network and disk alerts
+
+
+          **Use Cases:**
+
+          - Component-specific incident investigation
+
+          - Infrastructure subsystem analysis
+
+          - Capacity planning by component
+
+
+          When not specified, transitions for all components are included.
+
+          '
+        required: false
+        schema:
+          type: string
+        example: Disk,Network
+      - name: f_node
+        in: query
+        description: '**Facet Filter:** Filter transitions by exact node hostname.
+
+
+          This is a facet filter alternative to the `nodes` parameter, typically used when you want to combine it with other facets.
+
+
+          **Format:** Comma-separated list of exact node hostnames
+
+
+          **Examples:**
+
+          - `f_node=web-server-01` - Single specific node
+
+          - `f_node=web-server-01,db-server-01` - Multiple nodes
+
+
+          **Difference from `nodes` parameter:**
+
+          - Both accept exact node names
+
+          - `f_node` is a facet filter (can be combined with other f_* filters)
+
+          - `nodes` is a direct filter parameter
+
+
+          **Best Practice:** Use `nodes` for simple node filtering, use `f_node` when combining with other facets in complex queries.
+
+
+          When not specified, all nodes are included.
+
+          '
+        required: false
+        schema:
+          type: string
+        example: web-server-01
+      - name: f_alert
+        in: query
+        description: '**Facet Filter:** Filter transitions by exact alert name.
+
+
+          This is a facet filter alternative to the `alert` parameter.
+
+
+          **Format:** Comma-separated list of exact alert names
+
+
+          **Examples:**
+
+          - `f_alert=disk_space_usage` - Single alert
+
+          - `f_alert=cpu_usage,ram_in_use` - Multiple alerts
+
+
+          **Difference from `alert` parameter:**
+
+          - `alert`: Single alert name
+
+          - `f_alert`: Multiple alert names, facet filter
+
+
+          When not specified, all alerts are included.
+
+          '
+        required: false
+        schema:
+          type: string
+        example: disk_space_usage,ram_in_use
+      - name: f_instance
+        in: query
+        description: '**Facet Filter:** Filter transitions by chart instance name.
+
+
+          Chart instances are specific monitored entities (e.g., "disk_sda", "eth0", "mysql_localhost").
+
+
+          **Format:** Comma-separated list of instance names
+
+
+          **Examples:**
+
+          - `f_instance=sda` - Alerts for disk sda
+
+          - `f_instance=eth0,eth1` - Alerts for network interfaces eth0 and eth1
+
+
+          **Use Cases:**
+
+          - Device-specific alert history (specific disk, NIC, etc.)
+
+          - Instance-level troubleshooting
+
+          - Resource-specific analysis
+
+
+          **Note:** Instance names depend on your system configuration and what''s being monitored.
+
+
+          When not specified, all instances are included.
+
+          '
+        required: false
+        schema:
+          type: string
+        example: sda,sdb
+      - name: f_context
+        in: query
+        description: '**Facet Filter:** Filter transitions by exact metric context.
+
+
+          This is a facet filter alternative to the `contexts` parameter.
+
+
+          **Format:** Comma-separated list of exact context names
+
+
+          **Examples:**
+
+          - `f_context=system.cpu` - CPU context only
+
+          - `f_context=disk.space,disk.inodes` - Disk space and inodes
+
+
+          **Difference from `contexts` parameter:**
+
+          - Both accept exact context names
+
+          - `f_context` is a facet filter (can be combined with other f_* filters)
+
+          - `contexts` is a direct filter parameter
+
+
+          When not specified, all contexts are included.
+
+          '
+        required: false
+        schema:
+          type: string
+        example: system.cpu,system.ram
+      - $ref: '#/components/parameters/after'
+      - $ref: '#/components/parameters/before'
+      - name: timeout
+        in: query
+        description: 'Maximum time in milliseconds to wait for the query to complete.
+
+
+          Alert transition queries can be expensive when searching large time ranges or across many nodes.
+
+
+          **Format:** Integer (milliseconds)
+
+
+          **Default:** Server default timeout (typically 30000ms = 30 seconds)
+
+
+          **Examples:**
+
+          - `timeout=5000` - 5 second timeout
+
+          - `timeout=60000` - 60 second timeout (for large queries)
+
+
+          **Use Cases:**
+
+          - Prevent long-running queries from blocking
+
+          - API clients with strict latency requirements
+
+          - Dashboard widgets needing fast responses
+
+
+          When timeout is exceeded, the server returns a partial result with whatever transitions were collected before timeout, or an error if no results were ready.
+
+          '
+        required: false
+        schema:
+          type: integer
+          format: int64
+          minimum: 1000
+        example: 30000
+      - name: cardinality
+        in: query
+        description: 'Limit the number of transition records returned to prevent response explosion.
+
+
+          **Format:** Integer (maximum number of transitions)
+
+
+          **Default:** No limit (but respects `last` parameter)
+
+
+          **Relationship with `last`:**
+
+          - `last`: Controls result set size (pagination)
+
+          - `cardinality`: Hard limit on response size
+
+
+          **Use Cases:**
+
+          - Ensure responses stay within size limits
+
+          - Protect against accidentally requesting huge result sets
+
+          - API clients with memory constraints
+
+
+          **Example:**
+
+          - `cardinality=1000` - Never return more than 1000 transitions
+
+
+          **Alias:** Can also be specified as `cardinality_limit`
+
+
+          **Best Practice:** Use `last` for normal pagination, use `cardinality` as a safety limit.
+
+
+          When the limit is exceeded, the response may indicate how many transitions were omitted.
+
+          '
+        required: false
+        schema:
+          type: integer
+          minimum: 1
+        example: 1000
+      responses:
+        '200':
+          description: "Success. Returns alert transition history records.\n\n**Response Structure:**\n- Array of transition records, ordered by time (newest first by default)\n- Each record includes:\n  - `global_id`: Unique transition ID for pagination\n  - `transition_id`: UUID of this specific transition\n  - `alert_name`: Name of the alert\n  - `chart`, `chart_context`: What metric triggered the alert\n  - `old_status`, `new_status`: Status change (e.g., WARNING → CRITICAL)\n  - `old_value`, `new_value`: Metric values at transition\n  - `when_key`: When the transition occurred (timestamp)\n  - `duration`: How long the alert was in old_status\n  - `non_clear_duration`: Time spent in non-CLEAR states\n  - Alert metadata: type, classification, component, role, recipient\n  - Execution details: exec, exec_code, exec_run_timestamp\n  - Node information: machine_guid, hostname\n\n**Facets:**\nWhen not in MCP mode, the response includes facet information showing all available values for each facet filter (f_status, f_type, etc.) with counts.\n\n**Pagination:**\n- Use the `global_id` from the last record with `anchor_gi` parameter for next page\n- Response indicates if more results are available\n\n**Response Characteristics:**\n- JSON format\n- Not cacheable (new transitions constantly added)\n- May be cardinality-limited if specified\n- May be timeout-limited (partial results)\n\n**Example Usage:**\n```\nGET /api/v3/alert_transitions?last=100&f_status=CRITICAL&after=-86400\n```\nReturns last 100 transitions to CRITICAL state in the past 24 hours.\n"
+          content:
+            application/json:
+              schema:
+                type: object
+                description: Alert transition history with pagination support
+        '400':
+          description: 'Bad request. Common causes:
+
+            - Invalid parameter values
+
+            - Malformed filter patterns
+
+            - Invalid facet values
+
+            - Invalid timeout or cardinality values
+
+            - Invalid global_id for anchor_gi
+
+            '
+        '500':
+          description: Internal server error during transition query execution.
+  /api/v3/alert_config:
+    get:
+      operationId: alert_config_v3
+      tags:
+      - alerts
+      summary: Retrieve the configuration of a specific alert by its config hash ID
+      description: 'Returns the complete configuration of an alert identified by its unique configuration hash ID (UUID). This endpoint provides detailed information about how an alert is configured, including its thresholds, evaluation logic, notification settings, and metadata.
+
+
+        **What is an Alert Configuration?**
+
+        Each alert in Netdata has a unique configuration that defines:
+
+        - Threshold values (warning and critical)
+
+        - The metric expression being evaluated
+
+        - Evaluation frequency and hysteresis
+
+        - Who to notify (recipients and roles)
+
+        - Notification settings and delays
+
+        - Alert metadata (name, info, summary, classification)
+
+
+        **Configuration Hash ID:**
+
+        The `config` parameter is a UUID that uniquely identifies an alert configuration. Multiple alert instances may share the same configuration hash if they use identical alert rules.
+
+
+        **How to Get Config Hash IDs:**
+
+        - From `/api/v3/alerts` response - each alert includes its `config_hash_id`
+
+        - From `/api/v3/alert_transitions` response - transitions include `config_hash_id`
+
+        - From alert notifications - config hash is often included in alert payloads
+
+
+        **Use Cases:**
+
+        - **Alert Investigation:** Understand exactly what thresholds triggered an alert
+
+        - **Alert Tuning:** Review current configuration before making changes
+
+        - **Documentation:** Generate documentation of alert configurations
+
+        - **Audit Trails:** Track what alert configurations were in effect at specific times
+
+        - **Troubleshooting:** Verify alert logic when investigating false positives/negatives
+
+        - **Configuration Management:** Compare configurations across environments
+
+
+        **Response Content:**
+
+        The endpoint returns the complete alert configuration in the format it was defined (typically the Netdata health configuration syntax), including:
+
+        - Alert name and type
+
+        - The metric expression (`on` clause)
+
+        - Warning and critical threshold expressions
+
+        - Calculation method and dimensions
+
+        - Lookup parameters (duration, method)
+
+        - Notification recipients and roles
+
+        - Alert metadata (info, summary, classification, component)
+
+        - Delay settings and hysteresis rules
+
+
+        **Example Workflow:**
+
+        1. Query alerts: `GET /api/v3/alerts?alert=disk_space_usage`
+
+        2. Extract `config_hash_id` from response
+
+        3. Get config: `GET /api/v3/alert_config?config=<uuid>`
+
+        4. Review/analyze the alert configuration details
+
+
+        **Note:** This endpoint requires the exact config hash UUID. Invalid or non-existent UUIDs will return a 400 Bad Request error.
+
+
+        **Security & Access Control:**
+
+        - 📊 **Public Data API** - Bearer token optional, IP-based ACL restrictions apply
+
+        - **Default Access:** Public (no authentication required)
+
+        - **Bearer Protection:** When enabled via `/api/v3/bearer_protection`, requires bearer token
+
+        - **IP Restrictions:** Subject to `allow dashboard from` in netdata.conf
+
+        - **Access Methods:** Direct HTTP/HTTPS, Netdata Cloud, external tools
+
+        '
+      security:
+      - {}
+      - bearerAuth: []
+      parameters:
+      - name: config
+        in: query
+        description: "The unique configuration hash ID (UUID) of the alert whose configuration to retrieve.\n\n**Format:** UUID string (with or without hyphens)\n\n**Where to Find Config Hash IDs:**\n1. **From /api/v3/alerts Response:**\n   Each alert in the response includes a `config_hash_id` field containing the UUID\n\n2. **From /api/v3/alert_transitions Response:**\n   Transition records include `config_hash_id` showing which config was active\n\n3. **From Alert Notifications:**\n   Alert notifications (email, Slack, etc.) often include the config hash\n\n4. **From Logs:**\n   Netdata logs may reference config hashes when loading alert configurations\n\n**UUID Format Examples:**\n- With hyphens: `550e8400-e29b-41d4-a716-446655440000`\n- Without hyphens: `550e8400e29b41d4a716446655440000`\n- Both formats are accepted\n\n**Important Notes:**\n- This parameter is **REQUIRED**\n- Must be a valid UUID format\n- Must reference an existing alert configuration\n- Case-insensitive\n\n**Common Errors:**\n- Missing config parameter → 400 Bad Request with message \"A config hash ID is required\"\n- Invalid UUID format → 400 Bad Request\n- Non-existent UUID → 404 or empty result\n\n**Example Usage:**\n```\nGET /api/v3/alert_config?config=550e8400-e29b-41d4-a716-446655440000\n```\n\n**Tip:** To find all config hash IDs for a specific alert name, query the alerts endpoint first:\n```\nGET /api/v3/alerts?alert=disk_space_usage\n```\nThen extract the `config_hash_id` from the response.\n"
+        required: true
+        schema:
+          type: string
+          format: uuid
+        example: 550e8400-e29b-41d4-a716-446655440000
+      responses:
+        '200':
+          description: "Success. Returns the complete alert configuration.\n\n**Response Format:**\nThe response contains the alert configuration in a structured format, typically including:\n\n**Core Configuration:**\n- `name`: Alert name/identifier\n- `type`: Alert classification type\n- `on`: Metric expression being monitored\n- `class`: Alert classification category\n- `component`: System component being monitored\n- `lookup`: Metric lookup parameters (method, duration, dimensions)\n\n**Thresholds:**\n- `warn`: Warning threshold expression\n- `crit`: Critical threshold expression\n- `units`: Unit of measurement for values\n\n**Evaluation:**\n- `every`: How often the alert is evaluated\n- `green` / `red`: Hysteresis settings (when to clear/trigger)\n- `calc`: Calculation expression (if any)\n\n**Notifications:**\n- `to`: Notification recipients\n- `exec`: Script to execute on alert\n- `delay`: Notification delay settings\n- `repeat`: Repeat notification settings\n\n**Metadata:**\n- `info`: Detailed alert description\n- `summary`: Brief alert summary\n- `host_labels`: Labels for host filtering\n\n**Response Characteristics:**\n- Content-Type: Typically `text/plain` or `application/json` depending on format\n- Not cacheable (configurations may change)\n- Complete configuration as it exists in the system\n\n**Example Response Structure (JSON format):**\n```json\n{\n  \"name\": \"disk_space_usage\",\n  \"on\": \"disk.space\",\n  \"class\": \"Utilization\",\n  \"type\": \"System\",\n  \"component\": \"Disk\",\n  \"lookup\": \"average -1m percentage of used\",\n  \"units\": \"%\",\n  \"warn\": \"$this > 80\",\n  \"crit\": \"$this > 95\",\n  \"info\": \"Disk space utilization is high\",\n  \"to\": \"sysadmin\"\n}\n```\n\nThe exact format and fields depend on the alert configuration and may vary between different alert types.\n"
+          content:
+            application/json:
+              schema:
+                type: object
+                description: Alert configuration details
+            text/plain:
+              schema:
+                type: string
+                description: Alert configuration in text format
+        '400':
+          description: 'Bad request. Common causes:
+
+            - Missing `config` parameter (error: "A config hash ID is required. Add ?config=UUID query param")
+
+            - Invalid UUID format
+
+            - Malformed request
+
+
+            **Error Response:**
+
+            Returns plain text error message explaining what went wrong.
+
+            '
+        '404':
+          description: 'Configuration not found. The specified config hash ID does not exist or has been removed.
+
+
+            **Common Reasons:**
+
+            - Alert configuration was deleted
+
+            - Alert configuration was modified (gets a new hash)
+
+            - UUID was mistyped
+
+            - Configuration is from a different Netdata instance
+
+            '
+        '500':
+          description: Internal server error during configuration retrieval.
+  /api/v2/alerts:
+    get:
+      deprecated: true
+      operationId: alerts2
+      tags:
+      - alerts
+      summary: 'OBSOLETE: Get current alert status across all nodes (use /api/v3/alerts instead)'
+      description: '**⚠️ OBSOLETE API - Will be removed in future versions**
+
+
+        This endpoint is deprecated. Use `/api/v3/alerts` instead, which provides the same functionality.
+
+
+        **Migration:** Replace `/api/v2/alerts` with `/api/v3/alerts` in all API calls.
+
+
+        Returns the current status of health monitoring alerts across all nodes in the infrastructure.
+
+        Supports filtering by status, alert name, and node selection.
+
+
+        **Security & Access Control:**
+
+        - 📊 **Public Data API** - Bearer token optional, IP-based ACL restrictions apply
+
+        - **Default Access:** Public (no authentication required)
+
+        - **Bearer Protection:** When enabled via `/api/v3/bearer_protection`, requires bearer token
+
+        - **IP Restrictions:** Subject to `allow dashboard from` in netdata.conf
+
+        - **Access Methods:** Direct HTTP/HTTPS, Netdata Cloud, external tools
+
+        '
+      security:
+      - {}
+      - bearerAuth: []
+      parameters:
+      - $ref: '#/components/parameters/scopeNodes'
+      - $ref: '#/components/parameters/filterNodes'
+      - $ref: '#/components/parameters/scopeContexts'
+      - $ref: '#/components/parameters/filterContexts'
+      - name: status
+        in: query
+        schema:
+          type: string
+        description: Filter alerts by status (e.g., CRITICAL, WARNING, CLEAR)
+      - name: alert
+        in: query
+        schema:
+          type: string
+        description: Filter by alert name pattern
+      - $ref: '#/components/parameters/dataQueryOptions'
+      - $ref: '#/components/parameters/after'
+      - $ref: '#/components/parameters/before'
+      - $ref: '#/components/parameters/timeoutMS'
+      - $ref: '#/components/parameters/cardinalityLimit'
+      responses:
+        '200':
+          description: Alert status successfully retrieved
+        '400':
+          description: Invalid parameters
+  /api/v2/alert_transitions:
+    get:
+      deprecated: true
+      operationId: alertTransitions2
+      tags:
+      - alerts
+      summary: 'OBSOLETE: Get alert state transition history (use /api/v3/alert_transitions instead)'
+      description: '**⚠️ OBSOLETE API - Will be removed in future versions**
+
+
+        This endpoint is deprecated. Use `/api/v3/alert_transitions` instead, which provides the same functionality.
+
+
+        **Migration:** Replace `/api/v2/alert_transitions` with `/api/v3/alert_transitions` in all API calls.
+
+
+        Returns historical alert state transitions showing how alerts changed over time.
+
+        Supports faceted filtering by status, type, role, class, component, node, alert name, chart name, and context.
+
+
+        **Security & Access Control:**
+
+        - 📊 **Public Data API** - Bearer token optional, IP-based ACL restrictions apply
+
+        - **Default Access:** Public (no authentication required)
+
+        - **Bearer Protection:** When enabled via `/api/v3/bearer_protection`, requires bearer token
+
+        - **IP Restrictions:** Subject to `allow dashboard from` in netdata.conf
+
+        - **Access Methods:** Direct HTTP/HTTPS, Netdata Cloud, external tools
+
+        '
+      security:
+      - {}
+      - bearerAuth: []
+      parameters:
+      - $ref: '#/components/parameters/scopeNodes'
+      - $ref: '#/components/parameters/filterNodes'
+      - $ref: '#/components/parameters/scopeContexts'
+      - $ref: '#/components/parameters/filterContexts'
+      - name: alert
+        in: query
+        schema:
+          type: string
+        description: Filter by alert name
+      - name: transition
+        in: query
+        schema:
+          type: string
+        description: Filter by transition type
+      - name: last
+        in: query
+        schema:
+          type: integer
+        description: Return only the last N transitions
+      - name: anchor_gi
+        in: query
+        schema:
+          type: integer
+          format: int64
+        description: Global ID anchor for pagination
+      - name: f_status
+        in: query
+        schema:
+          type: string
+        description: Facet filter for alert status
+      - name: f_type
+        in: query
+        schema:
+          type: string
+        description: Facet filter for alert type
+      - name: f_role
+        in: query
+        schema:
+          type: string
+        description: Facet filter for recipient role
+      - name: f_class
+        in: query
+        schema:
+          type: string
+        description: Facet filter for alert class
+      - name: f_component
+        in: query
+        schema:
+          type: string
+        description: Facet filter for alert component
+      - name: f_node
+        in: query
+        schema:
+          type: string
+        description: Facet filter for node
+      - name: f_alert
+        in: query
+        schema:
+          type: string
+        description: Facet filter for alert name
+      - name: f_instance
+        in: query
+        schema:
+          type: string
+        description: Facet filter for chart/instance name
+      - name: f_context
+        in: query
+        schema:
+          type: string
+        description: Facet filter for context
+      - $ref: '#/components/parameters/dataQueryOptions'
+      - $ref: '#/components/parameters/after'
+      - $ref: '#/components/parameters/before'
+      - $ref: '#/components/parameters/timeoutMS'
+      - $ref: '#/components/parameters/cardinalityLimit'
+      responses:
+        '200':
+          description: Alert transitions successfully retrieved
+        '400':
+          description: Invalid parameters
+  /api/v2/alert_config:
+    get:
+      deprecated: true
+      operationId: alertConfig2
+      tags:
+      - alerts
+      summary: 'OBSOLETE: Get alert configuration by hash ID (use /api/v3/alert_config instead)'
+      description: '**⚠️ OBSOLETE API - Will be removed in future versions**
+
+
+        This endpoint is deprecated. Use `/api/v3/alert_config` instead, which provides the same functionality.
+
+
+        **Migration:** Replace `/api/v2/alert_config` with `/api/v3/alert_config` in all API calls.
+
+
+        Retrieves the complete configuration for a specific alert using its configuration hash (UUID).
+
+        Returns alert definition including conditions, thresholds, and notification settings.
+
+
+        **Security & Access Control:**
+
+        - 📊 **Public Data API** - Bearer token optional, IP-based ACL restrictions apply
+
+        - **Default Access:** Public (no authentication required)
+
+        - **Bearer Protection:** When enabled via `/api/v3/bearer_protection`, requires bearer token
+
+        - **IP Restrictions:** Subject to `allow dashboard from` in netdata.conf
+
+        - **Access Methods:** Direct HTTP/HTTPS, Netdata Cloud, external tools
+
+        '
+      security:
+      - {}
+      - bearerAuth: []
+      parameters:
+      - name: config
+        in: query
+        required: true
+        schema:
+          type: string
+          format: uuid
+        description: Alert configuration hash ID (UUID)
+      responses:
+        '200':
+          description: Alert configuration successfully retrieved
+        '400':
+          description: Missing or invalid config parameter
+  /api/v1/alarms:
+    get:
+      deprecated: true
+      operationId: alerts1
+      tags:
+      - alerts
+      summary: Get a list of active or raised alarms on the server
+      description: 'The alarms endpoint returns the list of all raised or enabled alarms on the netdata server. Called without any parameters, the raised alarms in state WARNING or CRITICAL are returned. By passing "?all", all the enabled alarms are returned.
+
+
+        **Security & Access Control:**
+
+        - 📊 **Public Data API** - Bearer token optional, IP-based ACL restrictions apply
+
+        - **Default Access:** Public (no authentication required)
+
+        - **Bearer Protection:** When enabled via `/api/v3/bearer_protection`, requires bearer token
+
+        - **IP Restrictions:** Subject to `allow dashboard from` in netdata.conf
+
+        - **Access Methods:** Direct HTTP/HTTPS, Netdata Cloud, external tools
+
+        '
+      security:
+      - {}
+      - bearerAuth: []
+      parameters:
+      - name: all
+        in: query
+        description: If passed, all enabled alarms are returned.
+        required: false
+        allowEmptyValue: true
+        schema:
+          type: boolean
+      - name: active
+        in: query
+        description: If passed, the raised alarms in state WARNING or CRITICAL are returned.
+        required: false
+        allowEmptyValue: true
+        schema:
+          type: boolean
+      responses:
+        '200':
+          description: An object containing general info and a linked list of alarms.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/alarms'
+  /api/v1/alarms_values:
+    get:
+      deprecated: true
+      operationId: alertValues1
+      tags:
+      - alerts
+      summary: Get a list of active or raised alarms on the server
+      description: 'The alarms_values endpoint returns the list of all raised or enabled alarms on the netdata server. Called without any parameters, the raised alarms in state WARNING or CRITICAL are returned. By passing ''?all'', all the enabled alarms are returned. This option output differs from `/alarms` in the number of variables delivered. This endpoint gives to user `id`, `value`, `last_updated` time, and alarm `status`.
+
+
+        **Security & Access Control:**
+
+        - 📊 **Public Data API** - Bearer token optional, IP-based ACL restrictions apply
+
+        - **Default Access:** Public (no authentication required)
+
+        - **Bearer Protection:** When enabled via `/api/v3/bearer_protection`, requires bearer token
+
+        - **IP Restrictions:** Subject to `allow dashboard from` in netdata.conf
+
+        - **Access Methods:** Direct HTTP/HTTPS, Netdata Cloud, external tools
+
+        '
+      security:
+      - {}
+      - bearerAuth: []
+      parameters:
+      - name: all
+        in: query
+        description: If passed, all enabled alarms are returned.
+        required: false
+        allowEmptyValue: true
+        schema:
+          type: boolean
+      - name: active
+        in: query
+        description: If passed, the raised alarms in state WARNING or CRITICAL are returned.
+        required: false
+        allowEmptyValue: true
+        schema:
+          type: boolean
+      responses:
+        '200':
+          description: An object containing general info and a linked list of alarms.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/alarms_values'
+  /api/v1/alarm_log:
+    get:
+      deprecated: true
+      operationId: alertsLog1
+      tags:
+      - alerts
+      summary: Retrieves the entries of the alarm log
+      description: 'Returns an array of alarm_log entries, with historical information on raised and cleared alarms.
+
+
+        **Security & Access Control:**
+
+        - 📊 **Public Data API** - Bearer token optional, IP-based ACL restrictions apply
+
+        - **Default Access:** Public (no authentication required)
+
+        - **Bearer Protection:** When enabled via `/api/v3/bearer_protection`, requires bearer token
+
+        - **IP Restrictions:** Subject to `allow dashboard from` in netdata.conf
+
+        - **Access Methods:** Direct HTTP/HTTPS, Netdata Cloud, external tools
+
+        '
+      security:
+      - {}
+      - bearerAuth: []
+      parameters:
+      - name: after
+        in: query
+        description: 'Passing the parameter after=UNIQUEID returns all the events in the alarm log that occurred after UNIQUEID. An automated series of calls would call the interface once without after=, store the last UNIQUEID of the returned set, and give it back to get incrementally the next events.
+
+          '
+        required: false
+        schema:
+          type: integer
+      responses:
+        '200':
+          description: An array of alarm log entries.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/alarm_log_entry'
+  /api/v1/alarm_count:
+    get:
+      deprecated: true
+      operationId: alertsCount1
+      tags:
+      - alerts
+      summary: Get an overall status of the chart
+      description: 'Checks multiple charts with the same context and counts number of alarms with given status.
+
+
+        **Security & Access Control:**
+
+        - 📊 **Public Data API** - Bearer token optional, IP-based ACL restrictions apply
+
+        - **Default Access:** Public (no authentication required)
+
+        - **Bearer Protection:** When enabled via `/api/v3/bearer_protection`, requires bearer token
+
+        - **IP Restrictions:** Subject to `allow dashboard from` in netdata.conf
+
+        - **Access Methods:** Direct HTTP/HTTPS, Netdata Cloud, external tools
+
+        '
+      security:
+      - {}
+      - bearerAuth: []
+      parameters:
+      - $ref: '#/components/parameters/context'
+      - name: status
+        in: query
+        description: Specify alarm status to count.
+        required: false
+        allowEmptyValue: true
+        schema:
+          type: string
+          enum:
+          - REMOVED
+          - UNDEFINED
+          - UNINITIALIZED
+          - CLEAR
+          - RAISED
+          - WARNING
+          - CRITICAL
+          default: RAISED
+      responses:
+        '200':
+          description: An object containing a count of alarms with given status for given contexts.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: number
+        '500':
+          description: Internal server error. This usually means the server is out of memory.
+  /api/v1/alarm_variables:
+    get:
+      deprecated: true
+      operationId: getNodeAlertVariables1
+      tags:
+      - alerts
+      summary: List variables available to configure alarms for a chart
+      description: 'Returns the basic information of a chart and all the variables that can be used in alarm and template health configurations for the particular chart or family.
+
+
+        **Security & Access Control:**
+
+        - 📊 **Public Data API** - Bearer token optional, IP-based ACL restrictions apply
+
+        - **Default Access:** Public (no authentication required)
+
+        - **Bearer Protection:** When enabled via `/api/v3/bearer_protection`, requires bearer token
+
+        - **IP Restrictions:** Subject to `allow dashboard from` in netdata.conf
+
+        - **Access Methods:** Direct HTTP/HTTPS, Netdata Cloud, external tools
+
+        '
+      security:
+      - {}
+      - bearerAuth: []
+      parameters:
+      - name: chart
+        in: query
+        description: The id of the chart as returned by the /charts call.
+        required: true
+        schema:
+          type: string
+          format: as returned by /charts
+          default: system.cpu
+      responses:
+        '200':
+          description: A javascript object with information about the chart and the available variables.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/alarm_variables'
+        '400':
+          description: Bad request - the body will include a message stating what is wrong.
+        '404':
+          description: No chart with the given id is found.
+        '500':
+          description: Internal server error. This usually means the server is out of memory.
+  /api/v2/spaces/{spaceID}/notifications/silencing/rrule/evaluate:
+    post:
+      summary: Evaluate an RRule and return occurrences
+      description: 'Evaluates an RRule string and returns the next occurrences within the specified time window.
+
+        This endpoint allows users to verify their rrule configuration for silencing rules.'
+      operationId: evaluate-rrule
+      tags:
+      - alerts
+      parameters:
+      - name: spaceID
+        in: path
+        required: true
+        description: The unique identifier of the requested space.
+        schema:
+          type: string
+          format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/github_com_netdata_cloud-api-docs_cloud-alarm-processor-service_api.evaluateRRuleReq'
+      responses:
+        '200':
+          description: The evaluated RRule occurrences
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/github_com_netdata_cloud-api-docs_cloud-alarm-processor-service_api.evaluateRRuleRes'
+        '400':
+          description: ' `\"errorCode\": \"ErrBadRequest\"`: when the request payload is invalid'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/errors.Error'
+        '401':
+          description: ' `\"errorCode\": \"ErrUnauthorized\"`: when the provided user token/cookie cannot be matched with an account'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/errors.Error'
+        '403':
+          description: ' `\"errorCode\": \"ErrForbidden\"`: when caller has no permissions to access the space or evaluate silencing rrules'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/errors.Error'
+        '413':
+          description: ' `\"errorCode\": \"ErrRequestEntityTooLarge\"`: when the rrule evaluation exceeds the allowed processing time, indicating a too wide time window'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/errors.Error'
+        '422':
+          description: ' `\"errorCode\": \"ErrUnprocessableEntity\"`: when invalid spaceID is provided'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/errors.Error'
+        '500':
+          description: ' `\"errorCode\": \"ErrInternal\"`: when some Internal Server Error has occurred'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/errors.Error'
+  /api/v2/spaces/{spaceID}/notifications/silencing/rule:
+    post:
+      summary: Create a new Alert Notification Silencing Rule
+      description: Creates an Alert Notification Silencing Rule according to the specifications provided
+      operationId: create-silencing-rule
+      tags:
+      - alerts
+      parameters:
+      - name: spaceID
+        in: path
+        required: true
+        description: The unique identifier of the requested space.
+        schema:
+          type: string
+          format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/github_com_netdata_cloud-api-docs_cloud-alarm-processor-service_api.silencingRule'
+      responses:
+        '200':
+          description: The newly created Silencing Rule
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/github_com_netdata_cloud-api-docs_cloud-alarm-processor-service_api.silencingRule'
+        '400':
+          description: ' `"errorCode": "ErrBadRequest"`: when the Silencing Rule request payload is invalid. Per-field validation errors are returned'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/errors.Error'
+        '401':
+          description: ' `"errorCode": "ErrUnauthorized"`: when the provided user token/cookie cannot be matched with an account '
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/errors.Error'
+        '403':
+          description: ' `"errorCode": "ErrForbidden"`: when caller is not authorized to access the space or create an Alert Notification Silencing Rule'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/errors.Error'
+        '422':
+          description: ' `"errorCode": "ErrUnprocessableEntity"`: when invalid spaceID is provided. '
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/errors.Error'
+        '500':
+          description: ' `"errorCode": "ErrInternal"`: when some Internal Server Error has occurred '
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/errors.Error'
+  /api/v2/spaces/{spaceID}/notifications/silencing/rule/ruleID:
+    put:
+      summary: Update an existing Alert Notification Silencing Rule
+      description: Updates an existing Alert Notification Silencing Rule according to the specifications provided
+      operationId: update-silencing-rule
+      tags:
+      - alerts
+      parameters:
+      - name: spaceID
+        in: path
+        required: true
+        description: The unique identifier of the requested space.
+        schema:
+          type: string
+          format: uuid
+      - name: ruleID
+        in: path
+        required: true
+        description: The unique identifier of the Silencing Rule to be updated.
+        schema:
+          type: string
+          format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/github_com_netdata_cloud-api-docs_cloud-alarm-processor-service_api.silencingRule'
+      responses:
+        '200':
+          description: The newly updated Silencing Rule
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/github_com_netdata_cloud-api-docs_cloud-alarm-processor-service_api.silencingRule'
+        '400':
+          description: ' `"errorCode": "ErrBadRequest"`: when the Silencing Rule ID or request payload is invalid. Per-field validation errors are returned in case of invalid Silencing Rule definition'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/errors.Error'
+        '401':
+          description: ' `"errorCode": "ErrUnauthorized"`: when the provided user token/cookie cannot be matched with an account '
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/errors.Error'
+        '403':
+          description: ' `"errorCode": "ErrForbidden"`: when caller is not authorized to access the space or update an Alert Notification Silencing Rule'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/errors.Error'
+        '404':
+          description: ' `"errorCode": "ErrNotFound"`: when the Silencing Rule to be updated was not found'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/errors.Error'
+        '422':
+          description: ' `"errorCode": "ErrUnprocessableEntity"`: when invalid spaceID is provided. '
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/errors.Error'
+        '500':
+          description: ' `"errorCode": "ErrInternal"`: when some Internal Server Error has occurred '
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/errors.Error'
+  /api/v2/spaces/{spaceID}/notifications/silencing/rules:
+    get:
+      summary: Get all the Alert Notification Silencing Rules
+      description: Retrieve the Alert Notification Silencing Rules of a given space
+      operationId: get-silencing-rules
+      tags:
+      - alerts
+      parameters:
+      - name: spaceID
+        in: path
+        required: true
+        description: The unique identifier of the requested space.
+        schema:
+          type: string
+          format: uuid
+      responses:
+        '200':
+          description: The available Silencing Rules
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/github_com_netdata_cloud-api-docs_cloud-alarm-processor-service_api.silencingRule'
+        '401':
+          description: ' `"errorCode": "ErrUnauthorized"`: when the provided user token/cookie cannot be matched with an account '
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/errors.Error'
+        '403':
+          description: ' `"errorCode": "ErrForbidden"`: when caller is not authorized to access the space or retrieve Alert Notification Silencing Rules'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/errors.Error'
+        '422':
+          description: ' `"errorCode": "ErrUnprocessableEntity"`: when invalid spaceID is provided. '
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/errors.Error'
+        '500':
+          description: ' `"errorCode": "ErrInternal"`: when some Internal Server Error has occurred '
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/errors.Error'
+  /api/v2/spaces/{spaceID}/notifications/silencing/rules/delete:
+    post:
+      summary: Delete Alert Notification Silencing Rules
+      description: Deletes the targeted Alert Notification Silencing Rules of a given space
+      operationId: delete-silencing-rules
+      tags:
+      - alerts
+      parameters:
+      - name: spaceID
+        in: path
+        required: true
+        description: The unique identifier of the requested space.
+        schema:
+          type: string
+          format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                type: string
+      responses:
+        '200':
+          description: OK
+        '400':
+          description: ' `"errorCode": "ErrBadRequest"`: at least one of the Silencing Rule IDs in the request payload is invalid'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/errors.Error'
+        '401':
+          description: ' `"errorCode": "ErrUnauthorized"`: when the provided user token/cookie cannot be matched with an account '
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/errors.Error'
+        '403':
+          description: ' `"errorCode": "ErrForbidden"`: when caller is not authorized to access the space or delete Alert Notification Silencing Rules'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/errors.Error'
+        '422':
+          description: ' `"errorCode": "ErrUnprocessableEntity"`: when invalid spaceID is provided. '
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/errors.Error'
+        '500':
+          description: ' `"errorCode": "ErrInternal"`: when some Internal Server Error has occurred '
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/errors.Error'
+  /api/v2/spaces/{spaceID}/rooms/{roomID}/alerts:misconfigured:
+    post:
+      summary: Get misconfigured alerts for a room
+      description: Retrieve alerts that are firing too often, stuck in a raised state, silenced for too long, or never dispatched for a given room
+      operationId: get-room-alerts-misconfigured
+      tags:
+      - alerts
+      parameters:
+      - name: spaceID
+        in: path
+        required: true
+        description: The unique identifier of the space.
+        schema:
+          type: string
+          format: uuid
+      - name: roomID
+        in: path
+        required: true
+        description: The unique identifier of the room.
+        schema:
+          type: string
+          format: uuid
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/github_com_netdata_cloud-alarm-processor-service_api.misconfiguredAlertsRequest'
+      responses:
+        '200':
+          description: The misconfigured alerts results
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/github_com_netdata_cloud-alarm-processor-service_api.misconfiguredAlertsResponse'
+        '400':
+          description: ' `\"errorCode\": \"ErrBadRequest\"`: when the request payload is invalid '
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/errors.Error'
+        '401':
+          description: ' `\"errorCode\": \"ErrUnauthorized\"`: when the provided user token/cookie cannot be matched with an account '
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/errors.Error'
+        '403':
+          description: ' `\"errorCode\": \"ErrForbidden\"`: when caller is not authorized to access the space or room '
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/errors.Error'
+        '422':
+          description: ' `\"errorCode\": \"ErrUnprocessableEntity\"`: when invalid spaceID or roomID is provided '
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/errors.Error'
+        '500':
+          description: ' `\"errorCode\": \"ErrInternal\"`: when some Internal Server Error has occurred '
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/errors.Error'
+components:
+  schemas:
+    alarm_log_entry:
+      type: object
+      properties:
+        hostname:
+          type: string
+        unique_id:
+          type: integer
+          format: int32
+        alarm_id:
+          type: integer
+          format: int32
+        alarm_event_id:
+          type: integer
+          format: int32
+        name:
+          type: string
+        chart:
+          type: string
+        family:
+          type: string
+        processed:
+          type: boolean
+        updated:
+          type: boolean
+        exec_run:
+          type: integer
+          format: int32
+        exec_failed:
+          type: boolean
+        exec:
+          type: string
+        recipient:
+          type: string
+        exec_code:
+          type: integer
+          format: int32
+        source:
+          type: string
+        units:
+          type: string
+        when:
+          type: integer
+          format: int32
+        duration:
+          type: integer
+          format: int32
+        non_clear_duration:
+          type: integer
+          format: int32
+        status:
+          type: string
+        old_status:
+          type: string
+        delay:
+          type: integer
+          format: int32
+        delay_up_to_timestamp:
+          type: integer
+          format: int32
+        updated_by_id:
+          type: integer
+          format: int32
+        updates_id:
+          type: integer
+          format: int32
+        value_string:
+          type: string
+        old_value_string:
+          type: string
+        silenced:
+          type: string
+        info:
+          type: string
+        value:
+          type: number
+          nullable: true
+        old_value:
+          type: number
+          nullable: true
+    github_com_netdata_cloud-alarm-processor-service_api.stuckRaisedResponse:
+      type: object
+      properties:
+        items:
+          description: Individual alerts stuck in a raised state, sorted by duration descending
+          type: array
+          items:
+            $ref: '#/components/schemas/github_com_netdata_cloud-alarm-processor-service_api.stuckRaisedItem'
+        totals:
+          description: Aggregated counts and durations across all stuck-raised items
+          allOf:
+          - $ref: '#/components/schemas/github_com_netdata_cloud-alarm-processor-service_api.stuckRaisedTotals'
+    github_com_netdata_cloud-alarm-processor-service_api.silencedLongResponse:
+      type: object
+      properties:
+        items:
+          description: Individual alerts that exceeded the silenced dispatch threshold
+          type: array
+          items:
+            $ref: '#/components/schemas/github_com_netdata_cloud-alarm-processor-service_api.silencedLongItem'
+        totals:
+          description: Aggregated counts across all silenced-long items
+          allOf:
+          - $ref: '#/components/schemas/github_com_netdata_cloud-alarm-processor-service_api.silencedLongTotals'
+    github_com_netdata_cloud-alarm-processor-service_api.silencedLongItem:
+      type: object
+      properties:
+        alert:
+          description: Alert identity
+          allOf:
+          - $ref: '#/components/schemas/github_com_netdata_cloud-alarm-processor-service_api.silencedLongAlert'
+        count:
+          description: Number of dispatch events where the alert was silenced within the lookback window
+          type: integer
+          example: 72
+        first_silenced:
+          description: Timestamp of the first silenced dispatch event, in unix milliseconds
+          type: integer
+          example: 1710892800000
+        last_silenced:
+          description: Timestamp of the last silenced dispatch event, in unix milliseconds
+          type: integer
+          example: 1711497600000
+        node:
+          description: Node where this alert is silenced
+          allOf:
+          - $ref: '#/components/schemas/github_com_netdata_cloud-alarm-processor-service_api.MisconfiguredNode'
+    github_com_netdata_cloud-alarm-processor-service_api.stuckRaisedItem:
+      type: object
+      properties:
+        alert:
+          description: Alert identity and current state
+          allOf:
+          - $ref: '#/components/schemas/github_com_netdata_cloud-alarm-processor-service_api.stuckRaisedAlert'
+        node:
+          description: Node where this alert is stuck
+          allOf:
+          - $ref: '#/components/schemas/github_com_netdata_cloud-alarm-processor-service_api.MisconfiguredNode'
+    errors.ValidationError:
+      type: object
+      properties:
+        code:
+          type: string
+        message:
+          type: string
+    alarm_variables:
+      type: object
+      properties:
+        chart:
+          type: string
+          description: The unique id of the chart.
+        chart_name:
+          type: string
+          description: The name of the chart.
+        cnart_context:
+          type: string
+          description: The context of the chart. It is shared across multiple monitored software or hardware instances and used in alarm templates.
+        family:
+          type: string
+          description: The family of the chart.
+        host:
+          type: string
+          description: The host containing the chart.
+        chart_variables:
+          type: object
+          additionalProperties:
+            $ref: '#/components/schemas/chart_variables'
+        family_variables:
+          type: object
+          properties:
+            varname1:
+              type: number
+              format: float
+            varname2:
+              type: number
+              format: float
+        host_variables:
+          type: object
+          properties:
+            varname1:
+              type: number
+              format: float
+            varname2:
+              type: number
+              format: float
+    github_com_netdata_cloud-alarm-processor-service_api.firingOftenAlert:
+      type: object
+      properties:
+        chart:
+          description: Chart the alert belongs to
+          type: string
+          example: system.cpu
+        context:
+          description: Chart context
+          type: string
+          example: system.cpu
+        name:
+          description: Alert name
+          type: string
+          example: 10min_cpu_usage
+    github_com_netdata_cloud-alarm-processor-service_api.firingOftenTotals:
+      type: object
+      properties:
+        items:
+          description: Number of alerts flagged as firing too often
+          type: integer
+          example: 5
+        transitions:
+          description: Sum of transitions across all flagged alerts
+          type: integer
+          example: 420
+    github_com_netdata_cloud-alarm-processor-service_api.dispatchNoneItem:
+      type: object
+      properties:
+        alert:
+          description: Alert identity
+          allOf:
+          - $ref: '#/components/schemas/github_com_netdata_cloud-alarm-processor-service_api.dispatchNoneAlert'
+        count:
+          description: Number of dispatch events where no notification was sent within the lookback window
+          type: integer
+          example: 42
+        first:
+          description: Timestamp of the first non-dispatched event, in unix milliseconds
+          type: integer
+          example: 1710892800000
+        last:
+          description: Timestamp of the last non-dispatched event, in unix milliseconds
+          type: integer
+          example: 1711497600000
+        node:
+          description: Node where this alert is not dispatched
+          allOf:
+          - $ref: '#/components/schemas/github_com_netdata_cloud-alarm-processor-service_api.MisconfiguredNode'
+    github_com_netdata_cloud-alarm-processor-service_api.silencedLongThresholds:
+      type: object
+      properties:
+        count:
+          description: Minimum silenced dispatch count to flag an alert (default 20, max 5000)
+          type: integer
+          example: 20
+        window_seconds:
+          description: Lookback window in seconds for silenced-long detection (default 2592000, max 7776000)
+          type: integer
+          example: 2592000
+    github_com_netdata_cloud-alarm-processor-service_api.stuckRaisedStatusTotal:
+      type: object
+      properties:
+        duration_seconds:
+          description: Sum of raised durations in seconds for this status
+          type: integer
+          example: 172800
+        items:
+          description: Number of alerts with this status
+          type: integer
+          example: 2
+    chart_variables:
+      type: object
+      properties:
+        varname1:
+          type: number
+          format: float
+        varname2:
+          type: number
+          format: float
+    github_com_netdata_cloud-api-docs_cloud-alarm-processor-service_api.occurrence:
+      type: object
+      properties:
+        end:
+          description: The end time of the occurrence (only present if lasts_until was provided)
+          type: string
+          example: '2025-05-20T01:49:01.803Z'
+        start:
+          description: The start time of the occurrence
+          type: string
+          example: '2025-05-19T13:49:01.803Z'
+    github_com_netdata_cloud-alarm-processor-service_api.firingOftenThresholds:
+      type: object
+      properties:
+        transitions:
+          description: Minimum number of transitions to flag an alert (default 30, max 5000)
+          type: integer
+          example: 30
+        window_seconds:
+          description: Lookback window in seconds for counting transitions (default 259200, max 7776000)
+          type: integer
+          example: 259200
+    github_com_netdata_cloud-alarm-processor-service_api.misconfiguredAlertsRequest:
+      type: object
+      properties:
+        categories:
+          description: Filter results to specific misconfiguration categories; empty means all categories
+          type: array
+          items:
+            type: string
+            enum:
+            - firing_often
+            - stuck_raised
+            - silenced_long
+            - dispatch_none
+          example:
+          - firing_often
+          - stuck_raised
+          - silenced_long
+          - dispatch_none
+        thresholds:
+          description: Override default detection thresholds per category
+          allOf:
+          - $ref: '#/components/schemas/github_com_netdata_cloud-alarm-processor-service_api.misconfiguredAlertsThresholds'
+    github_com_netdata_cloud-alarm-processor-service_api.dispatchNoneAlert:
+      type: object
+      properties:
+        chart:
+          description: Chart the alert belongs to
+          type: string
+          example: disk_space._
+        context:
+          description: Chart context
+          type: string
+          example: disk.space
+        name:
+          description: Alert name
+          type: string
+          example: disk_space_usage
+    github_com_netdata_cloud-alarm-processor-service_api.firingOftenResponse:
+      type: object
+      properties:
+        items:
+          description: Individual alerts that exceeded the transition threshold
+          type: array
+          items:
+            $ref: '#/components/schemas/github_com_netdata_cloud-alarm-processor-service_api.firingOftenItem'
+        totals:
+          description: Aggregated counts across all firing-often items
+          allOf:
+          - $ref: '#/components/schemas/github_com_netdata_cloud-alarm-processor-service_api.firingOftenTotals'
+    github_com_netdata_cloud-alarm-processor-service_api.misconfiguredAlertsThresholds:
+      type: object
+      properties:
+        dispatch_none:
+          description: Thresholds for the dispatch-none category
+          allOf:
+          - $ref: '#/components/schemas/github_com_netdata_cloud-alarm-processor-service_api.dispatchNoneThresholds'
+        firing_often:
+          description: Thresholds for the firing-often category
+          allOf:
+          - $ref: '#/components/schemas/github_com_netdata_cloud-alarm-processor-service_api.firingOftenThresholds'
+        silenced_long:
+          description: Thresholds for the silenced-long category
+          allOf:
+          - $ref: '#/components/schemas/github_com_netdata_cloud-alarm-processor-service_api.silencedLongThresholds'
+        stuck_raised:
+          description: Thresholds for the stuck-raised category
+          allOf:
+          - $ref: '#/components/schemas/github_com_netdata_cloud-alarm-processor-service_api.stuckRaisedThresholds'
+    github_com_netdata_cloud-api-docs_cloud-alarm-processor-service_api.evaluateRRuleWindowReq:
+      type: object
+      properties:
+        end:
+          description: End of the evaluation time window
+          type: string
+          example: '2025-06-19T00:00:00Z'
+        start:
+          description: Start of the evaluation time window
+          type: string
+          example: '2025-05-19T00:00:00Z'
+    github_com_netdata_cloud-alarm-processor-service_api.dispatchNoneTotals:
+      type: object
+      properties:
+        count:
+          description: Sum of non-dispatched event counts across all flagged alerts
+          type: integer
+          example: 150
+        items:
+          description: Number of alerts flagged as never dispatched
+          type: integer
+          example: 3
+    github_com_netdata_cloud-alarm-processor-service_api.silencedLongAlert:
+      type: object
+      properties:
+        chart:
+          description: Chart the alert belongs to
+          type: string
+          example: disk_space._
+        context:
+          description: Chart context
+          type: string
+          example: disk.space
+        name:
+          description: Alert name
+          type: string
+          example: disk_space_usage
+    github_com_netdata_cloud-api-docs_cloud-alarm-processor-service_api.silencingRule:
+      type: object
+      properties:
+        account_id:
+          description: The Account ID of the user that created the Silencing Rule
+          type: string
+          format: uuid
+          example: 0deede74-2257-48d7-8b3b-22e3728cd2ff
+        alert_contexts:
+          description: The Alert Contexts to which the Silencing Rule is applicable
+          type: array
+          items:
+            type: string
+          example:
+          - system.cpu
+          - cpu.cpu
+        alert_instances:
+          description: The Alert Instances to which the Silencing Rule is applicable
+          type: array
+          items:
+            type: string
+          example:
+          - system.post_update_reboot_status
+        alert_names:
+          description: The Alert names to which the Silencing Rule is applicable
+          type: array
+          items:
+            type: string
+          example:
+          - 10min_cpu_iowait
+        alert_roles:
+          description: The Alert Roles to which the Silencing Rule is applicable
+          type: array
+          items:
+            type: string
+          example:
+          - webmaster
+        disabled:
+          description: true if the Silencing Rule is Disabled
+          type: boolean
+          example: false
+        host_labels:
+          description: The host label key-values targeting the Nodes the Silencing Rule applies to
+          type: object
+          additionalProperties:
+            type: string
+          example:
+            '{"os"': '"linux"}'
+        id:
+          description: The Silencing Rule ID
+          type: string
+          format: uuid
+          example: 550e8400-e29b-41d4-a716-446655440000
+        integration_ids:
+          description: The Alert Notification Methods Integration IDs to which the Silencing Rule is applicable
+          type: array
+          items:
+            type: string
+          example:
+          - 303f0cc7-8613-4960-bea6-827be15cb043
+          - 32000626-37df-4c20-9dd0-cbe2c834384e
+        lasts_until:
+          description: The end of the time window during which the Silencing Rule is applicable
+          type: string
+          example: '2025-05-20T01:49:01.803Z'
+        name:
+          description: The Silencing Rule friendly name
+          type: string
+          example: notify only for Criticals
+        node_ids:
+          description: The Node IDs to which the Silencing Rule is applicable
+          type: array
+          items:
+            type: string
+            format: uuid
+          example:
+          - 21b52a82-8a5f-4a92-8446-8a84c7d1539c
+          - c6b6bcc9-27f1-47c0-ab47-c9cd2b6fc45a
+          - 805e93d7-ad28-4003-a3cb-83e42d1765df
+        read_only:
+          description: true if the Silencing Rule is ReadOnly and cannot be edited
+          type: boolean
+          example: false
+        room_ids:
+          description: The Room IDs to which the Silencing Rule is applicable
+          type: array
+          items:
+            type: string
+            format: uuid
+          example:
+          - 7314a1f2-dcc9-44cb-b9af-297a362bd800
+          - fff17c3c-4a7c-4990-87c7-dcb7e5d70de8
+        rrule:
+          description: The RRule string defining the recurrence pattern of the Silencing Rule, if any
+          type: string
+          example: RRULE:FREQ=DAILY
+        severities:
+          description: The Alert Severities to which the Silencing Rule is applicable
+          type: array
+          items:
+            type: string
+            enum:
+            - CLEAR
+            - WARNING
+            - CRITICAL
+          example:
+          - WARNING
+          - CRITICAL
+        starts_at:
+          description: The beginning of the time window during which the Silencing Rule is applicable
+          type: string
+          example: '2025-05-19T13:49:01.803Z'
+        state:
+          description: The current state of the Silencing Rule
+          type: string
+          enum:
+          - INACTIVE
+          - ACTIVE
+          - SCHEDULED
+          example: ACTIVE
+        timezone:
+          description: 'The IANA timezone the Silencing Rule''s recurrence is anchored to, if any.
+
+            All times stay UTC on the wire; the timezone is applied only when computing
+
+            recurrence, so it fires at the intended wall-clock time across DST transitions.'
+          type: string
+          example: Europe/Lisbon
+    alarms:
+      type: object
+      properties:
+        hostname:
+          type: string
+        latest_alarm_log_unique_id:
+          type: integer
+          format: int32
+        status:
+          type: boolean
+        now:
+          type: integer
+          format: int32
+        alarms:
+          type: object
+          properties:
+            chart-name.alarm-name:
+              type: object
+              properties:
+                id:
+                  type: integer
+                  format: int32
+                name:
+                  type: string
+                  description: Full alarm name.
+                chart:
+                  type: string
+                family:
+                  type: string
+                active:
+                  type: boolean
+                  description: Will be false only if the alarm is disabled in the configuration.
+                disabled:
+                  type: boolean
+                  description: Whether the health check for this alarm has been disabled via a health command API DISABLE command.
+                silenced:
+                  type: boolean
+                  description: Whether notifications for this alarm have been silenced via a health command API SILENCE command.
+                exec:
+                  type: string
+                recipient:
+                  type: string
+                source:
+                  type: string
+                units:
+                  type: string
+                info:
+                  type: string
+                status:
+                  type: string
+                last_status_change:
+                  type: integer
+                  format: int32
+                last_updated:
+                  type: integer
+                  format: int32
+                next_update:
+                  type: integer
+                  format: int32
+                update_every:
+                  type: integer
+                  format: int32
+                delay_up_duration:
+                  type: integer
+                  format: int32
+                delay_down_duration:
+                  type: integer
+                  format: int32
+                delay_max_duration:
+                  type: integer
+                  format: int32
+                delay_multiplier:
+                  type: integer
+                  format: int32
+                delay:
+                  type: integer
+                  format: int32
+                delay_up_to_timestamp:
+                  type: integer
+                  format: int32
+                value_string:
+                  type: string
+                no_clear_notification:
+                  type: boolean
+                lookup_dimensions:
+                  type: string
+                db_after:
+                  type: integer
+                  format: int32
+                db_before:
+                  type: integer
+                  format: int32
+                lookup_method:
+                  type: string
+                lookup_after:
+                  type: integer
+                  format: int32
+                lookup_before:
+                  type: integer
+                  format: int32
+                lookup_options:
+                  type: string
+                calc:
+                  type: string
+                calc_parsed:
+                  type: string
+                warn:
+                  type: string
+                warn_parsed:
+                  type: string
+                crit:
+                  type: string
+                crit_parsed:
+                  type: string
+                warn_repeat_every:
+                  type: integer
+                  format: int32
+                crit_repeat_every:
+                  type: integer
+                  format: int32
+                green:
+                  type: string
+                  format: nullable
+                red:
+                  type: string
+                  format: nullable
+                value:
+                  type: number
+    alarms_values:
+      type: object
+      properties:
+        hostname:
+          type: string
+        alarms:
+          type: object
+          description: HashMap with keys being alarm names
+          additionalProperties:
+            type: object
+            properties:
+              id:
+                type: integer
+              value:
+                type: integer
+              last_updated:
+                type: integer
+                format: int32
+              status:
+                type: string
+                enum:
+                - REMOVED
+                - UNDEFINED
+                - UNINITIALIZED
+                - CLEAR
+                - RAISED
+                - WARNING
+                - CRITICAL
+                - UNKNOWN
+    github_com_netdata_cloud-alarm-processor-service_api.stuckRaisedAlert:
+      type: object
+      properties:
+        chart:
+          description: Chart the alert belongs to
+          type: string
+          example: system.cpu
+        context:
+          description: Chart context
+          type: string
+          example: system.cpu
+        duration_seconds:
+          description: How long the alert has been raised in seconds
+          type: integer
+          example: 86400
+        name:
+          description: Alert name
+          type: string
+          example: 10min_cpu_usage
+        status:
+          description: Current alert status
+          type: string
+          enum:
+          - critical
+          - warning
+          example: critical
+        triggered_at:
+          description: When the alert was triggered, in unix milliseconds
+          type: integer
+          example: 1710892800000
+        units:
+          description: Unit of the alert value (e.g. "%", "MB/s"); empty when the alert config has no units
+          type: string
+          example: '%'
+        value:
+          description: Current alert value
+          type: number
+          example: 95.5
+    github_com_netdata_cloud-api-docs_cloud-alarm-processor-service_api.evaluateRRuleReq:
+      type: object
+      properties:
+        lasts_until:
+          description: The end time for the daily active window (optional)
+          type: string
+          example: '2025-05-20T01:49:01.803Z'
+        limit:
+          description: 'Maximum number of occurrences to return (optional, default: 10, max: 100)'
+          type: integer
+          example: 10
+        rrule:
+          description: The RRule string to evaluate (RFC 5545 format)
+          type: string
+          example: RRULE:FREQ=DAILY
+        starts_at:
+          description: The start time for the rrule (DTSTART)
+          type: string
+          example: '2025-05-19T13:49:01.803Z'
+        timezone:
+          description: 'IANA timezone the recurrence is anchored to (optional, default: UTC). The
+
+            rrule fires at the intended wall-clock time in this zone across DST transitions'
+          type: string
+          example: America/New_York
+        window:
+          description: The evaluation time window
+          allOf:
+          - $ref: '#/components/schemas/github_com_netdata_cloud-api-docs_cloud-alarm-processor-service_api.evaluateRRuleWindowReq'
+    github_com_netdata_cloud-alarm-processor-service_api.MisconfiguredNode:
+      type: object
+      properties:
+        id:
+          description: Node unique identifier
+          type: string
+          example: a1b2c3d4-e5f6-7890-abcd-ef1234567890
+        name:
+          description: Node hostname
+          type: string
+          example: ip-172-31-0-1
+    github_com_netdata_cloud-alarm-processor-service_api.stuckRaisedTotals:
+      type: object
+      properties:
+        critical:
+          description: Breakdown for critical-status alerts
+          allOf:
+          - $ref: '#/components/schemas/github_com_netdata_cloud-alarm-processor-service_api.stuckRaisedStatusTotal'
+        duration_seconds:
+          description: Sum of raised durations in seconds across all items
+          type: integer
+          example: 259200
+        items:
+          description: Number of stuck alerts
+          type: integer
+          example: 3
+        warning:
+          description: Breakdown for warning-status alerts
+          allOf:
+          - $ref: '#/components/schemas/github_com_netdata_cloud-alarm-processor-service_api.stuckRaisedStatusTotal'
+    errors.Error:
+      type: object
+      properties:
+        details:
+          type: object
+          additionalProperties: {}
+        errorCode:
+          type: string
+        errorMessage:
+          type: string
+        errorMsgKey:
+          type: string
+        validationErrors:
+          type: object
+          additionalProperties:
+            $ref: '#/components/schemas/errors.ValidationError'
+    github_com_netdata_cloud-api-docs_cloud-alarm-processor-service_api.evaluateRRuleRes:
+      type: object
+      properties:
+        has_more:
+          description: Whether there are more occurrences beyond the limit
+          type: boolean
+          example: false
+        occurrences:
+          description: List of occurrence timestamps within the window
+          type: array
+          items:
+            $ref: '#/components/schemas/github_com_netdata_cloud-api-docs_cloud-alarm-processor-service_api.occurrence'
+        rrule:
+          description: The normalized rrule string
+          type: string
+          example: 'DTSTART:20250519T134901Z
+
+            RRULE:FREQ=DAILY'
+    github_com_netdata_cloud-alarm-processor-service_api.stuckRaisedThresholds:
+      type: object
+      properties:
+        duration_seconds:
+          description: Minimum raised duration in seconds to flag an alert (default 1209600, max 7776000)
+          type: integer
+          example: 1209600
+    github_com_netdata_cloud-alarm-processor-service_api.firingOftenItem:
+      type: object
+      properties:
+        alert:
+          description: Alert identity
+          allOf:
+          - $ref: '#/components/schemas/github_com_netdata_cloud-alarm-processor-service_api.firingOftenAlert'
+        node:
+          description: Node where this alert fires
+          allOf:
+          - $ref: '#/components/schemas/github_com_netdata_cloud-alarm-processor-service_api.MisconfiguredNode'
+        transitions:
+          description: Number of transitions within the lookback window
+          type: integer
+          example: 100
+    github_com_netdata_cloud-alarm-processor-service_api.misconfiguredAlertsResponse:
+      type: object
+      properties:
+        dispatch_none:
+          description: Results for alerts where no notification was dispatched; nil when category is excluded
+          allOf:
+          - $ref: '#/components/schemas/github_com_netdata_cloud-alarm-processor-service_api.dispatchNoneResponse'
+        firing_often:
+          description: Results for alerts transitioning too frequently; nil when category is excluded
+          allOf:
+          - $ref: '#/components/schemas/github_com_netdata_cloud-alarm-processor-service_api.firingOftenResponse'
+        silenced_long:
+          description: Results for alerts silenced for too long; nil when category is excluded
+          allOf:
+          - $ref: '#/components/schemas/github_com_netdata_cloud-alarm-processor-service_api.silencedLongResponse'
+        stuck_raised:
+          description: Results for alerts stuck in a raised state; nil when category is excluded
+          allOf:
+          - $ref: '#/components/schemas/github_com_netdata_cloud-alarm-processor-service_api.stuckRaisedResponse'
+        thresholds:
+          description: Thresholds used for the calculation; always present
+          allOf:
+          - $ref: '#/components/schemas/github_com_netdata_cloud-alarm-processor-service_api.misconfiguredAlertsThresholds'
+    github_com_netdata_cloud-alarm-processor-service_api.silencedLongTotals:
+      type: object
+      properties:
+        count:
+          description: Sum of silenced dispatch counts across all flagged alerts
+          type: integer
+          example: 150
+        items:
+          description: Number of alerts flagged as silenced for too long
+          type: integer
+          example: 3
+    github_com_netdata_cloud-alarm-processor-service_api.dispatchNoneResponse:
+      type: object
+      properties:
+        items:
+          description: Individual alerts that exceeded the non-dispatched event threshold
+          type: array
+          items:
+            $ref: '#/components/schemas/github_com_netdata_cloud-alarm-processor-service_api.dispatchNoneItem'
+        totals:
+          description: Aggregated counts across all dispatch-none items
+          allOf:
+          - $ref: '#/components/schemas/github_com_netdata_cloud-alarm-processor-service_api.dispatchNoneTotals'
+    github_com_netdata_cloud-alarm-processor-service_api.dispatchNoneThresholds:
+      type: object
+      properties:
+        count:
+          description: Minimum non-dispatched event count to flag an alert (default 10, max 5000)
+          type: integer
+          example: 10
+        window_seconds:
+          description: Lookback window in seconds for dispatch-none detection (default 2592000, max 7776000)
+          type: integer
+          example: 2592000
+  parameters:
+    context:
+      name: context
+      in: query
+      description: The context of the chart as returned by the /charts call.
+      required: false
+      allowEmptyValue: false
+      schema:
+        type: string
+        format: as returned by /charts
+    cardinalityLimit:
+      name: cardinality_limit
+      in: query
+      description: 'Limits the number of unique items (contexts, instances, dimensions) returned in the query result. This is useful for preventing excessive memory usage and response sizes when queries match a large number of metrics. The query engine will return the most relevant items up to this limit.
+
+        '
+      required: false
+      schema:
+        type: integer
+        format: int64
+        minimum: 1
+        default: 10000
+    scopeContexts:
+      name: scope_contexts
+      in: query
+      description: 'A simple pattern limiting the contexts scope of the query. The scope controls both data and metadata response. The default contexts scope is all contexts for which this Agent has data for. Usually the contexts scope is used to slice data on the dashboard (e.g. each context based chart has its own contexts scope, limiting the chart to all the instances of the selected context). Both positive and negative simple pattern expressions are supported.
+
+        '
+      required: false
+      schema:
+        type: string
+        format: simple pattern
+        default: '*'
+    dataQueryOptions:
+      name: options
+      in: query
+      description: "Options that affect data generation.\n* `jsonwrap` - Wrap the output in a JSON object with metadata about the query.\n* `raw` - change the output so that it is aggregatable across multiple such queries. Supported by `/api/v2` data queries and `json2` format.\n* `minify` - Remove unnecessary spaces and newlines from the output.\n* `debug` - Provide additional information in `jsonwrap` output to help tracing issues.\n* `nonzero` - Do not return dimensions that all their values are zero, to improve the visual appearance of charts. They will still be returned if all the dimensions are entirely zero.\n* `null2zero` - Replace `null` values with `0`.\n* `absolute` or `abs` - Traditionally Netdata returns select dimensions negative to improve visual appearance. This option turns this feature off.\n* `display-absolute` - Only used by badges, to do color calculation using the signed value, but render the value without a sign.\n* `flip` or `reversed` - Order the timestamps array in reverse order (newest to oldest).\n* `min2max` - When flattening multi-dimensional data into a single metric format, use `max - min` instead of `sum`. This is EOL - use `/api/v2` to control aggregation across dimensions.\n* `percentage` - Convert all values into a percentage vs the row total. When enabled, Netdata will query all dimensions, even the ones that have not been selected or are hidden, to find the row total, in order to calculate the percentage of each dimension selected.\n* `seconds` - Output timestamps in seconds instead of dates.\n* `milliseconds` or `ms` - Output timestamps in milliseconds instead of dates.\n* `unaligned` - by default queries are aligned to the the view, so that as time passes past data returned do not change. When a data query will not be used for visualization, `unaligned` can be given to avoid aligning the query time-frame for visual precision.\n* `match-ids`, `match-names`. By default filters match both IDs and names when they are available. Setting either of the two options will disable the other.\n* `anomaly-bit` - query the anomaly information instead of metric values. This is EOL, use `/api/v2` and `json2` format which always returns this information and many more.\n* `jw-anomaly-rates` - return anomaly rates as a separate result set in the same `json` format response. This is EOL, use `/api/v2` and `json2` format which always returns information and many more. \n* `details` - `/api/v2/data` returns in `jsonwrap` the full tree of dimensions that have been matched by the query.\n* `group-by-labels` - `/api/v2/data` returns in `jsonwrap` flattened labels per output dimension. These are used to identify the instances that have been aggregated into each dimension, making it possible to provide a map, like Netdata does for Kubernetes.\n* `natural-points` - return timestamps as found in the database. The result is again fixed-step, but the query engine attempts to align them with the timestamps found in the database.\n* `virtual-points` - return timestamps independent of the database alignment. This is needed aggregating data across multiple Netdata Agents, to ensure that their outputs do not need to be interpolated to be merged.\n* `selected-tier` - use data exclusively from the selected tier given with the `tier` parameter. This option is set automatically when the `tier` parameter is set.\n* `all-dimensions` - In `/api/v1` `jsonwrap` include metadata for all candidate metrics examined. In `/api/v2` this is standard behavior and no option is needed.\n* `label-quotes` - In `csv` output format, enclose each header label in quotes.\n* `objectrows` - Each row of value should be an object, not an array (only for `json` format).\n* `google_json` - Comply with google JSON/JSONP specs (only for `json` format).\n* `minimal-stats` or `minimal` - Reduce the amount of statistics returned in `jsonwrap` format to save bandwidth.\n* `long-json-keys` or `long-keys` - Use descriptive key names in JSON output instead of abbreviated ones.\n* `mcp-info` - Include additional metadata useful for the Model Context Protocol (MCP) integration.\n* `rfc3339` - Return timestamps in RFC3339 format (e.g., \"2023-01-01T00:00:00Z\") instead of Unix timestamps.\n"
+      required: false
+      allowEmptyValue: false
+      schema:
+        type: array
+        items:
+          type: string
+          enum:
+          - jsonwrap
+          - raw
+          - minify
+          - debug
+          - nonzero
+          - null2zero
+          - abs
+          - absolute
+          - display-absolute
+          - flip
+          - reversed
+          - min2max
+          - percentage
+          - seconds
+          - ms
+          - milliseconds
+          - unaligned
+          - match-ids
+          - match-names
+          - anomaly-bit
+          - jw-anomaly-rates
+          - details
+          - group-by-labels
+          - natural-points
+          - virtual-points
+          - selected-tier
+          - all-dimensions
+          - label-quotes
+          - objectrows
+          - google_json
+          - minimal-stats
+          - minimal
+          - long-json-keys
+          - long-keys
+          - mcp-info
+          - rfc3339
+        default:
+        - seconds
+        - jsonwrap
+    filterContexts:
+      name: contexts
+      in: query
+      description: 'A simple pattern matching the contexts to be queried. This only controls the data response, not the metadata. Both positive and negative simple pattern expressions are supported.
+
+        '
+      required: false
+      schema:
+        type: string
+        format: simple pattern
+        default: '*'
+    timeoutMS:
+      name: timeout
+      in: query
+      description: 'Specify a timeout value in milliseconds after which the Agent will abort the query and return a 503 error. A value of 0 indicates no timeout.
+
+        '
+      required: false
+      schema:
+        type: number
+        format: integer
+        default: 0
+    filterNodes:
+      name: nodes
+      in: query
+      description: 'A simple pattern matching the nodes to be queried. This only controls the data response, not the metadata. The simple pattern is checked against the nodes'' machine guid, node id, hostname. The default nodes selector is all the nodes matched by the nodes scope. Both positive and negative simple pattern expressions are supported.
+
+        '
+      required: false
+      schema:
+        type: string
+        format: simple pattern
+        default: '*'
+    after:
+      name: after
+      in: query
+      description: '`after` and `before` define the time-frame of a query. `after` can be a negative number of seconds, up to 3 years (-94608000), relative to `before`. If not set, it is usually assumed to be -600. When non-data endpoints support the `after` and `before`, they use the time-frame to limit their response for objects having data retention within the time-frame given.
+
+        '
+      required: false
+      schema:
+        type: integer
+        default: -600
+    scopeNodes:
+      name: scope_nodes
+      in: query
+      description: 'A simple pattern limiting the nodes scope of the query. The scope controls both data and metadata response. The simple pattern is checked against the nodes'' machine guid, node id and hostname. The default nodes scope is all nodes for which this Agent has data for. Usually the nodes scope is used to slice the entire dashboard (e.g. the Global Nodes Selector at the Netdata Cloud overview dashboard). Both positive and negative simple pattern expressions are supported.
+
+        '
+      required: false
+      schema:
+        type: string
+        format: simple pattern
+        default: '*'
+    before:
+      name: before
+      in: query
+      description: '`after` and `before` define the time-frame of a query. `before` can be a negative number of seconds, up to 3 years (-94608000), relative to current clock. If not set, it is assumed to be the current clock time. When `before` is positive, it is assumed to be a unix epoch timestamp. When non-data endpoints support the `after` and `before`, they use the time-frame to limit their response for objects having data retention within the time-frame given.
+
+        '
+      required: false
+      schema:
+        type: integer
+        default: 0
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      description: 'Bearer token authentication for API access when bearer protection is enabled.
+
+
+        **How to obtain a token:**
+
+        1. Token must be obtained via `/api/v3/bearer_get_token` endpoint
+
+        2. This endpoint is ACLK-only (requires Netdata Cloud access)
+
+        3. Token includes role-based access control and expiration time
+
+
+        **How to use:**
+
+        ```
+
+        Authorization: Bearer <token>
+
+        ```
+
+
+        **When required:**
+
+        - When bearer protection is enabled on the agent (via `/api/v3/bearer_protection`)
+
+        - Applies to all APIs with `HTTP_ACCESS_ANONYMOUS_DATA` permission
+
+        - Does not apply to APIs with `HTTP_ACL_NOCHECK` (always public)
+
+        - Does not apply to ACLK-only APIs (use cloud authentication)
+
+
+        **Token expiration:**
+
+        - Tokens are time-limited and must be renewed periodically
+
+        - Expired tokens return HTTP 401 Unauthorized
+
+        '
+    aclkAuth:
+      type: http
+      scheme: bearer
+      description: 'ACLK-only authentication - these APIs are ONLY accessible via Netdata Cloud (ACLK).
+
+
+        **Access Requirements:**
+
+        - User must be authenticated via Netdata Cloud (`SIGNED_ID`)
+
+        - User and agent must be in the same Netdata Cloud space (`SAME_SPACE`)
+
+        - Additional role-based permissions may apply per endpoint
+
+
+        **NOT accessible via:**
+
+        - Direct HTTP/HTTPS to agent (even with bearer token)
+
+        - Local dashboard
+
+        - External integrations
+
+
+        **Available only through:**
+
+        - Netdata Cloud web interface
+
+        - Netdata Cloud API (ACLK tunnel)
+
+
+        **Development mode:**
+
+        - Can be made available in dev mode with `ACL_DEV_OPEN_ACCESS` flag
+
+        '
+    ipAcl:
+      type: apiKey
+      in: header
+      name: X-Forwarded-For
+      description: "IP-based Access Control List restrictions (informational only).\n\n**Configuration:**\nAPIs are subject to IP-based ACL restrictions configured in `netdata.conf`:\n\n```conf\n[web]\n    allow dashboard from = *\n    allow badges from = *\n    allow management from = localhost\n```\n\n**ACL Categories:**\n- `allow dashboard from` - Controls access to metrics, alerts, nodes, functions, config APIs\n- `allow badges from` - Controls access to badge generation APIs\n- `allow management from` - Controls access to management APIs\n\n**Default behavior:**\n- Most APIs allow access from any IP by default\n- Management APIs restrict to localhost by default\n- Can be customized per deployment\n\n**Note:** This is not a standard authentication mechanism but rather IP filtering.\nAPIs with `HTTP_ACL_NOCHECK` bypass all IP restrictions.\n"

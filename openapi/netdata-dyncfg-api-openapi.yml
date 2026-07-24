@@ -1,0 +1,418 @@
+openapi: 3.0.0
+info:
+  title: Netdata agent dyncfg API
+  description: 'Real-time performance and health monitoring.
+
+
+    ## API Versions
+
+
+    Netdata provides three API versions:
+
+    - **v1**: The original API, focused on single-node operations
+
+    - **v2**: Multi-node API with advanced grouping and aggregation capabilities
+
+    - **v3**: The latest API version that combines v1 and v2 endpoints and may include additional features
+
+
+    ### v3 API Endpoints
+
+
+    The v3 API provides the current, actively maintained endpoints:
+
+    - `/api/v3/data` - Multi-dimensional data queries
+
+    - `/api/v3/weights` - Metric scoring/correlation
+
+    - `/api/v3/contexts` - Context metadata
+
+    - `/api/v3/nodes` - Node information
+
+    - `/api/v3/q` - Full-text search
+
+    - `/api/v3/alerts` - Alert information
+
+    - `/api/v3/alert_transitions` - Alert state transitions
+
+    - `/api/v3/alert_config` - Alert configuration
+
+    - `/api/v3/functions` - Available functions
+
+    - `/api/v3/function` - Execute functions
+
+    - `/api/v3/info` - Agent information
+
+    - `/api/v3/node_instances` - Node instance information
+
+    - `/api/v3/stream_path` - Streaming topology
+
+    - `/api/v3/versions` - Version information
+
+    - `/api/v3/badge.svg` - Dynamic badges
+
+    - `/api/v3/allmetrics` - Export metrics
+
+    - `/api/v3/context` - Single context info
+
+    - `/api/v3/variable` - Variable information
+
+    - `/api/v3/config` - Dynamic configuration
+
+    - `/api/v3/settings` - Agent settings
+
+    - `/api/v3/me` - Current user information
+
+    - `/api/v3/claim` - Agent claiming
+
+    - Additional management and streaming endpoints
+
+
+    **Note:** V1 and V2 APIs are deprecated and maintained for backwards compatibility only. New integrations should use V3 exclusively.
+
+    '
+  version: v1-rolling
+  contact:
+    name: Netdata Agent API
+    email: info@netdata.cloud
+    url: https://netdata.cloud
+  license:
+    name: GPL v3+
+    url: https://github.com/netdata/netdata/blob/master/LICENSE
+servers:
+- url: https://registry.my-netdata.io
+- url: http://registry.my-netdata.io
+- url: http://localhost:19999
+tags:
+- name: dyncfg
+paths:
+  /api/v1/config:
+    get:
+      deprecated: true
+      operationId: getConfig
+      tags:
+      - dyncfg
+      description: 'Get dynamic configuration information.
+
+
+        **Security & Access Control:**
+
+        - 📊 **Public Data API** - Bearer token optional, IP-based ACL restrictions apply
+
+        - **Default Access:** Public (no authentication required)
+
+        - **Bearer Protection:** When enabled via `/api/v3/bearer_protection`, requires bearer token
+
+        - **IP Restrictions:** Subject to `allow dashboard from` in netdata.conf
+
+        - **Access Methods:** Direct HTTP/HTTPS, Netdata Cloud, external tools
+
+        '
+      security:
+      - {}
+      - bearerAuth: []
+      parameters:
+      - name: action
+        in: query
+        description: The type of information required
+        schema:
+          type: string
+          enum:
+          - tree
+          - schema
+          - get
+          - enable
+          - disable
+          - restart
+          default: tree
+      - name: id
+        in: query
+        description: The ID of the dynamic configuration entity
+        schema:
+          type: string
+      - name: path
+        in: query
+        description: Top level path of the configuration entities, used with action 'tree'
+        schema:
+          type: string
+          default: /
+      - name: timeout
+        in: query
+        description: The timeout in seconds
+        schema:
+          type: number
+          default: 120
+      responses:
+        '200':
+          description: The call was successful.
+          content:
+            application/json:
+              schema:
+                oneOf:
+                - $ref: '#/components/schemas/config_default_response'
+                - $ref: '#/components/schemas/config_tree'
+                - $ref: '#/components/schemas/config_schema'
+        '400':
+          description: Something is wrong with the request.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/config_default_response'
+        '404':
+          description: The configurable entity requests is not found.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/config_default_response'
+    post:
+      operationId: postConfig
+      tags:
+      - dyncfg
+      description: 'Post dynamic configuration to Netdata.
+
+        '
+      parameters:
+      - name: action
+        in: query
+        description: The type of action required.
+        schema:
+          type: string
+          enum:
+          - add
+          - test
+          - update
+      - name: id
+        in: query
+        description: The ID of the dynamic configuration entity to configure.
+        schema:
+          type: string
+      - name: name
+        in: query
+        description: Name of the dynamic configuration entity, used with action 'add'
+        schema:
+          type: string
+      - name: timeout
+        in: query
+        description: The timeout in seconds
+        schema:
+          type: number
+          default: 120
+      responses:
+        '200':
+          description: The call was successful. This also means the configuration is currently running.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/config_default_response'
+        '202':
+          description: The call was successful. The configuration has been accepted, but its status is not yet known.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/config_default_response'
+        '299':
+          description: The call was successful. The configuration has been accepted, but a restart is required to apply it.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/config_default_response'
+        '400':
+          description: Something is wrong with the request.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/config_default_response'
+        '404':
+          description: The configurable entity requests is not found.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/config_default_response'
+components:
+  schemas:
+    config_default_response:
+      type: object
+      properties:
+        status:
+          type: integer
+          description: The HTTP status code of the response.
+        message:
+          type: string
+          description: A descriptive message about the response or the action taken.
+        data:
+          type: object
+          description: The data payload of the response, contents vary depending on the specific request and action.
+          additionalProperties: true
+    config_schema:
+      type: object
+      properties:
+        jsonSchema:
+          type: object
+          description: Standard JSON Schema object describing the schema of each configurable entity.
+        uiSchema:
+          type: object
+          description: Schema for react-json-schema-form to drive the UI. Provides additional UI-specific configuration.
+    config_tree:
+      type: object
+      properties:
+        version:
+          type: integer
+          description: The version of dynamic configuration supported by the Netdata Agent.
+        tree:
+          type: object
+          description: A map of configuration entity paths, each containing one or more configurable entities.
+          additionalProperties:
+            type: object
+            additionalProperties:
+              $ref: '#/components/schemas/config_entity'
+        attention:
+          $ref: '#/components/schemas/config_attention'
+    config_entity:
+      type: object
+      properties:
+        type:
+          type: string
+          description: Can be 'single' for entities appearing once, 'template' for entities supporting multiple instances, or 'job' for jobs belonging to a template.
+        status:
+          type: string
+          description: The current status of the entity. Values include 'accepted', 'running', 'failed', 'disabled', 'incomplete', or 'orphan'.
+        cmds:
+          type: array
+          items:
+            type: string
+          description: An array of the possible actions supported by this entity.
+        source_type:
+          type: string
+          description: The source type of the configuration (e.g., 'internal', 'stock', 'user', 'discovered', 'dyncfg').
+        source:
+          type: string
+          description: Additional information about the source, formatted as comma-separated name-value pairs.
+        sync:
+          type: boolean
+          description: Indicates if this is an internal module (true) or an external plugin (false).
+        user_disabled:
+          type: boolean
+          description: True if the entity is disabled by the user.
+        restart_required:
+          type: boolean
+          description: True if the entity requires a restart after addition or update.
+        plugin_rejected:
+          type: boolean
+          description: True if a previously saved configuration failed to apply after a restart.
+        payload:
+          type: object
+          description: Object containing at least an 'available' boolean indicating if there's a saved configuration for this entity.
+          properties:
+            available:
+              type: boolean
+        saves:
+          type: integer
+          description: The number of times this configuration has been saved to disk by the dynamic configuration manager.
+        created_ut:
+          type: integer
+          format: int64
+          description: The timestamp in microseconds when this dynamic configuration was first created.
+        modified_ut:
+          type: integer
+          format: int64
+          description: The timestamp in microseconds when this dynamic configuration was last modified.
+        template:
+          type: string
+          description: Shows the template the job belongs to, applicable when type is 'job'.
+    config_attention:
+      type: object
+      properties:
+        degraded:
+          type: boolean
+        restart_required:
+          type: integer
+        plugin_rejected:
+          type: integer
+        status_failed:
+          type: integer
+        status_incomplete:
+          type: integer
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      description: 'Bearer token authentication for API access when bearer protection is enabled.
+
+
+        **How to obtain a token:**
+
+        1. Token must be obtained via `/api/v3/bearer_get_token` endpoint
+
+        2. This endpoint is ACLK-only (requires Netdata Cloud access)
+
+        3. Token includes role-based access control and expiration time
+
+
+        **How to use:**
+
+        ```
+
+        Authorization: Bearer <token>
+
+        ```
+
+
+        **When required:**
+
+        - When bearer protection is enabled on the agent (via `/api/v3/bearer_protection`)
+
+        - Applies to all APIs with `HTTP_ACCESS_ANONYMOUS_DATA` permission
+
+        - Does not apply to APIs with `HTTP_ACL_NOCHECK` (always public)
+
+        - Does not apply to ACLK-only APIs (use cloud authentication)
+
+
+        **Token expiration:**
+
+        - Tokens are time-limited and must be renewed periodically
+
+        - Expired tokens return HTTP 401 Unauthorized
+
+        '
+    aclkAuth:
+      type: http
+      scheme: bearer
+      description: 'ACLK-only authentication - these APIs are ONLY accessible via Netdata Cloud (ACLK).
+
+
+        **Access Requirements:**
+
+        - User must be authenticated via Netdata Cloud (`SIGNED_ID`)
+
+        - User and agent must be in the same Netdata Cloud space (`SAME_SPACE`)
+
+        - Additional role-based permissions may apply per endpoint
+
+
+        **NOT accessible via:**
+
+        - Direct HTTP/HTTPS to agent (even with bearer token)
+
+        - Local dashboard
+
+        - External integrations
+
+
+        **Available only through:**
+
+        - Netdata Cloud web interface
+
+        - Netdata Cloud API (ACLK tunnel)
+
+
+        **Development mode:**
+
+        - Can be made available in dev mode with `ACL_DEV_OPEN_ACCESS` flag
+
+        '
+    ipAcl:
+      type: apiKey
+      in: header
+      name: X-Forwarded-For
+      description: "IP-based Access Control List restrictions (informational only).\n\n**Configuration:**\nAPIs are subject to IP-based ACL restrictions configured in `netdata.conf`:\n\n```conf\n[web]\n    allow dashboard from = *\n    allow badges from = *\n    allow management from = localhost\n```\n\n**ACL Categories:**\n- `allow dashboard from` - Controls access to metrics, alerts, nodes, functions, config APIs\n- `allow badges from` - Controls access to badge generation APIs\n- `allow management from` - Controls access to management APIs\n\n**Default behavior:**\n- Most APIs allow access from any IP by default\n- Management APIs restrict to localhost by default\n- Can be customized per deployment\n\n**Note:** This is not a standard authentication mechanism but rather IP filtering.\nAPIs with `HTTP_ACL_NOCHECK` bypass all IP restrictions.\n"

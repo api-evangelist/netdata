@@ -1,0 +1,1335 @@
+openapi: 3.0.0
+info:
+  title: Netdata agent charts API
+  description: 'Real-time performance and health monitoring.
+
+
+    ## API Versions
+
+
+    Netdata provides three API versions:
+
+    - **v1**: The original API, focused on single-node operations
+
+    - **v2**: Multi-node API with advanced grouping and aggregation capabilities
+
+    - **v3**: The latest API version that combines v1 and v2 endpoints and may include additional features
+
+
+    ### v3 API Endpoints
+
+
+    The v3 API provides the current, actively maintained endpoints:
+
+    - `/api/v3/data` - Multi-dimensional data queries
+
+    - `/api/v3/weights` - Metric scoring/correlation
+
+    - `/api/v3/contexts` - Context metadata
+
+    - `/api/v3/nodes` - Node information
+
+    - `/api/v3/q` - Full-text search
+
+    - `/api/v3/alerts` - Alert information
+
+    - `/api/v3/alert_transitions` - Alert state transitions
+
+    - `/api/v3/alert_config` - Alert configuration
+
+    - `/api/v3/functions` - Available functions
+
+    - `/api/v3/function` - Execute functions
+
+    - `/api/v3/info` - Agent information
+
+    - `/api/v3/node_instances` - Node instance information
+
+    - `/api/v3/stream_path` - Streaming topology
+
+    - `/api/v3/versions` - Version information
+
+    - `/api/v3/badge.svg` - Dynamic badges
+
+    - `/api/v3/allmetrics` - Export metrics
+
+    - `/api/v3/context` - Single context info
+
+    - `/api/v3/variable` - Variable information
+
+    - `/api/v3/config` - Dynamic configuration
+
+    - `/api/v3/settings` - Agent settings
+
+    - `/api/v3/me` - Current user information
+
+    - `/api/v3/claim` - Agent claiming
+
+    - Additional management and streaming endpoints
+
+
+    **Note:** V1 and V2 APIs are deprecated and maintained for backwards compatibility only. New integrations should use V3 exclusively.
+
+    '
+  version: v1-rolling
+  contact:
+    name: Netdata Agent API
+    email: info@netdata.cloud
+    url: https://netdata.cloud
+  license:
+    name: GPL v3+
+    url: https://github.com/netdata/netdata/blob/master/LICENSE
+servers:
+- url: https://registry.my-netdata.io
+- url: http://registry.my-netdata.io
+- url: http://localhost:19999
+tags:
+- name: charts
+  description: Everything related to chart instances - DO NOT USE IN NEW CODE - use contexts instead
+paths:
+  /api/v1/charts:
+    get:
+      deprecated: true
+      operationId: getNodeCharts1
+      tags:
+      - charts
+      summary: List all charts v1 - EOL
+      description: 'The charts endpoint returns a summary about all charts stored in the netdata server.
+
+        **Security & Access Control:** - 📊 **Public Data API** - Bearer token optional, IP-based ACL restrictions apply - **Default Access:** Public (no authentication required) - **Bearer Protection:** When enabled via `/api/v3/bearer_protection`, requires bearer token - **IP Restrictions:** Subject to `allow dashboard from` in netdata.conf - **Access Methods:** Direct HTTP/HTTPS, Netdata Cloud, external tools'
+      security:
+      - {}
+      - bearerAuth: []
+      responses:
+        '200':
+          description: An array of charts.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/chart_summary'
+  /api/v1/chart:
+    get:
+      deprecated: true
+      operationId: getNodeChart1
+      tags:
+      - charts
+      summary: Get one chart v1 - EOL
+      description: 'The chart endpoint returns detailed information about a chart.
+
+        **Security & Access Control:** - 📊 **Public Data API** - Bearer token optional, IP-based ACL restrictions apply - **Default Access:** Public (no authentication required) - **Bearer Protection:** When enabled via `/api/v3/bearer_protection`, requires bearer token - **IP Restrictions:** Subject to `allow dashboard from` in netdata.conf - **Access Methods:** Direct HTTP/HTTPS, Netdata Cloud, external tools'
+      security:
+      - {}
+      - bearerAuth: []
+      parameters:
+      - $ref: '#/components/parameters/chart'
+      responses:
+        '200':
+          description: A javascript object with detailed information about the chart.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/chart'
+        '400':
+          description: No chart id was supplied in the request.
+        '404':
+          description: No chart with the given id is found.
+  /api/v3/spaces/{spaceID}/rooms/{roomID}/data:
+    post:
+      summary: Time series data queries
+      description: Multi-node, multi-context, multi-instance, multi-dimension data queries, with time and metric aggregation.
+      operationId: post-scope-data
+      tags:
+      - charts
+      parameters:
+      - name: spaceID
+        in: path
+        required: true
+        description: The unique identifier of the requested space.
+        schema:
+          type: string
+          format: uuid
+      - name: roomID
+        in: path
+        required: true
+        description: The unique identifier of the requested room.
+        schema:
+          type: string
+          format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/github_com_netdata_cloud-charts-service_internal_model.ScopeDataRequest'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/github_com_netdata_cloud-charts-service_internal_model.ScopeDataResponse'
+        '400':
+          description: ' `"errorCode": "ErrBadRequest"`: when invalid query parameters/req. payload are provided <br /> `"errorCode": "ErrBigAgentResponses"`: when Agents return big responses and the caller needs to filter further, reduce the amount of requested `points` or use parents <br /> `"errorCode": "ErrNoEligibleNodeRequested"`: when no eligible nodes were targeted due to space plan restrictions <br /> `"errorCode": "ErrAllNodesFailed"`: when all Agent requests failed, details on every failure are included '
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/errors.Error'
+        '401':
+          description: ' `"errorCode": "ErrUnauthorized"`: when the caller is not authenticated or not authorized to access this resource '
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/errors.Error'
+        '500':
+          description: ' `"errorCode": "ErrInternal"`: when some Internal Server Error has occurred '
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/errors.Error'
+components:
+  schemas:
+    github_com_netdata_cloud-charts-service_internal_model.WindowSpan:
+      type: object
+      properties:
+        after:
+          description: After can be a negative number of seconds, up to 3 years (-94608000), relative to before. If not set, it is usually assumed to be -600. When non-data endpoints support the after and before, they use the time-frame to limit their response for objects having data retention within the time-frame given.
+          type: integer
+          example: 1745928492
+        before:
+          description: Before can be a negative number of seconds, up to 3 years (-94608000), relative to current clock. If not set, it is assumed to be the current clock time. When before is positive, it is assumed to be a unix epoch timestamp. When non-data endpoints support the after and before, they use the time-frame to limit their response for objects having data retention within the time-frame given.
+          type: integer
+          example: 1745929392
+        duration:
+          type: integer
+        points:
+          description: The number of points to be returned. If not given, or it is <= 0, or it is bigger than the points stored in the database for the given duration, all the available collected values for the given duration will be returned.
+          type: integer
+          example: 100
+    github_com_netdata_cloud-charts-service_internal_model.MetricsAggregation:
+      type: object
+      properties:
+        aggregation:
+          description: The aggregation function to apply when grouping metrics together.
+          default: average
+          enum:
+          - sum
+          - min
+          - max
+          - avg
+          - median
+          allOf:
+          - $ref: '#/components/schemas/github_com_netdata_cloud-charts-service_internal_model.AggregationMethod'
+          example: sum
+        group_by:
+          description: A list of groupings. All possible values can be combined together, except `selected`. If `selected` is provided, all others are ignored. The order they are placed in the list is currently ignored.
+          type: array
+          items:
+            type: string
+            enum:
+            - dimension
+            - instance
+            - percentage-of-instance
+            - label
+            - node
+            - context
+            - units
+            - selected
+          example:
+          - selected
+        group_by_label:
+          description: A list of the label keys to group by their values. The order of the labels in the list is respected.
+          type: array
+          items:
+            type: string
+          example:
+          - a_label_key
+    github_com_netdata_cloud-charts-service_internal_model.DB:
+      type: object
+      properties:
+        dimensions:
+          description: The Database dimensions details
+          allOf:
+          - $ref: '#/components/schemas/github_com_netdata_cloud-charts-service_internal_model.DBDimensions'
+        first_entry:
+          description: The `min` (earliest) FirstEntry across participating Nodes
+          type: integer
+        last_entry:
+          description: The `max` (latest) LastEntry across participating Nodes
+          type: integer
+        per_tier:
+          description: Aggregated tier information for all participating Nodes
+          type: array
+          items:
+            $ref: '#/components/schemas/github_com_netdata_cloud-charts-service_internal_model.Tier'
+        tiers:
+          description: The `max` amount of Database Tiers
+          type: integer
+        units:
+          description: The Units of the database data
+          type: array
+          items:
+            type: integer
+        update_every:
+          description: The `max` UpdateEvery across participating Nodes
+          type: integer
+    errors.ValidationError:
+      type: object
+      properties:
+        code:
+          type: string
+        message:
+          type: string
+    github_com_netdata_cloud-charts-service_internal_model.View:
+      type: object
+      properties:
+        after:
+          description: The oldest unix epoch timestamp of the data returned
+          type: integer
+        before:
+          description: The newest unix epoch timestamp of the data returned
+          type: integer
+        chart_type:
+          description: The default chart type of the query
+          type: string
+        dimensions:
+          description: Detailed information about the chart dimensions included in the response
+          allOf:
+          - $ref: '#/components/schemas/github_com_netdata_cloud-charts-service_internal_model.ViewDimensions'
+        max:
+          description: The maximum value of all points included in the result.
+          type: number
+        min:
+          description: The minimum value of all points included in the
+          type: number
+        partial_data_trimming:
+          description: Holds information related to trimming of the last few points of the result, that was required to remove (increasing) partial data. Trimming is disabled when the `raw` option is given to the query
+          allOf:
+          - $ref: '#/components/schemas/github_com_netdata_cloud-charts-service_internal_model.PartialDataTrimming'
+        points:
+          description: The number of points in result. Available only when `raw` option is provided
+          type: integer
+        title:
+          description: The title the chart should have
+          type: string
+        units:
+          description: The units of the query.
+          type: array
+          items:
+            type: integer
+        update_every:
+          description: The UpdateEvery interval in seconds
+          type: integer
+    github_com_netdata_cloud-charts-service_internal_model.ViewDimensions:
+      type: object
+      properties:
+        aggregated:
+          description: An array with the number of source metrics aggregated into each dimension.
+          type: array
+          items:
+            type: integer
+        grouped_by:
+          description: An array with the order of the groupings performed.
+          type: array
+          items:
+            type: string
+        ids:
+          description: An array with the dimension ids that uniquely identify the dimensions for this query.
+          type: array
+          items:
+            type: string
+        labels:
+          description: The labels associated with each dimension in the query. This object is only available when the `group-by-labels` option is provided.
+          type: object
+          additionalProperties:
+            type: array
+            items:
+              type: array
+              items:
+                type: string
+        names:
+          description: An array with the dimension names to be presented to users. Names may be overlapping, but IDs are not.
+          type: array
+          items:
+            type: string
+        priorities:
+          description: An array with the relative priorities of the dimensions. Numbers may not be sequential or unique. The application is expected to order by this and then by name.
+          type: array
+          items:
+            type: integer
+        sts:
+          description: Statistics about the view points for each dimension
+          allOf:
+          - $ref: '#/components/schemas/github_com_netdata_cloud-charts-service_internal_model.StatsArray'
+        units:
+          description: An array with the units each dimension includes.
+          type: array
+          items:
+            type: string
+    github_com_netdata_cloud-charts-service_internal_model.ScopeDataResponse:
+      type: object
+      properties:
+        agents:
+          description: The Agents consulted to compose this response.
+          type: array
+          items:
+            $ref: '#/components/schemas/github_com_netdata_cloud-charts-service_internal_model.AgentSummary'
+        api:
+          description: The API version used.
+          type: integer
+          example: 2
+        db:
+          description: Summarized Agent DB related information
+          allOf:
+          - $ref: '#/components/schemas/github_com_netdata_cloud-charts-service_internal_model.DB'
+        functions:
+          description: A list of the supported Functions
+          type: array
+          items:
+            type: string
+        result:
+          description: The composite data query Result
+          allOf:
+          - $ref: '#/components/schemas/github_com_netdata_cloud-charts-service_internal_model.Result'
+        summary:
+          description: Summarized information about nodes, contexts, instances, labels, alerts, and dimensions. The items returned are determined by the scope of the query only, however the statistical data in them are influenced by the filters of the query. Using this information the dashboard allows users to slice and dice the data by filtering and grouping.
+          allOf:
+          - $ref: '#/components/schemas/github_com_netdata_cloud-charts-service_internal_model.Summary'
+        timings:
+          description: Timing information regarding the various phases of the composite query
+          allOf:
+          - $ref: '#/components/schemas/github_com_netdata_cloud-charts-service_internal_model.Timings'
+        totals:
+          description: A summary of the Totals of Nodes, Contexts, Instances, Dimensions and Labels
+          allOf:
+          - $ref: '#/components/schemas/github_com_netdata_cloud-charts-service_internal_model.Totals'
+        versions:
+          description: Hashes that allow the caller to detect important database changes of Netdata Agents.
+          allOf:
+          - $ref: '#/components/schemas/github_com_netdata_cloud-charts-service_internal_model.Versions'
+        view:
+          description: View includes presentation related details
+          allOf:
+          - $ref: '#/components/schemas/github_com_netdata_cloud-charts-service_internal_model.View'
+    github_com_netdata_cloud-charts-service_internal_model.TimeAggregation:
+      type: object
+      properties:
+        time_group:
+          description: Time aggregation function. If multiple collected values are to be grouped in order to return fewer points, this parameters defines the method of grouping. If the `absolute` option is set, the values are turned positive before applying this calculation.
+          type: string
+          default: average
+          enum:
+          - min
+          - max
+          - avg
+          - average
+          - median
+          - stddev
+          - sum
+          - incremental-sum
+          - ses
+          - des
+          - cv
+          - countif
+          - percentile
+          - percentile25
+          - percentile50
+          - percentile75
+          - percentile80
+          - percentile90
+          - percentile95
+          - percentile97
+          - percentile98
+          - percentile99
+          - trimmed-mean
+          - trimmed-mean1
+          - trimmed-mean2
+          - trimmed-mean3
+          - trimmed-mean5
+          - trimmed-mean10
+          - trimmed-mean15
+          - trimmed-mean20
+          - trimmed-mean25
+          - trimmed-median
+          - trimmed-median1
+          - trimmed-median2
+          - trimmed-median3
+          - trimmed-median5
+          - trimmed-median10
+          - trimmed-median15
+          - trimmed-median20
+          - trimmed-median25
+          example: min
+        time_group_options:
+          description: When the time grouping function supports additional parameters, this field can be used to pass them to it.
+          type: string
+          enum:
+          - countif
+          - trimmed-mean
+          - trimmed-median
+          - percentile
+          example: countif
+        time_resampling:
+          description: For incremental values that are "per second", this value is used to resample them to "per minute` (60) or "per hour" (3600). It can only be used when `time_group` function is `average`.
+          type: integer
+          example: 60
+    github_com_netdata_cloud-charts-service_internal_model.ScopeDataRequest:
+      type: object
+      properties:
+        aggregations:
+          description: Aggregations define the time and metric aggregation specs. At last one metric aggregation is required
+          allOf:
+          - $ref: '#/components/schemas/github_com_netdata_cloud-charts-service_internal_model.Aggregations'
+        format:
+          description: The format of the data to be returned. Only `json2` is currently supported by Netdata Cloud.
+          type: string
+          default: json2
+          enum:
+          - json2
+          example: json2
+        options:
+          description: 'Options that affect data generation, more info on each option : https://learn.netdata.cloud/api#/data/dataQuery2.'
+          type: array
+          items:
+            type: string
+            enum:
+            - jsonwrap
+            - raw
+            - minify
+            - debug
+            - nonzero
+            - null2zero
+            - abs
+            - absolute
+            - display-absolute
+            - flip
+            - reversed
+            - min2max
+            - percentage
+            - seconds
+            - ms
+            - milliseconds
+            - unaligned
+            - match-ids
+            - match-names
+            - anomaly-bit
+            - jw-anomaly-rates
+            - details
+            - group-by-labels
+            - natural-points
+            - virtual-points
+            - selected-tier
+            - all-dimensions
+            - label-quotes
+            - objectrows
+            - google_json
+          example:
+          - jsonwrap
+          - minify
+        scope:
+          description: Scope defines the data that the agent must take into account in order to generate the response. Affects the response data and metadata.
+          allOf:
+          - $ref: '#/components/schemas/github_com_netdata_cloud-charts-service_internal_model.Scope'
+        selectors:
+          description: Selectors act as filters when the agent generates the response, and can only affect response data, not metadata.
+          allOf:
+          - $ref: '#/components/schemas/github_com_netdata_cloud-charts-service_internal_model.Selectors'
+        timeout:
+          description: Timeout defined in milliseconds.
+          type: integer
+          default: 10000
+          example: 12000
+        window:
+          description: Window defines the time-frame of a query.
+          allOf:
+          - $ref: '#/components/schemas/github_com_netdata_cloud-charts-service_internal_model.Window'
+    github_com_netdata_cloud-charts-service_internal_model.Result:
+      type: object
+      properties:
+        data:
+          description: The actual time series data is a 2D array whose contents may vary. The first element should be the timestamp while the rest should be arrays of values for the various dimensions
+          type: array
+          items:
+            type: array
+            items: {}
+        labels:
+          description: The IDs of the dimensions returned. The first is always `time`.
+          type: array
+          items:
+            type: string
+        point:
+          description: The format of each point returned.
+          type: object
+          additionalProperties:
+            type: integer
+    chart_variables:
+      type: object
+      properties:
+        varname1:
+          type: number
+          format: float
+        varname2:
+          type: number
+          format: float
+    chart_summary:
+      type: object
+      properties:
+        hostname:
+          type: string
+          description: The hostname of the netdata server.
+        version:
+          type: string
+          description: netdata version of the server.
+        release_channel:
+          type: string
+          description: The release channel of the build on the server.
+          example: nightly
+        timezone:
+          type: string
+          description: The current timezone on the server.
+        os:
+          type: string
+          description: The netdata server host operating system.
+          enum:
+          - macos
+          - linux
+          - freebsd
+        history:
+          type: number
+          description: The duration, in seconds, of the round robin database maintained by netdata.
+        memory_mode:
+          type: string
+          description: The name of the database memory mode on the server.
+        update_every:
+          type: number
+          description: The default update frequency of the netdata server. All charts have an update frequency equal or bigger than this.
+        charts:
+          type: object
+          description: An object containing all the chart objects available at the netdata server. This is used as an indexed array. The key of each chart object is the id of the chart.
+          additionalProperties:
+            $ref: '#/components/schemas/chart'
+        charts_count:
+          type: number
+          description: The number of charts.
+        dimensions_count:
+          type: number
+          description: The total number of dimensions.
+        alarms_count:
+          type: number
+          description: The number of alarms.
+        rrd_memory_bytes:
+          type: number
+          description: The size of the round robin database in bytes.
+    github_com_netdata_cloud-charts-service_internal_model.Versions:
+      type: object
+      properties:
+        alerts_hard_hash:
+          description: An auto-increment value that reflects the number of changes to the number of alerts. Everytime an alert is added or removed, this number gets incremented.
+          type: integer
+        alerts_soft_hash:
+          description: An auto-increment value that reflects the number of alerts transitions. Everytime an alert transitions to a new state, this number gets incremented.
+          type: integer
+        contexts_hard_hash:
+          description: An auto-increment value that reflects the number of changes to the number of contexts maintained by the server. Everytime a context is added or removed, this number gets incremented.
+          type: integer
+        contexts_soft_hash:
+          description: An auto-increment value that reflects the number of changes to the queue that sends contexts updates to Netdata Cloud. Everytime the contents of a context are updated, this number gets incremented.
+          type: integer
+        nodes_hard_hash:
+          description: An auto-increment value that reflects the number of changes to the number of nodes maintained by the server. Everytime a node is added or removed, this number gets incremented.
+          type: integer
+    github_com_netdata_cloud-charts-service_internal_model.GlobalSummary:
+      type: object
+      properties:
+        sts:
+          type: array
+          items:
+            type: integer
+    github_com_netdata_cloud-charts-service_internal_model.StatsArray:
+      type: object
+      properties:
+        arc:
+          type: array
+          items:
+            type: number
+        arp:
+          type: array
+          items:
+            type: number
+        avg:
+          type: array
+          items:
+            type: number
+        cnt:
+          type: array
+          items:
+            type: number
+        con:
+          type: array
+          items:
+            type: number
+        max:
+          type: array
+          items:
+            type: number
+        min:
+          type: array
+          items:
+            type: number
+        sum:
+          type: array
+          items:
+            type: number
+        vol:
+          type: array
+          items:
+            type: number
+    github_com_netdata_cloud-charts-service_internal_model.AgentSummary:
+      type: object
+      properties:
+        ai:
+          description: The index of the Agent in the summaries array
+          type: integer
+        claim_id:
+          description: The Agent Claim ID
+          type: string
+          format: uuid
+          example: 550e8400-e29b-41d4-a716-446655440000
+        mg:
+          description: The Agent Machine GUID
+          type: string
+          format: uuid
+          example: 550e8400-e29b-41d4-a716-446655440000
+        nd:
+          description: The Agent Node ID
+          type: string
+          format: uuid
+          example: 550e8400-e29b-41d4-a716-446655440000
+        nm:
+          description: The Agent Node name
+          type: string
+          example: my_node
+        timings:
+          description: Timing information for all the stages included until the final composite response is returned
+          allOf:
+          - $ref: '#/components/schemas/github_com_netdata_cloud-charts-service_internal_model.Timings'
+    github_com_netdata_cloud-charts-service_internal_model.PartialDataTrimming:
+      type: object
+      properties:
+        expected_after:
+          type: integer
+        max_update_every:
+          type: integer
+        trimmed_after:
+          type: integer
+    github_com_netdata_cloud-charts-service_internal_model.ItemsCount:
+      type: object
+      properties:
+        ex:
+          description: The amount of items that were Excluded
+          type: integer
+        fl:
+          description: The amount of items that were not queried successfully
+          type: integer
+        qr:
+          description: The amount of items that were queried successfully
+          type: integer
+        sl:
+          description: The amount of items that were Selected
+          type: integer
+    github_com_netdata_cloud-charts-service_internal_model.LabelSummary:
+      type: object
+      properties:
+        ds:
+          description: Dimensions are th available label keys
+          allOf:
+          - $ref: '#/components/schemas/github_com_netdata_cloud-charts-service_internal_model.ItemsCount'
+        id:
+          description: ID is the label key
+          type: string
+        sts:
+          description: Statistics object including `min`, `max`, `avg`, `anomaly-rate` and `contribution-percentage`
+          type: array
+          items:
+            type: integer
+        vl:
+          description: The Values are summarizing the label values of the result
+          type: array
+          items:
+            $ref: '#/components/schemas/github_com_netdata_cloud-charts-service_internal_model.LabelValueSummary'
+    github_com_netdata_cloud-charts-service_internal_model.Scope:
+      type: object
+      properties:
+        contexts:
+          description: The targeted contexts.
+          type: array
+          items:
+            type: string
+          example:
+          - disk.space
+        dimensions:
+          description: The targeted dimensions.
+          type: array
+          items:
+            type: string
+          example:
+          - avail
+          - used
+        instances:
+          description: The targeted instances.
+          type: array
+          items:
+            type: string
+          example:
+          - disk_space./@bd498fed-8aa1-440c-a9d6-7c33db570608
+        labels:
+          description: The targeted labels.
+          type: array
+          items:
+            type: string
+          example:
+          - filesystem:btrfs
+          - mount_point:/host/var/log
+        nodes:
+          description: The targeted nodes.
+          type: array
+          items:
+            type: string
+          example:
+          - node_id_1
+          - node_id_2
+    github_com_netdata_cloud-charts-service_internal_model.DimensionSummary:
+      type: object
+      properties:
+        ds:
+          $ref: '#/components/schemas/github_com_netdata_cloud-charts-service_internal_model.ItemsCount'
+        id:
+          type: string
+        nm:
+          type: string
+        pri:
+          type: integer
+        sts:
+          type: array
+          items:
+            type: integer
+    github_com_netdata_cloud-charts-service_internal_model.Tier:
+      type: object
+      properties:
+        first_entry:
+          type: integer
+        last_entry:
+          type: integer
+        points:
+          type: integer
+        queries:
+          type: integer
+        tier:
+          type: integer
+        update_every:
+          type: integer
+    chart:
+      type: object
+      properties:
+        id:
+          type: string
+          description: The unique id of the chart.
+        name:
+          type: string
+          description: The name of the chart.
+        type:
+          type: string
+          description: The type of the chart. Types are not handled by netdata. You can use this field for anything you like.
+        family:
+          type: string
+          description: The family of the chart. Families are not handled by netdata. You can use this field for anything you like.
+        title:
+          type: string
+          description: The title of the chart.
+        priority:
+          type: number
+          description: The relative priority of the chart. Netdata does not care about priorities. This is just an indication of importance for the chart viewers to sort charts of higher priority (lower number) closer to the top. Priority sorting should only be used among charts of the same type or family.
+        enabled:
+          type: boolean
+          description: True when the chart is enabled. Disabled charts do not currently collect values, but they may have historical values available.
+        units:
+          type: string
+          description: The unit of measurement for the values of all dimensions of the chart.
+        data_url:
+          type: string
+          description: The absolute path to get data values for this chart. You are expected to use this path as the base when constructing the URL to fetch data values for this chart.
+        chart_type:
+          type: string
+          description: The chart type.
+          enum:
+          - line
+          - area
+          - stacked
+        duration:
+          type: number
+          description: The duration, in seconds, of the round robin database maintained by netdata.
+        first_entry:
+          type: number
+          description: The UNIX timestamp of the first entry (the oldest) in the round robin database.
+        last_entry:
+          type: number
+          description: The UNIX timestamp of the latest entry in the round robin database.
+        update_every:
+          type: number
+          description: The update frequency of this chart, in seconds. One value every this amount of time is kept in the round robin database.
+        dimensions:
+          type: object
+          description: 'An object containing all the chart dimensions available for the chart. This is used as an indexed array. For each pair in the dictionary: the key is the id of the dimension and the value is a dictionary containing the name."
+
+            '
+          additionalProperties:
+            type: object
+            properties:
+              name:
+                type: string
+                description: The name of the dimension
+        chart_variables:
+          type: object
+          additionalProperties:
+            $ref: '#/components/schemas/chart_variables'
+        green:
+          type: number
+          nullable: true
+          description: Chart health green threshold.
+        red:
+          type: number
+          nullable: true
+          description: Chart health red threshold.
+    github_com_netdata_cloud-charts-service_internal_model.Window:
+      type: object
+      properties:
+        after:
+          description: After can be a negative number of seconds, up to 3 years (-94608000), relative to before. If not set, it is usually assumed to be -600. When non-data endpoints support the after and before, they use the time-frame to limit their response for objects having data retention within the time-frame given.
+          type: integer
+          example: 1745928492
+        baseline:
+          $ref: '#/components/schemas/github_com_netdata_cloud-charts-service_internal_model.WindowSpan'
+        before:
+          description: Before can be a negative number of seconds, up to 3 years (-94608000), relative to current clock. If not set, it is assumed to be the current clock time. When before is positive, it is assumed to be a unix epoch timestamp. When non-data endpoints support the after and before, they use the time-frame to limit their response for objects having data retention within the time-frame given.
+          type: integer
+          example: 1745929392
+        duration:
+          type: integer
+        points:
+          description: The number of points to be returned. If not given, or it is <= 0, or it is bigger than the points stored in the database for the given duration, all the available collected values for the given duration will be returned.
+          type: integer
+          example: 100
+        tier:
+          description: Use only the given dbengine tier for executing the query.
+          type: integer
+    github_com_netdata_cloud-charts-service_internal_model.ContextSummary:
+      type: object
+      properties:
+        al:
+          description: Summary of the Alert counts of the participating nodes by severity
+          allOf:
+          - $ref: '#/components/schemas/github_com_netdata_cloud-charts-service_internal_model.AlertSummary'
+        ds:
+          description: A breakdown summary of the Dimensions by outcome and filter
+          allOf:
+          - $ref: '#/components/schemas/github_com_netdata_cloud-charts-service_internal_model.ItemsCount'
+        id:
+          description: The Context ID
+          type: string
+        is:
+          description: A breakdown summary of the Instances by outcome and filter
+          allOf:
+          - $ref: '#/components/schemas/github_com_netdata_cloud-charts-service_internal_model.ItemsCount'
+        sts:
+          description: Provides global statistics such as `min`, `max`, `sum`, `volume`, `count` and `anomaly-rate-count`
+          type: array
+          items:
+            type: integer
+    github_com_netdata_cloud-charts-service_internal_model.Selectors:
+      type: object
+      properties:
+        alerts:
+          description: A simple pattern matching the alerts to be queried. The simple pattern is checked against the name of alerts and the combination of name:status, when status is one of CLEAR, WARNING, CRITICAL, REMOVED, UNDEFINED, UNINITIALIZED, of all the alerts of all the eligible instances (as filtered by all the above). A negative simple pattern will exclude the instances having the labels matched.
+          type: array
+          items:
+            type: string
+          example:
+          - '*'
+        contexts:
+          description: A simple pattern matching the contexts to be queried. This only controls the data response, not the metadata. Both positive and negative simple pattern expressions are supported.
+          type: array
+          items:
+            type: string
+          example:
+          - '*'
+        dimensions:
+          description: A simple patterns matching the dimensions to be queried. The simple pattern is checked against and id and the name of the dimensions of the eligible instances (as filtered by all the above). Both positive and negative simple pattern expressions are supported.
+          type: array
+          items:
+            type: string
+          example:
+          - sent
+          - received
+        instances:
+          description: A simple pattern matching the instances to be queried. The simple pattern is checked against the instance id, the instance name, the fully qualified name of the instance id and name, like instance@machine_guid, where instance is either its id or name. Both positive and negative simple pattern expressions are supported.
+          type: array
+          items:
+            type: string
+          example:
+          - instance1@machine_guid1
+          - instance2@machine_guid1
+          - instanceX@machine_guidX
+        labels:
+          description: 'A simple pattern matching the labels to be queried. The simple pattern is checked against name:value of all the labels of all the eligible instances (as filtered by all the above: scope nodes, scope contexts, nodes, contexts and instances). Negative simple patterns should not be used in this filter.'
+          type: array
+          items:
+            type: string
+          example:
+          - '*'
+        nodes:
+          description: A simple pattern matching the nodes to be queried. This only controls the data response, not the metadata. The simple pattern is checked against the nodes' machine guid, node id, hostname. The default nodes selector is all the nodes matched by the nodes scope. Both positive and negative simple pattern expressions are supported.
+          type: array
+          items:
+            type: string
+          example:
+          - '*'
+    github_com_netdata_cloud-charts-service_internal_model.AggregationMethod:
+      type: string
+      enum:
+      - sum
+      - min
+      - max
+      - avg
+      - median
+      - percentage
+      x-enum-varnames:
+      - Sum
+      - Min
+      - Max
+      - Avg
+      - Median
+      - Pct
+    github_com_netdata_cloud-charts-service_internal_model.Summary:
+      type: object
+      properties:
+        alerts:
+          description: An array of all the unique alerts running, grouped by alert name
+          type: array
+          items:
+            $ref: '#/components/schemas/github_com_netdata_cloud-charts-service_internal_model.AlertSummary'
+        contexts:
+          description: Summary of the related Contexts
+          type: array
+          items:
+            $ref: '#/components/schemas/github_com_netdata_cloud-charts-service_internal_model.ContextSummary'
+        dimensions:
+          description: Summary of the related Dimensions
+          type: array
+          items:
+            $ref: '#/components/schemas/github_com_netdata_cloud-charts-service_internal_model.DimensionSummary'
+        globals:
+          description: Provides global statistics for all entities including the following aggregate values `min`, `max`, `sum`, `volume`, `count` and `anomaly-rate-count`
+          allOf:
+          - $ref: '#/components/schemas/github_com_netdata_cloud-charts-service_internal_model.GlobalSummary'
+        instances:
+          description: Summary of the related Instances
+          type: array
+          items:
+            $ref: '#/components/schemas/github_com_netdata_cloud-charts-service_internal_model.InstanceSummary'
+        labels:
+          description: Summary of the related Labels
+          type: array
+          items:
+            $ref: '#/components/schemas/github_com_netdata_cloud-charts-service_internal_model.LabelSummary'
+        nodes:
+          description: Summary of the related nodes
+          type: array
+          items:
+            $ref: '#/components/schemas/github_com_netdata_cloud-charts-service_internal_model.NodeSummary'
+    github_com_netdata_cloud-charts-service_internal_model.Totals:
+      type: object
+      properties:
+        contexts:
+          description: A breakdown summary of the Contexts by outcome and filter
+          allOf:
+          - $ref: '#/components/schemas/github_com_netdata_cloud-charts-service_internal_model.ItemsCount'
+        dimensions:
+          description: A breakdown summary of the Dimensions by outcome and filter
+          allOf:
+          - $ref: '#/components/schemas/github_com_netdata_cloud-charts-service_internal_model.ItemsCount'
+        instances:
+          description: A breakdown summary of the Instances by outcome and filter
+          allOf:
+          - $ref: '#/components/schemas/github_com_netdata_cloud-charts-service_internal_model.ItemsCount'
+        label_key_values:
+          description: A breakdown summary of the LabelKeyValues by outcome and filter
+          allOf:
+          - $ref: '#/components/schemas/github_com_netdata_cloud-charts-service_internal_model.ItemsCount'
+        label_keys:
+          description: A breakdown summary of the LabelKeys by outcome and filter
+          allOf:
+          - $ref: '#/components/schemas/github_com_netdata_cloud-charts-service_internal_model.ItemsCount'
+        nodes:
+          description: A breakdown summary of the Nodes by outcome and filter
+          allOf:
+          - $ref: '#/components/schemas/github_com_netdata_cloud-charts-service_internal_model.ItemsCount'
+    github_com_netdata_cloud-charts-service_internal_model.Aggregations:
+      type: object
+      properties:
+        metrics:
+          type: array
+          items:
+            $ref: '#/components/schemas/github_com_netdata_cloud-charts-service_internal_model.MetricsAggregation'
+        time:
+          $ref: '#/components/schemas/github_com_netdata_cloud-charts-service_internal_model.TimeAggregation'
+    github_com_netdata_cloud-charts-service_internal_model.LabelValueSummary:
+      type: object
+      properties:
+        ds:
+          description: Dimensions are the label key-value pairs
+          allOf:
+          - $ref: '#/components/schemas/github_com_netdata_cloud-charts-service_internal_model.ItemsCount'
+        id:
+          description: ID is the label value
+          type: string
+        sts:
+          description: Statistics object including `min`, `max`, `avg`, `anomaly-rate` and `contribution-percentage`
+          type: array
+          items:
+            type: integer
+    errors.Error:
+      type: object
+      properties:
+        details:
+          type: object
+          additionalProperties: {}
+        errorCode:
+          type: string
+        errorMessage:
+          type: string
+        errorMsgKey:
+          type: string
+        validationErrors:
+          type: object
+          additionalProperties:
+            $ref: '#/components/schemas/errors.ValidationError'
+    github_com_netdata_cloud-charts-service_internal_model.NodeSummary:
+      type: object
+      properties:
+        al:
+          description: Summary of the Alert counts of the participating nodes by severity
+          allOf:
+          - $ref: '#/components/schemas/github_com_netdata_cloud-charts-service_internal_model.AlertSummary'
+        ds:
+          description: Information regarding the dimensions that were selected, excluded and whether their query was successful or not
+          allOf:
+          - $ref: '#/components/schemas/github_com_netdata_cloud-charts-service_internal_model.ItemsCount'
+        is:
+          description: Information regarding the instances that were selected, excluded and whether their query was successful or not
+          allOf:
+          - $ref: '#/components/schemas/github_com_netdata_cloud-charts-service_internal_model.ItemsCount'
+        mg:
+          description: The Machine GUID
+          type: string
+          format: uuid
+          example: 550e8400-e29b-41d4-a716-446655440000
+        nd:
+          description: The Node ID
+          type: string
+          format: uuid
+          example: 550e8400-e29b-41d4-a716-446655440000
+        ni:
+          description: The index of the Node in the summaries array
+          type: integer
+        nm:
+          description: The Node name
+          type: string
+          example: my_node
+        st:
+          description: Node Status information
+          allOf:
+          - $ref: '#/components/schemas/github_com_netdata_cloud-charts-service_internal_model.NodeStatus'
+        sts:
+          description: Provides global statistics such as `min`, `max`, `sum`, `volume`, `count` and `anomaly-rate-count`
+          type: array
+          items:
+            type: integer
+    github_com_netdata_cloud-charts-service_internal_model.NodeStatus:
+      type: object
+      properties:
+        ai:
+          description: The index of the Agent that the Node belongs to
+          type: integer
+        code:
+          description: The HTTP response code the Agent returned
+          type: integer
+          example: 200
+        ms:
+          description: The required time in milliseconds until the Cloud got back the Agent's response
+          type: number
+        msg:
+          description: Any error message the Agent might have returned
+          type: string
+          example: timed out
+    github_com_netdata_cloud-charts-service_internal_model.AlertSummary:
+      type: object
+      properties:
+        cl:
+          description: The count of Clear alerts
+          type: integer
+        cr:
+          description: The count of Critical alerts
+          type: integer
+        nm:
+          description: The Name of the alert can be absent when the counters refer to more than one alert instances.
+          type: string
+        ot:
+          description: The count of Other alerts
+          type: integer
+        wr:
+          description: The count of Warning alerts
+          type: integer
+    github_com_netdata_cloud-charts-service_internal_model.Timings:
+      type: object
+      properties:
+        cloud_ms:
+          type: number
+        node_max_ms:
+          type: number
+        output_ms:
+          type: number
+        prep_ms:
+          type: number
+        query_ms:
+          type: number
+        routing_ms:
+          type: number
+        total_ms:
+          type: number
+    github_com_netdata_cloud-charts-service_internal_model.DBDimensions:
+      type: object
+      properties:
+        ids:
+          description: An array with the dimension ids that uniquely identify the dimensions for this query
+          type: array
+          items:
+            type: string
+        sts:
+          description: Statistics of the database dimensions including `max`, `min`, `average`, `sum`, `volume`, `count`, `anomaly-rate-count`, `average-anomaly-rate` and `contribution-percentage`
+          allOf:
+          - $ref: '#/components/schemas/github_com_netdata_cloud-charts-service_internal_model.StatsArray'
+        units:
+          description: An array with the units each dimension has in the database (independent of group-by aggregation that may override the units).
+          type: array
+          items:
+            type: string
+    github_com_netdata_cloud-charts-service_internal_model.InstanceSummary:
+      type: object
+      properties:
+        al:
+          $ref: '#/components/schemas/github_com_netdata_cloud-charts-service_internal_model.AlertSummary'
+        ds:
+          $ref: '#/components/schemas/github_com_netdata_cloud-charts-service_internal_model.ItemsCount'
+        id:
+          type: string
+        ni:
+          type: integer
+        nm:
+          type: string
+        sts:
+          type: array
+          items:
+            type: integer
+  parameters:
+    chart:
+      name: chart
+      in: query
+      description: The id of the chart as returned by the `/api/v1/charts` call.
+      required: false
+      allowEmptyValue: false
+      schema:
+        type: string
+        format: as returned by `/api/v1/charts`
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      description: 'Bearer token authentication for API access when bearer protection is enabled.
+
+
+        **How to obtain a token:**
+
+        1. Token must be obtained via `/api/v3/bearer_get_token` endpoint
+
+        2. This endpoint is ACLK-only (requires Netdata Cloud access)
+
+        3. Token includes role-based access control and expiration time
+
+
+        **How to use:**
+
+        ```
+
+        Authorization: Bearer <token>
+
+        ```
+
+
+        **When required:**
+
+        - When bearer protection is enabled on the agent (via `/api/v3/bearer_protection`)
+
+        - Applies to all APIs with `HTTP_ACCESS_ANONYMOUS_DATA` permission
+
+        - Does not apply to APIs with `HTTP_ACL_NOCHECK` (always public)
+
+        - Does not apply to ACLK-only APIs (use cloud authentication)
+
+
+        **Token expiration:**
+
+        - Tokens are time-limited and must be renewed periodically
+
+        - Expired tokens return HTTP 401 Unauthorized
+
+        '
+    aclkAuth:
+      type: http
+      scheme: bearer
+      description: 'ACLK-only authentication - these APIs are ONLY accessible via Netdata Cloud (ACLK).
+
+
+        **Access Requirements:**
+
+        - User must be authenticated via Netdata Cloud (`SIGNED_ID`)
+
+        - User and agent must be in the same Netdata Cloud space (`SAME_SPACE`)
+
+        - Additional role-based permissions may apply per endpoint
+
+
+        **NOT accessible via:**
+
+        - Direct HTTP/HTTPS to agent (even with bearer token)
+
+        - Local dashboard
+
+        - External integrations
+
+
+        **Available only through:**
+
+        - Netdata Cloud web interface
+
+        - Netdata Cloud API (ACLK tunnel)
+
+
+        **Development mode:**
+
+        - Can be made available in dev mode with `ACL_DEV_OPEN_ACCESS` flag
+
+        '
+    ipAcl:
+      type: apiKey
+      in: header
+      name: X-Forwarded-For
+      description: "IP-based Access Control List restrictions (informational only).\n\n**Configuration:**\nAPIs are subject to IP-based ACL restrictions configured in `netdata.conf`:\n\n```conf\n[web]\n    allow dashboard from = *\n    allow badges from = *\n    allow management from = localhost\n```\n\n**ACL Categories:**\n- `allow dashboard from` - Controls access to metrics, alerts, nodes, functions, config APIs\n- `allow badges from` - Controls access to badge generation APIs\n- `allow management from` - Controls access to management APIs\n\n**Default behavior:**\n- Most APIs allow access from any IP by default\n- Management APIs restrict to localhost by default\n- Can be customized per deployment\n\n**Note:** This is not a standard authentication mechanism but rather IP filtering.\nAPIs with `HTTP_ACL_NOCHECK` bypass all IP restrictions.\n"

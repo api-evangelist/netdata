@@ -1,0 +1,609 @@
+openapi: 3.0.0
+info:
+  title: Netdata agent management API
+  description: 'Real-time performance and health monitoring.
+
+
+    ## API Versions
+
+
+    Netdata provides three API versions:
+
+    - **v1**: The original API, focused on single-node operations
+
+    - **v2**: Multi-node API with advanced grouping and aggregation capabilities
+
+    - **v3**: The latest API version that combines v1 and v2 endpoints and may include additional features
+
+
+    ### v3 API Endpoints
+
+
+    The v3 API provides the current, actively maintained endpoints:
+
+    - `/api/v3/data` - Multi-dimensional data queries
+
+    - `/api/v3/weights` - Metric scoring/correlation
+
+    - `/api/v3/contexts` - Context metadata
+
+    - `/api/v3/nodes` - Node information
+
+    - `/api/v3/q` - Full-text search
+
+    - `/api/v3/alerts` - Alert information
+
+    - `/api/v3/alert_transitions` - Alert state transitions
+
+    - `/api/v3/alert_config` - Alert configuration
+
+    - `/api/v3/functions` - Available functions
+
+    - `/api/v3/function` - Execute functions
+
+    - `/api/v3/info` - Agent information
+
+    - `/api/v3/node_instances` - Node instance information
+
+    - `/api/v3/stream_path` - Streaming topology
+
+    - `/api/v3/versions` - Version information
+
+    - `/api/v3/badge.svg` - Dynamic badges
+
+    - `/api/v3/allmetrics` - Export metrics
+
+    - `/api/v3/context` - Single context info
+
+    - `/api/v3/variable` - Variable information
+
+    - `/api/v3/config` - Dynamic configuration
+
+    - `/api/v3/settings` - Agent settings
+
+    - `/api/v3/me` - Current user information
+
+    - `/api/v3/claim` - Agent claiming
+
+    - Additional management and streaming endpoints
+
+
+    **Note:** V1 and V2 APIs are deprecated and maintained for backwards compatibility only. New integrations should use V3 exclusively.
+
+    '
+  version: v1-rolling
+  contact:
+    name: Netdata Agent API
+    email: info@netdata.cloud
+    url: https://netdata.cloud
+  license:
+    name: GPL v3+
+    url: https://github.com/netdata/netdata/blob/master/LICENSE
+servers:
+- url: https://registry.my-netdata.io
+- url: http://registry.my-netdata.io
+- url: http://localhost:19999
+tags:
+- name: management
+  description: Everything related to managing netdata Agents
+paths:
+  /api/v1/manage/health:
+    get:
+      deprecated: true
+      operationId: health1
+      tags:
+      - management
+      summary: 'Accesses the health management API to control health checks and notifications at runtime.
+
+        '
+      description: 'Available from Netdata v1.12 and above, protected via bearer authorization. Especially useful for maintenance periods, the API allows you to disable health checks completely, silence alarm notifications, or Disable/Silence specific alarms that match selectors on alarm/template name, chart, context, host and family. For the simple disable/silence all scenarios, only the cmd parameter is required. The other parameters are used to define alarm selectors. For more information and examples, refer to the netdata documentation.
+
+
+        **Security & Access Control:**
+
+        - 🔧 **Management API** - Subject to management ACL restrictions
+
+        - **IP Restrictions:** Controlled by `allow management from` in netdata.conf (default: localhost only)
+
+        - **Internal Permissions:** Each management action has its own permission requirements
+
+        - **No Bearer Protection:** Not subject to bearer token authentication
+
+        '
+      parameters:
+      - name: cmd
+        in: query
+        description: 'DISABLE ALL: No alarm criteria are evaluated, nothing is written in the alarm log. SILENCE ALL: No notifications are sent. RESET: Return to the default state. DISABLE/SILENCE: Set the mode to be used for the alarms matching the criteria of the alarm selectors. LIST: Show active configuration.
+
+          '
+        required: false
+        schema:
+          type: string
+          enum:
+          - DISABLE ALL
+          - SILENCE ALL
+          - DISABLE
+          - SILENCE
+          - RESET
+          - LIST
+      - name: alarm
+        in: query
+        description: The expression provided will match both `alarm` and `template` names.
+        schema:
+          type: string
+      - name: chart
+        in: query
+        description: Chart ids/names, as shown on the dashboard. These will match the `on` entry of a configured `alarm`.
+        schema:
+          type: string
+      - name: context
+        in: query
+        description: Chart context, as shown on the dashboard. These will match the `on` entry of a configured `template`.
+        schema:
+          type: string
+      - name: hosts
+        in: query
+        description: The hostnames that will need to match.
+        schema:
+          type: string
+      responses:
+        '200':
+          description: A plain text response based on the result of the command.
+        '403':
+          description: Bearer authentication error.
+  /api/v1/aclk:
+    get:
+      deprecated: true
+      operationId: aclk1
+      tags:
+      - management
+      summary: Get information about current ACLK state
+      description: 'ACLK endpoint returns detailed information about current state of ACLK (Agent to Cloud communication).
+
+
+        **Security & Access Control:**
+
+        - 📊 **Public Data API** - Bearer token optional, IP-based ACL restrictions apply
+
+        - **Default Access:** Public (no authentication required)
+
+        - **Bearer Protection:** When enabled via `/api/v3/bearer_protection`, requires bearer token
+
+        - **IP Restrictions:** Subject to `allow dashboard from` in netdata.conf
+
+        - **Access Methods:** Direct HTTP/HTTPS, Netdata Cloud, external tools
+
+        '
+      security:
+      - {}
+      - bearerAuth: []
+      responses:
+        '200':
+          description: JSON object with ACLK information.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/aclk_state'
+  /api/v1/dbengine_stats:
+    get:
+      deprecated: true
+      operationId: dbengine_stats1
+      tags:
+      - management
+      summary: '[DEPRECATED] Get DBEngine storage statistics'
+      description: '**[DEPRECATED - Use Netdata Cloud or internal metrics for storage monitoring]**
+
+
+        **DBEngine Storage Statistics**
+
+
+        Returns detailed statistics about Netdata''s DBEngine storage system for all configured storage tiers. DBEngine is Netdata''s high-performance time-series database that stores metrics on disk.
+
+
+        **Statistics Provided (per tier):**
+
+
+        **Datafiles:**
+
+        - Active datafiles count
+
+        - Total datafiles (active + archived)
+
+        - Datafile size limits
+
+
+        **Extents:**
+
+        - Number of extents (storage chunks)
+
+        - Extent compression statistics
+
+        - Extent allocation and fragmentation
+
+
+        **Pages:**
+
+        - Page cache statistics
+
+        - Page types (hot, cold, compressed)
+
+        - Page I/O statistics
+
+
+        **Compression:**
+
+        - Compression ratios achieved
+
+        - Compression algorithm efficiency
+
+        - Space saved by compression
+
+
+        **Retention:**
+
+        - Actual retention achieved
+
+        - Retention limits and targets
+
+        - Disk space usage
+
+
+        **Performance:**
+
+        - Read/write rates
+
+        - Cache hit ratios
+
+        - I/O wait times
+
+
+        **Use Cases:**
+
+        - **Capacity Planning:** Monitor disk space usage trends
+
+        - **Performance Tuning:** Analyze cache efficiency and I/O patterns
+
+        - **Storage Optimization:** Review compression ratios and retention
+
+        - **Troubleshooting:** Diagnose DBEngine performance issues
+
+
+        **Storage Tiers:**
+
+        Netdata supports multiple storage tiers with different retention periods:
+
+        - **Tier 0:** High resolution (1-second), short retention
+
+        - **Tier 1:** Medium resolution, medium retention
+
+        - **Tier 2:** Low resolution, long retention
+
+
+        **Availability:**
+
+        This endpoint only works if DBEngine is enabled. Returns 404 if DBEngine is disabled.
+
+
+        **Migration:**
+
+        Modern Netdata installations should use:
+
+        - Netdata Cloud for storage monitoring across agents
+
+        - Internal metrics: `netdata.dbengine_*` charts
+
+        - System info API for aggregate statistics
+
+
+        **Security & Access Control:**
+
+        - 📊 **Public Data API** - Bearer token optional, IP-based ACL restrictions apply
+
+        - **Default Access:** Public (no authentication required)
+
+        - **Bearer Protection:** When enabled via `/api/v3/bearer_protection`, requires bearer token
+
+        - **IP Restrictions:** Subject to `allow dashboard from` in netdata.conf
+
+        - **Access Methods:** Direct HTTP/HTTPS, Netdata Cloud, external tools
+
+        '
+      security:
+      - {}
+      - bearerAuth: []
+      responses:
+        '200':
+          description: DBEngine statistics for all tiers
+          content:
+            application/json:
+              schema:
+                type: object
+                description: Object with one property per tier (tier0, tier1, tier2, etc.) containing detailed statistics
+                additionalProperties:
+                  type: object
+                  description: Statistics for this specific tier
+              example:
+                tier0:
+                  datafiles_active: 4
+                  datafiles_total: 12
+                  extents_total: 156789
+                  pages_total: 8934567
+                  compression_ratio: 3.2
+                  disk_space_bytes: 524288000
+                  retention_seconds: 86400
+                tier1:
+                  datafiles_active: 2
+                  datafiles_total: 6
+                  extents_total: 45678
+                  pages_total: 1234567
+                  compression_ratio: 4.1
+                  disk_space_bytes: 134217728
+                  retention_seconds: 604800
+        '404':
+          description: DBEngine is not enabled
+        '503':
+          description: Service unavailable - Netdata not ready
+  /api/v1/ml_info:
+    get:
+      deprecated: true
+      operationId: ml_info1
+      tags:
+      - management
+      summary: '[DEPRECATED] Get machine learning detection information'
+      description: '**[DEPRECATED - Use internal metrics and Netdata Cloud for ML monitoring]**
+
+
+        **Machine Learning Detection Info**
+
+
+        Returns information about Netdata''s built-in machine learning (ML) anomaly detection system for the specified host. Netdata trains ML models on every metric to detect anomalous behavior in real-time.
+
+
+        **Information Provided:**
+
+
+        **Training Status:**
+
+        - Whether ML is enabled and trained
+
+        - Training progress and completion percentage
+
+        - Number of models trained
+
+        - Training time and resource usage
+
+
+        **Detection Configuration:**
+
+        - Detection sensitivity settings
+
+        - Anomaly detection thresholds
+
+        - Update frequency
+
+        - Model parameters
+
+
+        **Model Statistics:**
+
+        - Number of dimensions being modeled
+
+        - Model types in use (k-means, etc.)
+
+        - Model accuracy metrics
+
+        - Training data requirements
+
+
+        **Detection State:**
+
+        - Current anomaly detection status
+
+        - Recent anomaly counts
+
+        - Detection performance metrics
+
+
+        **Use Cases:**
+
+        - **ML Verification:** Confirm ML is trained and detecting anomalies
+
+        - **Troubleshooting:** Diagnose why ML isn''t detecting issues
+
+        - **Configuration:** Verify ML settings are applied correctly
+
+        - **Monitoring:** Track ML training progress on new agents
+
+
+        **Availability:**
+
+        This endpoint only works if:
+
+        - Netdata was compiled with ML support (`ENABLE_ML`)
+
+        - ML is enabled in configuration
+
+        - The agent has finished initial startup
+
+
+        Returns 503 (Service Unavailable) if ML is not compiled in or not ready.
+
+
+        **Machine Learning in Netdata:**
+
+        - Trains individual k-means models for every metric dimension
+
+        - Updates models continuously as new data arrives
+
+        - Detects anomalies in real-time (within seconds)
+
+        - No configuration required - works out of the box
+
+        - Models stored locally, no data sent to cloud
+
+
+        **Migration:**
+
+        Modern deployments should:
+
+        - Use internal metrics: `netdata.ml_*` charts
+
+        - Check Netdata Cloud for ML insights
+
+        - Use alert transitions API to see ML-based alerts
+
+        - Monitor anomaly rates via `/api/v2/data` with appropriate options
+
+
+        **Security & Access Control:**
+
+        - 📊 **Public Data API** - Bearer token optional, IP-based ACL restrictions apply
+
+        - **Default Access:** Public (no authentication required)
+
+        - **Bearer Protection:** When enabled via `/api/v3/bearer_protection`, requires bearer token
+
+        - **IP Restrictions:** Subject to `allow dashboard from` in netdata.conf
+
+        - **Access Methods:** Direct HTTP/HTTPS, Netdata Cloud, external tools
+
+        '
+      security:
+      - {}
+      - bearerAuth: []
+      responses:
+        '200':
+          description: ML detection information for the host
+          content:
+            application/json:
+              schema:
+                type: object
+                description: Machine learning detection configuration and status
+              example:
+                enabled: true
+                trained: true
+                training_progress: 100
+                models_trained: 1247
+                dimensions_monitored: 1247
+                detection_enabled: true
+                anomaly_detection_running: true
+        '503':
+          description: Service unavailable - ML not compiled in, not enabled, or Netdata not ready
+components:
+  schemas:
+    aclk_state:
+      type: object
+      properties:
+        aclk-available:
+          type: string
+          description: 'Describes whether this Agent is capable of connection to the Cloud. False means Agent has been built without ACLK component either on purpose (user choice) or due to missing dependency.
+
+            '
+        aclk-version:
+          type: integer
+          description: Describes which ACLK version is currently used.
+        protocols-supported:
+          type: array
+          description: List of supported protocols for communication with Cloud.
+          items:
+            type: string
+        Agent-claimed:
+          type: boolean
+          description: Informs whether this Agent has been added to a space in the cloud (User has to perform claiming). If false (user didn't perform claiming) Agent will never attempt any cloud connection.
+        claimed_id:
+          type: string
+          format: uuid
+          description: Unique ID this Agent uses to identify when connecting to cloud
+        online:
+          type: boolean
+          description: Informs if this Agent was connected to the cloud at the time this request has been processed.
+        used-cloud-protocol:
+          type: string
+          description: Informs which protocol is used to communicate with cloud
+          enum:
+          - Old
+          - New
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      description: 'Bearer token authentication for API access when bearer protection is enabled.
+
+
+        **How to obtain a token:**
+
+        1. Token must be obtained via `/api/v3/bearer_get_token` endpoint
+
+        2. This endpoint is ACLK-only (requires Netdata Cloud access)
+
+        3. Token includes role-based access control and expiration time
+
+
+        **How to use:**
+
+        ```
+
+        Authorization: Bearer <token>
+
+        ```
+
+
+        **When required:**
+
+        - When bearer protection is enabled on the agent (via `/api/v3/bearer_protection`)
+
+        - Applies to all APIs with `HTTP_ACCESS_ANONYMOUS_DATA` permission
+
+        - Does not apply to APIs with `HTTP_ACL_NOCHECK` (always public)
+
+        - Does not apply to ACLK-only APIs (use cloud authentication)
+
+
+        **Token expiration:**
+
+        - Tokens are time-limited and must be renewed periodically
+
+        - Expired tokens return HTTP 401 Unauthorized
+
+        '
+    aclkAuth:
+      type: http
+      scheme: bearer
+      description: 'ACLK-only authentication - these APIs are ONLY accessible via Netdata Cloud (ACLK).
+
+
+        **Access Requirements:**
+
+        - User must be authenticated via Netdata Cloud (`SIGNED_ID`)
+
+        - User and agent must be in the same Netdata Cloud space (`SAME_SPACE`)
+
+        - Additional role-based permissions may apply per endpoint
+
+
+        **NOT accessible via:**
+
+        - Direct HTTP/HTTPS to agent (even with bearer token)
+
+        - Local dashboard
+
+        - External integrations
+
+
+        **Available only through:**
+
+        - Netdata Cloud web interface
+
+        - Netdata Cloud API (ACLK tunnel)
+
+
+        **Development mode:**
+
+        - Can be made available in dev mode with `ACL_DEV_OPEN_ACCESS` flag
+
+        '
+    ipAcl:
+      type: apiKey
+      in: header
+      name: X-Forwarded-For
+      description: "IP-based Access Control List restrictions (informational only).\n\n**Configuration:**\nAPIs are subject to IP-based ACL restrictions configured in `netdata.conf`:\n\n```conf\n[web]\n    allow dashboard from = *\n    allow badges from = *\n    allow management from = localhost\n```\n\n**ACL Categories:**\n- `allow dashboard from` - Controls access to metrics, alerts, nodes, functions, config APIs\n- `allow badges from` - Controls access to badge generation APIs\n- `allow management from` - Controls access to management APIs\n\n**Default behavior:**\n- Most APIs allow access from any IP by default\n- Management APIs restrict to localhost by default\n- Can be customized per deployment\n\n**Note:** This is not a standard authentication mechanism but rather IP filtering.\nAPIs with `HTTP_ACL_NOCHECK` bypass all IP restrictions.\n"

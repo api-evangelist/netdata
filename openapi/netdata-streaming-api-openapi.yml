@@ -1,0 +1,363 @@
+openapi: 3.0.0
+info:
+  title: Netdata agent streaming API
+  description: 'Real-time performance and health monitoring.
+
+
+    ## API Versions
+
+
+    Netdata provides three API versions:
+
+    - **v1**: The original API, focused on single-node operations
+
+    - **v2**: Multi-node API with advanced grouping and aggregation capabilities
+
+    - **v3**: The latest API version that combines v1 and v2 endpoints and may include additional features
+
+
+    ### v3 API Endpoints
+
+
+    The v3 API provides the current, actively maintained endpoints:
+
+    - `/api/v3/data` - Multi-dimensional data queries
+
+    - `/api/v3/weights` - Metric scoring/correlation
+
+    - `/api/v3/contexts` - Context metadata
+
+    - `/api/v3/nodes` - Node information
+
+    - `/api/v3/q` - Full-text search
+
+    - `/api/v3/alerts` - Alert information
+
+    - `/api/v3/alert_transitions` - Alert state transitions
+
+    - `/api/v3/alert_config` - Alert configuration
+
+    - `/api/v3/functions` - Available functions
+
+    - `/api/v3/function` - Execute functions
+
+    - `/api/v3/info` - Agent information
+
+    - `/api/v3/node_instances` - Node instance information
+
+    - `/api/v3/stream_path` - Streaming topology
+
+    - `/api/v3/versions` - Version information
+
+    - `/api/v3/badge.svg` - Dynamic badges
+
+    - `/api/v3/allmetrics` - Export metrics
+
+    - `/api/v3/context` - Single context info
+
+    - `/api/v3/variable` - Variable information
+
+    - `/api/v3/config` - Dynamic configuration
+
+    - `/api/v3/settings` - Agent settings
+
+    - `/api/v3/me` - Current user information
+
+    - `/api/v3/claim` - Agent claiming
+
+    - Additional management and streaming endpoints
+
+
+    **Note:** V1 and V2 APIs are deprecated and maintained for backwards compatibility only. New integrations should use V3 exclusively.
+
+    '
+  version: v1-rolling
+  contact:
+    name: Netdata Agent API
+    email: info@netdata.cloud
+    url: https://netdata.cloud
+  license:
+    name: GPL v3+
+    url: https://github.com/netdata/netdata/blob/master/LICENSE
+servers:
+- url: https://registry.my-netdata.io
+- url: http://registry.my-netdata.io
+- url: http://localhost:19999
+tags:
+- name: streaming
+paths:
+  /api/v3/stream_info:
+    get:
+      operationId: stream_info
+      tags:
+      - streaming
+      summary: Get streaming information and statistics
+      description: "**V3 SPECIFIC ENDPOINT**\n\nReturns detailed information about Netdata's streaming connections, including sender/receiver\nstatistics, buffer usage, compression ratios, and connection health metrics.\n\n**Streaming Overview:**\nNetdata supports hierarchical streaming where:\n- **Child nodes** send metrics to **parent nodes** for centralization\n- **Parent nodes** aggregate and store metrics from multiple children\n- Streaming uses efficient binary protocol with compression\n- Connections can be TLS-encrypted and authenticated\n\n**Information Provided:**\n- **Connection status**: Active, established, disconnected\n- **Streaming statistics**: Bytes sent/received, compression ratios\n- **Buffer usage**: Current buffer fill levels, drops\n- **Performance metrics**: Streaming latency, throughput\n- **Replication status**: Data replication lag and progress\n- **Protocol version**: Streaming protocol version in use\n\n**Use Cases:**\n- **Monitor streaming health**: Ensure children are connected and streaming\n- **Troubleshoot connectivity**: Identify disconnections and buffer issues\n- **Performance analysis**: Check compression ratios and throughput\n- **Capacity planning**: Monitor buffer usage and network bandwidth\n- **Replication monitoring**: Track data replication status\n\n**Common Usage Patterns:**\n\n1. **Get streaming info for localhost:**\n   ```\n   /api/v3/stream_info\n   ```\n\n2. **Get streaming info for specific node:**\n   ```\n   /api/v3/stream_info?machine_guid=12345678-1234-1234-1234-123456789012\n   ```\n\n**Response Structure:**\nReturns streaming information including:\n- Parent/child relationship status\n- Connection uptime and reconnection count\n- Bytes sent/received with compression ratios\n- Buffer usage (current size, maximum size, drops)\n- Replication lag and status\n- Stream protocol version\n\n**Streaming Modes:**\n- **Sender mode**: Node is streaming data TO a parent\n- **Receiver mode**: Node is receiving data FROM children\n- **Both**: Node can be both sender and receiver\n\n**Health Indicators:**\n- `connected: true/false` - Connection status\n- `buffer_used_percentage` - Buffer fill level\n- `compression_ratio` - Data compression efficiency\n- `replication_lag_seconds` - Data replication delay\n\n**Security & Access Control:**\n- \U0001F513 **Always Public API** - This endpoint is always accessible without authentication\n- **No Restrictions:** Not subject to bearer protection or IP-based ACL restrictions\n- **No Authentication:** Cannot be restricted by any configuration\n- **Access:** Available to anyone who can reach the agent's HTTP endpoint\n"
+      parameters:
+      - name: machine_guid
+        in: query
+        required: false
+        description: 'Machine GUID (unique node identifier) to query streaming information for.
+
+          If not specified, returns streaming information for the local agent.
+
+
+          **GUID Format:**
+
+          - UUID format: `xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx`
+
+          - Case-insensitive
+
+          - Can be obtained from `/api/v3/nodes` endpoint
+
+
+          **Use Cases:**
+
+          - Query specific child node''s streaming status
+
+          - Check parent node''s connection to specific child
+
+          - Diagnostic queries for particular node
+
+
+          **Examples:**
+
+          - `12345678-1234-1234-1234-123456789012` - Specific node
+
+          - Empty/omitted - Local agent (default)
+
+
+          **Invalid GUIDs:**
+
+          - Malformed UUID: May return error or empty result
+
+          - Non-existent GUID: Returns empty or not-found response
+
+          '
+        schema:
+          type: string
+          format: uuid
+        example: 12345678-1234-1234-1234-123456789012
+      responses:
+        '200':
+          description: 'Successfully retrieved streaming information.
+
+
+            Returns streaming connection details, statistics, and health metrics.
+
+            '
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  machine_guid:
+                    type: string
+                    format: uuid
+                    description: Node machine GUID
+                  hostname:
+                    type: string
+                    description: Node hostname
+                  streaming_mode:
+                    type: string
+                    enum:
+                    - sender
+                    - receiver
+                    - both
+                    - none
+                    description: Streaming mode of this node
+                  sender:
+                    type: object
+                    description: Sender (child→parent) streaming information
+                    properties:
+                      connected:
+                        type: boolean
+                        description: Whether sender is currently connected to parent
+                      parent_hostname:
+                        type: string
+                        description: Hostname of parent node
+                      uptime_seconds:
+                        type: integer
+                        description: Connection uptime in seconds
+                      reconnects:
+                        type: integer
+                        description: Number of reconnection attempts
+                      bytes_sent:
+                        type: integer
+                        description: Total bytes sent
+                      bytes_compressed:
+                        type: integer
+                        description: Bytes after compression
+                      compression_ratio:
+                        type: number
+                        description: Compression ratio (original/compressed)
+                      buffer_used_bytes:
+                        type: integer
+                        description: Current send buffer usage
+                      buffer_max_bytes:
+                        type: integer
+                        description: Maximum send buffer size
+                      buffer_used_percentage:
+                        type: number
+                        description: Buffer fill percentage
+                      drops:
+                        type: integer
+                        description: Number of dropped metrics due to buffer overflow
+                  receiver:
+                    type: object
+                    description: Receiver (parent←children) streaming information
+                    properties:
+                      children:
+                        type: array
+                        description: Connected child nodes
+                        items:
+                          type: object
+                          properties:
+                            machine_guid:
+                              type: string
+                              format: uuid
+                            hostname:
+                              type: string
+                            connected:
+                              type: boolean
+                            uptime_seconds:
+                              type: integer
+                            bytes_received:
+                              type: integer
+                            replication_lag_seconds:
+                              type: integer
+                  protocol_version:
+                    type: integer
+                    description: Streaming protocol version
+              examples:
+                sender_info:
+                  value:
+                    machine_guid: 12345678-1234-1234-1234-123456789012
+                    hostname: child-node-1
+                    streaming_mode: sender
+                    sender:
+                      connected: true
+                      parent_hostname: parent-node
+                      uptime_seconds: 86400
+                      reconnects: 2
+                      bytes_sent: 524288000
+                      bytes_compressed: 104857600
+                      compression_ratio: 5.0
+                      buffer_used_bytes: 1048576
+                      buffer_max_bytes: 10485760
+                      buffer_used_percentage: 10.0
+                      drops: 0
+                    protocol_version: 3
+                  summary: Child node streaming to parent
+                receiver_info:
+                  value:
+                    machine_guid: 87654321-4321-4321-4321-210987654321
+                    hostname: parent-node
+                    streaming_mode: receiver
+                    receiver:
+                      children:
+                      - machine_guid: 12345678-1234-1234-1234-123456789012
+                        hostname: child-node-1
+                        connected: true
+                        uptime_seconds: 86400
+                        bytes_received: 524288000
+                        replication_lag_seconds: 2
+                      - machine_guid: 23456789-2345-2345-2345-234567890123
+                        hostname: child-node-2
+                        connected: true
+                        uptime_seconds: 43200
+                        bytes_received: 262144000
+                        replication_lag_seconds: 1
+                    protocol_version: 3
+                  summary: Parent node receiving from children
+        '400':
+          description: Invalid machine_guid format.
+        '404':
+          description: Node with specified machine_guid not found.
+        '500':
+          description: Internal server error during streaming info retrieval.
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      description: 'Bearer token authentication for API access when bearer protection is enabled.
+
+
+        **How to obtain a token:**
+
+        1. Token must be obtained via `/api/v3/bearer_get_token` endpoint
+
+        2. This endpoint is ACLK-only (requires Netdata Cloud access)
+
+        3. Token includes role-based access control and expiration time
+
+
+        **How to use:**
+
+        ```
+
+        Authorization: Bearer <token>
+
+        ```
+
+
+        **When required:**
+
+        - When bearer protection is enabled on the agent (via `/api/v3/bearer_protection`)
+
+        - Applies to all APIs with `HTTP_ACCESS_ANONYMOUS_DATA` permission
+
+        - Does not apply to APIs with `HTTP_ACL_NOCHECK` (always public)
+
+        - Does not apply to ACLK-only APIs (use cloud authentication)
+
+
+        **Token expiration:**
+
+        - Tokens are time-limited and must be renewed periodically
+
+        - Expired tokens return HTTP 401 Unauthorized
+
+        '
+    aclkAuth:
+      type: http
+      scheme: bearer
+      description: 'ACLK-only authentication - these APIs are ONLY accessible via Netdata Cloud (ACLK).
+
+
+        **Access Requirements:**
+
+        - User must be authenticated via Netdata Cloud (`SIGNED_ID`)
+
+        - User and agent must be in the same Netdata Cloud space (`SAME_SPACE`)
+
+        - Additional role-based permissions may apply per endpoint
+
+
+        **NOT accessible via:**
+
+        - Direct HTTP/HTTPS to agent (even with bearer token)
+
+        - Local dashboard
+
+        - External integrations
+
+
+        **Available only through:**
+
+        - Netdata Cloud web interface
+
+        - Netdata Cloud API (ACLK tunnel)
+
+
+        **Development mode:**
+
+        - Can be made available in dev mode with `ACL_DEV_OPEN_ACCESS` flag
+
+        '
+    ipAcl:
+      type: apiKey
+      in: header
+      name: X-Forwarded-For
+      description: "IP-based Access Control List restrictions (informational only).\n\n**Configuration:**\nAPIs are subject to IP-based ACL restrictions configured in `netdata.conf`:\n\n```conf\n[web]\n    allow dashboard from = *\n    allow badges from = *\n    allow management from = localhost\n```\n\n**ACL Categories:**\n- `allow dashboard from` - Controls access to metrics, alerts, nodes, functions, config APIs\n- `allow badges from` - Controls access to badge generation APIs\n- `allow management from` - Controls access to management APIs\n\n**Default behavior:**\n- Most APIs allow access from any IP by default\n- Management APIs restrict to localhost by default\n- Can be customized per deployment\n\n**Note:** This is not a standard authentication mechanism but rather IP filtering.\nAPIs with `HTTP_ACL_NOCHECK` bypass all IP restrictions.\n"

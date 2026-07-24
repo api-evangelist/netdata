@@ -1,0 +1,1038 @@
+openapi: 3.0.0
+info:
+  title: Netdata agent contexts API
+  description: 'Real-time performance and health monitoring.
+
+
+    ## API Versions
+
+
+    Netdata provides three API versions:
+
+    - **v1**: The original API, focused on single-node operations
+
+    - **v2**: Multi-node API with advanced grouping and aggregation capabilities
+
+    - **v3**: The latest API version that combines v1 and v2 endpoints and may include additional features
+
+
+    ### v3 API Endpoints
+
+
+    The v3 API provides the current, actively maintained endpoints:
+
+    - `/api/v3/data` - Multi-dimensional data queries
+
+    - `/api/v3/weights` - Metric scoring/correlation
+
+    - `/api/v3/contexts` - Context metadata
+
+    - `/api/v3/nodes` - Node information
+
+    - `/api/v3/q` - Full-text search
+
+    - `/api/v3/alerts` - Alert information
+
+    - `/api/v3/alert_transitions` - Alert state transitions
+
+    - `/api/v3/alert_config` - Alert configuration
+
+    - `/api/v3/functions` - Available functions
+
+    - `/api/v3/function` - Execute functions
+
+    - `/api/v3/info` - Agent information
+
+    - `/api/v3/node_instances` - Node instance information
+
+    - `/api/v3/stream_path` - Streaming topology
+
+    - `/api/v3/versions` - Version information
+
+    - `/api/v3/badge.svg` - Dynamic badges
+
+    - `/api/v3/allmetrics` - Export metrics
+
+    - `/api/v3/context` - Single context info
+
+    - `/api/v3/variable` - Variable information
+
+    - `/api/v3/config` - Dynamic configuration
+
+    - `/api/v3/settings` - Agent settings
+
+    - `/api/v3/me` - Current user information
+
+    - `/api/v3/claim` - Agent claiming
+
+    - Additional management and streaming endpoints
+
+
+    **Note:** V1 and V2 APIs are deprecated and maintained for backwards compatibility only. New integrations should use V3 exclusively.
+
+    '
+  version: v1-rolling
+  contact:
+    name: Netdata Agent API
+    email: info@netdata.cloud
+    url: https://netdata.cloud
+  license:
+    name: GPL v3+
+    url: https://github.com/netdata/netdata/blob/master/LICENSE
+servers:
+- url: https://registry.my-netdata.io
+- url: http://registry.my-netdata.io
+- url: http://localhost:19999
+tags:
+- name: contexts
+  description: Everything related contexts - in new code, use this instead of charts
+paths:
+  /api/v2/contexts:
+    get:
+      deprecated: true
+      operationId: getContexts2
+      tags:
+      - contexts
+      summary: Contexts Info v2
+      description: 'Get a list of all contexts, across all nodes, hosted by this Netdata Agent.
+
+
+        **Security & Access Control:**
+
+        - 📊 **Public Data API** - Bearer token optional, IP-based ACL restrictions apply
+
+        - **Default Access:** Public (no authentication required)
+
+        - **Bearer Protection:** When enabled via `/api/v3/bearer_protection`, requires bearer token
+
+        - **IP Restrictions:** Subject to `allow dashboard from` in netdata.conf
+
+        - **Access Methods:** Direct HTTP/HTTPS, Netdata Cloud, external tools
+
+        '
+      security:
+      - {}
+      - bearerAuth: []
+      parameters:
+      - $ref: '#/components/parameters/scopeNodes'
+      - $ref: '#/components/parameters/scopeContexts'
+      - $ref: '#/components/parameters/filterNodes'
+      - $ref: '#/components/parameters/filterContexts'
+      - $ref: '#/components/parameters/contextsQueryOptions'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/contexts2'
+  /api/v3/contexts:
+    get:
+      operationId: getContexts3
+      tags:
+      - contexts
+      summary: Contexts Info v3
+      description: 'Get a list of all contexts, across all nodes, hosted by this Netdata Agent.
+
+
+        **Security & Access Control:**
+
+        - 📊 **Public Data API** - Bearer token optional, IP-based ACL restrictions apply
+
+        - **Default Access:** Public (no authentication required)
+
+        - **Bearer Protection:** When enabled via `/api/v3/bearer_protection`, requires bearer token
+
+        - **IP Restrictions:** Subject to `allow dashboard from` in netdata.conf
+
+        - **Access Methods:** Direct HTTP/HTTPS, Netdata Cloud, external tools
+
+        '
+      security:
+      - {}
+      - bearerAuth: []
+      parameters:
+      - $ref: '#/components/parameters/scopeNodes'
+      - $ref: '#/components/parameters/scopeContexts'
+      - $ref: '#/components/parameters/filterNodes'
+      - $ref: '#/components/parameters/filterContexts'
+      - $ref: '#/components/parameters/contextsQueryOptions'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/contexts2'
+  /api/v2/q:
+    get:
+      deprecated: true
+      operationId: q2
+      tags:
+      - contexts
+      summary: Full Text Search v2
+      description: 'Get a list of contexts, across all nodes, hosted by this Netdata Agent, matching a string expression
+
+
+        **Security & Access Control:**
+
+        - 📊 **Public Data API** - Bearer token optional, IP-based ACL restrictions apply
+
+        - **Default Access:** Public (no authentication required)
+
+        - **Bearer Protection:** When enabled via `/api/v3/bearer_protection`, requires bearer token
+
+        - **IP Restrictions:** Subject to `allow dashboard from` in netdata.conf
+
+        - **Access Methods:** Direct HTTP/HTTPS, Netdata Cloud, external tools
+
+        '
+      security:
+      - {}
+      - bearerAuth: []
+      parameters:
+      - name: q
+        in: query
+        description: The strings to search for, formatted as a simple pattern
+        required: true
+        schema:
+          type: string
+          format: simple pattern
+      - $ref: '#/components/parameters/scopeNodes'
+      - $ref: '#/components/parameters/scopeContexts'
+      - $ref: '#/components/parameters/filterNodes'
+      - $ref: '#/components/parameters/filterContexts'
+      - $ref: '#/components/parameters/contextsQueryOptions'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/contexts2'
+  /api/v3/q:
+    get:
+      operationId: q3
+      tags:
+      - contexts
+      summary: Full Text Search v3
+      description: 'Get a list of contexts, across all nodes, hosted by this Netdata Agent, matching a string expression.
+
+
+        **Security & Access Control:**
+
+        - 📊 **Public Data API** - Bearer token optional, IP-based ACL restrictions apply
+
+        - **Default Access:** Public (no authentication required)
+
+        - **Bearer Protection:** When enabled via `/api/v3/bearer_protection`, requires bearer token
+
+        - **IP Restrictions:** Subject to `allow dashboard from` in netdata.conf
+
+        - **Access Methods:** Direct HTTP/HTTPS, Netdata Cloud, external tools
+
+        '
+      security:
+      - {}
+      - bearerAuth: []
+      parameters:
+      - name: q
+        in: query
+        description: The strings to search for, formatted as a simple pattern
+        required: true
+        schema:
+          type: string
+          format: simple pattern
+      - $ref: '#/components/parameters/scopeNodes'
+      - $ref: '#/components/parameters/scopeContexts'
+      - $ref: '#/components/parameters/filterNodes'
+      - $ref: '#/components/parameters/filterContexts'
+      - $ref: '#/components/parameters/contextsQueryOptions'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/contexts2'
+  /api/v1/contexts:
+    get:
+      deprecated: true
+      operationId: getNodeContexts1
+      tags:
+      - contexts
+      summary: Get a list of all node contexts available v1
+      description: 'The contexts endpoint returns a summary about all contexts stored in the netdata server.
+
+        **Security & Access Control:** - 📊 **Public Data API** - Bearer token optional, IP-based ACL restrictions apply - **Default Access:** Public (no authentication required) - **Bearer Protection:** When enabled via `/api/v3/bearer_protection`, requires bearer token - **IP Restrictions:** Subject to `allow dashboard from` in netdata.conf - **Access Methods:** Direct HTTP/HTTPS, Netdata Cloud, external tools'
+      security:
+      - {}
+      - bearerAuth: []
+      parameters:
+      - $ref: '#/components/parameters/dimensions'
+      - $ref: '#/components/parameters/chart_label_key'
+      - $ref: '#/components/parameters/chart_labels_filter'
+      - $ref: '#/components/parameters/contextOptions1'
+      - $ref: '#/components/parameters/after'
+      - $ref: '#/components/parameters/before'
+      responses:
+        '200':
+          description: An array of contexts.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/context_summary'
+  /api/v1/context:
+    get:
+      deprecated: true
+      operationId: getNodeContext1
+      tags:
+      - contexts
+      summary: Get info about a specific context
+      description: 'The context endpoint returns detailed information about a given context.
+
+        The `context` parameter is required for this call.
+
+
+        **Security & Access Control:**
+
+        - 📊 **Public Data API** - Bearer token optional, IP-based ACL restrictions apply
+
+        - **Default Access:** Public (no authentication required)
+
+        - **Bearer Protection:** When enabled via `/api/v3/bearer_protection`, requires bearer token
+
+        - **IP Restrictions:** Subject to `allow dashboard from` in netdata.conf
+
+        - **Access Methods:** Direct HTTP/HTTPS, Netdata Cloud, external tools
+
+        '
+      security:
+      - {}
+      - bearerAuth: []
+      parameters:
+      - $ref: '#/components/parameters/context'
+      - $ref: '#/components/parameters/dimensions'
+      - $ref: '#/components/parameters/chart_label_key'
+      - $ref: '#/components/parameters/chart_labels_filter'
+      - $ref: '#/components/parameters/contextOptions1'
+      - $ref: '#/components/parameters/after'
+      - $ref: '#/components/parameters/before'
+      responses:
+        '200':
+          description: A javascript object with detailed information about the context.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/context'
+        '400':
+          description: No context id was supplied in the request.
+        '404':
+          description: No context with the given id is found.
+  /api/v3/context:
+    get:
+      operationId: getNodeContext3
+      tags:
+      - contexts
+      summary: Get info about a specific context - Latest API
+      description: 'The context endpoint returns detailed information about a specific monitoring context across all nodes.
+
+
+        This is the latest version (v3) of the context API. It provides the same functionality as v1 but may include additional features in the future.
+
+
+        **What is a Context?**
+
+        A context is a grouping of charts that monitor the same type of metric across different instances. For example:
+
+        - `system.cpu` - CPU usage (one chart per node)
+
+        - `disk.io` - Disk I/O operations (one chart per disk)
+
+        - `net.packets` - Network packets (one chart per network interface)
+
+
+        **Use Cases:**
+
+        - Get metadata about a specific metric type across all instances and nodes
+
+        - Discover which charts belong to a context
+
+        - Filter charts by labels or dimensions
+
+        - Understand metric families, units, and chart types
+
+        - Build dynamic dashboards that adapt to available instances
+
+
+        The response includes all charts that belong to the specified context, with their metadata, dimensions, labels, and current availability status.
+
+
+        **Security & Access Control:**
+
+        - 📊 **Public Data API** - Bearer token optional, IP-based ACL restrictions apply
+
+        - **Default Access:** Public (no authentication required)
+
+        - **Bearer Protection:** When enabled via `/api/v3/bearer_protection`, requires bearer token
+
+        - **IP Restrictions:** Subject to `allow dashboard from` in netdata.conf
+
+        - **Access Methods:** Direct HTTP/HTTPS, Netdata Cloud, external tools
+
+        '
+      security:
+      - {}
+      - bearerAuth: []
+      parameters:
+      - name: context
+        in: query
+        description: 'The context identifier to query. This is a required parameter.
+
+
+          A context represents a type of metric collected across multiple instances. Each context groups charts that measure the same thing but for different entities.
+
+
+          **Common Context Examples:**
+
+          - `system.cpu` - CPU utilization metrics
+
+          - `system.ram` - RAM usage metrics
+
+          - `disk.io` - Disk I/O operations
+
+          - `disk.ops` - Disk operation counts
+
+          - `net.packets` - Network packet statistics
+
+          - `net.drops` - Network packet drops
+
+          - `cgroup.cpu` - Container CPU usage
+
+          - `nginx.requests` - Nginx request rates
+
+
+          **Finding Available Contexts:**
+
+          Use the `/api/v3/contexts` endpoint to get a list of all available contexts.
+
+
+          **Alias:** Can also be specified as `ctx` for brevity.
+
+          '
+        required: true
+        schema:
+          type: string
+        example: system.cpu
+      - $ref: '#/components/parameters/dimensions'
+      - $ref: '#/components/parameters/chart_label_key'
+      - $ref: '#/components/parameters/chart_labels_filter'
+      - name: options
+        in: query
+        description: 'Comma or pipe-separated list of options to control the response content and format.
+
+
+          **Available Options:**
+
+          - `full` or `all` - Include all possible information (equivalent to enabling all options below)
+
+          - `charts` - Include the list of charts belonging to this context
+
+          - `dimensions` - Include dimension information for each chart
+
+          - `queue` - Include data collection queue statistics
+
+          - `flags` - Include internal flags and states
+
+          - `labels` - Include chart labels
+
+          - `alerts` - Include alert configurations and states for this context
+
+
+          **Option Combinations:**
+
+          Options can be combined. For example: `options=charts,dimensions,labels` will include charts with their dimensions and labels.
+
+
+          **Default Behavior:**
+
+          When not specified, returns basic context information without detailed chart data.
+
+
+          **Examples:**
+
+          - `options=full` - Complete information
+
+          - `options=charts,dimensions` - Charts with dimension details
+
+          - `options=charts|labels` - Charts with labels (pipe separator)
+
+          '
+        required: false
+        schema:
+          type: string
+        examples:
+          minimal:
+            value: ''
+            summary: Basic context info only
+          standard:
+            value: charts,dimensions
+            summary: Charts with dimensions
+          complete:
+            value: full
+            summary: All available information
+      - name: after
+        in: query
+        description: 'Return only charts that have collected data after this timestamp.
+
+
+          This filters charts based on their data collection activity, excluding charts that haven''t collected data since the specified time.
+
+
+          **Format:** Unix timestamp in seconds
+
+
+          **Use Cases:**
+
+          - Find recently active charts
+
+          - Exclude stale or obsolete charts
+
+          - Filter charts by collection timeframe
+
+
+          **Example:** `after=1609459200` (charts active after January 1, 2021)
+
+
+          When not specified, all charts are included regardless of their last update time.
+
+          '
+        required: false
+        schema:
+          type: integer
+          format: int64
+        example: 1609459200
+      - name: before
+        in: query
+        description: 'Return only charts that have collected data before this timestamp.
+
+
+          This filters charts based on their data collection activity, excluding charts that only have data after the specified time.
+
+
+          **Format:** Unix timestamp in seconds
+
+
+          **Use Cases:**
+
+          - Historical analysis of chart availability
+
+          - Find charts that were active during a specific time period
+
+          - Exclude newer charts from results
+
+
+          **Example:** `before=1640995200` (charts active before January 1, 2022)
+
+
+          When combined with `after`, you can specify an exact time window:
+
+          `after=1609459200&before=1640995200` (charts active during 2021)
+
+
+          When not specified, all charts are included regardless of their collection timeline.
+
+          '
+        required: false
+        schema:
+          type: integer
+          format: int64
+        example: 1640995200
+      responses:
+        '200':
+          description: 'Success. Returns detailed information about the requested context.
+
+
+            The response is a JSON object containing:
+
+            - Context metadata (name, title, family, units, chart type)
+
+            - List of charts belonging to this context (when options=charts)
+
+            - Dimension information (when options=dimensions)
+
+            - Chart labels (when options=labels)
+
+            - Alert configurations (when options=alerts)
+
+            - Collection statistics (when options=queue)
+
+
+            **Response Structure:**
+
+            The exact structure depends on the options parameter. With `options=full`, you get complete information including all charts, their dimensions, labels, and current states.
+
+            '
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/context'
+        '400':
+          description: 'Bad request. Common causes:
+
+            - Missing required ''context'' parameter
+
+            - Invalid parameter values
+
+            - Malformed filter patterns
+
+            '
+        '404':
+          description: 'Not found. The specified context does not exist on this Netdata agent.
+
+
+            This can occur when:
+
+            - The context name is misspelled
+
+            - The context is not being collected on this agent
+
+            - The context was available but is now obsolete
+
+            '
+        '500':
+          description: Internal server error. Usually indicates the server is out of memory.
+components:
+  parameters:
+    context:
+      name: context
+      in: query
+      description: The context of the chart as returned by the /charts call.
+      required: false
+      allowEmptyValue: false
+      schema:
+        type: string
+        format: as returned by /charts
+    scopeContexts:
+      name: scope_contexts
+      in: query
+      description: 'A simple pattern limiting the contexts scope of the query. The scope controls both data and metadata response. The default contexts scope is all contexts for which this Agent has data for. Usually the contexts scope is used to slice data on the dashboard (e.g. each context based chart has its own contexts scope, limiting the chart to all the instances of the selected context). Both positive and negative simple pattern expressions are supported.
+
+        '
+      required: false
+      schema:
+        type: string
+        format: simple pattern
+        default: '*'
+    chart_labels_filter:
+      name: chart_labels_filter
+      in: query
+      description: 'Specify the chart label keys and values to match for context queries. All keys/values need to match for the chart to be included in the query. The labels are specified as key1:value1,key2:value2
+
+        '
+      required: false
+      allowEmptyValue: false
+      schema:
+        type: string
+        format: key1:value1,key2:value2,key3:value3
+    chart_label_key:
+      name: chart_label_key
+      in: query
+      description: 'Specify the chart label keys that need to match for context queries as comma separated values. At least one matching key is needed to match the corresponding chart.
+
+        '
+      required: false
+      allowEmptyValue: false
+      schema:
+        type: string
+        format: key1,key2,key3
+    filterContexts:
+      name: contexts
+      in: query
+      description: 'A simple pattern matching the contexts to be queried. This only controls the data response, not the metadata. Both positive and negative simple pattern expressions are supported.
+
+        '
+      required: false
+      schema:
+        type: string
+        format: simple pattern
+        default: '*'
+    contextsQueryOptions:
+      name: options
+      in: query
+      description: 'Options that affect the output of contexts metadata queries.
+
+        * `minify` - Remove unnecessary spaces and newlines from the output to reduce bandwidth.
+
+        * `debug` - Provide additional debugging information in the response.
+
+        * `config` - Include alert configuration information (used by /api/v2/alert_transitions).
+
+        * `instances` - Include alert/context instance information (used by /api/v2/alerts).
+
+        * `values` - Include latest metric values (used by /api/v2/alerts).
+
+        * `summary` - Include summary counters (used by /api/v2/alerts).
+
+        * `mcp` - Format output for Model Context Protocol (MCP) integration.
+
+        * `dimensions` - Include dimension information for each context.
+
+        * `labels` - Include label information for each context.
+
+        * `priorities` - Include priority information for each context.
+
+        * `titles` - Include title information for each context.
+
+        * `rfc3339` - Return timestamps in RFC3339 format (e.g., "2023-01-01T00:00:00Z") instead of Unix timestamps.
+
+
+        Note: Some options like `retention`, `liveness`, `family`, and `units` are automatically included by specific endpoints and cannot be controlled via this parameter.
+
+        '
+      required: false
+      allowEmptyValue: false
+      schema:
+        type: array
+        items:
+          type: string
+          enum:
+          - minify
+          - debug
+          - config
+          - instances
+          - values
+          - summary
+          - mcp
+          - dimensions
+          - labels
+          - priorities
+          - titles
+          - rfc3339
+        default: []
+    dimensions:
+      name: dimensions
+      in: query
+      description: a simple pattern matching dimensions (use comma or pipe as separator)
+      required: false
+      allowEmptyValue: true
+      schema:
+        type: string
+    contextOptions1:
+      name: options
+      in: query
+      description: 'Options that affect data generation.
+
+        * `full` or `all` - Include all available information.
+
+        * `charts` - Include chart information.
+
+        * `dimensions` - Include dimension information.
+
+        * `labels` - Include label information.
+
+        * `uuids` - Include UUIDs in the response.
+
+        * `queue` - Include queue information.
+
+        * `flags` - Include internal flags.
+
+        * `deleted` - Include deleted items.
+
+        * `deepscan` - Perform a deep scan for contexts.
+
+        * `rfc3339` - Return timestamps in RFC3339 format instead of Unix timestamps.
+
+        '
+      required: false
+      schema:
+        type: array
+        items:
+          type: string
+          enum:
+          - full
+          - all
+          - charts
+          - dimensions
+          - labels
+          - uuids
+          - queue
+          - flags
+          - deleted
+          - deepscan
+          - rfc3339
+    filterNodes:
+      name: nodes
+      in: query
+      description: 'A simple pattern matching the nodes to be queried. This only controls the data response, not the metadata. The simple pattern is checked against the nodes'' machine guid, node id, hostname. The default nodes selector is all the nodes matched by the nodes scope. Both positive and negative simple pattern expressions are supported.
+
+        '
+      required: false
+      schema:
+        type: string
+        format: simple pattern
+        default: '*'
+    after:
+      name: after
+      in: query
+      description: '`after` and `before` define the time-frame of a query. `after` can be a negative number of seconds, up to 3 years (-94608000), relative to `before`. If not set, it is usually assumed to be -600. When non-data endpoints support the `after` and `before`, they use the time-frame to limit their response for objects having data retention within the time-frame given.
+
+        '
+      required: false
+      schema:
+        type: integer
+        default: -600
+    scopeNodes:
+      name: scope_nodes
+      in: query
+      description: 'A simple pattern limiting the nodes scope of the query. The scope controls both data and metadata response. The simple pattern is checked against the nodes'' machine guid, node id and hostname. The default nodes scope is all nodes for which this Agent has data for. Usually the nodes scope is used to slice the entire dashboard (e.g. the Global Nodes Selector at the Netdata Cloud overview dashboard). Both positive and negative simple pattern expressions are supported.
+
+        '
+      required: false
+      schema:
+        type: string
+        format: simple pattern
+        default: '*'
+    before:
+      name: before
+      in: query
+      description: '`after` and `before` define the time-frame of a query. `before` can be a negative number of seconds, up to 3 years (-94608000), relative to current clock. If not set, it is assumed to be the current clock time. When `before` is positive, it is assumed to be a unix epoch timestamp. When non-data endpoints support the `after` and `before`, they use the time-frame to limit their response for objects having data retention within the time-frame given.
+
+        '
+      required: false
+      schema:
+        type: integer
+        default: 0
+  schemas:
+    agents:
+      description: 'An array of Agent definitions consulted to compose this response.
+
+        '
+      type: array
+      items:
+        type: object
+        properties:
+          mg:
+            description: The Agent machine GUID.
+            type: string
+            format: uuid
+          nd:
+            description: The Agent cloud node ID.
+            type: string
+            format: uuid
+          nm:
+            description: The Agent hostname.
+            type: string
+          ai:
+            description: The Agent index ID for this Agent, in this response.
+            type: integer
+          now:
+            description: The current unix epoch timestamp of this Agent.
+            type: integer
+    context:
+      type: object
+      properties:
+        version:
+          type: string
+          description: The version of this context. The number are not sequential, but bigger numbers depict a newer object.
+        hub_version:
+          type: string
+          description: The version of this context, as known by hub.
+        family:
+          type: string
+          description: The family of the context. When multiple charts of a context have different families, the netdata server replaces the different parts with [x], so that the context can have only one family.
+        title:
+          type: string
+          description: The title of the context. When multiple charts of a context have different titles, the netdata server replaces the different parts with [x], so that the context can have only one title.
+        priority:
+          type: number
+          description: The relative priority of the context. When multiple contexts have different priorities, the minimum among them is selected as the priority of the context.
+        units:
+          type: string
+          description: The unit of measurement for the values of all dimensions of the context. If multiple charts of context have different units, the latest collected is selected.
+        chart_type:
+          type: string
+          description: The chart type.
+          enum:
+          - line
+          - area
+          - stacked
+        first_time_t:
+          type: number
+          description: The UNIX timestamp of the first entry (the oldest) in the database.
+        last_time_t:
+          type: number
+          description: The UNIX timestamp of the latest entry in the database.
+        charts:
+          type: object
+          description: An object containing all the charts available for the chart. This is used as an indexed array. For each pair in the dictionary, the key is the id of the chart and the value provides all details about the chart.
+    api:
+      description: The version of the API used.
+      type: integer
+    context2Basic:
+      type: object
+      properties:
+        family:
+          type: string
+        priority:
+          type: integer
+        first_entry:
+          type: integer
+        last_entry:
+          type: integer
+        live:
+          type: boolean
+    context_summary:
+      type: object
+      properties:
+        hostname:
+          type: string
+          description: The hostname of the netdata server.
+        machine_guid:
+          type: string
+          description: The unique installation id of this netdata server.
+        node_id:
+          type: string
+          description: The unique node id of this netdata server at the hub.
+          example: nightly
+        claim_id:
+          type: string
+          description: The unique handshake id of this netdata server and the hub.
+        host_labels:
+          type: object
+          description: The host labels associated with this netdata server.
+        context:
+          type: object
+          description: An object containing all the context objects available at the netdata server. This is used as an indexed array. The key of each context object is the id of the context.
+          additionalProperties:
+            $ref: '#/components/schemas/context'
+    versions:
+      description: 'Hashes that allow the caller to detect important database changes of Netdata Agents.
+
+        '
+      type: object
+      properties:
+        nodes_hard_hash:
+          description: 'An auto-increment value that reflects the number of changes to the number of nodes maintained by the server. Everytime a node is added or removed, this number gets incremented.
+
+            '
+          type: integer
+        contexts_hard_hash:
+          description: 'An auto-increment value that reflects the number of changes to the number of contexts maintained by the server. Everytime a context is added or removed, this number gets incremented.
+
+            '
+          type: integer
+        contexts_soft_hash:
+          description: 'An auto-increment value that reflects the number of changes to the queue that sends contexts updates to Netdata Cloud. Everytime the contents of a context are updated, this number gets incremented.
+
+            '
+          type: integer
+        alerts_hard_hash:
+          description: 'An auto-increment value that reflects the number of changes to the number of alerts. Everytime an alert is added or removed, this number gets incremented.
+
+            '
+          type: integer
+        alerts_soft_hash:
+          description: 'An auto-increment value that reflects the number of alerts transitions. Everytime an alert transitions to a new state, this number gets incremented.
+
+            '
+          type: integer
+    contexts2:
+      description: '`/api/v2/contexts` and `/api/v2/q` response about multi-node contexts hosted by a Netdata Agent.
+
+        '
+      type: object
+      properties:
+        api:
+          $ref: '#/components/schemas/api'
+        agents:
+          $ref: '#/components/schemas/agents'
+        versions:
+          $ref: '#/components/schemas/versions'
+        contexts:
+          additionalProperties:
+            $ref: '#/components/schemas/context2Basic'
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      description: 'Bearer token authentication for API access when bearer protection is enabled.
+
+
+        **How to obtain a token:**
+
+        1. Token must be obtained via `/api/v3/bearer_get_token` endpoint
+
+        2. This endpoint is ACLK-only (requires Netdata Cloud access)
+
+        3. Token includes role-based access control and expiration time
+
+
+        **How to use:**
+
+        ```
+
+        Authorization: Bearer <token>
+
+        ```
+
+
+        **When required:**
+
+        - When bearer protection is enabled on the agent (via `/api/v3/bearer_protection`)
+
+        - Applies to all APIs with `HTTP_ACCESS_ANONYMOUS_DATA` permission
+
+        - Does not apply to APIs with `HTTP_ACL_NOCHECK` (always public)
+
+        - Does not apply to ACLK-only APIs (use cloud authentication)
+
+
+        **Token expiration:**
+
+        - Tokens are time-limited and must be renewed periodically
+
+        - Expired tokens return HTTP 401 Unauthorized
+
+        '
+    aclkAuth:
+      type: http
+      scheme: bearer
+      description: 'ACLK-only authentication - these APIs are ONLY accessible via Netdata Cloud (ACLK).
+
+
+        **Access Requirements:**
+
+        - User must be authenticated via Netdata Cloud (`SIGNED_ID`)
+
+        - User and agent must be in the same Netdata Cloud space (`SAME_SPACE`)
+
+        - Additional role-based permissions may apply per endpoint
+
+
+        **NOT accessible via:**
+
+        - Direct HTTP/HTTPS to agent (even with bearer token)
+
+        - Local dashboard
+
+        - External integrations
+
+
+        **Available only through:**
+
+        - Netdata Cloud web interface
+
+        - Netdata Cloud API (ACLK tunnel)
+
+
+        **Development mode:**
+
+        - Can be made available in dev mode with `ACL_DEV_OPEN_ACCESS` flag
+
+        '
+    ipAcl:
+      type: apiKey
+      in: header
+      name: X-Forwarded-For
+      description: "IP-based Access Control List restrictions (informational only).\n\n**Configuration:**\nAPIs are subject to IP-based ACL restrictions configured in `netdata.conf`:\n\n```conf\n[web]\n    allow dashboard from = *\n    allow badges from = *\n    allow management from = localhost\n```\n\n**ACL Categories:**\n- `allow dashboard from` - Controls access to metrics, alerts, nodes, functions, config APIs\n- `allow badges from` - Controls access to badge generation APIs\n- `allow management from` - Controls access to management APIs\n\n**Default behavior:**\n- Most APIs allow access from any IP by default\n- Management APIs restrict to localhost by default\n- Can be customized per deployment\n\n**Note:** This is not a standard authentication mechanism but rather IP filtering.\nAPIs with `HTTP_ACL_NOCHECK` bypass all IP restrictions.\n"

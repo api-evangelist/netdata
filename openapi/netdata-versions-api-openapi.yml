@@ -1,0 +1,372 @@
+openapi: 3.0.0
+info:
+  title: Netdata agent versions API
+  description: 'Real-time performance and health monitoring.
+
+
+    ## API Versions
+
+
+    Netdata provides three API versions:
+
+    - **v1**: The original API, focused on single-node operations
+
+    - **v2**: Multi-node API with advanced grouping and aggregation capabilities
+
+    - **v3**: The latest API version that combines v1 and v2 endpoints and may include additional features
+
+
+    ### v3 API Endpoints
+
+
+    The v3 API provides the current, actively maintained endpoints:
+
+    - `/api/v3/data` - Multi-dimensional data queries
+
+    - `/api/v3/weights` - Metric scoring/correlation
+
+    - `/api/v3/contexts` - Context metadata
+
+    - `/api/v3/nodes` - Node information
+
+    - `/api/v3/q` - Full-text search
+
+    - `/api/v3/alerts` - Alert information
+
+    - `/api/v3/alert_transitions` - Alert state transitions
+
+    - `/api/v3/alert_config` - Alert configuration
+
+    - `/api/v3/functions` - Available functions
+
+    - `/api/v3/function` - Execute functions
+
+    - `/api/v3/info` - Agent information
+
+    - `/api/v3/node_instances` - Node instance information
+
+    - `/api/v3/stream_path` - Streaming topology
+
+    - `/api/v3/versions` - Version information
+
+    - `/api/v3/badge.svg` - Dynamic badges
+
+    - `/api/v3/allmetrics` - Export metrics
+
+    - `/api/v3/context` - Single context info
+
+    - `/api/v3/variable` - Variable information
+
+    - `/api/v3/config` - Dynamic configuration
+
+    - `/api/v3/settings` - Agent settings
+
+    - `/api/v3/me` - Current user information
+
+    - `/api/v3/claim` - Agent claiming
+
+    - Additional management and streaming endpoints
+
+
+    **Note:** V1 and V2 APIs are deprecated and maintained for backwards compatibility only. New integrations should use V3 exclusively.
+
+    '
+  version: v1-rolling
+  contact:
+    name: Netdata Agent API
+    email: info@netdata.cloud
+    url: https://netdata.cloud
+  license:
+    name: GPL v3+
+    url: https://github.com/netdata/netdata/blob/master/LICENSE
+servers:
+- url: https://registry.my-netdata.io
+- url: http://registry.my-netdata.io
+- url: http://localhost:19999
+tags:
+- name: versions
+paths:
+  /api/v3/versions:
+    get:
+      operationId: versions3
+      tags:
+      - versions
+      summary: Retrieve Netdata agent version information across nodes
+      description: "Returns version information for Netdata agents running on monitored nodes.\nThis endpoint provides visibility into the software versions deployed across your infrastructure,\nhelping identify version mismatches, outdated agents, and upgrade planning.\n\n**Version Information Includes:**\n- Netdata agent version string (e.g., \"v1.40.0\")\n- Build information and commit hash\n- Protocol versions supported\n- Feature capabilities based on version\n\n**Use Cases:**\n- **Version audit**: Identify which nodes run which versions\n- **Upgrade planning**: Find nodes that need updates\n- **Compatibility checking**: Ensure version compatibility across infrastructure\n- **Feature availability**: Determine which features are available on which nodes\n- **Security compliance**: Identify nodes running vulnerable versions\n\n**Common Usage Patterns:**\n\n1. **Get versions of all nodes:**\n   ```\n   /api/v3/versions\n   ```\n\n2. **Check versions of specific nodes:**\n   ```\n   /api/v3/versions?nodes=prod-*\n   ```\n\n3. **Scope to production infrastructure:**\n   ```\n   /api/v3/versions?scope_nodes=prod-*\n   ```\n\n**Response Structure:**\nReturns version information grouped by node, showing:\n- Agent version string\n- Build timestamp\n- Git commit hash\n- Protocol versions\n- Feature flags and capabilities\n\n**Security & Access Control:**\n- \U0001F513 **Always Public API** - This endpoint is always accessible without authentication\n- **No Restrictions:** Not subject to bearer protection or IP-based ACL restrictions\n- **No Authentication:** Cannot be restricted by any configuration\n- **Access:** Available to anyone who can reach the agent's HTTP endpoint\n"
+      parameters:
+      - name: scope_nodes
+        in: query
+        required: false
+        description: 'Simple pattern to match node hostnames for scope filtering. Uses Netdata''s simple pattern
+
+          matching (not regex). Matched nodes define the scope for version information retrieval.
+
+
+          **Pattern Syntax:**
+
+          - `*` matches any number of characters
+
+          - Use `|` to separate multiple patterns (OR logic)
+
+          - Matches are case-insensitive
+
+          - No regex support - only simple wildcards
+
+
+          **Examples:**
+
+          - `prod-*` - All production nodes
+
+          - `*-db-*` - All database nodes
+
+          - `web-*|app-*` - All web or application nodes
+
+          - `*` - All nodes (default)
+
+          '
+        schema:
+          type: string
+          default: '*'
+        example: prod-*
+      - name: nodes
+        in: query
+        required: false
+        description: 'Simple pattern to filter which nodes to include in the version information response.
+
+          After scope is determined, this filters the results. Uses the same pattern syntax as scope_nodes.
+
+
+          **Difference from scope_nodes:**
+
+          - `scope_nodes` defines what nodes to analyze
+
+          - `nodes` filters which nodes appear in the output
+
+
+          **Examples:**
+
+          - `old-*` - Only show nodes matching "old-*" pattern
+
+          - Specific hostnames: `node1|node2|node3`
+
+          '
+        schema:
+          type: string
+          default: '*'
+        example: '*'
+      - name: options
+        in: query
+        required: false
+        description: 'Comma-separated list of options to control response content and format.
+
+
+          **Available Options:**
+
+          - `minify` - Minimize JSON output (no pretty-printing)
+
+          - `debug` - Include additional debug information
+
+          - `raw` - Include raw version metadata
+
+
+          **Examples:**
+
+          - `minify` - Compact JSON response
+
+          - `debug,raw` - Debug mode with raw metadata
+
+          '
+        schema:
+          type: string
+        example: debug
+      - name: timeout
+        in: query
+        required: false
+        description: 'Maximum time in seconds to wait for the query to complete before timing out.
+
+
+          **Guidelines:**
+
+          - Recommended: 10-30 seconds for most queries
+
+          - Version information is usually quick to retrieve
+
+          - Timeout mainly applies to very large infrastructures
+
+          '
+        schema:
+          type: integer
+          minimum: 1
+          default: 60
+        example: 10
+      - name: cardinality
+        in: query
+        required: false
+        description: 'Maximum number of nodes to include in the response to prevent overwhelming large responses.
+
+          When this limit is exceeded, the response will indicate how many nodes were omitted.
+
+
+          **Purpose:**
+
+          - Prevent memory exhaustion from very large infrastructures
+
+          - Control response size for performance
+
+          - Useful when exploring large node sets incrementally
+
+
+          **Recommendations:**
+
+          - Small infrastructures (< 100 nodes): Use default
+
+          - Medium infrastructures (100-1000 nodes): 500-1000
+
+          - Large infrastructures (> 1000 nodes): Use filtering or increase limit carefully
+
+          '
+        schema:
+          type: integer
+          minimum: 1
+          maximum: 10000
+          default: 1000
+        example: 500
+      responses:
+        '200':
+          description: 'Successfully retrieved version information.
+
+
+            Returns version data for each node including agent version, build info,
+
+            protocol versions, and feature capabilities.
+
+            '
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  versions:
+                    type: array
+                    description: Array of version information per node
+                    items:
+                      type: object
+                      properties:
+                        hostname:
+                          type: string
+                          description: Node hostname
+                        machine_guid:
+                          type: string
+                          description: Unique node identifier
+                        version:
+                          type: string
+                          description: Netdata agent version string
+                          example: v1.40.0
+                        build_info:
+                          type: string
+                          description: Build information and timestamp
+                        commit_hash:
+                          type: string
+                          description: Git commit hash of the build
+                        protocol_version:
+                          type: integer
+                          description: Streaming protocol version supported
+                        features:
+                          type: array
+                          description: Feature flags and capabilities
+                          items:
+                            type: string
+                  omitted:
+                    type: integer
+                    description: Number of nodes omitted due to cardinality limit
+        '400':
+          description: Invalid parameters provided (e.g., invalid pattern syntax).
+        '500':
+          description: Internal server error during version information retrieval.
+        '504':
+          description: Query timeout - version collection took too long.
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      description: 'Bearer token authentication for API access when bearer protection is enabled.
+
+
+        **How to obtain a token:**
+
+        1. Token must be obtained via `/api/v3/bearer_get_token` endpoint
+
+        2. This endpoint is ACLK-only (requires Netdata Cloud access)
+
+        3. Token includes role-based access control and expiration time
+
+
+        **How to use:**
+
+        ```
+
+        Authorization: Bearer <token>
+
+        ```
+
+
+        **When required:**
+
+        - When bearer protection is enabled on the agent (via `/api/v3/bearer_protection`)
+
+        - Applies to all APIs with `HTTP_ACCESS_ANONYMOUS_DATA` permission
+
+        - Does not apply to APIs with `HTTP_ACL_NOCHECK` (always public)
+
+        - Does not apply to ACLK-only APIs (use cloud authentication)
+
+
+        **Token expiration:**
+
+        - Tokens are time-limited and must be renewed periodically
+
+        - Expired tokens return HTTP 401 Unauthorized
+
+        '
+    aclkAuth:
+      type: http
+      scheme: bearer
+      description: 'ACLK-only authentication - these APIs are ONLY accessible via Netdata Cloud (ACLK).
+
+
+        **Access Requirements:**
+
+        - User must be authenticated via Netdata Cloud (`SIGNED_ID`)
+
+        - User and agent must be in the same Netdata Cloud space (`SAME_SPACE`)
+
+        - Additional role-based permissions may apply per endpoint
+
+
+        **NOT accessible via:**
+
+        - Direct HTTP/HTTPS to agent (even with bearer token)
+
+        - Local dashboard
+
+        - External integrations
+
+
+        **Available only through:**
+
+        - Netdata Cloud web interface
+
+        - Netdata Cloud API (ACLK tunnel)
+
+
+        **Development mode:**
+
+        - Can be made available in dev mode with `ACL_DEV_OPEN_ACCESS` flag
+
+        '
+    ipAcl:
+      type: apiKey
+      in: header
+      name: X-Forwarded-For
+      description: "IP-based Access Control List restrictions (informational only).\n\n**Configuration:**\nAPIs are subject to IP-based ACL restrictions configured in `netdata.conf`:\n\n```conf\n[web]\n    allow dashboard from = *\n    allow badges from = *\n    allow management from = localhost\n```\n\n**ACL Categories:**\n- `allow dashboard from` - Controls access to metrics, alerts, nodes, functions, config APIs\n- `allow badges from` - Controls access to badge generation APIs\n- `allow management from` - Controls access to management APIs\n\n**Default behavior:**\n- Most APIs allow access from any IP by default\n- Management APIs restrict to localhost by default\n- Can be customized per deployment\n\n**Note:** This is not a standard authentication mechanism but rather IP filtering.\nAPIs with `HTTP_ACL_NOCHECK` bypass all IP restrictions.\n"

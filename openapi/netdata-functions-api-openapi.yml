@@ -1,0 +1,1067 @@
+openapi: 3.0.0
+info:
+  title: Netdata agent functions API
+  description: 'Real-time performance and health monitoring.
+
+
+    ## API Versions
+
+
+    Netdata provides three API versions:
+
+    - **v1**: The original API, focused on single-node operations
+
+    - **v2**: Multi-node API with advanced grouping and aggregation capabilities
+
+    - **v3**: The latest API version that combines v1 and v2 endpoints and may include additional features
+
+
+    ### v3 API Endpoints
+
+
+    The v3 API provides the current, actively maintained endpoints:
+
+    - `/api/v3/data` - Multi-dimensional data queries
+
+    - `/api/v3/weights` - Metric scoring/correlation
+
+    - `/api/v3/contexts` - Context metadata
+
+    - `/api/v3/nodes` - Node information
+
+    - `/api/v3/q` - Full-text search
+
+    - `/api/v3/alerts` - Alert information
+
+    - `/api/v3/alert_transitions` - Alert state transitions
+
+    - `/api/v3/alert_config` - Alert configuration
+
+    - `/api/v3/functions` - Available functions
+
+    - `/api/v3/function` - Execute functions
+
+    - `/api/v3/info` - Agent information
+
+    - `/api/v3/node_instances` - Node instance information
+
+    - `/api/v3/stream_path` - Streaming topology
+
+    - `/api/v3/versions` - Version information
+
+    - `/api/v3/badge.svg` - Dynamic badges
+
+    - `/api/v3/allmetrics` - Export metrics
+
+    - `/api/v3/context` - Single context info
+
+    - `/api/v3/variable` - Variable information
+
+    - `/api/v3/config` - Dynamic configuration
+
+    - `/api/v3/settings` - Agent settings
+
+    - `/api/v3/me` - Current user information
+
+    - `/api/v3/claim` - Agent claiming
+
+    - Additional management and streaming endpoints
+
+
+    **Note:** V1 and V2 APIs are deprecated and maintained for backwards compatibility only. New integrations should use V3 exclusively.
+
+    '
+  version: v1-rolling
+  contact:
+    name: Netdata Agent API
+    email: info@netdata.cloud
+    url: https://netdata.cloud
+  license:
+    name: GPL v3+
+    url: https://github.com/netdata/netdata/blob/master/LICENSE
+servers:
+- url: https://registry.my-netdata.io
+- url: http://registry.my-netdata.io
+- url: http://localhost:19999
+tags:
+- name: functions
+  description: Everything related to functions
+paths:
+  /api/v3/progress:
+    get:
+      operationId: progress3
+      tags:
+      - functions
+      summary: Track progress of long-running function executions
+      description: "Monitors the progress of long-running Netdata function executions identified by a transaction ID.\nWhen executing functions that may take significant time (e.g., data collection, analysis, exports),\nthis endpoint allows clients to poll for progress updates and track completion status.\n\n**Function Execution Flow:**\n1. Client initiates a function execution (e.g., via `/api/v3/function`)\n2. Function returns immediately with a transaction ID\n3. Client polls `/api/v3/progress?transaction=<id>` for status updates\n4. Progress endpoint returns completion percentage and status\n5. When complete, client retrieves final results\n\n**Progress Information Includes:**\n- **Percentage complete**: 0-100% progress indicator\n- **Status**: running, completed, failed, cancelled\n- **Message**: Human-readable status description\n- **Remaining time estimate**: If available\n\n**Use Cases:**\n- **Long data exports**: Track progress of large data export operations\n- **Analysis functions**: Monitor CPU-intensive analysis tasks\n- **Batch operations**: Track multi-step batch processing\n- **User experience**: Provide progress feedback in UI applications\n\n**Polling Best Practices:**\n- Poll every 1-2 seconds for responsive updates\n- Implement exponential backoff for completed/failed states\n- Set reasonable timeouts (functions may take minutes)\n- Handle cancellation gracefully\n\n**Common Usage Patterns:**\n\n1. **Poll for function progress:**\n   ```\n   /api/v3/progress?transaction=550e8400-e29b-41d4-a716-446655440000\n   ```\n\n2. **Integration with function execution:**\n   ```javascript\n   // 1. Start function\n   const response = await fetch('/api/v3/function?...');\n   const { transaction } = await response.json();\n\n   // 2. Poll for progress\n   const interval = setInterval(async () => {\n     const progress = await fetch(`/api/v3/progress?transaction=${transaction}`);\n     const { percentage, status } = await progress.json();\n\n     if (status === 'completed') {\n       clearInterval(interval);\n       // Fetch final results\n     }\n   }, 1000);\n   ```\n\n**Transaction ID Format:**\n- UUID v4 format: `xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx`\n- Returned by function execution endpoints\n- Valid for the lifetime of the function execution\n- Expires after completion or timeout\n\n**Security & Access Control:**\n- \U0001F513 **Always Public API** - This endpoint is always accessible without authentication\n- **No Restrictions:** Not subject to bearer protection or IP-based ACL restrictions\n- **No Authentication:** Cannot be restricted by any configuration\n- **Access:** Available to anyone who can reach the agent's HTTP endpoint\n"
+      parameters:
+      - name: transaction
+        in: query
+        required: true
+        description: 'Transaction ID (UUID) of the function execution to track. This ID is returned
+
+          when initiating a function execution via `/api/v3/function` or similar endpoints.
+
+
+          **UUID Format:**
+
+          - Standard UUID v4 format
+
+          - Example: `550e8400-e29b-41d4-a716-446655440000`
+
+          - Case-insensitive
+
+
+          **Transaction Lifecycle:**
+
+          - **Created**: When function execution starts
+
+          - **Active**: While function is running
+
+          - **Expired**: After completion, failure, or timeout
+
+          - **Retention**: Transaction state kept briefly after completion for final status retrieval
+
+
+          **Invalid Transaction Handling:**
+
+          - Missing transaction: Returns 400 Bad Request
+
+          - Malformed UUID: Returns 400 Bad Request
+
+          - Expired transaction: Returns 404 Not Found
+
+          - Unknown transaction: Returns 404 Not Found
+
+          '
+        schema:
+          type: string
+          format: uuid
+        example: 550e8400-e29b-41d4-a716-446655440000
+      responses:
+        '200':
+          description: 'Successfully retrieved progress information for the transaction.
+
+
+            Returns current progress status including percentage complete, state, and optional message.
+
+            '
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  transaction:
+                    type: string
+                    format: uuid
+                    description: The transaction ID being tracked
+                  status:
+                    type: string
+                    enum:
+                    - running
+                    - completed
+                    - failed
+                    - cancelled
+                    description: Current status of the function execution
+                  percentage:
+                    type: integer
+                    minimum: 0
+                    maximum: 100
+                    description: Completion percentage (0-100)
+                  message:
+                    type: string
+                    description: Human-readable status message or error description
+                  done:
+                    type: integer
+                    description: Number of items processed (if applicable)
+                  all:
+                    type: integer
+                    description: Total number of items to process (if applicable)
+                  eta_seconds:
+                    type: integer
+                    description: Estimated time remaining in seconds (if available)
+              examples:
+                running:
+                  value:
+                    transaction: 550e8400-e29b-41d4-a716-446655440000
+                    status: running
+                    percentage: 45
+                    message: Processing data...
+                    done: 450
+                    all: 1000
+                    eta_seconds: 30
+                completed:
+                  value:
+                    transaction: 550e8400-e29b-41d4-a716-446655440000
+                    status: completed
+                    percentage: 100
+                    message: Function execution completed successfully
+                failed:
+                  value:
+                    transaction: 550e8400-e29b-41d4-a716-446655440000
+                    status: failed
+                    percentage: 67
+                    message: 'Error: timeout during data collection'
+        '400':
+          description: 'Bad request. Common causes:
+
+            - Missing transaction parameter
+
+            - Malformed UUID format
+
+            - Invalid transaction ID format
+
+            '
+        '404':
+          description: 'Transaction not found. Possible reasons:
+
+            - Transaction ID does not exist
+
+            - Transaction has expired (completed/failed long ago)
+
+            - Transaction was never created
+
+            '
+        '500':
+          description: Internal server error during progress tracking.
+  /api/v3/function:
+    get:
+      operationId: function3
+      tags:
+      - functions
+      summary: Execute a Netdata function on a specific node
+      description: "Executes a named function on a Netdata agent to retrieve live information or trigger actions.\nFunctions are plugin-provided operations that can query system state, collect real-time data,\nor perform administrative tasks.\n\n**What are Netdata Functions?**\nFunctions extend Netdata beyond passive metric collection by allowing:\n- **Live data queries**: Get current system state (processes, connections, services)\n- **Interactive diagnostics**: Run on-demand checks and analysis\n- **Administrative operations**: Trigger actions like cache clearing or config reloading\n- **Plugin-specific features**: Access specialized capabilities provided by plugins\n\n**Common Functions Include:**\n- `systemd-list-units` - List systemd services and their status\n- `processes` - List currently running processes with resource usage\n- `network-connections` - Show active network connections\n- `mount-points` - Display mounted filesystems\n- `docker-containers` - List Docker containers (if Docker plugin enabled)\n- Many more plugin-specific functions\n\n**Function Discovery:**\nUse `/api/v3/functions` to discover available functions on each node.\n\n**Execution Model:**\n- Functions execute on the target node's agent\n- Results are collected and returned in real-time\n- Long-running functions return a transaction ID for progress tracking\n- Functions may require specific permissions or capabilities\n\n**Use Cases:**\n- **System diagnostics**: Query live system state for troubleshooting\n- **Capacity planning**: Get current resource utilization details\n- **Security auditing**: List processes, connections, open ports\n- **Service management**: Check service status across infrastructure\n- **Interactive dashboards**: Provide drill-down capabilities\n\n**Common Usage Patterns:**\n\n1. **List running processes:**\n   ```\n   /api/v3/function?function=processes\n   ```\n\n2. **List systemd services:**\n   ```\n   /api/v3/function?function=systemd-list-units&timeout=30\n   ```\n\n3. **Get network connections:**\n   ```\n   /api/v3/function?function=network-connections\n   ```\n\n4. **Execute with custom timeout for slow operations:**\n   ```\n   /api/v3/function?function=docker-containers&timeout=60\n   ```\n\n**Function Response Formats:**\n- Most functions return JSON data\n- Some may return plain text or formatted output\n- Check Content-Type header for response format\n- Long operations may return transaction ID for `/api/v3/progress` polling\n\n**Security Considerations:**\n- Functions respect user authentication and authorization\n- Some functions may require elevated permissions\n- Function execution is subject to ACL checks\n- Sensitive operations may be restricted by configuration\n\n**Security & Access Control:**\n- \U0001F4CA **Public Data API** - Bearer token optional, IP-based ACL restrictions apply\n- **Default Access:** Public (no authentication required)\n- **Bearer Protection:** When enabled via `/api/v3/bearer_protection`, requires bearer token\n- **IP Restrictions:** Subject to `allow dashboard from` in netdata.conf\n- **Access Methods:** Direct HTTP/HTTPS, Netdata Cloud, external tools\n"
+      security:
+      - {}
+      - bearerAuth: []
+      parameters:
+      - name: function
+        in: query
+        required: true
+        description: 'Name of the function to execute. Each Netdata plugin can provide multiple functions
+
+          with different capabilities.
+
+
+          **Function Names:**
+
+          - Kebab-case naming: `function-name-here`
+
+          - Provided by plugins: different plugins provide different functions
+
+          - Discoverable via `/api/v3/functions` endpoint
+
+          - Case-sensitive
+
+
+          **Common Built-in Functions:**
+
+          - `systemd-list-units` - List systemd services
+
+          - `processes` - Running processes with CPU/memory usage
+
+          - `network-connections` - Active network connections and sockets
+
+          - `mount-points` - Mounted filesystems and usage
+
+          - `ipmi-sensors` - IPMI hardware sensors (if available)
+
+
+          **Plugin-Specific Functions:**
+
+          - Docker plugin: `docker-containers`, `docker-images`
+
+          - Apps plugin: `apps-processes`
+
+          - Logs plugin: `logs-query`
+
+          - And many more depending on enabled plugins
+
+
+          **Invalid Function Names:**
+
+          - Missing function: Returns 400 Bad Request
+
+          - Unknown function: Returns 404 Not Found or function-specific error
+
+          - Disabled function: Returns 403 Forbidden
+
+          '
+        schema:
+          type: string
+        example: processes
+      - name: timeout
+        in: query
+        required: false
+        description: "Maximum time in seconds to wait for function execution before timing out.\nDifferent functions have different execution times.\n\n**Timeout Guidelines by Function Type:**\n- **Fast queries** (< 1s): processes, mount-points\n  Recommended: 10-30 seconds\n- **Medium queries** (1-5s): systemd-list-units, network-connections\n  Recommended: 30-60 seconds\n- **Slow operations** (5-30s): docker operations, log queries\n  Recommended: 60-300 seconds\n\n**Timeout Behavior:**\n- If execution completes before timeout: Returns results immediately\n- If timeout expires: Function is cancelled and error returned\n- For async functions: Returns transaction ID immediately, timeout applies to overall operation\n\n**Best Practices:**\n- Set conservative timeouts for production systems\n- Consider network latency for remote nodes\n- Monitor timeout errors and adjust accordingly\n"
+        schema:
+          type: integer
+          minimum: 1
+          maximum: 3600
+          default: 60
+        example: 30
+      responses:
+        '200':
+          description: 'Function executed successfully and returned results.
+
+
+            The response format depends on the specific function:
+
+            - Most functions return JSON data
+
+            - Some return plain text or formatted output
+
+            - Check Content-Type header
+
+            '
+          content:
+            application/json:
+              schema:
+                type: object
+                description: Function-specific response data
+              examples:
+                processes:
+                  value:
+                    processes:
+                    - pid: 1234
+                      name: nginx
+                      cpu: 2.5
+                      memory: 45678
+                    - pid: 5678
+                      name: postgres
+                      cpu: 15.3
+                      memory: 234567
+                systemd_units:
+                  value:
+                    units:
+                    - name: nginx.service
+                      state: active
+                      substate: running
+                    - name: postgresql.service
+                      state: active
+                      substate: running
+            text/plain:
+              schema:
+                type: string
+                description: Plain text response from function
+        '202':
+          description: 'Function execution started asynchronously. Use the returned transaction ID
+
+            to poll `/api/v3/progress` for status and results.
+
+            '
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  transaction:
+                    type: string
+                    format: uuid
+                    description: Transaction ID for progress tracking
+                  message:
+                    type: string
+                    description: Status message
+        '400':
+          description: 'Bad request. Common causes:
+
+            - Missing required `function` parameter
+
+            - Invalid function name format
+
+            - Invalid request body for the function
+
+            '
+        '403':
+          description: 'Forbidden. Possible reasons:
+
+            - Function requires higher permissions than current user has
+
+            - Function is disabled in configuration
+
+            - ACL restrictions prevent execution
+
+            '
+        '404':
+          description: 'Function not found. The specified function does not exist or is not available on this node.
+
+            '
+        '500':
+          description: Internal server error during function execution.
+        '503':
+          description: 'Service unavailable. Netdata agent is not ready or function execution system is overloaded.
+
+            '
+        '504':
+          description: Function execution timeout - operation took longer than specified timeout.
+    post:
+      operationId: function3_post
+      tags:
+      - functions
+      summary: Execute a Netdata function with request body parameters
+      description: 'Same as GET /api/v3/function, but allows passing parameters via request body for functions
+
+        that require complex input or configuration data.
+
+
+        Use this method when:
+
+        - Function requires complex parameters that don''t fit in query string
+
+        - Passing sensitive data that shouldn''t be in URL
+
+        - Function accepts JSON configuration or structured data
+
+
+        See GET /api/v3/function for complete documentation on functions, timeouts, and responses.
+
+        '
+      security:
+      - {}
+      - bearerAuth: []
+      parameters:
+      - name: function
+        in: query
+        required: true
+        description: Name of the function to execute (see GET method for details)
+        schema:
+          type: string
+        example: processes
+      - name: timeout
+        in: query
+        required: false
+        description: Maximum time in seconds to wait for function execution (see GET method for details)
+        schema:
+          type: integer
+          minimum: 1
+          maximum: 3600
+          default: 60
+        example: 30
+      requestBody:
+        description: "Optional request body for functions that accept parameters or configuration.\nThe format and content depend on the specific function being executed.\n\n**When to Use Request Body:**\n- Functions that accept filtering parameters\n- Functions that need configuration data\n- Functions with complex input requirements\n\n**Common Patterns:**\n- JSON object with function-specific parameters\n- Plain text for simple commands\n- Format specified by function documentation\n\n**Example for logs-query function:**\n```json\n{\n  \"after\": -3600,\n  \"before\": 0,\n  \"filter\": \"error\",\n  \"limit\": 100\n}\n```\n"
+        required: false
+        content:
+          application/json:
+            schema:
+              type: object
+              description: Function-specific parameters (varies by function)
+          text/plain:
+            schema:
+              type: string
+              description: Plain text parameters for simple functions
+      responses:
+        '200':
+          description: Function executed successfully (see GET method for response details)
+          content:
+            application/json:
+              schema:
+                type: object
+            text/plain:
+              schema:
+                type: string
+        '202':
+          description: Function execution started asynchronously (see GET method for details)
+        '400':
+          description: Bad request (see GET method for details)
+        '403':
+          description: Forbidden (see GET method for details)
+        '404':
+          description: Function not found (see GET method for details)
+        '500':
+          description: Internal server error (see GET method for details)
+        '503':
+          description: Service unavailable (see GET method for details)
+        '504':
+          description: Function execution timeout (see GET method for details)
+  /api/v3/functions:
+    get:
+      operationId: functions3
+      tags:
+      - functions
+      summary: List available functions across all nodes
+      description: "Retrieves a catalog of available functions across the monitored infrastructure.\nFunctions are plugin-provided operations that extend Netdata's capabilities beyond\npassive metric collection, allowing live queries, diagnostics, and administrative actions.\n\n**What This Endpoint Returns:**\n- **Function inventory**: All functions available across your nodes\n- **Per-node availability**: Which functions each node supports\n- **Function metadata**: Descriptions, parameters, requirements\n- **Plugin information**: Which plugin provides each function\n\n**Function Categories:**\n- **System queries**: processes, mount-points, network-connections\n- **Service management**: systemd-list-units, docker-containers\n- **Hardware**: ipmi-sensors, smart-disk-info\n- **Application-specific**: mysql-queries, redis-info, nginx-status\n- **Diagnostics**: performance-analysis, log-queries\n- **Administrative**: config-reload, cache-clear\n\n**Use Cases:**\n- **Capability discovery**: Determine what operations are available\n- **Multi-node comparison**: See which nodes support which functions\n- **Plugin verification**: Confirm plugins are loaded and functional\n- **UI generation**: Build dynamic interfaces based on available functions\n- **Documentation**: Generate function reference for your infrastructure\n\n**Common Usage Patterns:**\n\n1. **List all functions across all nodes:**\n   ```\n   /api/v3/functions\n   ```\n\n2. **Functions for specific nodes:**\n   ```\n   /api/v3/functions?nodes=web-*\n   ```\n\n3. **Scope to production infrastructure:**\n   ```\n   /api/v3/functions?scope_nodes=prod-*\n   ```\n\n4. **Get detailed function information:**\n   ```\n   /api/v3/functions?options=debug\n   ```\n\n**Response Organization:**\nResults grouped by:\n- **Node**: Functions available on each node\n- **Function name**: Unique identifier\n- **Plugin**: Source plugin providing the function\n- **Capabilities**: What the function can do\n\n**Integration with /api/v3/function:**\n1. Use `/api/v3/functions` to discover available functions\n2. Use `/api/v3/function?function=<name>` to execute specific functions\n3. Results tell you which nodes support which operations\n\n**Security & Access Control:**\n- \U0001F4CA **Public Data API** - Bearer token optional, IP-based ACL restrictions apply\n- **Default Access:** Public (no authentication required)\n- **Bearer Protection:** When enabled via `/api/v3/bearer_protection`, requires bearer token\n- **IP Restrictions:** Subject to `allow dashboard from` in netdata.conf\n- **Access Methods:** Direct HTTP/HTTPS, Netdata Cloud, external tools\n"
+      security:
+      - {}
+      - bearerAuth: []
+      parameters:
+      - name: scope_nodes
+        in: query
+        required: false
+        description: 'Simple pattern to match node hostnames for scope filtering. Uses Netdata''s simple pattern
+
+          matching (not regex). Matched nodes define the scope for function discovery.
+
+
+          **Pattern Syntax:**
+
+          - `*` matches any number of characters
+
+          - Use `|` to separate multiple patterns (OR logic)
+
+          - Matches are case-insensitive
+
+          - No regex support - only simple wildcards
+
+
+          **Examples:**
+
+          - `prod-*` - All production nodes
+
+          - `*-web-*` - All web server nodes
+
+          - `db-*|cache-*` - All database or cache nodes
+
+          - `*` - All nodes (default)
+
+          '
+        schema:
+          type: string
+          default: '*'
+        example: prod-*
+      - name: nodes
+        in: query
+        required: false
+        description: 'Simple pattern to filter which nodes to include in the functions list.
+
+          After scope is determined, this filters the results. Uses the same pattern syntax as scope_nodes.
+
+
+          **Difference from scope_nodes:**
+
+          - `scope_nodes` defines what nodes to query for functions
+
+          - `nodes` filters which nodes appear in the output
+
+
+          **Examples:**
+
+          - `web-*` - Only show functions from web servers
+
+          - Specific hostnames: `node1|node2|node3`
+
+          '
+        schema:
+          type: string
+          default: '*'
+        example: '*'
+      - name: options
+        in: query
+        required: false
+        description: 'Comma-separated list of options to control response content and format.
+
+
+          **Available Options:**
+
+          - `minify` - Minimize JSON output (no pretty-printing)
+
+          - `debug` - Include detailed function metadata and plugin information
+
+          - `raw` - Include raw function definitions
+
+
+          **Examples:**
+
+          - `minify` - Compact JSON response
+
+          - `debug,raw` - Full debug information
+
+          '
+        schema:
+          type: string
+        example: debug
+      - name: timeout
+        in: query
+        required: false
+        description: 'Maximum time in seconds to wait for the query to complete before timing out.
+
+
+          **Guidelines:**
+
+          - Recommended: 10-30 seconds for most queries
+
+          - Function listing is usually fast
+
+          - Timeout mainly applies to very large infrastructures
+
+          '
+        schema:
+          type: integer
+          minimum: 1
+          default: 60
+        example: 10
+      - name: cardinality
+        in: query
+        required: false
+        description: 'Maximum number of nodes to include in the response to prevent overwhelming large responses.
+
+          When this limit is exceeded, the response will indicate how many nodes were omitted.
+
+
+          **Purpose:**
+
+          - Prevent memory exhaustion from very large infrastructures
+
+          - Control response size for performance
+
+          - Useful when exploring large node sets incrementally
+
+
+          **Recommendations:**
+
+          - Small infrastructures (< 100 nodes): Use default
+
+          - Medium infrastructures (100-1000 nodes): 500-1000
+
+          - Large infrastructures (> 1000 nodes): Use filtering or increase limit carefully
+
+          '
+        schema:
+          type: integer
+          minimum: 1
+          maximum: 10000
+          default: 1000
+        example: 500
+      responses:
+        '200':
+          description: 'Successfully retrieved functions catalog.
+
+
+            Returns available functions organized by node, with metadata about each function
+
+            including name, description, plugin source, and parameter requirements.
+
+            '
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  nodes:
+                    type: array
+                    description: Array of nodes with their available functions
+                    items:
+                      type: object
+                      properties:
+                        hostname:
+                          type: string
+                          description: Node hostname
+                        machine_guid:
+                          type: string
+                          description: Unique node identifier
+                        functions:
+                          type: array
+                          description: Functions available on this node
+                          items:
+                            type: object
+                            properties:
+                              name:
+                                type: string
+                                description: Function name
+                                example: processes
+                              plugin:
+                                type: string
+                                description: Plugin providing this function
+                                example: apps.plugin
+                              description:
+                                type: string
+                                description: Human-readable function description
+                              parameters:
+                                type: array
+                                description: Required or optional parameters
+                                items:
+                                  type: object
+                                  properties:
+                                    name:
+                                      type: string
+                                    required:
+                                      type: boolean
+                                    description:
+                                      type: string
+                  omitted:
+                    type: integer
+                    description: Number of nodes omitted due to cardinality limit
+              examples:
+                functions_list:
+                  value:
+                    nodes:
+                    - hostname: web-server-1
+                      machine_guid: 12345678-1234-1234-1234-123456789012
+                      functions:
+                      - name: processes
+                        plugin: apps.plugin
+                        description: List running processes with resource usage
+                      - name: systemd-list-units
+                        plugin: systemd.plugin
+                        description: List systemd services and their status
+                      - name: network-connections
+                        plugin: network.plugin
+                        description: Show active network connections
+        '400':
+          description: Invalid parameters provided (e.g., invalid pattern syntax).
+        '500':
+          description: Internal server error during functions listing.
+        '504':
+          description: Query timeout - functions collection took too long.
+  /api/v2/progress:
+    get:
+      deprecated: true
+      operationId: progress2
+      tags:
+      - functions
+      summary: 'OBSOLETE: Track async operation progress (use /api/v3/progress instead)'
+      description: '**⚠️ OBSOLETE API - Will be removed in future versions**
+
+
+        This endpoint is deprecated. Use `/api/v3/progress` instead, which provides the same functionality.
+
+
+        **Migration:** Replace `/api/v2/progress` with `/api/v3/progress` in all API calls.
+
+
+        Tracks progress of long-running asynchronous operations using transaction UUID.
+
+        Used for polling function execution status and completion percentage.
+
+
+        **Security & Access Control:**
+
+        - 🔓 **Always Public API** - This endpoint is always accessible without authentication
+
+        - **No Restrictions:** Not subject to bearer protection or IP-based ACL restrictions
+
+        - **No Authentication:** Cannot be restricted by any configuration
+
+        - **Access:** Available to anyone who can reach the agent''s HTTP endpoint
+
+        '
+      parameters:
+      - name: transaction
+        in: query
+        required: true
+        schema:
+          type: string
+          format: uuid
+        description: Transaction UUID from async operation
+      responses:
+        '200':
+          description: Progress information successfully retrieved
+        '400':
+          description: Missing or invalid transaction parameter
+  /api/v2/functions:
+    get:
+      deprecated: true
+      operationId: functions2
+      tags:
+      - functions
+      summary: 'OBSOLETE: List available functions (use /api/v3/functions instead)'
+      description: '**⚠️ OBSOLETE API - Will be removed in future versions**
+
+
+        This endpoint is deprecated. Use `/api/v3/functions` instead, which provides the same functionality.
+
+
+        **Migration:** Replace `/api/v2/functions` with `/api/v3/functions` in all API calls.
+
+
+        Lists all functions available on agents, including their descriptions, parameters, and capabilities.
+
+        Functions provide live operational data and diagnostic capabilities.
+
+
+        **Security & Access Control:**
+
+        - 📊 **Public Data API** - Bearer token optional, IP-based ACL restrictions apply
+
+        - **Default Access:** Public (no authentication required)
+
+        - **Bearer Protection:** When enabled via `/api/v3/bearer_protection`, requires bearer token
+
+        - **IP Restrictions:** Subject to `allow dashboard from` in netdata.conf
+
+        - **Access Methods:** Direct HTTP/HTTPS, Netdata Cloud, external tools
+
+        '
+      security:
+      - {}
+      - bearerAuth: []
+      parameters:
+      - $ref: '#/components/parameters/scopeNodes'
+      - $ref: '#/components/parameters/filterNodes'
+      - $ref: '#/components/parameters/dataQueryOptions'
+      - $ref: '#/components/parameters/timeoutMS'
+      - $ref: '#/components/parameters/cardinalityLimit'
+      responses:
+        '200':
+          description: Functions list successfully retrieved
+        '400':
+          description: Invalid parameters
+  /api/v1/function:
+    get:
+      deprecated: true
+      operationId: function1
+      tags:
+      - functions
+      description: '|
+
+
+        **Security & Access Control:**
+
+        - 📊 **Public Data API** - Bearer token optional, IP-based ACL restrictions apply
+
+        - **Default Access:** Public (no authentication required)
+
+        - **Bearer Protection:** When enabled via `/api/v3/bearer_protection`, requires bearer token
+
+        - **IP Restrictions:** Subject to `allow dashboard from` in netdata.conf
+
+        - **Access Methods:** Direct HTTP/HTTPS, Netdata Cloud, external tools
+
+        '
+      security:
+      - {}
+      - bearerAuth: []
+      parameters:
+      - name: function
+        in: query
+        description: The name of the function, as returned by the collector.
+        required: true
+        allowEmptyValue: false
+        schema:
+          type: string
+      - $ref: '#/components/parameters/timeoutSecs'
+      responses:
+        '200':
+          description: The collector function has been executed successfully. Each collector may return a different type of content.
+        '400':
+          description: The request was rejected by the collector.
+        '404':
+          description: The requested function is not found.
+        '500':
+          description: Other internal error, getting this error means there is a bug in Netdata.
+        '503':
+          description: The collector to execute the function is not currently available.
+        '504':
+          description: Timeout while waiting for the collector to execute the function.
+        '591':
+          description: The collector sent a response, but it was invalid or corrupted.
+  /api/v1/functions:
+    get:
+      deprecated: true
+      operationId: functions1
+      tags:
+      - functions
+      summary: Get a list of all registered collector functions.
+      description: 'Collector functions are programs that can be executed on demand.
+
+
+        **Security & Access Control:**
+
+        - 📊 **Public Data API** - Bearer token optional, IP-based ACL restrictions apply
+
+        - **Default Access:** Public (no authentication required)
+
+        - **Bearer Protection:** When enabled via `/api/v3/bearer_protection`, requires bearer token
+
+        - **IP Restrictions:** Subject to `allow dashboard from` in netdata.conf
+
+        - **Access Methods:** Direct HTTP/HTTPS, Netdata Cloud, external tools
+
+        '
+      security:
+      - {}
+      - bearerAuth: []
+      responses:
+        '200':
+          description: A JSON object containing one object per supported function.
+components:
+  parameters:
+    filterNodes:
+      name: nodes
+      in: query
+      description: 'A simple pattern matching the nodes to be queried. This only controls the data response, not the metadata. The simple pattern is checked against the nodes'' machine guid, node id, hostname. The default nodes selector is all the nodes matched by the nodes scope. Both positive and negative simple pattern expressions are supported.
+
+        '
+      required: false
+      schema:
+        type: string
+        format: simple pattern
+        default: '*'
+    scopeNodes:
+      name: scope_nodes
+      in: query
+      description: 'A simple pattern limiting the nodes scope of the query. The scope controls both data and metadata response. The simple pattern is checked against the nodes'' machine guid, node id and hostname. The default nodes scope is all nodes for which this Agent has data for. Usually the nodes scope is used to slice the entire dashboard (e.g. the Global Nodes Selector at the Netdata Cloud overview dashboard). Both positive and negative simple pattern expressions are supported.
+
+        '
+      required: false
+      schema:
+        type: string
+        format: simple pattern
+        default: '*'
+    cardinalityLimit:
+      name: cardinality_limit
+      in: query
+      description: 'Limits the number of unique items (contexts, instances, dimensions) returned in the query result. This is useful for preventing excessive memory usage and response sizes when queries match a large number of metrics. The query engine will return the most relevant items up to this limit.
+
+        '
+      required: false
+      schema:
+        type: integer
+        format: int64
+        minimum: 1
+        default: 10000
+    dataQueryOptions:
+      name: options
+      in: query
+      description: "Options that affect data generation.\n* `jsonwrap` - Wrap the output in a JSON object with metadata about the query.\n* `raw` - change the output so that it is aggregatable across multiple such queries. Supported by `/api/v2` data queries and `json2` format.\n* `minify` - Remove unnecessary spaces and newlines from the output.\n* `debug` - Provide additional information in `jsonwrap` output to help tracing issues.\n* `nonzero` - Do not return dimensions that all their values are zero, to improve the visual appearance of charts. They will still be returned if all the dimensions are entirely zero.\n* `null2zero` - Replace `null` values with `0`.\n* `absolute` or `abs` - Traditionally Netdata returns select dimensions negative to improve visual appearance. This option turns this feature off.\n* `display-absolute` - Only used by badges, to do color calculation using the signed value, but render the value without a sign.\n* `flip` or `reversed` - Order the timestamps array in reverse order (newest to oldest).\n* `min2max` - When flattening multi-dimensional data into a single metric format, use `max - min` instead of `sum`. This is EOL - use `/api/v2` to control aggregation across dimensions.\n* `percentage` - Convert all values into a percentage vs the row total. When enabled, Netdata will query all dimensions, even the ones that have not been selected or are hidden, to find the row total, in order to calculate the percentage of each dimension selected.\n* `seconds` - Output timestamps in seconds instead of dates.\n* `milliseconds` or `ms` - Output timestamps in milliseconds instead of dates.\n* `unaligned` - by default queries are aligned to the the view, so that as time passes past data returned do not change. When a data query will not be used for visualization, `unaligned` can be given to avoid aligning the query time-frame for visual precision.\n* `match-ids`, `match-names`. By default filters match both IDs and names when they are available. Setting either of the two options will disable the other.\n* `anomaly-bit` - query the anomaly information instead of metric values. This is EOL, use `/api/v2` and `json2` format which always returns this information and many more.\n* `jw-anomaly-rates` - return anomaly rates as a separate result set in the same `json` format response. This is EOL, use `/api/v2` and `json2` format which always returns information and many more. \n* `details` - `/api/v2/data` returns in `jsonwrap` the full tree of dimensions that have been matched by the query.\n* `group-by-labels` - `/api/v2/data` returns in `jsonwrap` flattened labels per output dimension. These are used to identify the instances that have been aggregated into each dimension, making it possible to provide a map, like Netdata does for Kubernetes.\n* `natural-points` - return timestamps as found in the database. The result is again fixed-step, but the query engine attempts to align them with the timestamps found in the database.\n* `virtual-points` - return timestamps independent of the database alignment. This is needed aggregating data across multiple Netdata Agents, to ensure that their outputs do not need to be interpolated to be merged.\n* `selected-tier` - use data exclusively from the selected tier given with the `tier` parameter. This option is set automatically when the `tier` parameter is set.\n* `all-dimensions` - In `/api/v1` `jsonwrap` include metadata for all candidate metrics examined. In `/api/v2` this is standard behavior and no option is needed.\n* `label-quotes` - In `csv` output format, enclose each header label in quotes.\n* `objectrows` - Each row of value should be an object, not an array (only for `json` format).\n* `google_json` - Comply with google JSON/JSONP specs (only for `json` format).\n* `minimal-stats` or `minimal` - Reduce the amount of statistics returned in `jsonwrap` format to save bandwidth.\n* `long-json-keys` or `long-keys` - Use descriptive key names in JSON output instead of abbreviated ones.\n* `mcp-info` - Include additional metadata useful for the Model Context Protocol (MCP) integration.\n* `rfc3339` - Return timestamps in RFC3339 format (e.g., \"2023-01-01T00:00:00Z\") instead of Unix timestamps.\n"
+      required: false
+      allowEmptyValue: false
+      schema:
+        type: array
+        items:
+          type: string
+          enum:
+          - jsonwrap
+          - raw
+          - minify
+          - debug
+          - nonzero
+          - null2zero
+          - abs
+          - absolute
+          - display-absolute
+          - flip
+          - reversed
+          - min2max
+          - percentage
+          - seconds
+          - ms
+          - milliseconds
+          - unaligned
+          - match-ids
+          - match-names
+          - anomaly-bit
+          - jw-anomaly-rates
+          - details
+          - group-by-labels
+          - natural-points
+          - virtual-points
+          - selected-tier
+          - all-dimensions
+          - label-quotes
+          - objectrows
+          - google_json
+          - minimal-stats
+          - minimal
+          - long-json-keys
+          - long-keys
+          - mcp-info
+          - rfc3339
+        default:
+        - seconds
+        - jsonwrap
+    timeoutSecs:
+      name: timeout
+      in: query
+      description: 'Specify a timeout value in seconds after which the Agent will abort the query and return a 504 error. A value of 0 indicates no timeout, but some endpoints, like `weights`, do not accept infinite timeouts (they have a predefined default), so to disable the timeout it must be set to a really high value.
+
+        '
+      required: false
+      schema:
+        type: number
+        format: integer
+        default: 0
+    timeoutMS:
+      name: timeout
+      in: query
+      description: 'Specify a timeout value in milliseconds after which the Agent will abort the query and return a 503 error. A value of 0 indicates no timeout.
+
+        '
+      required: false
+      schema:
+        type: number
+        format: integer
+        default: 0
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      description: 'Bearer token authentication for API access when bearer protection is enabled.
+
+
+        **How to obtain a token:**
+
+        1. Token must be obtained via `/api/v3/bearer_get_token` endpoint
+
+        2. This endpoint is ACLK-only (requires Netdata Cloud access)
+
+        3. Token includes role-based access control and expiration time
+
+
+        **How to use:**
+
+        ```
+
+        Authorization: Bearer <token>
+
+        ```
+
+
+        **When required:**
+
+        - When bearer protection is enabled on the agent (via `/api/v3/bearer_protection`)
+
+        - Applies to all APIs with `HTTP_ACCESS_ANONYMOUS_DATA` permission
+
+        - Does not apply to APIs with `HTTP_ACL_NOCHECK` (always public)
+
+        - Does not apply to ACLK-only APIs (use cloud authentication)
+
+
+        **Token expiration:**
+
+        - Tokens are time-limited and must be renewed periodically
+
+        - Expired tokens return HTTP 401 Unauthorized
+
+        '
+    aclkAuth:
+      type: http
+      scheme: bearer
+      description: 'ACLK-only authentication - these APIs are ONLY accessible via Netdata Cloud (ACLK).
+
+
+        **Access Requirements:**
+
+        - User must be authenticated via Netdata Cloud (`SIGNED_ID`)
+
+        - User and agent must be in the same Netdata Cloud space (`SAME_SPACE`)
+
+        - Additional role-based permissions may apply per endpoint
+
+
+        **NOT accessible via:**
+
+        - Direct HTTP/HTTPS to agent (even with bearer token)
+
+        - Local dashboard
+
+        - External integrations
+
+
+        **Available only through:**
+
+        - Netdata Cloud web interface
+
+        - Netdata Cloud API (ACLK tunnel)
+
+
+        **Development mode:**
+
+        - Can be made available in dev mode with `ACL_DEV_OPEN_ACCESS` flag
+
+        '
+    ipAcl:
+      type: apiKey
+      in: header
+      name: X-Forwarded-For
+      description: "IP-based Access Control List restrictions (informational only).\n\n**Configuration:**\nAPIs are subject to IP-based ACL restrictions configured in `netdata.conf`:\n\n```conf\n[web]\n    allow dashboard from = *\n    allow badges from = *\n    allow management from = localhost\n```\n\n**ACL Categories:**\n- `allow dashboard from` - Controls access to metrics, alerts, nodes, functions, config APIs\n- `allow badges from` - Controls access to badge generation APIs\n- `allow management from` - Controls access to management APIs\n\n**Default behavior:**\n- Most APIs allow access from any IP by default\n- Management APIs restrict to localhost by default\n- Can be customized per deployment\n\n**Note:** This is not a standard authentication mechanism but rather IP filtering.\nAPIs with `HTTP_ACL_NOCHECK` bypass all IP restrictions.\n"

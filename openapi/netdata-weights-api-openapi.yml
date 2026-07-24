@@ -1,0 +1,983 @@
+openapi: 3.0.0
+info:
+  title: Netdata agent weights API
+  description: 'Real-time performance and health monitoring.
+
+
+    ## API Versions
+
+
+    Netdata provides three API versions:
+
+    - **v1**: The original API, focused on single-node operations
+
+    - **v2**: Multi-node API with advanced grouping and aggregation capabilities
+
+    - **v3**: The latest API version that combines v1 and v2 endpoints and may include additional features
+
+
+    ### v3 API Endpoints
+
+
+    The v3 API provides the current, actively maintained endpoints:
+
+    - `/api/v3/data` - Multi-dimensional data queries
+
+    - `/api/v3/weights` - Metric scoring/correlation
+
+    - `/api/v3/contexts` - Context metadata
+
+    - `/api/v3/nodes` - Node information
+
+    - `/api/v3/q` - Full-text search
+
+    - `/api/v3/alerts` - Alert information
+
+    - `/api/v3/alert_transitions` - Alert state transitions
+
+    - `/api/v3/alert_config` - Alert configuration
+
+    - `/api/v3/functions` - Available functions
+
+    - `/api/v3/function` - Execute functions
+
+    - `/api/v3/info` - Agent information
+
+    - `/api/v3/node_instances` - Node instance information
+
+    - `/api/v3/stream_path` - Streaming topology
+
+    - `/api/v3/versions` - Version information
+
+    - `/api/v3/badge.svg` - Dynamic badges
+
+    - `/api/v3/allmetrics` - Export metrics
+
+    - `/api/v3/context` - Single context info
+
+    - `/api/v3/variable` - Variable information
+
+    - `/api/v3/config` - Dynamic configuration
+
+    - `/api/v3/settings` - Agent settings
+
+    - `/api/v3/me` - Current user information
+
+    - `/api/v3/claim` - Agent claiming
+
+    - Additional management and streaming endpoints
+
+
+    **Note:** V1 and V2 APIs are deprecated and maintained for backwards compatibility only. New integrations should use V3 exclusively.
+
+    '
+  version: v1-rolling
+  contact:
+    name: Netdata Agent API
+    email: info@netdata.cloud
+    url: https://netdata.cloud
+  license:
+    name: GPL v3+
+    url: https://github.com/netdata/netdata/blob/master/LICENSE
+servers:
+- url: https://registry.my-netdata.io
+- url: http://registry.my-netdata.io
+- url: http://localhost:19999
+tags:
+- name: weights
+  description: Everything related to scoring / weighting metrics
+paths:
+  /api/v2/weights:
+    get:
+      deprecated: true
+      operationId: weights2
+      tags:
+      - weights
+      summary: Score or weight all or some of the metrics, across all nodes, according to various algorithms.
+      description: 'This endpoint goes through all metrics and scores them according to an algorithm.
+
+
+        **Security & Access Control:**
+
+        - 📊 **Public Data API** - Bearer token optional, IP-based ACL restrictions apply
+
+        - **Default Access:** Public (no authentication required)
+
+        - **Bearer Protection:** When enabled via `/api/v3/bearer_protection`, requires bearer token
+
+        - **IP Restrictions:** Subject to `allow dashboard from` in netdata.conf
+
+        - **Access Methods:** Direct HTTP/HTTPS, Netdata Cloud, external tools
+
+        '
+      security:
+      - {}
+      - bearerAuth: []
+      parameters:
+      - $ref: '#/components/parameters/weightMethods'
+      - $ref: '#/components/parameters/scopeNodes'
+      - $ref: '#/components/parameters/scopeContexts'
+      - $ref: '#/components/parameters/scopeInstances'
+      - $ref: '#/components/parameters/scopeLabels'
+      - $ref: '#/components/parameters/scopeDimensions'
+      - $ref: '#/components/parameters/filterNodes'
+      - $ref: '#/components/parameters/filterContexts'
+      - $ref: '#/components/parameters/filterInstances'
+      - $ref: '#/components/parameters/filterLabels'
+      - $ref: '#/components/parameters/filterAlerts'
+      - $ref: '#/components/parameters/filterDimensions'
+      - $ref: '#/components/parameters/baselineAfter'
+      - $ref: '#/components/parameters/baselineBefore'
+      - $ref: '#/components/parameters/after'
+      - $ref: '#/components/parameters/before'
+      - $ref: '#/components/parameters/tier'
+      - $ref: '#/components/parameters/points'
+      - $ref: '#/components/parameters/timeoutMS'
+      - $ref: '#/components/parameters/dataQueryOptions'
+      - $ref: '#/components/parameters/dataTimeGroup2'
+      - $ref: '#/components/parameters/dataTimeGroupOptions2'
+      - $ref: '#/components/parameters/cardinalityLimit'
+      responses:
+        '200':
+          description: JSON object with weights for each context, chart and dimension.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/weights2'
+        '400':
+          description: The given parameters are invalid.
+        '403':
+          description: metrics correlations are not enabled on this Netdata Agent.
+        '404':
+          description: 'No charts could be found, or the method that correlated the metrics did not produce any result.
+
+            '
+        '504':
+          description: Timeout - the query took too long and has been cancelled.
+  /api/v3/weights:
+    get:
+      operationId: weights3
+      tags:
+      - weights
+      summary: Score or weight all or some of the metrics, across all nodes, according to various algorithms.
+      description: 'This endpoint goes through all metrics and scores them according to an algorithm.
+
+
+        **Security & Access Control:**
+
+        - 📊 **Public Data API** - Bearer token optional, IP-based ACL restrictions apply
+
+        - **Default Access:** Public (no authentication required)
+
+        - **Bearer Protection:** When enabled via `/api/v3/bearer_protection`, requires bearer token
+
+        - **IP Restrictions:** Subject to `allow dashboard from` in netdata.conf
+
+        - **Access Methods:** Direct HTTP/HTTPS, Netdata Cloud, external tools
+
+        '
+      security:
+      - {}
+      - bearerAuth: []
+      parameters:
+      - $ref: '#/components/parameters/weightMethods'
+      - $ref: '#/components/parameters/scopeNodes'
+      - $ref: '#/components/parameters/scopeContexts'
+      - $ref: '#/components/parameters/scopeInstances'
+      - $ref: '#/components/parameters/scopeLabels'
+      - $ref: '#/components/parameters/scopeDimensions'
+      - $ref: '#/components/parameters/filterNodes'
+      - $ref: '#/components/parameters/filterContexts'
+      - $ref: '#/components/parameters/filterInstances'
+      - $ref: '#/components/parameters/filterLabels'
+      - $ref: '#/components/parameters/filterAlerts'
+      - $ref: '#/components/parameters/filterDimensions'
+      - $ref: '#/components/parameters/baselineAfter'
+      - $ref: '#/components/parameters/baselineBefore'
+      - $ref: '#/components/parameters/after'
+      - $ref: '#/components/parameters/before'
+      - $ref: '#/components/parameters/tier'
+      - $ref: '#/components/parameters/points'
+      - $ref: '#/components/parameters/timeoutMS'
+      - $ref: '#/components/parameters/dataQueryOptions'
+      - $ref: '#/components/parameters/dataTimeGroup2'
+      - $ref: '#/components/parameters/dataTimeGroupOptions2'
+      - $ref: '#/components/parameters/cardinalityLimit'
+      responses:
+        '200':
+          description: JSON object with weights for each context, chart and dimension.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/weights2'
+        '400':
+          description: The given parameters are invalid.
+        '403':
+          description: metrics correlations are not enabled on this Netdata Agent.
+        '404':
+          description: 'No charts could be found, or the method that correlated the metrics did not produce any result.
+
+            '
+        '504':
+          description: Timeout - the query took too long and has been cancelled.
+  /api/v1/weights:
+    get:
+      deprecated: true
+      operationId: weights1
+      tags:
+      - weights
+      summary: Score or weight all or some of the metrics of a single node, according to various algorithms.
+      description: 'This endpoint goes through all metrics and scores them according to an algorithm.
+
+
+        **Security & Access Control:**
+
+        - 📊 **Public Data API** - Bearer token optional, IP-based ACL restrictions apply
+
+        - **Default Access:** Public (no authentication required)
+
+        - **Bearer Protection:** When enabled via `/api/v3/bearer_protection`, requires bearer token
+
+        - **IP Restrictions:** Subject to `allow dashboard from` in netdata.conf
+
+        - **Access Methods:** Direct HTTP/HTTPS, Netdata Cloud, external tools
+
+        '
+      security:
+      - {}
+      - bearerAuth: []
+      parameters:
+      - $ref: '#/components/parameters/weightMethods'
+      - $ref: '#/components/parameters/context'
+      - $ref: '#/components/parameters/baselineAfter'
+      - $ref: '#/components/parameters/baselineBefore'
+      - $ref: '#/components/parameters/after'
+      - $ref: '#/components/parameters/before'
+      - $ref: '#/components/parameters/tier'
+      - $ref: '#/components/parameters/points'
+      - $ref: '#/components/parameters/timeoutMS'
+      - $ref: '#/components/parameters/dataQueryOptions'
+      - $ref: '#/components/parameters/dataTimeGroup1'
+      - $ref: '#/components/parameters/dataTimeGroupOptions1'
+      responses:
+        '200':
+          description: JSON object with weights for each context, chart and dimension.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/weights'
+        '400':
+          description: The given parameters are invalid.
+        '403':
+          description: metrics correlations are not enabled on this Netdata Agent.
+        '404':
+          description: No charts could be found, or the method that correlated the metrics did not produce any result.
+        '504':
+          description: Timeout - the query took too long and has been cancelled.
+  /api/v1/metric_correlations:
+    get:
+      deprecated: true
+      operationId: metricCorrelations1
+      tags:
+      - weights
+      summary: Analyze all the metrics to find their correlations - EOL
+      description: 'THIS ENDPOINT IS OBSOLETE. Use the /weights endpoint. Given two time-windows (baseline, highlight), it goes through all the available metrics, querying both windows and tries to find how these two windows relate to each other. It supports multiple algorithms to do so. The result is a list of all metrics evaluated, weighted for 0.0 (the two windows are more different) to 1.0 (the two windows are similar). The algorithm adjusts automatically the baseline window to be a power of two multiple of the highlighted (1, 2, 4, 8, etc).
+
+
+        **Security & Access Control:**
+
+        - 📊 **Public Data API** - Bearer token optional, IP-based ACL restrictions apply
+
+        - **Default Access:** Public (no authentication required)
+
+        - **Bearer Protection:** When enabled via `/api/v3/bearer_protection`, requires bearer token
+
+        - **IP Restrictions:** Subject to `allow dashboard from` in netdata.conf
+
+        - **Access Methods:** Direct HTTP/HTTPS, Netdata Cloud, external tools
+
+        '
+      security:
+      - {}
+      - bearerAuth: []
+      parameters:
+      - $ref: '#/components/parameters/weightMethods'
+      - $ref: '#/components/parameters/baselineAfter'
+      - $ref: '#/components/parameters/baselineBefore'
+      - $ref: '#/components/parameters/after'
+      - $ref: '#/components/parameters/before'
+      - $ref: '#/components/parameters/points'
+      - $ref: '#/components/parameters/tier'
+      - $ref: '#/components/parameters/timeoutMS'
+      - $ref: '#/components/parameters/dataQueryOptions'
+      - $ref: '#/components/parameters/dataTimeGroup1'
+      - $ref: '#/components/parameters/dataTimeGroupOptions1'
+      responses:
+        '200':
+          description: JSON object with weights for each chart and dimension.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/metric_correlations'
+        '400':
+          description: The given parameters are invalid.
+        '403':
+          description: metrics correlations are not enabled on this Netdata Agent.
+        '404':
+          description: No charts could be found, or the method that correlated the metrics did not produce any result.
+        '504':
+          description: Timeout - the query took too long and has been cancelled.
+components:
+  schemas:
+    weighted_chart:
+      type: object
+      properties:
+        weight:
+          description: The average weight of the context.
+          type: number
+        dimensions:
+          description: A dictionary of weighted dimensions.
+          type: object
+          additionalProperties:
+            $ref: '#/components/schemas/weighted_dimension'
+    weighted_context:
+      type: object
+      properties:
+        weight:
+          description: The average weight of the context.
+          type: number
+        charts:
+          description: A dictionary of weighted chart objects.
+          type: object
+          additionalProperties:
+            $ref: '#/components/schemas/weighted_chart'
+    metric_correlations:
+      type: object
+      properties:
+        after:
+          description: the start time of the highlighted window
+          type: integer
+        before:
+          description: the end time of the highlighted window
+          type: integer
+        duration:
+          description: the duration of the highlighted window
+          type: integer
+        points:
+          description: the points of the highlighted window
+          type: integer
+        baseline_after:
+          description: the start time of the baseline window
+          type: integer
+        baseline_before:
+          description: the end time of the baseline window
+          type: integer
+        baseline_duration:
+          description: the duration of the baseline window
+          type: integer
+        baseline_points:
+          description: the points of the baseline window
+          type: integer
+        group:
+          description: the grouping method across time
+          type: string
+        method:
+          description: the correlation method used
+          type: string
+        options:
+          description: a comma separated list of the query options set
+          type: string
+        correlated_dimensions:
+          description: the number of dimensions returned in the result
+        total_dimensions_count:
+          description: the total number of dimensions evaluated
+          type: integer
+        statistics:
+          type: object
+          properties:
+            query_time_ms:
+              type: number
+            db_queries:
+              type: integer
+            db_points_read:
+              type: integer
+            query_result_points:
+              type: integer
+            binary_searches:
+              type: integer
+        correlated_charts:
+          type: object
+          description: An object containing chart objects with their metrics correlations.
+          properties:
+            chart-id1:
+              type: object
+              properties:
+                context:
+                  type: string
+                dimensions:
+                  type: object
+                  properties:
+                    dimension1-name:
+                      type: number
+                    dimension2-name:
+                      type: number
+            chart-id2:
+              type: object
+              properties:
+                context:
+                  type: string
+                dimensions:
+                  type: object
+                  properties:
+                    dimension1-name:
+                      type: number
+                    dimension2-name:
+                      type: number
+    weighted_dimension:
+      type: number
+    weights2:
+      type: object
+    weights:
+      type: object
+      properties:
+        after:
+          description: the start time of the highlighted window
+          type: integer
+        before:
+          description: the end time of the highlighted window
+          type: integer
+        duration:
+          description: the duration of the highlighted window
+          type: integer
+        points:
+          description: the points of the highlighted window
+          type: integer
+        baseline_after:
+          description: the start time of the baseline window
+          type: integer
+        baseline_before:
+          description: the end time of the baseline window
+          type: integer
+        baseline_duration:
+          description: the duration of the baseline window
+          type: integer
+        baseline_points:
+          description: the points of the baseline window
+          type: integer
+        group:
+          description: the grouping method across time
+          type: string
+        method:
+          description: the correlation method used
+          type: string
+        options:
+          description: a comma separated list of the query options set
+          type: string
+        correlated_dimensions:
+          description: the number of dimensions returned in the result
+        total_dimensions_count:
+          description: the total number of dimensions evaluated
+          type: integer
+        statistics:
+          type: object
+          properties:
+            query_time_ms:
+              type: number
+            db_queries:
+              type: integer
+            db_points_read:
+              type: integer
+            query_result_points:
+              type: integer
+            binary_searches:
+              type: integer
+        contexts:
+          description: A dictionary of weighted context objects.
+          type: object
+          additionalProperties:
+            $ref: '#/components/schemas/weighted_context'
+  parameters:
+    context:
+      name: context
+      in: query
+      description: The context of the chart as returned by the /charts call.
+      required: false
+      allowEmptyValue: false
+      schema:
+        type: string
+        format: as returned by /charts
+    dataTimeGroup2:
+      name: time_group
+      in: query
+      description: 'Time aggregation function. If multiple collected values are to be grouped in order to return fewer points, this parameters defines the method of grouping. If the `absolute` option is set, the values are turned positive before applying this calculation.
+
+        '
+      required: false
+      schema:
+        type: string
+        enum:
+        - min
+        - max
+        - avg
+        - average
+        - median
+        - stddev
+        - sum
+        - incremental-sum
+        - ses
+        - des
+        - cv
+        - countif
+        - percentile
+        - percentile25
+        - percentile50
+        - percentile75
+        - percentile80
+        - percentile90
+        - percentile95
+        - percentile97
+        - percentile98
+        - percentile99
+        - trimmed-mean
+        - trimmed-mean1
+        - trimmed-mean2
+        - trimmed-mean3
+        - trimmed-mean5
+        - trimmed-mean10
+        - trimmed-mean15
+        - trimmed-mean20
+        - trimmed-mean25
+        - trimmed-median
+        - trimmed-median1
+        - trimmed-median2
+        - trimmed-median3
+        - trimmed-median5
+        - trimmed-median10
+        - trimmed-median15
+        - trimmed-median20
+        - trimmed-median25
+        - ema
+        - extremes
+        default: average
+    filterLabels:
+      name: labels
+      in: query
+      description: 'A simple pattern matching the labels to be queried. The simple pattern is checked against `name:value` of all the labels of all the eligible instances (as filtered by all the above: scope nodes, scope contexts, nodes, contexts and instances). Negative simple patterns should not be used in this filter.
+
+        '
+      required: false
+      schema:
+        type: string
+        format: simple pattern
+        default: '*'
+    baselineAfter:
+      name: baseline_after
+      in: query
+      description: '`baseline_after` and `baseline_before` define the baseline time-frame of a comparative query. `baseline_after` can be a negative number of seconds, up to 3 years (-94608000), relative to `baseline_before`. If not set, it is usually assumed to be -300.
+
+        '
+      required: false
+      schema:
+        type: integer
+        default: -600
+    dataTimeGroupOptions1:
+      name: group_options
+      in: query
+      description: 'When the time grouping function supports additional parameters, this field can be used to pass them to it. Currently `countif`, `trimmed-mean`, `trimmed-median` and `percentile` support this. For `countif` the string may start with `<`, `<=`, `<:`, `<>`, `!=`, `>`, `>=`, `>:`. For all others just a number is expected.
+
+        '
+      required: false
+      schema:
+        type: string
+    weightMethods:
+      name: method
+      in: query
+      description: The weighting / scoring algorithm.
+      required: false
+      schema:
+        type: string
+        enum:
+        - ks2
+        - volume
+        - anomaly-rate
+        - value
+    cardinalityLimit:
+      name: cardinality_limit
+      in: query
+      description: 'Limits the number of unique items (contexts, instances, dimensions) returned in the query result. This is useful for preventing excessive memory usage and response sizes when queries match a large number of metrics. The query engine will return the most relevant items up to this limit.
+
+        '
+      required: false
+      schema:
+        type: integer
+        format: int64
+        minimum: 1
+        default: 10000
+    dataTimeGroupOptions2:
+      name: time_group_options
+      in: query
+      description: 'When the time grouping function supports additional parameters, this field can be used to pass them to it. Currently `countif`, `trimmed-mean`, `trimmed-median` and `percentile` support this. For `countif` the string may start with `<`, `<=`, `<:`, `<>`, `!=`, `>`, `>=`, `>:`. For all others just a number is expected.
+
+        '
+      required: false
+      schema:
+        type: string
+    tier:
+      name: tier
+      in: query
+      description: 'Use only the given dbengine tier for executing the query. Setting this parameters automatically sets the option `selected-tier` for the query.
+
+        '
+      required: false
+      schema:
+        type: number
+        format: integer
+    scopeContexts:
+      name: scope_contexts
+      in: query
+      description: 'A simple pattern limiting the contexts scope of the query. The scope controls both data and metadata response. The default contexts scope is all contexts for which this Agent has data for. Usually the contexts scope is used to slice data on the dashboard (e.g. each context based chart has its own contexts scope, limiting the chart to all the instances of the selected context). Both positive and negative simple pattern expressions are supported.
+
+        '
+      required: false
+      schema:
+        type: string
+        format: simple pattern
+        default: '*'
+    dataQueryOptions:
+      name: options
+      in: query
+      description: "Options that affect data generation.\n* `jsonwrap` - Wrap the output in a JSON object with metadata about the query.\n* `raw` - change the output so that it is aggregatable across multiple such queries. Supported by `/api/v2` data queries and `json2` format.\n* `minify` - Remove unnecessary spaces and newlines from the output.\n* `debug` - Provide additional information in `jsonwrap` output to help tracing issues.\n* `nonzero` - Do not return dimensions that all their values are zero, to improve the visual appearance of charts. They will still be returned if all the dimensions are entirely zero.\n* `null2zero` - Replace `null` values with `0`.\n* `absolute` or `abs` - Traditionally Netdata returns select dimensions negative to improve visual appearance. This option turns this feature off.\n* `display-absolute` - Only used by badges, to do color calculation using the signed value, but render the value without a sign.\n* `flip` or `reversed` - Order the timestamps array in reverse order (newest to oldest).\n* `min2max` - When flattening multi-dimensional data into a single metric format, use `max - min` instead of `sum`. This is EOL - use `/api/v2` to control aggregation across dimensions.\n* `percentage` - Convert all values into a percentage vs the row total. When enabled, Netdata will query all dimensions, even the ones that have not been selected or are hidden, to find the row total, in order to calculate the percentage of each dimension selected.\n* `seconds` - Output timestamps in seconds instead of dates.\n* `milliseconds` or `ms` - Output timestamps in milliseconds instead of dates.\n* `unaligned` - by default queries are aligned to the the view, so that as time passes past data returned do not change. When a data query will not be used for visualization, `unaligned` can be given to avoid aligning the query time-frame for visual precision.\n* `match-ids`, `match-names`. By default filters match both IDs and names when they are available. Setting either of the two options will disable the other.\n* `anomaly-bit` - query the anomaly information instead of metric values. This is EOL, use `/api/v2` and `json2` format which always returns this information and many more.\n* `jw-anomaly-rates` - return anomaly rates as a separate result set in the same `json` format response. This is EOL, use `/api/v2` and `json2` format which always returns information and many more. \n* `details` - `/api/v2/data` returns in `jsonwrap` the full tree of dimensions that have been matched by the query.\n* `group-by-labels` - `/api/v2/data` returns in `jsonwrap` flattened labels per output dimension. These are used to identify the instances that have been aggregated into each dimension, making it possible to provide a map, like Netdata does for Kubernetes.\n* `natural-points` - return timestamps as found in the database. The result is again fixed-step, but the query engine attempts to align them with the timestamps found in the database.\n* `virtual-points` - return timestamps independent of the database alignment. This is needed aggregating data across multiple Netdata Agents, to ensure that their outputs do not need to be interpolated to be merged.\n* `selected-tier` - use data exclusively from the selected tier given with the `tier` parameter. This option is set automatically when the `tier` parameter is set.\n* `all-dimensions` - In `/api/v1` `jsonwrap` include metadata for all candidate metrics examined. In `/api/v2` this is standard behavior and no option is needed.\n* `label-quotes` - In `csv` output format, enclose each header label in quotes.\n* `objectrows` - Each row of value should be an object, not an array (only for `json` format).\n* `google_json` - Comply with google JSON/JSONP specs (only for `json` format).\n* `minimal-stats` or `minimal` - Reduce the amount of statistics returned in `jsonwrap` format to save bandwidth.\n* `long-json-keys` or `long-keys` - Use descriptive key names in JSON output instead of abbreviated ones.\n* `mcp-info` - Include additional metadata useful for the Model Context Protocol (MCP) integration.\n* `rfc3339` - Return timestamps in RFC3339 format (e.g., \"2023-01-01T00:00:00Z\") instead of Unix timestamps.\n"
+      required: false
+      allowEmptyValue: false
+      schema:
+        type: array
+        items:
+          type: string
+          enum:
+          - jsonwrap
+          - raw
+          - minify
+          - debug
+          - nonzero
+          - null2zero
+          - abs
+          - absolute
+          - display-absolute
+          - flip
+          - reversed
+          - min2max
+          - percentage
+          - seconds
+          - ms
+          - milliseconds
+          - unaligned
+          - match-ids
+          - match-names
+          - anomaly-bit
+          - jw-anomaly-rates
+          - details
+          - group-by-labels
+          - natural-points
+          - virtual-points
+          - selected-tier
+          - all-dimensions
+          - label-quotes
+          - objectrows
+          - google_json
+          - minimal-stats
+          - minimal
+          - long-json-keys
+          - long-keys
+          - mcp-info
+          - rfc3339
+        default:
+        - seconds
+        - jsonwrap
+    scopeLabels:
+      name: scope_labels
+      in: query
+      description: 'A simple pattern limiting the labels scope of the query. The scope controls both data and metadata response. This limits which instances are even considered for the query based on their labels. The simple pattern is checked against `name:value` of all the labels of all the eligible instances (as filtered by scope nodes, scope contexts, and scope instances). Only instances having labels that match this pattern will be included in the query. Both positive and negative simple pattern expressions are supported.
+
+        '
+      required: false
+      schema:
+        type: string
+        format: simple pattern
+        default: '*'
+    baselineBefore:
+      name: baseline_before
+      in: query
+      description: '`baseline_after` and `baseline_before` define the baseline time-frame of a comparative query. `baseline_before` can be a negative number of seconds, up to 3 years (-94608000), relative to current clock. If not set, it is assumed to be the current clock time. When `baseline_before` is positive, it is assumed to be a unix epoch timestamp.
+
+        '
+      required: false
+      schema:
+        type: integer
+        default: 0
+    filterContexts:
+      name: contexts
+      in: query
+      description: 'A simple pattern matching the contexts to be queried. This only controls the data response, not the metadata. Both positive and negative simple pattern expressions are supported.
+
+        '
+      required: false
+      schema:
+        type: string
+        format: simple pattern
+        default: '*'
+    scopeInstances:
+      name: scope_instances
+      in: query
+      description: 'A simple pattern limiting the instances scope of the query. The scope controls both data and metadata response. This limits which instances are even considered for the query, including their visibility in the query response metadata. The simple pattern is checked against the instance `id`, the instance `name`, the fully qualified name of the instance `id` and `name`, like `instance@machine_guid`, where `instance` is either its `id` or `name`. Both positive and negative simple pattern expressions are supported.
+
+        '
+      required: false
+      schema:
+        type: string
+        format: simple pattern
+        default: '*'
+    scopeDimensions:
+      name: scope_dimensions
+      in: query
+      description: 'A simple pattern limiting the dimensions scope of the query. The scope controls both data and metadata response. This limits which dimensions are even considered for the query, including their visibility in the query response metadata. The simple pattern is checked against both the dimension `id` and `name`. Both positive and negative simple pattern expressions are supported.
+
+        '
+      required: false
+      schema:
+        type: string
+        format: simple pattern
+        default: '*'
+    points:
+      name: points
+      in: query
+      description: 'The number of points to be returned. If not given, or it is <= 0, or it is bigger than the points stored in the database for the given duration, all the available collected values for the given duration will be returned. For `weights` endpoints that do statistical analysis, the `points` define the detail of this analysis (the default is 500).
+
+        '
+      required: false
+      schema:
+        type: number
+        format: integer
+        default: 0
+    timeoutMS:
+      name: timeout
+      in: query
+      description: 'Specify a timeout value in milliseconds after which the Agent will abort the query and return a 503 error. A value of 0 indicates no timeout.
+
+        '
+      required: false
+      schema:
+        type: number
+        format: integer
+        default: 0
+    dataTimeGroup1:
+      name: group
+      in: query
+      description: 'Time aggregation function. If multiple collected values are to be grouped in order to return fewer points, this parameters defines the method of grouping. If the `absolute` option is set, the values are turned positive before applying this calculation.
+
+        '
+      required: false
+      schema:
+        type: string
+        enum:
+        - min
+        - max
+        - avg
+        - average
+        - median
+        - stddev
+        - sum
+        - incremental-sum
+        - ses
+        - des
+        - cv
+        - countif
+        - percentile
+        - percentile25
+        - percentile50
+        - percentile75
+        - percentile80
+        - percentile90
+        - percentile95
+        - percentile97
+        - percentile98
+        - percentile99
+        - trimmed-mean
+        - trimmed-mean1
+        - trimmed-mean2
+        - trimmed-mean3
+        - trimmed-mean5
+        - trimmed-mean10
+        - trimmed-mean15
+        - trimmed-mean20
+        - trimmed-mean25
+        - trimmed-median
+        - trimmed-median1
+        - trimmed-median2
+        - trimmed-median3
+        - trimmed-median5
+        - trimmed-median10
+        - trimmed-median15
+        - trimmed-median20
+        - trimmed-median25
+        - ema
+        - extremes
+        default: average
+    filterNodes:
+      name: nodes
+      in: query
+      description: 'A simple pattern matching the nodes to be queried. This only controls the data response, not the metadata. The simple pattern is checked against the nodes'' machine guid, node id, hostname. The default nodes selector is all the nodes matched by the nodes scope. Both positive and negative simple pattern expressions are supported.
+
+        '
+      required: false
+      schema:
+        type: string
+        format: simple pattern
+        default: '*'
+    after:
+      name: after
+      in: query
+      description: '`after` and `before` define the time-frame of a query. `after` can be a negative number of seconds, up to 3 years (-94608000), relative to `before`. If not set, it is usually assumed to be -600. When non-data endpoints support the `after` and `before`, they use the time-frame to limit their response for objects having data retention within the time-frame given.
+
+        '
+      required: false
+      schema:
+        type: integer
+        default: -600
+    scopeNodes:
+      name: scope_nodes
+      in: query
+      description: 'A simple pattern limiting the nodes scope of the query. The scope controls both data and metadata response. The simple pattern is checked against the nodes'' machine guid, node id and hostname. The default nodes scope is all nodes for which this Agent has data for. Usually the nodes scope is used to slice the entire dashboard (e.g. the Global Nodes Selector at the Netdata Cloud overview dashboard). Both positive and negative simple pattern expressions are supported.
+
+        '
+      required: false
+      schema:
+        type: string
+        format: simple pattern
+        default: '*'
+    filterAlerts:
+      name: alerts
+      in: query
+      description: 'A simple pattern matching the alerts to be queried. The simple pattern is checked against the `name` of alerts and the combination of `name:status`, when status is one of `CLEAR`, `WARNING`, `CRITICAL`, `REMOVED`, `UNDEFINED`, `UNINITIALIZED`, of all the alerts of all the eligible instances (as filtered by all the above). A negative simple pattern will exclude the instances having the labels matched.
+
+        '
+      required: false
+      schema:
+        type: string
+        format: simple pattern
+        default: '*'
+    before:
+      name: before
+      in: query
+      description: '`after` and `before` define the time-frame of a query. `before` can be a negative number of seconds, up to 3 years (-94608000), relative to current clock. If not set, it is assumed to be the current clock time. When `before` is positive, it is assumed to be a unix epoch timestamp. When non-data endpoints support the `after` and `before`, they use the time-frame to limit their response for objects having data retention within the time-frame given.
+
+        '
+      required: false
+      schema:
+        type: integer
+        default: 0
+    filterDimensions:
+      name: dimensions
+      in: query
+      description: 'A simple patterns matching the dimensions to be queried. The simple pattern is checked against and `id` and the `name` of the dimensions of the eligible instances (as filtered by all the above). Both positive and negative simple pattern expressions are supported.
+
+        '
+      required: false
+      schema:
+        type: string
+        format: simple pattern
+        default: '*'
+    filterInstances:
+      name: instances
+      in: query
+      description: 'A simple pattern matching the instances to be queried. The simple pattern is checked against the instance `id`, the instance `name`, the fully qualified name of the instance `id` and `name`, like `instance@machine_guid`, where `instance` is either its `id` or `name`. Both positive and negative simple pattern expressions are supported.
+
+        '
+      required: false
+      schema:
+        type: string
+        format: simple pattern
+        default: '*'
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      description: 'Bearer token authentication for API access when bearer protection is enabled.
+
+
+        **How to obtain a token:**
+
+        1. Token must be obtained via `/api/v3/bearer_get_token` endpoint
+
+        2. This endpoint is ACLK-only (requires Netdata Cloud access)
+
+        3. Token includes role-based access control and expiration time
+
+
+        **How to use:**
+
+        ```
+
+        Authorization: Bearer <token>
+
+        ```
+
+
+        **When required:**
+
+        - When bearer protection is enabled on the agent (via `/api/v3/bearer_protection`)
+
+        - Applies to all APIs with `HTTP_ACCESS_ANONYMOUS_DATA` permission
+
+        - Does not apply to APIs with `HTTP_ACL_NOCHECK` (always public)
+
+        - Does not apply to ACLK-only APIs (use cloud authentication)
+
+
+        **Token expiration:**
+
+        - Tokens are time-limited and must be renewed periodically
+
+        - Expired tokens return HTTP 401 Unauthorized
+
+        '
+    aclkAuth:
+      type: http
+      scheme: bearer
+      description: 'ACLK-only authentication - these APIs are ONLY accessible via Netdata Cloud (ACLK).
+
+
+        **Access Requirements:**
+
+        - User must be authenticated via Netdata Cloud (`SIGNED_ID`)
+
+        - User and agent must be in the same Netdata Cloud space (`SAME_SPACE`)
+
+        - Additional role-based permissions may apply per endpoint
+
+
+        **NOT accessible via:**
+
+        - Direct HTTP/HTTPS to agent (even with bearer token)
+
+        - Local dashboard
+
+        - External integrations
+
+
+        **Available only through:**
+
+        - Netdata Cloud web interface
+
+        - Netdata Cloud API (ACLK tunnel)
+
+
+        **Development mode:**
+
+        - Can be made available in dev mode with `ACL_DEV_OPEN_ACCESS` flag
+
+        '
+    ipAcl:
+      type: apiKey
+      in: header
+      name: X-Forwarded-For
+      description: "IP-based Access Control List restrictions (informational only).\n\n**Configuration:**\nAPIs are subject to IP-based ACL restrictions configured in `netdata.conf`:\n\n```conf\n[web]\n    allow dashboard from = *\n    allow badges from = *\n    allow management from = localhost\n```\n\n**ACL Categories:**\n- `allow dashboard from` - Controls access to metrics, alerts, nodes, functions, config APIs\n- `allow badges from` - Controls access to badge generation APIs\n- `allow management from` - Controls access to management APIs\n\n**Default behavior:**\n- Most APIs allow access from any IP by default\n- Management APIs restrict to localhost by default\n- Can be customized per deployment\n\n**Note:** This is not a standard authentication mechanism but rather IP filtering.\nAPIs with `HTTP_ACL_NOCHECK` bypass all IP restrictions.\n"

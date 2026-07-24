@@ -1,0 +1,687 @@
+openapi: 3.0.0
+info:
+  title: Netdata agent claiming API
+  description: 'Real-time performance and health monitoring.
+
+
+    ## API Versions
+
+
+    Netdata provides three API versions:
+
+    - **v1**: The original API, focused on single-node operations
+
+    - **v2**: Multi-node API with advanced grouping and aggregation capabilities
+
+    - **v3**: The latest API version that combines v1 and v2 endpoints and may include additional features
+
+
+    ### v3 API Endpoints
+
+
+    The v3 API provides the current, actively maintained endpoints:
+
+    - `/api/v3/data` - Multi-dimensional data queries
+
+    - `/api/v3/weights` - Metric scoring/correlation
+
+    - `/api/v3/contexts` - Context metadata
+
+    - `/api/v3/nodes` - Node information
+
+    - `/api/v3/q` - Full-text search
+
+    - `/api/v3/alerts` - Alert information
+
+    - `/api/v3/alert_transitions` - Alert state transitions
+
+    - `/api/v3/alert_config` - Alert configuration
+
+    - `/api/v3/functions` - Available functions
+
+    - `/api/v3/function` - Execute functions
+
+    - `/api/v3/info` - Agent information
+
+    - `/api/v3/node_instances` - Node instance information
+
+    - `/api/v3/stream_path` - Streaming topology
+
+    - `/api/v3/versions` - Version information
+
+    - `/api/v3/badge.svg` - Dynamic badges
+
+    - `/api/v3/allmetrics` - Export metrics
+
+    - `/api/v3/context` - Single context info
+
+    - `/api/v3/variable` - Variable information
+
+    - `/api/v3/config` - Dynamic configuration
+
+    - `/api/v3/settings` - Agent settings
+
+    - `/api/v3/me` - Current user information
+
+    - `/api/v3/claim` - Agent claiming
+
+    - Additional management and streaming endpoints
+
+
+    **Note:** V1 and V2 APIs are deprecated and maintained for backwards compatibility only. New integrations should use V3 exclusively.
+
+    '
+  version: v1-rolling
+  contact:
+    name: Netdata Agent API
+    email: info@netdata.cloud
+    url: https://netdata.cloud
+  license:
+    name: GPL v3+
+    url: https://github.com/netdata/netdata/blob/master/LICENSE
+servers:
+- url: https://registry.my-netdata.io
+- url: http://registry.my-netdata.io
+- url: http://localhost:19999
+tags:
+- name: claiming
+paths:
+  /api/v3/claim:
+    get:
+      operationId: claim3
+      tags:
+      - claiming
+      summary: Claim agent to Netdata Cloud
+      description: '**Agent Claiming to Netdata Cloud**
+
+
+        This endpoint initiates the process of claiming (connecting) a Netdata agent to Netdata Cloud. Claiming establishes a secure, authenticated connection between the agent and Netdata Cloud, enabling centralized monitoring, team collaboration, and cloud-based features.
+
+
+        **Claiming Process Flow:**
+
+        1. **Get Claim Info:** Call endpoint without parameters to get claiming status and verification command
+
+        2. **Generate Verification Key:** Server generates random session ID and saves it to `/var/lib/netdata/netdata_random_session_id`
+
+        3. **Verify Server Ownership:** Administrator runs provided OS-specific command to retrieve the verification key
+
+        4. **Submit Claim Request:** Call endpoint with key, token, URL, and optionally rooms to complete claiming
+
+        5. **Establish Connection:** Server connects to Netdata Cloud and registers the agent
+
+        6. **Reload Connection:** Agent reloads cloud connection and waits for online status
+
+
+        **Use Cases:**
+
+        - **Initial Setup:** Claim a new agent to connect it to Netdata Cloud for the first time
+
+        - **Team Onboarding:** Add agents to specific cloud rooms for team organization
+
+        - **Infrastructure Management:** Connect agents across distributed infrastructure to centralized monitoring
+
+        - **Security Verification:** Ensure only authorized users can claim agents through server access verification
+
+        - **Status Checking:** Query current claiming status and cloud connection state
+
+
+        **Claiming States:**
+
+        - **AVAILABLE:** Agent can be claimed (not yet connected to cloud)
+
+        - **OFFLINE:** Agent was claimed but is currently offline from cloud
+
+        - **INDIRECT:** Agent is connected through a parent agent
+
+        - **ONLINE:** Agent is claimed and online (cannot be re-claimed without unclaiming first)
+
+        - **BANNED:** Agent is banned from cloud (cannot be claimed)
+
+
+        **Security Features:**
+
+        - Random session key verification prevents unauthorized claiming
+
+        - Key is regenerated after each claim attempt (successful or failed)
+
+        - Key stored in file system requires server access to retrieve
+
+        - Parameter validation ensures only safe characters (alphanumeric, dots, commas, dashes, colons, slashes, underscores)
+
+        - Different OS-specific commands for key retrieval (Linux/Docker/Windows)
+
+
+        **Platform-Specific Key Retrieval:**
+
+        - **Linux:** `sudo cat /var/lib/netdata/netdata_random_session_id`
+
+        - **Docker:** `docker exec netdata cat /var/lib/netdata/netdata_random_session_id`
+
+        - **Windows:** `more C:\path\to\netdata_random_session_id`
+
+
+        **Response Formats:**
+
+        - **Info Response:** Returns cloud status, can_be_claimed flag, verification command, and agents info
+
+        - **Success Response:** Includes success=true, message="ok", updated cloud status
+
+        - **Error Response:** Includes success=false, error message, can_be_claimed flag, new verification key
+
+
+        **Important Notes:**
+
+        - Agent must be in AVAILABLE, OFFLINE, or INDIRECT state to be claimed
+
+        - Claiming token is obtained from Netdata Cloud UI (Space settings → Nodes tab → Add Nodes)
+
+        - Base URL typically points to Netdata Cloud API (e.g., https://api.netdata.cloud)
+
+        - Rooms parameter is optional - agent will be added to specified war rooms if provided
+
+        - After successful claiming, agent automatically reloads connection and waits for online status
+
+        - Failed claim attempts regenerate the verification key for security
+
+
+        **Example Workflow:**
+
+        ```bash
+
+        # 1. Get claiming info and verification command
+
+        curl http://localhost:19999/api/v3/claim
+
+
+        # 2. Run the command shown in response to get the key
+
+        sudo cat /var/lib/netdata/netdata_random_session_id
+
+        # Output: 12345678-1234-1234-1234-123456789abc
+
+
+        # 3. Submit claim request with key from step 2 and token from Netdata Cloud
+
+        curl "http://localhost:19999/api/v3/claim?key=12345678-1234-1234-1234-123456789abc&token=YOUR_CLAIM_TOKEN&url=https://api.netdata.cloud&rooms=room1,room2"
+
+        ```
+
+
+        **Security & Access Control:**
+
+        - 🔓 **Always Public API** - This endpoint is always accessible without authentication
+
+        - **Security Model:** Protected by random session key verification (not ACL/bearer token)
+
+        - **Verification Required:** Must provide verification key from agent''s file system to claim
+
+        - **Server Access:** Only users with server file system access can obtain the verification key
+
+        - **No ACL Restrictions:** Not subject to IP-based ACL or bearer protection
+
+        '
+      parameters:
+      - name: key
+        in: query
+        required: false
+        schema:
+          type: string
+          format: uuid
+        description: '**Verification key (UUID) obtained from the server''s file system.**
+
+
+          This is a randomly generated session ID that proves the requester has access to the server.
+
+          To obtain this key:
+
+          1. Call the endpoint without parameters to get the OS-specific command
+
+          2. Run the command on the server (requires sudo/admin access)
+
+          3. Copy the UUID from the file content
+
+          4. Use it in the claim request
+
+
+          **Security Notes:**
+
+          - Key is randomly generated on each info request
+
+          - Key is regenerated after each claim attempt (prevents reuse)
+
+          - Mismatched key triggers new key generation (prevents brute force)
+
+          - Validates server ownership through file system access
+
+
+          **When to Include:**
+
+          - Omit when requesting claiming info/status
+
+          - Include when submitting actual claim request
+
+
+          Example: `12345678-1234-1234-1234-123456789abc`
+
+          '
+      - name: token
+        in: query
+        required: false
+        schema:
+          type: string
+        description: '**Claiming token from Netdata Cloud.**
+
+
+          This token authorizes the agent to connect to a specific Netdata Cloud space.
+
+          Obtained from Netdata Cloud UI: Space settings → Nodes tab → Add Nodes → Copy claim token
+
+
+          **Validation:**
+
+          - Must contain only alphanumeric characters, dots, commas, dashes, colons, slashes, underscores
+
+          - Required when key parameter is provided
+
+          - Invalid token triggers error and key regeneration
+
+
+          **Token Characteristics:**
+
+          - Space-specific (each cloud space has different tokens)
+
+          - Can be regenerated in cloud UI if compromised
+
+          - Does not expire (remains valid until regenerated)
+
+
+          Example: `a1b2c3d4-e5f6-7890-abcd-ef1234567890`
+
+          '
+      - name: url
+        in: query
+        required: false
+        schema:
+          type: string
+          format: uri
+        description: '**Netdata Cloud API base URL.**
+
+
+          The endpoint URL for Netdata Cloud API where the agent will connect.
+
+
+          **Standard Values:**
+
+          - Production: `https://api.netdata.cloud`
+
+          - Staging/Testing: `https://api-staging.netdata.cloud` (if applicable)
+
+
+          **Validation:**
+
+          - Must contain only alphanumeric characters, dots, commas, dashes, colons, slashes, underscores
+
+          - Required when key parameter is provided
+
+          - Should be valid HTTPS URL pointing to Netdata Cloud API
+
+
+          **Important Notes:**
+
+          - Use the URL provided in Netdata Cloud UI claim instructions
+
+          - Different cloud regions may have different URLs
+
+          - Invalid URL prevents successful claiming
+
+
+          Example: `https://api.netdata.cloud`
+
+          '
+      - name: rooms
+        in: query
+        required: false
+        schema:
+          type: string
+        description: '**Comma-separated list of war room IDs to add the agent to.**
+
+
+          War rooms are organizational units within a Netdata Cloud space for grouping related nodes.
+
+
+          **Format:**
+
+          - Comma-separated room IDs (no spaces)
+
+          - Each room ID validated for safe characters
+
+          - Optional parameter (agent claimed to space without specific rooms if omitted)
+
+
+          **Validation:**
+
+          - Must contain only alphanumeric characters, dots, commas, dashes, colons, slashes, underscores
+
+          - Invalid format triggers error and key regeneration
+
+
+          **Room IDs:**
+
+          - Obtained from Netdata Cloud UI (room settings)
+
+          - Room must exist in the target space
+
+          - Agent added to all specified rooms after claiming
+
+          - Can be modified later in cloud UI
+
+
+          **Use Cases:**
+
+          - Add agent to production monitoring room
+
+          - Organize by environment (dev, staging, prod)
+
+          - Group by application or service type
+
+
+          Example: `room-1234-5678-90ab,room-cdef-0123-4567`
+
+          '
+      responses:
+        '200':
+          description: 'Claiming request processed successfully. Check the `success` field to determine if claiming succeeded.
+
+            - **Info response** (no key provided): Returns cloud status, verification command, and can_be_claimed flag
+
+            - **Success response** (key provided, claim succeeded): Returns success=true with updated cloud status
+
+            - **Action failed response** (key provided, claim failed): Returns success=false with failure reason
+
+            '
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    description: 'Present only for claim action responses (when key is provided).
+
+                      true = claiming succeeded, false = claiming failed.
+
+                      Not present in info responses (when requesting claim status without key).
+
+                      '
+                  message:
+                    type: string
+                    description: 'Result message. Present only for claim action responses.
+
+                      - Success: "ok"
+
+                      - Failure: Reason for failure (e.g., "invalid key", "invalid parameters", cloud connection error)
+
+                      '
+                  cloud_status:
+                    type: string
+                    enum:
+                    - available
+                    - offline
+                    - indirect
+                    - online
+                    - banned
+                    description: 'Current cloud connection status of the agent.
+
+                      - available: Not claimed yet, can be claimed
+
+                      - offline: Claimed but currently disconnected
+
+                      - indirect: Connected through parent agent
+
+                      - online: Claimed and connected (cannot re-claim)
+
+                      - banned: Banned from cloud (cannot claim)
+
+                      '
+                  can_be_claimed:
+                    type: boolean
+                    description: 'Whether the agent can currently be claimed. Present in info and error responses.
+
+                      true for available/offline/indirect states, false for online/banned.
+
+                      '
+                  key_filename:
+                    type: string
+                    description: 'Full path to the file containing the verification key.
+
+                      Present in info and error responses (not present after successful claim).
+
+                      Platform-specific path (Linux: /var/lib/netdata/..., Windows: C:\...).
+
+                      '
+                  cmd:
+                    type: string
+                    description: 'OS-specific command to retrieve the verification key.
+
+                      Present in info and error responses.
+
+                      - Linux: "sudo cat /var/lib/netdata/netdata_random_session_id"
+
+                      - Docker: "docker exec netdata cat /var/lib/netdata/netdata_random_session_id"
+
+                      - Windows: "more C:\path\to\netdata_random_session_id"
+
+                      '
+                  help:
+                    type: string
+                    description: 'Human-readable instructions for obtaining the verification key.
+
+                      Present in info and error responses.
+
+                      '
+                  agents:
+                    type: array
+                    description: Agent information for the claimed node(s)
+                    items:
+                      type: object
+              examples:
+                info_response:
+                  value:
+                    cloud_status: available
+                    can_be_claimed: true
+                    key_filename: /var/lib/netdata/netdata_random_session_id
+                    cmd: sudo cat /var/lib/netdata/netdata_random_session_id
+                    help: 'We need to verify this server is yours. SSH to this server and run this command. It will give you a UUID. Copy and paste this UUID to this box:'
+                    agents:
+                    - hostname: my-server
+                      machine_guid: 12345678-1234-1234-1234-123456789abc
+                  summary: Info response (no claim attempt)
+                success_response:
+                  value:
+                    success: true
+                    message: ok
+                    cloud_status: online
+                    agents:
+                    - hostname: my-server
+                      machine_guid: 12345678-1234-1234-1234-123456789abc
+                      claimed_id: cloud-node-id-123
+                  summary: Successful claim
+                error_response:
+                  value:
+                    success: false
+                    message: invalid key
+                    cloud_status: available
+                    can_be_claimed: true
+                    key_filename: /var/lib/netdata/netdata_random_session_id
+                    cmd: sudo cat /var/lib/netdata/netdata_random_session_id
+                    help: 'We need to verify this server is yours. SSH to this server and run this command. It will give you a UUID. Copy and paste this UUID to this box:'
+                    agents:
+                    - hostname: my-server
+                      machine_guid: 12345678-1234-1234-1234-123456789abc
+                  summary: Failed claim (invalid key)
+        '400':
+          description: 'Bad request (only in v2 API or earlier). V3 returns errors as JSON with HTTP 200.
+
+            Reasons include:
+
+            - Invalid key (doesn''t match generated session ID)
+
+            - Invalid parameters (missing token/url, or invalid characters)
+
+            - Cloud connection failure
+
+            '
+  /api/v2/claim:
+    get:
+      deprecated: true
+      operationId: claim2
+      tags:
+      - claiming
+      summary: 'OBSOLETE: Claim agent to Netdata Cloud (use /api/v3/claim instead)'
+      description: '**⚠️ OBSOLETE API - Will be removed in future versions**
+
+
+        This endpoint is deprecated. Use `/api/v3/claim` instead, which provides improved error handling.
+
+
+        **Migration:** Replace `/api/v2/claim` with `/api/v3/claim` in all API calls.
+
+        Parameters are identical, but v3 returns errors as JSON instead of plain text for better integration.
+
+
+        Claims (connects) agent to Netdata Cloud using server ownership verification.
+
+        Enables centralized monitoring and team collaboration features.
+
+
+        **Security & Access Control:**
+
+        - 🔓 **Always Public API** - This endpoint is always accessible without authentication
+
+        - **Security Model:** Protected by random session key verification (not ACL/bearer token)
+
+        - **Verification Required:** Must provide verification key from agent''s file system to claim
+
+        - **Server Access:** Only users with server file system access can obtain the verification key
+
+        - **No ACL Restrictions:** Not subject to IP-based ACL or bearer protection
+
+        '
+      parameters:
+      - name: key
+        in: query
+        required: false
+        schema:
+          type: string
+          format: uuid
+        description: Verification key obtained from server file system
+      - name: token
+        in: query
+        required: false
+        schema:
+          type: string
+        description: Claiming token from Netdata Cloud
+      - name: url
+        in: query
+        required: false
+        schema:
+          type: string
+          format: uri
+        description: Netdata Cloud API base URL
+      - name: rooms
+        in: query
+        required: false
+        schema:
+          type: string
+        description: Comma-separated war room IDs
+      responses:
+        '200':
+          description: Claim operation processed (check response for success/failure)
+        '400':
+          description: Invalid parameters (v2 returns plain text errors)
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      description: 'Bearer token authentication for API access when bearer protection is enabled.
+
+
+        **How to obtain a token:**
+
+        1. Token must be obtained via `/api/v3/bearer_get_token` endpoint
+
+        2. This endpoint is ACLK-only (requires Netdata Cloud access)
+
+        3. Token includes role-based access control and expiration time
+
+
+        **How to use:**
+
+        ```
+
+        Authorization: Bearer <token>
+
+        ```
+
+
+        **When required:**
+
+        - When bearer protection is enabled on the agent (via `/api/v3/bearer_protection`)
+
+        - Applies to all APIs with `HTTP_ACCESS_ANONYMOUS_DATA` permission
+
+        - Does not apply to APIs with `HTTP_ACL_NOCHECK` (always public)
+
+        - Does not apply to ACLK-only APIs (use cloud authentication)
+
+
+        **Token expiration:**
+
+        - Tokens are time-limited and must be renewed periodically
+
+        - Expired tokens return HTTP 401 Unauthorized
+
+        '
+    aclkAuth:
+      type: http
+      scheme: bearer
+      description: 'ACLK-only authentication - these APIs are ONLY accessible via Netdata Cloud (ACLK).
+
+
+        **Access Requirements:**
+
+        - User must be authenticated via Netdata Cloud (`SIGNED_ID`)
+
+        - User and agent must be in the same Netdata Cloud space (`SAME_SPACE`)
+
+        - Additional role-based permissions may apply per endpoint
+
+
+        **NOT accessible via:**
+
+        - Direct HTTP/HTTPS to agent (even with bearer token)
+
+        - Local dashboard
+
+        - External integrations
+
+
+        **Available only through:**
+
+        - Netdata Cloud web interface
+
+        - Netdata Cloud API (ACLK tunnel)
+
+
+        **Development mode:**
+
+        - Can be made available in dev mode with `ACL_DEV_OPEN_ACCESS` flag
+
+        '
+    ipAcl:
+      type: apiKey
+      in: header
+      name: X-Forwarded-For
+      description: "IP-based Access Control List restrictions (informational only).\n\n**Configuration:**\nAPIs are subject to IP-based ACL restrictions configured in `netdata.conf`:\n\n```conf\n[web]\n    allow dashboard from = *\n    allow badges from = *\n    allow management from = localhost\n```\n\n**ACL Categories:**\n- `allow dashboard from` - Controls access to metrics, alerts, nodes, functions, config APIs\n- `allow badges from` - Controls access to badge generation APIs\n- `allow management from` - Controls access to management APIs\n\n**Default behavior:**\n- Most APIs allow access from any IP by default\n- Management APIs restrict to localhost by default\n- Can be customized per deployment\n\n**Note:** This is not a standard authentication mechanism but rather IP filtering.\nAPIs with `HTTP_ACL_NOCHECK` bypass all IP restrictions.\n"

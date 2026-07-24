@@ -1,0 +1,1560 @@
+openapi: 3.0.0
+info:
+  title: Netdata agent nodes API
+  description: 'Real-time performance and health monitoring.
+
+
+    ## API Versions
+
+
+    Netdata provides three API versions:
+
+    - **v1**: The original API, focused on single-node operations
+
+    - **v2**: Multi-node API with advanced grouping and aggregation capabilities
+
+    - **v3**: The latest API version that combines v1 and v2 endpoints and may include additional features
+
+
+    ### v3 API Endpoints
+
+
+    The v3 API provides the current, actively maintained endpoints:
+
+    - `/api/v3/data` - Multi-dimensional data queries
+
+    - `/api/v3/weights` - Metric scoring/correlation
+
+    - `/api/v3/contexts` - Context metadata
+
+    - `/api/v3/nodes` - Node information
+
+    - `/api/v3/q` - Full-text search
+
+    - `/api/v3/alerts` - Alert information
+
+    - `/api/v3/alert_transitions` - Alert state transitions
+
+    - `/api/v3/alert_config` - Alert configuration
+
+    - `/api/v3/functions` - Available functions
+
+    - `/api/v3/function` - Execute functions
+
+    - `/api/v3/info` - Agent information
+
+    - `/api/v3/node_instances` - Node instance information
+
+    - `/api/v3/stream_path` - Streaming topology
+
+    - `/api/v3/versions` - Version information
+
+    - `/api/v3/badge.svg` - Dynamic badges
+
+    - `/api/v3/allmetrics` - Export metrics
+
+    - `/api/v3/context` - Single context info
+
+    - `/api/v3/variable` - Variable information
+
+    - `/api/v3/config` - Dynamic configuration
+
+    - `/api/v3/settings` - Agent settings
+
+    - `/api/v3/me` - Current user information
+
+    - `/api/v3/claim` - Agent claiming
+
+    - Additional management and streaming endpoints
+
+
+    **Note:** V1 and V2 APIs are deprecated and maintained for backwards compatibility only. New integrations should use V3 exclusively.
+
+    '
+  version: v1-rolling
+  contact:
+    name: Netdata Agent API
+    email: info@netdata.cloud
+    url: https://netdata.cloud
+  license:
+    name: GPL v3+
+    url: https://github.com/netdata/netdata/blob/master/LICENSE
+servers:
+- url: https://registry.my-netdata.io
+- url: http://registry.my-netdata.io
+- url: http://localhost:19999
+tags:
+- name: nodes
+  description: Everything related to monitored nodes
+paths:
+  /api/v2/nodes:
+    get:
+      deprecated: true
+      operationId: getNodes2
+      tags:
+      - nodes
+      summary: Nodes Info v2
+      description: 'Get a list of all nodes hosted by this Netdata Agent.
+
+
+        **Security & Access Control:**
+
+        - 📊 **Public Data API** - Bearer token optional, IP-based ACL restrictions apply
+
+        - **Default Access:** Public (no authentication required)
+
+        - **Bearer Protection:** When enabled via `/api/v3/bearer_protection`, requires bearer token
+
+        - **IP Restrictions:** Subject to `allow dashboard from` in netdata.conf
+
+        - **Access Methods:** Direct HTTP/HTTPS, Netdata Cloud, external tools
+
+        '
+      security:
+      - {}
+      - bearerAuth: []
+      parameters:
+      - $ref: '#/components/parameters/scopeNodes'
+      - $ref: '#/components/parameters/scopeContexts'
+      - $ref: '#/components/parameters/filterNodes'
+      - $ref: '#/components/parameters/filterContexts'
+      - $ref: '#/components/parameters/contextsQueryOptions'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                description: '`/api/v2/nodes` response for all nodes hosted by a Netdata Agent.
+
+                  '
+                type: object
+                properties:
+                  api:
+                    $ref: '#/components/schemas/api'
+                  agents:
+                    $ref: '#/components/schemas/agents'
+                  versions:
+                    $ref: '#/components/schemas/versions'
+                  nodes:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/nodeFull'
+  /api/v3/nodes:
+    get:
+      operationId: getNodes3
+      tags:
+      - nodes
+      summary: Nodes Info v3
+      description: 'Get a list of all nodes hosted by this Netdata Agent.
+
+
+        **Security & Access Control:**
+
+        - 📊 **Public Data API** - Bearer token optional, IP-based ACL restrictions apply
+
+        - **Default Access:** Public (no authentication required)
+
+        - **Bearer Protection:** When enabled via `/api/v3/bearer_protection`, requires bearer token
+
+        - **IP Restrictions:** Subject to `allow dashboard from` in netdata.conf
+
+        - **Access Methods:** Direct HTTP/HTTPS, Netdata Cloud, external tools
+
+        '
+      security:
+      - {}
+      - bearerAuth: []
+      parameters:
+      - $ref: '#/components/parameters/scopeNodes'
+      - $ref: '#/components/parameters/scopeContexts'
+      - $ref: '#/components/parameters/filterNodes'
+      - $ref: '#/components/parameters/filterContexts'
+      - $ref: '#/components/parameters/contextsQueryOptions'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                description: '`/api/v3/nodes` response for all nodes hosted by a Netdata Agent.
+
+                  '
+                type: object
+                properties:
+                  api:
+                    $ref: '#/components/schemas/api'
+                  agents:
+                    $ref: '#/components/schemas/agents'
+                  versions:
+                    $ref: '#/components/schemas/versions'
+                  nodes:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/nodeFull'
+  /api/v1/info:
+    get:
+      deprecated: true
+      operationId: getNodeInfo1
+      tags:
+      - nodes
+      summary: Node Info v1
+      description: "The info endpoint returns basic information about netdata. It provides:\n* netdata version\n* netdata unique id\n* list of hosts mirrored (includes itself)\n* Operating System, Virtualization, K8s nodes and Container technology information\n* List of active collector plugins and modules\n* Streaming information\n* number of alarms in the host\n  * number of alarms in normal state\n  * number of alarms in warning state\n  * number of alarms in critical state\n\n**Security & Access Control:**\n- \U0001F4CA **Public Data API** - Bearer token optional, IP-based ACL restrictions apply\n- **Default Access:** Public (no authentication required)\n- **Bearer Protection:** When enabled via `/api/v3/bearer_protection`, requires bearer token\n- **IP Restrictions:** Subject to `allow dashboard from` in netdata.conf\n- **Access Methods:** Direct HTTP/HTTPS, Netdata Cloud, external tools\n"
+      security:
+      - {}
+      - bearerAuth: []
+      responses:
+        '200':
+          description: netdata basic information.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/info'
+        '503':
+          description: netdata daemon not ready (used for health checks).
+  /api/v3/info:
+    get:
+      operationId: info_v3
+      tags:
+      - nodes
+      summary: Retrieve detailed Netdata agent information across all nodes
+      description: 'Returns comprehensive information about Netdata agents running across the monitored infrastructure. This endpoint provides detailed metadata about each agent including version information, capabilities, collection status, and system configuration.
+
+
+        **What is Netdata Agent Information?**
+
+        The `info` endpoint provides detailed metadata about the Netdata monitoring agent itself, including:
+
+        - Agent version and build information
+
+        - System capabilities and features enabled
+
+        - Collection status and health
+
+        - Host configuration and labels
+
+        - Database information (storage, retention)
+
+        - Plugin and collector status
+
+        - Operating system details
+
+        - Hardware information
+
+
+        **Difference from /api/v3/nodes:**
+
+        - **`/api/v3/nodes`:** Returns lightweight node list with basic identification
+
+        - **`/api/v3/info`:** Returns comprehensive agent details with full capabilities and configuration
+
+
+        **Multi-Node Support:**
+
+        When queried on a Netdata Parent, this endpoint can return information for:
+
+        - The parent agent itself
+
+        - All child agents (streaming to the parent)
+
+        - Filtered subsets using scope_nodes/nodes parameters
+
+
+        **Use Cases:**
+
+        - **Infrastructure Inventory:** Complete catalog of all Netdata installations
+
+        - **Version Audits:** Find agents that need updates
+
+        - **Capability Discovery:** What features are available on each node
+
+        - **Health Monitoring:** Verify agent collection status
+
+        - **Configuration Management:** Understand how agents are configured
+
+        - **Troubleshooting:** Diagnose agent-specific issues
+
+        - **License/Compliance:** Track Netdata deployments
+
+
+        **Information Categories:**
+
+
+        **1. Agent Identity:**
+
+        - Unique agent ID (machine_guid)
+
+        - Hostname
+
+        - Agent version and commit
+
+        - Build information
+
+
+        **2. System Information:**
+
+        - Operating system and kernel
+
+        - CPU architecture
+
+        - Virtualization platform
+
+        - Container runtime (if applicable)
+
+
+        **3. Database & Storage:**
+
+        - Database mode (dbengine, ram, alloc)
+
+        - Retention period
+
+        - Storage capacity
+
+        - Disk space usage
+
+
+        **4. Features & Capabilities:**
+
+        - ML/anomaly detection status
+
+        - ACLK (cloud connection) status
+
+        - Streaming capabilities
+
+        - Available collectors
+
+
+        **5. Collection Status:**
+
+        - Number of charts collecting
+
+        - Number of dimensions
+
+        - Collection frequency
+
+        - Last collection timestamp
+
+
+        **6. Host Labels:**
+
+        - Custom labels assigned to the host
+
+        - Automatic labels (OS, architecture, etc.)
+
+        - Cloud provider information (if detected)
+
+
+        **Performance Characteristics:**
+
+        - Fast query (primarily metadata lookups)
+
+        - No time-series data processing
+
+        - Results can be cached for reasonable duration
+
+        - Supports filtering by node patterns
+
+
+        **Example Usage:**
+
+        ```
+
+        # Get info for all nodes
+
+        GET /api/v3/info
+
+
+        # Get info for specific nodes
+
+        GET /api/v3/info?nodes=web-server-01,db-server-01
+
+
+        # Get info for nodes matching pattern
+
+        GET /api/v3/info?scope_nodes=prod-*
+
+
+        # Include specific options
+
+        GET /api/v3/info?options=full
+
+        ```
+
+
+        **Response Format:**
+
+        Returns JSON with agent information grouped by node, including complete details about each agent''s capabilities, configuration, and current status.
+
+
+        **Security & Access Control:**
+
+        - 🔓 **Always Public API** - This endpoint is always accessible without authentication
+
+        - **No Restrictions:** Not subject to bearer protection or IP-based ACL restrictions
+
+        - **No Authentication:** Cannot be restricted by any configuration
+
+        - **Access:** Available to anyone who can reach the agent''s HTTP endpoint
+
+        '
+      parameters:
+      - name: scope_nodes
+        in: query
+        description: 'Filter to specific nodes using simple pattern matching.
+
+
+          **Pattern Syntax:**
+
+          - `*` matches any characters
+
+          - Space-separated list for multiple patterns
+
+          - `!` prefix to exclude
+
+          - Combine with: `web* !web-test*`
+
+
+          **Examples:**
+
+          - `scope_nodes=web*` - All web servers
+
+          - `scope_nodes=prod-*` - All production nodes
+
+          - `scope_nodes=* !test*` - All except test nodes
+
+
+          **Use Cases:**
+
+          - Focus on specific infrastructure tiers
+
+          - Exclude development/test environments
+
+          - Group by naming conventions
+
+
+          When not specified, returns info for all nodes.
+
+          '
+        required: false
+        schema:
+          type: string
+        example: prod-*
+      - name: nodes
+        in: query
+        description: 'Filter to specific nodes by exact names.
+
+
+          Unlike `scope_nodes`, this requires exact node names (no patterns).
+
+
+          **Format:** Comma or pipe-separated list
+
+
+          **Examples:**
+
+          - `nodes=web-server-01` - Single node
+
+          - `nodes=web-server-01,db-server-01` - Multiple nodes
+
+          - `nodes=web-01|web-02` - Pipe separator
+
+
+          **Best Practice:**
+
+          - Use `nodes` when you know exact names
+
+          - Use `scope_nodes` for pattern-based filtering
+
+
+          When not specified, returns info for all nodes matching scope_nodes.
+
+          '
+        required: false
+        schema:
+          type: string
+        example: web-server-01,db-server-01
+      - name: options
+        in: query
+        description: 'Control the level of detail and what information to include in the response.
+
+
+          **Available Options:**
+
+          - `full` or `all` - Include all available information
+
+          - `labels` - Include host labels
+
+          - `uuids` - Include UUIDs and identifiers
+
+          - `deleted` - Include information about deleted/offline nodes
+
+          - `hidden` - Include hidden agents
+
+
+          **Examples:**
+
+          - `options=full` - Complete information
+
+          - `options=labels,uuids` - Labels and identifiers
+
+          - `options=labels|uuids` - Pipe separator also works
+
+
+          **Default Behavior:**
+
+          When not specified, returns standard information without deleted/hidden nodes and without excessive detail.
+
+
+          **Use Cases:**
+
+          - Inventory systems need `full` detail
+
+          - Label-based filtering needs `labels`
+
+          - Historical analysis may need `deleted`
+
+          '
+        required: false
+        schema:
+          type: string
+        example: full,labels
+      - $ref: '#/components/parameters/after'
+      - $ref: '#/components/parameters/before'
+      - name: timeout
+        in: query
+        description: 'Maximum time in milliseconds to wait for the query to complete.
+
+
+          **Format:** Integer (milliseconds)
+
+
+          **Default:** Server default timeout
+
+
+          **Example:**
+
+          - `timeout=30000` - 30 second timeout
+
+
+          For agent info queries, timeouts are rarely needed as this is a fast metadata-only operation. However, on very large multi-node setups, you may want to limit query time.
+
+          '
+        required: false
+        schema:
+          type: integer
+          format: int64
+          minimum: 1000
+        example: 30000
+      - name: cardinality
+        in: query
+        description: 'Limit the number of nodes returned.
+
+
+          **Format:** Integer (maximum nodes)
+
+
+          **Default:** No limit
+
+
+          **Example:**
+
+          - `cardinality=100` - Return at most 100 nodes
+
+
+          **Use Cases:**
+
+          - Prevent huge responses in very large infrastructures
+
+          - Get a sample of nodes for testing
+
+          - Dashboard widgets with limited display space
+
+
+          When exceeded, response indicates how many nodes were omitted.
+
+          '
+        required: false
+        schema:
+          type: integer
+          minimum: 1
+        example: 100
+      responses:
+        '200':
+          description: "Success. Returns detailed Netdata agent information.\n\n**Response Structure:**\nThe response is a JSON object containing comprehensive agent information grouped by node.\n\n**Top-Level Structure:**\n- `agents`: Array of agent information objects, one per node\n\n**Per-Agent Information Includes:**\n\n**1. Identity:**\n- `machine_guid`: Unique agent identifier (UUID)\n- `hostname`: Node hostname\n- `agent_version`: Netdata version string\n- `agent_commit`: Git commit hash of build\n\n**2. System Information:**\n- `os_name`: Operating system name\n- `os_version`: OS version\n- `kernel_name`: Kernel name\n- `kernel_version`: Kernel version\n- `architecture`: CPU architecture (x86_64, aarch64, etc.)\n- `virtualization`: Virtualization platform (if any)\n- `container`: Container runtime (Docker, LXC, etc.)\n- `container_detection`: How container was detected\n\n**3. Database & Storage:**\n- `database_mode`: Storage mode (dbengine, ram, alloc, none)\n- `database_retention`: Data retention period in seconds\n- `database_size`: Current database size in bytes\n- `page_cache_size`: Page cache size\n- `metrics_stored`: Number of unique metrics\n\n**4. Features & Capabilities:**\n- `ml_enabled`: Machine learning / anomaly detection enabled\n- `ml_models_running`: Number of ML models active\n- `aclk_available`: Cloud connectivity available\n- `aclk_status`: Cloud connection status\n- `stream_compression`: Streaming compression supported\n- `web_enabled`: Web server enabled\n\n**5. Collection Status:**\n- `charts_count`: Number of charts being collected\n- `dimensions_count`: Number of dimensions (time-series)\n- `collectors_count`: Number of active collectors\n- `update_every`: Collection frequency in seconds\n- `history`: Retention in seconds\n- `memory_mode`: Memory storage mode\n\n**6. Host Labels:**\n- `host_labels`: Object containing all host labels\n  - Includes automatic labels (_os_name, _architecture, etc.)\n  - Includes custom labels assigned by user\n  - May include cloud provider labels\n\n**7. Timestamps:**\n- `first_time_t`: Timestamp of oldest data point\n- `last_time_t`: Timestamp of newest data point\n- `now`: Current server time\n\n**8. Streaming Information (if applicable):**\n- `stream_status`: Streaming status (parent/child)\n- `stream_parents`: Parent nodes (if child)\n- `stream_children`: Child nodes (if parent)\n\n**Example Response Structure:**\n```json\n{\n  \"agents\": [\n    {\n      \"machine_guid\": \"550e8400-e29b-41d4-a716-446655440000\",\n      \"hostname\": \"web-server-01\",\n      \"agent_version\": \"v1.40.0\",\n      \"os_name\": \"ubuntu\",\n      \"os_version\": \"22.04\",\n      \"kernel_version\": \"5.15.0\",\n      \"architecture\": \"x86_64\",\n      \"database_mode\": \"dbengine\",\n      \"database_retention\": 86400,\n      \"ml_enabled\": true,\n      \"charts_count\": 425,\n      \"dimensions_count\": 2850,\n      \"update_every\": 1,\n      \"host_labels\": {\n        \"_os_name\": \"ubuntu\",\n        \"_architecture\": \"x86_64\",\n        \"environment\": \"production\",\n        \"tier\": \"web\"\n      }\n    }\n  ]\n}\n```\n\n**Response Characteristics:**\n- Content-Type: application/json\n- Can be cached (agent info changes infrequently)\n- Complete metadata without time-series data\n- Lightweight and fast to generate\n\n**Filtering:**\nResponse respects scope_nodes/nodes filters and cardinality limits.\n"
+          content:
+            application/json:
+              schema:
+                type: object
+                description: Comprehensive Netdata agent information
+        '400':
+          description: 'Bad request. Common causes:
+
+            - Invalid parameter values
+
+            - Malformed filter patterns
+
+            '
+        '500':
+          description: Internal server error during info retrieval.
+  /api/v3/node_instances:
+    get:
+      operationId: node_instances_v3
+      tags:
+      - nodes
+      summary: Retrieve chart instances organized by node across the infrastructure
+      description: "Returns information about all chart instances grouped by node. This endpoint provides a comprehensive view of what metrics are being collected on each node, organized by chart instances.\n\n**What are Node Instances?**\nNode instances represent the specific chart instances (individual monitoring targets) on each node:\n- Each node may have multiple instances of the same chart type\n- Examples: Multiple disks (sda, sdb, sdc), multiple network interfaces (eth0, eth1)\n- Instances represent the specific entities being monitored\n\n**Example:**\nFor disk monitoring:\n- Node: `web-server-01`\n  - Instances: `disk.sda`, `disk.sdb`, `disk.nvme0n1`\n- Node: `db-server-01`\n  - Instances: `disk.sda`, `disk.sdb`\n\n**Difference from Other Endpoints:**\n- **`/api/v3/nodes`:** Returns lightweight node list\n- **`/api/v3/info`:** Returns detailed agent information\n- **`/api/v3/node_instances`:** Returns what chart instances each node has (what's being monitored)\n- **`/api/v3/contexts`:** Returns contexts aggregated across all nodes\n\n**Use Cases:**\n- **Infrastructure Discovery:** What devices/services are monitored on each node\n- **Capacity Planning:** Understand monitoring coverage per node\n- **Configuration Verification:** Verify expected charts are collecting\n- **Collector Status:** See which collectors are active per node\n- **Instance Inventory:** Complete catalog of monitored entities\n- **Troubleshooting:** Find which nodes monitor specific instances\n\n**Response Organization:**\nResults are organized hierarchically:\n1. **By Node:** Top-level grouping by node hostname\n2. **By Context:** Charts grouped by their context (e.g., disk.space)\n3. **By Instance:** Individual chart instances within each context\n\n**Performance Characteristics:**\n- Medium query cost (metadata aggregation across nodes)\n- Response size grows with number of nodes and instances\n- Can be filtered to reduce response size\n- Results can be cached (instances change infrequently)\n\n**Example Query Patterns:**\n```\n# Get all instances across all nodes\nGET /api/v3/node_instances\n\n# Get instances for specific nodes\nGET /api/v3/node_instances?nodes=web-server-01,db-server-01\n\n# Get instances for nodes matching pattern\nGET /api/v3/node_instances?scope_nodes=prod-*\n\n# Limit response size\nGET /api/v3/node_instances?cardinality=100\n```\n\n**Response Includes:**\n- Node identification (hostname, machine_guid)\n- Agent information (version, capabilities)\n- All chart instances organized by context\n- Instance-specific metadata (labels, units, dimensions)\n- Instance collection status\n\n**Security & Access Control:**\n- \U0001F4CA **Public Data API** - Bearer token optional, IP-based ACL restrictions apply\n- **Default Access:** Public (no authentication required)\n- **Bearer Protection:** When enabled via `/api/v3/bearer_protection`, requires bearer token\n- **IP Restrictions:** Subject to `allow dashboard from` in netdata.conf\n- **Access Methods:** Direct HTTP/HTTPS, Netdata Cloud, external tools\n"
+      security:
+      - {}
+      - bearerAuth: []
+      parameters:
+      - name: scope_nodes
+        in: query
+        description: 'Filter to specific nodes using pattern matching.
+
+
+          **Pattern Syntax:**
+
+          - `*` matches any characters
+
+          - Space-separated for multiple patterns
+
+          - `!` prefix excludes
+
+          - Example: `prod-* !prod-test*`
+
+
+          **Examples:**
+
+          - `scope_nodes=web*` - All web servers
+
+          - `scope_nodes=db-* cache-*` - Database and cache nodes
+
+          - `scope_nodes=* !test*` - All except test nodes
+
+
+          When not specified, returns instances from all nodes.
+
+          '
+        required: false
+        schema:
+          type: string
+        example: prod-*
+      - name: nodes
+        in: query
+        description: 'Filter to specific nodes by exact names.
+
+
+          **Format:** Comma or pipe-separated exact names
+
+
+          **Examples:**
+
+          - `nodes=web-server-01` - Single node
+
+          - `nodes=web-01,db-01` - Multiple nodes
+
+
+          **Best Practice:** Use `nodes` for exact names, `scope_nodes` for patterns.
+
+
+          When not specified, returns instances from all nodes.
+
+          '
+        required: false
+        schema:
+          type: string
+        example: web-server-01,db-server-01
+      - name: options
+        in: query
+        description: 'Control response detail level and included information.
+
+
+          **Available Options:**
+
+          - `full` or `all` - Complete instance information
+
+          - `labels` - Include instance labels
+
+          - `uuids` - Include UUIDs and identifiers
+
+          - `deleted` - Include deleted/offline instances
+
+          - `hidden` - Include hidden instances
+
+          - `instances` or `charts` - Include chart instances (default)
+
+          - `metrics` or `dimensions` - Include dimension details
+
+
+          **Examples:**
+
+          - `options=full` - All information
+
+          - `options=labels,dimensions` - Labels and dimension details
+
+          - `options=labels|uuids` - Pipe separator
+
+
+          **Default:** Returns basic instance information without excessive detail.
+
+          '
+        required: false
+        schema:
+          type: string
+        example: full,labels,dimensions
+      - $ref: '#/components/parameters/after'
+      - $ref: '#/components/parameters/before'
+      - name: timeout
+        in: query
+        description: 'Maximum time in milliseconds to wait for query completion.
+
+
+          **Format:** Integer (milliseconds)
+
+
+          **Default:** Server default timeout
+
+
+          **Example:** `timeout=30000` (30 seconds)
+
+
+          For large multi-node infrastructures, you may need to increase timeout to allow complete instance enumeration.
+
+          '
+        required: false
+        schema:
+          type: integer
+          format: int64
+          minimum: 1000
+        example: 30000
+      - name: cardinality
+        in: query
+        description: 'Limit the number of instances returned per node.
+
+
+          **Format:** Integer (max instances per node)
+
+
+          **Default:** No limit
+
+
+          **Example:** `cardinality=500` - At most 500 instances per node
+
+
+          **Use Cases:**
+
+          - Prevent huge responses from nodes with many instances
+
+          - Sample instances for testing
+
+          - Dashboard widgets with limited space
+
+
+          When exceeded, response indicates how many instances were omitted per node.
+
+          '
+        required: false
+        schema:
+          type: integer
+          minimum: 1
+        example: 500
+      responses:
+        '200':
+          description: "Success. Returns chart instances organized by node.\n\n**Response Structure:**\n```json\n{\n  \"nodes\": [\n    {\n      \"machine_guid\": \"uuid\",\n      \"hostname\": \"web-server-01\",\n      \"agent_version\": \"v1.40.0\",\n      \"contexts\": [\n        {\n          \"context\": \"disk.space\",\n          \"instances\": [\n            {\n              \"id\": \"disk.sda\",\n              \"name\": \"disk sda\",\n              \"family\": \"sda\",\n              \"labels\": {...},\n              \"dimensions\": [...],\n              \"status\": \"active\"\n            },\n            {\n              \"id\": \"disk.sdb\",\n              \"name\": \"disk sdb\",\n              \"family\": \"sdb\",\n              \"labels\": {...},\n              \"dimensions\": [...],\n              \"status\": \"active\"\n            }\n          ]\n        },\n        {\n          \"context\": \"net.net\",\n          \"instances\": [\n            {\n              \"id\": \"net.eth0\",\n              \"name\": \"eth0\",\n              \"family\": \"eth0\",\n              \"labels\": {...},\n              \"dimensions\": [...],\n              \"status\": \"active\"\n            }\n          ]\n        }\n      ]\n    }\n  ]\n}\n```\n\n**Response Fields:**\n\n**Node Level:**\n- `machine_guid`: Unique node identifier\n- `hostname`: Node hostname\n- `agent_version`: Netdata version on this node\n- `contexts`: Array of contexts with their instances\n\n**Context Level:**\n- `context`: Context name (e.g., \"disk.space\", \"system.cpu\")\n- `instances`: Array of chart instances for this context\n\n**Instance Level:**\n- `id`: Chart instance ID (e.g., \"disk.sda\")\n- `name`: Human-readable instance name\n- `family`: Chart family/grouping\n- `labels`: Instance-specific labels\n- `dimensions`: Array of dimensions (metrics) collected\n- `status`: Collection status (active, stale, offline)\n- `units`: Unit of measurement\n- `chart_type`: Chart visualization type\n- `priority`: Display priority\n\n**Dimension Information (when options=dimensions):**\n- `id`: Dimension identifier\n- `name`: Dimension display name\n- `algorithm`: Aggregation algorithm\n- `multiplier`, `divisor`: Value transformation\n\n**Label Information (when options=labels):**\n- Instance labels provide additional metadata\n- Examples: disk_type=ssd, interface_speed=1000, mount_point=/\n\n**Response Characteristics:**\n- Content-Type: application/json\n- Cacheable (instances change infrequently)\n- Size grows with number of nodes and instances\n- Organized hierarchically for easy navigation\n\n**Filtering:**\nResponse respects scope_nodes/nodes filters and cardinality limits.\n"
+          content:
+            application/json:
+              schema:
+                type: object
+                description: Chart instances organized by node
+        '400':
+          description: 'Bad request. Common causes:
+
+            - Invalid parameter values
+
+            - Malformed filter patterns
+
+            '
+        '500':
+          description: Internal server error during instance enumeration.
+  /api/v3/stream_path:
+    get:
+      operationId: stream_path
+      tags:
+      - nodes
+      summary: Retrieve streaming topology path for nodes
+      description: "**V3 SPECIFIC ENDPOINT**\n\nReturns the streaming path and topology showing how nodes are connected in the Netdata infrastructure.\nThis endpoint reveals the parent-child relationships between nodes, showing which nodes stream data\nto which parents, creating a hierarchical view of the monitoring infrastructure.\n\n**Streaming Topology:**\n- **Parent nodes**: Nodes that receive streaming data from child nodes\n- **Child nodes**: Nodes that send their metrics to parent nodes for centralization\n- **Streaming path**: The complete chain from child → parent → grandparent (if any)\n\n**Use Cases:**\n- Understand infrastructure hierarchy and data flow\n- Identify parent nodes that aggregate data from multiple children\n- Debug streaming connectivity issues\n- Plan infrastructure changes and reorganization\n- Visualize the complete monitoring topology\n\n**Common Usage Patterns:**\n\n1. **Get complete streaming topology:**\n   ```\n   /api/v3/stream_path\n   ```\n\n2. **Filter by specific nodes:**\n   ```\n   /api/v3/stream_path?nodes=child-node-1|child-node-2\n   ```\n\n3. **Scope to nodes matching pattern:**\n   ```\n   /api/v3/stream_path?scope_nodes=prod-*\n   ```\n\n**Response Structure:**\nThe response includes nodes organized by their streaming relationships, showing:\n- Node hostnames and machine GUIDs\n- Parent-child relationships\n- Streaming connection status (live/stale/offline)\n- Complete path from each child to root parent\n\n**Security & Access Control:**\n- \U0001F4CA **Public Data API** - Bearer token optional, IP-based ACL restrictions apply\n- **Default Access:** Public (no authentication required)\n- **Bearer Protection:** When enabled via `/api/v3/bearer_protection`, requires bearer token\n- **IP Restrictions:** Subject to `allow dashboard from` in netdata.conf\n- **Access Methods:** Direct HTTP/HTTPS, Netdata Cloud, external tools\n"
+      security:
+      - {}
+      - bearerAuth: []
+      parameters:
+      - name: scope_nodes
+        in: query
+        required: false
+        description: 'Simple pattern to match node hostnames for scope filtering. Uses Netdata''s simple pattern
+
+          matching (not regex). Matched nodes define the scope for topology analysis.
+
+
+          **Pattern Syntax:**
+
+          - `*` matches any number of characters
+
+          - Use `|` to separate multiple patterns (OR logic)
+
+          - Matches are case-insensitive
+
+          - No regex support - only simple wildcards
+
+
+          **Examples:**
+
+          - `prod-*` - All production nodes
+
+          - `*-web-*` - All web server nodes
+
+          - `db-*|cache-*` - All database or cache nodes
+
+          - `*` - All nodes (default)
+
+          '
+        schema:
+          type: string
+          default: '*'
+        example: prod-*
+      - name: nodes
+        in: query
+        required: false
+        description: 'Simple pattern to filter which nodes to include in the streaming path response.
+
+          After scope is determined, this filters the results. Uses the same pattern syntax as scope_nodes.
+
+
+          **Difference from scope_nodes:**
+
+          - `scope_nodes` defines what nodes to analyze for relationships
+
+          - `nodes` filters which nodes to include in the output
+
+
+          **Examples:**
+
+          - `web-*` - Only show web server nodes in output
+
+          - `parent-*` - Only show parent nodes
+
+          - Specific hostnames: `node1|node2|node3`
+
+          '
+        schema:
+          type: string
+          default: '*'
+        example: web-*
+      - name: options
+        in: query
+        required: false
+        description: 'Comma-separated list of options to control response content and format.
+
+
+          **Available Options:**
+
+          - `minify` - Minimize JSON output (no pretty-printing)
+
+          - `debug` - Include debug information about streaming connections
+
+          - `raw` - Include raw streaming metadata
+
+
+          **Examples:**
+
+          - `minify` - Compact JSON response
+
+          - `debug,raw` - Debug mode with raw metadata
+
+          '
+        schema:
+          type: string
+        example: debug
+      - name: timeout
+        in: query
+        required: false
+        description: 'Maximum time in seconds to wait for the query to complete before timing out.
+
+
+          **Guidelines:**
+
+          - Recommended: 30-60 seconds for most queries
+
+          - Large infrastructures may need longer timeouts
+
+          - Queries timeout if streaming metadata collection takes too long
+
+          '
+        schema:
+          type: integer
+          minimum: 1
+          default: 60
+        example: 30
+      - name: cardinality
+        in: query
+        required: false
+        description: 'Maximum number of nodes to include in the response to prevent overwhelming large responses.
+
+          When this limit is exceeded, the response will indicate how many nodes were omitted.
+
+
+          **Purpose:**
+
+          - Prevent memory exhaustion from very large infrastructures
+
+          - Control response size for performance
+
+          - Useful when exploring large node hierarchies incrementally
+
+
+          **Recommendations:**
+
+          - Small infrastructures (< 50 nodes): Use default or increase
+
+          - Medium infrastructures (50-500 nodes): 200-500
+
+          - Large infrastructures (> 500 nodes): Use filtering or increase limit carefully
+
+          '
+        schema:
+          type: integer
+          minimum: 1
+          maximum: 10000
+          default: 1000
+        example: 500
+      responses:
+        '200':
+          description: 'Successfully retrieved streaming topology path information.
+
+
+            Returns nodes with their streaming relationships, showing parent-child hierarchy,
+
+            connection status, and complete paths from children to root parents.
+
+            '
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  nodes:
+                    type: array
+                    description: Array of nodes with streaming path information
+                    items:
+                      type: object
+                      properties:
+                        hostname:
+                          type: string
+                          description: Node hostname
+                        machine_guid:
+                          type: string
+                          description: Unique node identifier
+                        parent:
+                          type: string
+                          description: Hostname of parent node (if any)
+                        parent_guid:
+                          type: string
+                          description: Machine GUID of parent node
+                        streaming_status:
+                          type: string
+                          enum:
+                          - live
+                          - stale
+                          - offline
+                          description: Current streaming connection status
+                        path:
+                          type: array
+                          description: Complete path from this node to root parent
+                          items:
+                            type: string
+                  omitted:
+                    type: integer
+                    description: Number of nodes omitted due to cardinality limit
+        '400':
+          description: Invalid parameters provided (e.g., invalid pattern syntax).
+        '500':
+          description: Internal server error during streaming topology retrieval.
+        '504':
+          description: Query timeout - streaming topology collection took too long.
+  /api/v2/node_instances:
+    get:
+      deprecated: true
+      operationId: nodeInstances2
+      tags:
+      - nodes
+      summary: 'OBSOLETE: Get node instances hierarchy (use /api/v3/node_instances instead)'
+      description: '**⚠️ OBSOLETE API - Will be removed in future versions**
+
+
+        This endpoint is deprecated. Use `/api/v3/node_instances` instead, which provides the same functionality.
+
+
+        **Migration:** Replace `/api/v2/node_instances` with `/api/v3/node_instances` in all API calls.
+
+
+        Returns hierarchical organization of chart instances across nodes, showing relationships between
+
+        parent and child agents and their monitored components.
+
+
+        **Security & Access Control:**
+
+        - 📊 **Public Data API** - Bearer token optional, IP-based ACL restrictions apply
+
+        - **Default Access:** Public (no authentication required)
+
+        - **Bearer Protection:** When enabled via `/api/v3/bearer_protection`, requires bearer token
+
+        - **IP Restrictions:** Subject to `allow dashboard from` in netdata.conf
+
+        - **Access Methods:** Direct HTTP/HTTPS, Netdata Cloud, external tools
+
+        '
+      security:
+      - {}
+      - bearerAuth: []
+      parameters:
+      - $ref: '#/components/parameters/scopeNodes'
+      - $ref: '#/components/parameters/filterNodes'
+      - $ref: '#/components/parameters/dataQueryOptions'
+      - $ref: '#/components/parameters/after'
+      - $ref: '#/components/parameters/before'
+      - $ref: '#/components/parameters/timeoutMS'
+      - $ref: '#/components/parameters/cardinalityLimit'
+      responses:
+        '200':
+          description: Node instances successfully retrieved
+        '400':
+          description: Invalid parameters
+components:
+  parameters:
+    filterNodes:
+      name: nodes
+      in: query
+      description: 'A simple pattern matching the nodes to be queried. This only controls the data response, not the metadata. The simple pattern is checked against the nodes'' machine guid, node id, hostname. The default nodes selector is all the nodes matched by the nodes scope. Both positive and negative simple pattern expressions are supported.
+
+        '
+      required: false
+      schema:
+        type: string
+        format: simple pattern
+        default: '*'
+    after:
+      name: after
+      in: query
+      description: '`after` and `before` define the time-frame of a query. `after` can be a negative number of seconds, up to 3 years (-94608000), relative to `before`. If not set, it is usually assumed to be -600. When non-data endpoints support the `after` and `before`, they use the time-frame to limit their response for objects having data retention within the time-frame given.
+
+        '
+      required: false
+      schema:
+        type: integer
+        default: -600
+    scopeNodes:
+      name: scope_nodes
+      in: query
+      description: 'A simple pattern limiting the nodes scope of the query. The scope controls both data and metadata response. The simple pattern is checked against the nodes'' machine guid, node id and hostname. The default nodes scope is all nodes for which this Agent has data for. Usually the nodes scope is used to slice the entire dashboard (e.g. the Global Nodes Selector at the Netdata Cloud overview dashboard). Both positive and negative simple pattern expressions are supported.
+
+        '
+      required: false
+      schema:
+        type: string
+        format: simple pattern
+        default: '*'
+    filterContexts:
+      name: contexts
+      in: query
+      description: 'A simple pattern matching the contexts to be queried. This only controls the data response, not the metadata. Both positive and negative simple pattern expressions are supported.
+
+        '
+      required: false
+      schema:
+        type: string
+        format: simple pattern
+        default: '*'
+    before:
+      name: before
+      in: query
+      description: '`after` and `before` define the time-frame of a query. `before` can be a negative number of seconds, up to 3 years (-94608000), relative to current clock. If not set, it is assumed to be the current clock time. When `before` is positive, it is assumed to be a unix epoch timestamp. When non-data endpoints support the `after` and `before`, they use the time-frame to limit their response for objects having data retention within the time-frame given.
+
+        '
+      required: false
+      schema:
+        type: integer
+        default: 0
+    cardinalityLimit:
+      name: cardinality_limit
+      in: query
+      description: 'Limits the number of unique items (contexts, instances, dimensions) returned in the query result. This is useful for preventing excessive memory usage and response sizes when queries match a large number of metrics. The query engine will return the most relevant items up to this limit.
+
+        '
+      required: false
+      schema:
+        type: integer
+        format: int64
+        minimum: 1
+        default: 10000
+    scopeContexts:
+      name: scope_contexts
+      in: query
+      description: 'A simple pattern limiting the contexts scope of the query. The scope controls both data and metadata response. The default contexts scope is all contexts for which this Agent has data for. Usually the contexts scope is used to slice data on the dashboard (e.g. each context based chart has its own contexts scope, limiting the chart to all the instances of the selected context). Both positive and negative simple pattern expressions are supported.
+
+        '
+      required: false
+      schema:
+        type: string
+        format: simple pattern
+        default: '*'
+    dataQueryOptions:
+      name: options
+      in: query
+      description: "Options that affect data generation.\n* `jsonwrap` - Wrap the output in a JSON object with metadata about the query.\n* `raw` - change the output so that it is aggregatable across multiple such queries. Supported by `/api/v2` data queries and `json2` format.\n* `minify` - Remove unnecessary spaces and newlines from the output.\n* `debug` - Provide additional information in `jsonwrap` output to help tracing issues.\n* `nonzero` - Do not return dimensions that all their values are zero, to improve the visual appearance of charts. They will still be returned if all the dimensions are entirely zero.\n* `null2zero` - Replace `null` values with `0`.\n* `absolute` or `abs` - Traditionally Netdata returns select dimensions negative to improve visual appearance. This option turns this feature off.\n* `display-absolute` - Only used by badges, to do color calculation using the signed value, but render the value without a sign.\n* `flip` or `reversed` - Order the timestamps array in reverse order (newest to oldest).\n* `min2max` - When flattening multi-dimensional data into a single metric format, use `max - min` instead of `sum`. This is EOL - use `/api/v2` to control aggregation across dimensions.\n* `percentage` - Convert all values into a percentage vs the row total. When enabled, Netdata will query all dimensions, even the ones that have not been selected or are hidden, to find the row total, in order to calculate the percentage of each dimension selected.\n* `seconds` - Output timestamps in seconds instead of dates.\n* `milliseconds` or `ms` - Output timestamps in milliseconds instead of dates.\n* `unaligned` - by default queries are aligned to the the view, so that as time passes past data returned do not change. When a data query will not be used for visualization, `unaligned` can be given to avoid aligning the query time-frame for visual precision.\n* `match-ids`, `match-names`. By default filters match both IDs and names when they are available. Setting either of the two options will disable the other.\n* `anomaly-bit` - query the anomaly information instead of metric values. This is EOL, use `/api/v2` and `json2` format which always returns this information and many more.\n* `jw-anomaly-rates` - return anomaly rates as a separate result set in the same `json` format response. This is EOL, use `/api/v2` and `json2` format which always returns information and many more. \n* `details` - `/api/v2/data` returns in `jsonwrap` the full tree of dimensions that have been matched by the query.\n* `group-by-labels` - `/api/v2/data` returns in `jsonwrap` flattened labels per output dimension. These are used to identify the instances that have been aggregated into each dimension, making it possible to provide a map, like Netdata does for Kubernetes.\n* `natural-points` - return timestamps as found in the database. The result is again fixed-step, but the query engine attempts to align them with the timestamps found in the database.\n* `virtual-points` - return timestamps independent of the database alignment. This is needed aggregating data across multiple Netdata Agents, to ensure that their outputs do not need to be interpolated to be merged.\n* `selected-tier` - use data exclusively from the selected tier given with the `tier` parameter. This option is set automatically when the `tier` parameter is set.\n* `all-dimensions` - In `/api/v1` `jsonwrap` include metadata for all candidate metrics examined. In `/api/v2` this is standard behavior and no option is needed.\n* `label-quotes` - In `csv` output format, enclose each header label in quotes.\n* `objectrows` - Each row of value should be an object, not an array (only for `json` format).\n* `google_json` - Comply with google JSON/JSONP specs (only for `json` format).\n* `minimal-stats` or `minimal` - Reduce the amount of statistics returned in `jsonwrap` format to save bandwidth.\n* `long-json-keys` or `long-keys` - Use descriptive key names in JSON output instead of abbreviated ones.\n* `mcp-info` - Include additional metadata useful for the Model Context Protocol (MCP) integration.\n* `rfc3339` - Return timestamps in RFC3339 format (e.g., \"2023-01-01T00:00:00Z\") instead of Unix timestamps.\n"
+      required: false
+      allowEmptyValue: false
+      schema:
+        type: array
+        items:
+          type: string
+          enum:
+          - jsonwrap
+          - raw
+          - minify
+          - debug
+          - nonzero
+          - null2zero
+          - abs
+          - absolute
+          - display-absolute
+          - flip
+          - reversed
+          - min2max
+          - percentage
+          - seconds
+          - ms
+          - milliseconds
+          - unaligned
+          - match-ids
+          - match-names
+          - anomaly-bit
+          - jw-anomaly-rates
+          - details
+          - group-by-labels
+          - natural-points
+          - virtual-points
+          - selected-tier
+          - all-dimensions
+          - label-quotes
+          - objectrows
+          - google_json
+          - minimal-stats
+          - minimal
+          - long-json-keys
+          - long-keys
+          - mcp-info
+          - rfc3339
+        default:
+        - seconds
+        - jsonwrap
+    contextsQueryOptions:
+      name: options
+      in: query
+      description: 'Options that affect the output of contexts metadata queries.
+
+        * `minify` - Remove unnecessary spaces and newlines from the output to reduce bandwidth.
+
+        * `debug` - Provide additional debugging information in the response.
+
+        * `config` - Include alert configuration information (used by /api/v2/alert_transitions).
+
+        * `instances` - Include alert/context instance information (used by /api/v2/alerts).
+
+        * `values` - Include latest metric values (used by /api/v2/alerts).
+
+        * `summary` - Include summary counters (used by /api/v2/alerts).
+
+        * `mcp` - Format output for Model Context Protocol (MCP) integration.
+
+        * `dimensions` - Include dimension information for each context.
+
+        * `labels` - Include label information for each context.
+
+        * `priorities` - Include priority information for each context.
+
+        * `titles` - Include title information for each context.
+
+        * `rfc3339` - Return timestamps in RFC3339 format (e.g., "2023-01-01T00:00:00Z") instead of Unix timestamps.
+
+
+        Note: Some options like `retention`, `liveness`, `family`, and `units` are automatically included by specific endpoints and cannot be controlled via this parameter.
+
+        '
+      required: false
+      allowEmptyValue: false
+      schema:
+        type: array
+        items:
+          type: string
+          enum:
+          - minify
+          - debug
+          - config
+          - instances
+          - values
+          - summary
+          - mcp
+          - dimensions
+          - labels
+          - priorities
+          - titles
+          - rfc3339
+        default: []
+    timeoutMS:
+      name: timeout
+      in: query
+      description: 'Specify a timeout value in milliseconds after which the Agent will abort the query and return a 503 error. A value of 0 indicates no timeout.
+
+        '
+      required: false
+      schema:
+        type: number
+        format: integer
+        default: 0
+  schemas:
+    nodeBasic:
+      type: object
+      description: Basic information about a node.
+      required:
+      - ni
+      - st
+      properties:
+        mg:
+          description: The machine guid of the node. May not be available if the request is served by the Netdata Cloud.
+          type: string
+          format: UUID
+        nd:
+          description: The node id of the node. May not be available if the node is not registered to Netdata Cloud.
+          type: string
+          format: UUID
+        nm:
+          description: The name (hostname) of the node.
+          type: string
+        ni:
+          description: The node index id, a number that uniquely identifies this node for this query.
+          type: integer
+        st:
+          description: Status information about the communication with this node.
+          type: object
+          properties:
+            ai:
+              description: The Agent index id that has been contacted for this node.
+              type: integer
+            code:
+              description: The HTTP response code of the response for this node. When working directly with an Agent, this is always 200. If the `code` is missing, it should be assumed to be 200.
+              type: integer
+            msg:
+              description: A human readable description of the error, if any. If `msg` is missing, or is the empty string `""` or is `null`, there is no description associated with the current status.
+              type: string
+            ms:
+              description: The time in milliseconds this node took to respond, or if the local Agent responded for this node, the time it needed to execute the query. If `ms` is missing, the time that was required to query this node is unknown.
+              type: number
+    api:
+      description: The version of the API used.
+      type: integer
+    info:
+      type: object
+      properties:
+        version:
+          type: string
+          description: netdata version of the server.
+          example: 1.11.1_rolling
+        uid:
+          type: string
+          description: netdata unique id of the server.
+          example: 24e9fe3c-f2ac-11e8-bafc-0242ac110002
+        mirrored_hosts:
+          type: array
+          description: List of hosts mirrored of the server (include itself).
+          items:
+            type: string
+          example:
+          - host1.example.com
+          - host2.example.com
+        mirrored_hosts_status:
+          type: array
+          description: List of details of hosts mirrored to this served (including self). Indexes correspond to indexes in "mirrored_hosts".
+          items:
+            type: object
+            description: Host data
+            properties:
+              guid:
+                type: string
+                format: uuid
+                nullable: false
+                description: Host unique GUID from `netdata.public.unique.id`.
+                example: 245e4bff-3b34-47c1-a6e5-5c535a9abfb2
+              reachable:
+                type: boolean
+                nullable: false
+                description: Current state of streaming. Always true for localhost/self.
+              claim_id:
+                type: string
+                format: uuid
+                nullable: true
+                description: Cloud GUID/identifier in case the host is claimed. If child status unknown or unclaimed this field is set to `null`
+                example: c3b2a66a-3052-498c-ac52-7fe9e8cccb0c
+        os_name:
+          type: string
+          description: Operating System Name.
+          example: Manjaro Linux
+        os_id:
+          type: string
+          description: Operating System ID.
+          example: manjaro
+        os_id_like:
+          type: string
+          description: Known OS similar to this OS.
+          example: arch
+        os_version:
+          type: string
+          description: Operating System Version.
+          example: 18.0.4
+        os_version_id:
+          type: string
+          description: Operating System Version ID.
+          example: unknown
+        os_detection:
+          type: string
+          description: OS parameters detection method.
+          example: Mixed
+        kernel_name:
+          type: string
+          description: Kernel Name.
+          example: Linux
+        kernel_version:
+          type: string
+          description: Kernel Version.
+          example: 4.19.32-1-MANJARO
+        is_k8s_node:
+          type: boolean
+          description: Netdata is running on a K8s node.
+          example: false
+        architecture:
+          type: string
+          description: Kernel architecture.
+          example: x86_64
+        virtualization:
+          type: string
+          description: Virtualization Type.
+          example: kvm
+        virt_detection:
+          type: string
+          description: Virtualization detection method.
+          example: systemd-detect-virt
+        container:
+          type: string
+          description: Container technology.
+          example: docker
+        container_detection:
+          type: string
+          description: Container technology detection method.
+          example: dockerenv
+        stream_compression:
+          type: boolean
+          description: Stream transmission compression method.
+          example: true
+        labels:
+          type: object
+          description: List of host labels.
+          properties:
+            app:
+              type: string
+              description: Host label.
+              example: netdata
+        collectors:
+          type: array
+          items:
+            type: object
+            description: Array of collector plugins and modules.
+            properties:
+              plugin:
+                type: string
+                description: Collector plugin.
+                example: python.d.plugin
+              module:
+                type: string
+                description: Module of the collector plugin.
+                example: dockerd
+        alarms:
+          type: object
+          description: Number of alarms in the server.
+          properties:
+            normal:
+              type: integer
+              description: Number of alarms in normal state.
+            warning:
+              type: integer
+              description: Number of alarms in warning state.
+            critical:
+              type: integer
+              description: Number of alarms in critical state.
+    versions:
+      description: 'Hashes that allow the caller to detect important database changes of Netdata Agents.
+
+        '
+      type: object
+      properties:
+        nodes_hard_hash:
+          description: 'An auto-increment value that reflects the number of changes to the number of nodes maintained by the server. Everytime a node is added or removed, this number gets incremented.
+
+            '
+          type: integer
+        contexts_hard_hash:
+          description: 'An auto-increment value that reflects the number of changes to the number of contexts maintained by the server. Everytime a context is added or removed, this number gets incremented.
+
+            '
+          type: integer
+        contexts_soft_hash:
+          description: 'An auto-increment value that reflects the number of changes to the queue that sends contexts updates to Netdata Cloud. Everytime the contents of a context are updated, this number gets incremented.
+
+            '
+          type: integer
+        alerts_hard_hash:
+          description: 'An auto-increment value that reflects the number of changes to the number of alerts. Everytime an alert is added or removed, this number gets incremented.
+
+            '
+          type: integer
+        alerts_soft_hash:
+          description: 'An auto-increment value that reflects the number of alerts transitions. Everytime an alert transitions to a new state, this number gets incremented.
+
+            '
+          type: integer
+    agents:
+      description: 'An array of Agent definitions consulted to compose this response.
+
+        '
+      type: array
+      items:
+        type: object
+        properties:
+          mg:
+            description: The Agent machine GUID.
+            type: string
+            format: uuid
+          nd:
+            description: The Agent cloud node ID.
+            type: string
+            format: uuid
+          nm:
+            description: The Agent hostname.
+            type: string
+          ai:
+            description: The Agent index ID for this Agent, in this response.
+            type: integer
+          now:
+            description: The current unix epoch timestamp of this Agent.
+            type: integer
+    nodeFull:
+      allOf:
+      - $ref: '#/components/schemas/nodeBasic'
+      - type: object
+        properties:
+          version:
+            description: The version of the Netdata Agent the node runs.
+            type: string
+          hops:
+            description: How many hops away from the origin node, the queried one is. 0 means the Agent itself is the origin node.
+            type: integer
+          state:
+            description: The current state of the node on this Agent.
+            type: string
+            enum:
+            - reachable
+            - stale
+            - offline
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      description: 'Bearer token authentication for API access when bearer protection is enabled.
+
+
+        **How to obtain a token:**
+
+        1. Token must be obtained via `/api/v3/bearer_get_token` endpoint
+
+        2. This endpoint is ACLK-only (requires Netdata Cloud access)
+
+        3. Token includes role-based access control and expiration time
+
+
+        **How to use:**
+
+        ```
+
+        Authorization: Bearer <token>
+
+        ```
+
+
+        **When required:**
+
+        - When bearer protection is enabled on the agent (via `/api/v3/bearer_protection`)
+
+        - Applies to all APIs with `HTTP_ACCESS_ANONYMOUS_DATA` permission
+
+        - Does not apply to APIs with `HTTP_ACL_NOCHECK` (always public)
+
+        - Does not apply to ACLK-only APIs (use cloud authentication)
+
+
+        **Token expiration:**
+
+        - Tokens are time-limited and must be renewed periodically
+
+        - Expired tokens return HTTP 401 Unauthorized
+
+        '
+    aclkAuth:
+      type: http
+      scheme: bearer
+      description: 'ACLK-only authentication - these APIs are ONLY accessible via Netdata Cloud (ACLK).
+
+
+        **Access Requirements:**
+
+        - User must be authenticated via Netdata Cloud (`SIGNED_ID`)
+
+        - User and agent must be in the same Netdata Cloud space (`SAME_SPACE`)
+
+        - Additional role-based permissions may apply per endpoint
+
+
+        **NOT accessible via:**
+
+        - Direct HTTP/HTTPS to agent (even with bearer token)
+
+        - Local dashboard
+
+        - External integrations
+
+
+        **Available only through:**
+
+        - Netdata Cloud web interface
+
+        - Netdata Cloud API (ACLK tunnel)
+
+
+        **Development mode:**
+
+        - Can be made available in dev mode with `ACL_DEV_OPEN_ACCESS` flag
+
+        '
+    ipAcl:
+      type: apiKey
+      in: header
+      name: X-Forwarded-For
+      description: "IP-based Access Control List restrictions (informational only).\n\n**Configuration:**\nAPIs are subject to IP-based ACL restrictions configured in `netdata.conf`:\n\n```conf\n[web]\n    allow dashboard from = *\n    allow badges from = *\n    allow management from = localhost\n```\n\n**ACL Categories:**\n- `allow dashboard from` - Controls access to metrics, alerts, nodes, functions, config APIs\n- `allow badges from` - Controls access to badge generation APIs\n- `allow management from` - Controls access to management APIs\n\n**Default behavior:**\n- Most APIs allow access from any IP by default\n- Management APIs restrict to localhost by default\n- Can be customized per deployment\n\n**Note:** This is not a standard authentication mechanism but rather IP filtering.\nAPIs with `HTTP_ACL_NOCHECK` bypass all IP restrictions.\n"

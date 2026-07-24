@@ -1,0 +1,369 @@
+openapi: 3.0.0
+info:
+  title: Netdata agent registry API
+  description: 'Real-time performance and health monitoring.
+
+
+    ## API Versions
+
+
+    Netdata provides three API versions:
+
+    - **v1**: The original API, focused on single-node operations
+
+    - **v2**: Multi-node API with advanced grouping and aggregation capabilities
+
+    - **v3**: The latest API version that combines v1 and v2 endpoints and may include additional features
+
+
+    ### v3 API Endpoints
+
+
+    The v3 API provides the current, actively maintained endpoints:
+
+    - `/api/v3/data` - Multi-dimensional data queries
+
+    - `/api/v3/weights` - Metric scoring/correlation
+
+    - `/api/v3/contexts` - Context metadata
+
+    - `/api/v3/nodes` - Node information
+
+    - `/api/v3/q` - Full-text search
+
+    - `/api/v3/alerts` - Alert information
+
+    - `/api/v3/alert_transitions` - Alert state transitions
+
+    - `/api/v3/alert_config` - Alert configuration
+
+    - `/api/v3/functions` - Available functions
+
+    - `/api/v3/function` - Execute functions
+
+    - `/api/v3/info` - Agent information
+
+    - `/api/v3/node_instances` - Node instance information
+
+    - `/api/v3/stream_path` - Streaming topology
+
+    - `/api/v3/versions` - Version information
+
+    - `/api/v3/badge.svg` - Dynamic badges
+
+    - `/api/v3/allmetrics` - Export metrics
+
+    - `/api/v3/context` - Single context info
+
+    - `/api/v3/variable` - Variable information
+
+    - `/api/v3/config` - Dynamic configuration
+
+    - `/api/v3/settings` - Agent settings
+
+    - `/api/v3/me` - Current user information
+
+    - `/api/v3/claim` - Agent claiming
+
+    - Additional management and streaming endpoints
+
+
+    **Note:** V1 and V2 APIs are deprecated and maintained for backwards compatibility only. New integrations should use V3 exclusively.
+
+    '
+  version: v1-rolling
+  contact:
+    name: Netdata Agent API
+    email: info@netdata.cloud
+    url: https://netdata.cloud
+  license:
+    name: GPL v3+
+    url: https://github.com/netdata/netdata/blob/master/LICENSE
+servers:
+- url: https://registry.my-netdata.io
+- url: http://registry.my-netdata.io
+- url: http://localhost:19999
+tags:
+- name: registry
+paths:
+  /api/v1/registry:
+    get:
+      deprecated: true
+      operationId: registry1
+      tags:
+      - registry
+      summary: '[DEPRECATED] Registry operations for tracking dashboard access'
+      description: '**[DEPRECATED - Registry functionality being phased out]**
+
+
+        **Dashboard Access Registry**
+
+
+        The registry API tracks which dashboards (browsers) have accessed which Netdata agents, enabling features like:
+
+        - Dashboard synchronization across multiple agents
+
+        - Tracking which users/machines accessed which agents
+
+        - Migrating dashboard preferences between agents
+
+
+        **Actions:**
+
+
+        **1. hello** - Initial registry contact
+
+        - Identifies the dashboard to the registry
+
+        - Returns person_guid for tracking this dashboard
+
+
+        **2. access** - Record dashboard accessing an agent
+
+        - Called when a dashboard accesses a Netdata agent
+
+        - Tracks the relationship between dashboard and agent
+
+        - Parameters: machine, url, name
+
+
+        **3. delete** - Remove a tracked agent URL
+
+        - Removes a specific agent URL from dashboard''s history
+
+        - Parameters: machine, url, name, delete_url
+
+
+        **4. search** - Find all agents accessed by a dashboard
+
+        - Returns list of all agents this dashboard has accessed
+
+        - Parameter: for (machine_guid to search for)
+
+
+        **5. switch** - Migrate dashboard identity
+
+        - Transfers tracking from one person_guid to another
+
+        - Parameters: machine, url, name, to (new person_guid)
+
+
+        **Use Cases:**
+
+        - **Multi-Agent Dashboards:** Track which agents a user has accessed
+
+        - **Dashboard Migration:** Move identity between browsers/machines
+
+        - **Access History:** See which dashboards accessed an agent
+
+        - **Cleanup:** Remove old/invalid agent entries
+
+
+        **Security Notes:**
+
+        - Registry stores dashboard-agent relationships
+
+        - person_guid is stored in browser cookies
+
+        - machine_guid identifies Netdata agents
+
+        - No authentication required (deprecated functionality)
+
+
+        **Deprecation:**
+
+        Registry functionality is being phased out. Modern deployments should use Netdata Cloud for multi-agent management.
+
+
+        **Security & Access Control:**
+
+        - 🔓 **Always Public API** - This endpoint is always accessible without authentication
+
+        - **Internal ACL:** Manages its own access control internally (not via standard ACL)
+
+        - **No External Restrictions:** Not subject to bearer protection or IP-based ACL
+
+        '
+      parameters:
+      - name: action
+        in: query
+        description: 'Registry action to perform.
+
+
+          **Available Actions:**
+
+          - `hello` - Initial contact with registry
+
+          - `access` - Record dashboard access to agent
+
+          - `delete` - Remove agent URL from dashboard history
+
+          - `search` - Find all agents accessed by dashboard
+
+          - `switch` - Migrate dashboard identity to new person_guid
+
+          '
+        required: true
+        schema:
+          type: string
+          enum:
+          - hello
+          - access
+          - delete
+          - search
+          - switch
+        example: access
+      - name: machine
+        in: query
+        description: 'Machine GUID of the dashboard making the request. This is typically stored in browser cookies and identifies the specific browser/client.
+
+          '
+        required: false
+        schema:
+          type: string
+          format: uuid
+        example: 12345678-1234-1234-1234-123456789012
+      - name: name
+        in: query
+        description: 'Human-readable name for the dashboard/machine (typically hostname). Used for display purposes in registry listings.
+
+          '
+        required: false
+        schema:
+          type: string
+        example: my-laptop
+      - name: url
+        in: query
+        description: 'URL of the Netdata agent being accessed. This is the full URL including protocol and port.
+
+          '
+        required: false
+        schema:
+          type: string
+          format: uri
+        example: http://netdata.example.com:19999
+      - name: delete_url
+        in: query
+        description: 'URL to delete from the registry (used with action=delete). Must match a previously registered URL.
+
+          '
+        required: false
+        schema:
+          type: string
+          format: uri
+        example: http://old-server.example.com:19999
+      - name: for
+        in: query
+        description: 'Machine GUID to search for (used with action=search). Returns all agents accessed by this machine.
+
+          '
+        required: false
+        schema:
+          type: string
+          format: uuid
+        example: 12345678-1234-1234-1234-123456789012
+      - name: to
+        in: query
+        description: 'New person_guid to switch to (used with action=switch). Migrates the dashboard identity to a new person_guid.
+
+          '
+        required: false
+        schema:
+          type: string
+          format: uuid
+        example: 87654321-4321-4321-4321-210987654321
+      responses:
+        '200':
+          description: Registry operation successful
+          content:
+            application/json:
+              schema:
+                type: object
+                description: Response varies by action type
+        '400':
+          description: Invalid action or missing required parameters
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      description: 'Bearer token authentication for API access when bearer protection is enabled.
+
+
+        **How to obtain a token:**
+
+        1. Token must be obtained via `/api/v3/bearer_get_token` endpoint
+
+        2. This endpoint is ACLK-only (requires Netdata Cloud access)
+
+        3. Token includes role-based access control and expiration time
+
+
+        **How to use:**
+
+        ```
+
+        Authorization: Bearer <token>
+
+        ```
+
+
+        **When required:**
+
+        - When bearer protection is enabled on the agent (via `/api/v3/bearer_protection`)
+
+        - Applies to all APIs with `HTTP_ACCESS_ANONYMOUS_DATA` permission
+
+        - Does not apply to APIs with `HTTP_ACL_NOCHECK` (always public)
+
+        - Does not apply to ACLK-only APIs (use cloud authentication)
+
+
+        **Token expiration:**
+
+        - Tokens are time-limited and must be renewed periodically
+
+        - Expired tokens return HTTP 401 Unauthorized
+
+        '
+    aclkAuth:
+      type: http
+      scheme: bearer
+      description: 'ACLK-only authentication - these APIs are ONLY accessible via Netdata Cloud (ACLK).
+
+
+        **Access Requirements:**
+
+        - User must be authenticated via Netdata Cloud (`SIGNED_ID`)
+
+        - User and agent must be in the same Netdata Cloud space (`SAME_SPACE`)
+
+        - Additional role-based permissions may apply per endpoint
+
+
+        **NOT accessible via:**
+
+        - Direct HTTP/HTTPS to agent (even with bearer token)
+
+        - Local dashboard
+
+        - External integrations
+
+
+        **Available only through:**
+
+        - Netdata Cloud web interface
+
+        - Netdata Cloud API (ACLK tunnel)
+
+
+        **Development mode:**
+
+        - Can be made available in dev mode with `ACL_DEV_OPEN_ACCESS` flag
+
+        '
+    ipAcl:
+      type: apiKey
+      in: header
+      name: X-Forwarded-For
+      description: "IP-based Access Control List restrictions (informational only).\n\n**Configuration:**\nAPIs are subject to IP-based ACL restrictions configured in `netdata.conf`:\n\n```conf\n[web]\n    allow dashboard from = *\n    allow badges from = *\n    allow management from = localhost\n```\n\n**ACL Categories:**\n- `allow dashboard from` - Controls access to metrics, alerts, nodes, functions, config APIs\n- `allow badges from` - Controls access to badge generation APIs\n- `allow management from` - Controls access to management APIs\n\n**Default behavior:**\n- Most APIs allow access from any IP by default\n- Management APIs restrict to localhost by default\n- Can be customized per deployment\n\n**Note:** This is not a standard authentication mechanism but rather IP filtering.\nAPIs with `HTTP_ACL_NOCHECK` bypass all IP restrictions.\n"
