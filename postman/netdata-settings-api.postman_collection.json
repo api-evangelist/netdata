@@ -1,0 +1,481 @@
+{
+  "info": {
+    "_postman_id": "1f505d62-a7c9-47c7-b149-750417f7b8e8",
+    "name": "Netdata agent settings API",
+    "description": "Real-time performance and health monitoring.\n\n## API Versions\n\nNetdata provides three API versions:\n- **v1**: The original API, focused on single-node operations\n- **v2**: Multi-node API with advanced grouping and aggregation capabilities\n- **v3**: The latest API version that combines v1 and v2 endpoints and may include additional features\n\n### v3 API Endpoints\n\nThe v3 API provides the current, actively maintained endpoints:\n- `/api/v3/data` - Multi-dimensional data queries\n- `/api/v3/weights` - Metric scoring/correlation\n- `/api/v3/contexts` - Context metadata\n- `/api/v3/nodes` - Node information\n- `/api/v3/q` - Full-text search\n- `/api/v3/alerts` - Alert information\n- `/api/v3/alert_transitions` - Alert state transitions\n- `/api/v3/alert_config` - Alert configuration\n- `/api/v3/functions` - Available functions\n- `/api/v3/function` - Execute functions\n- `/api/v3/info` - Agent information\n- `/api/v3/node_instances` - Node instance information\n- `/api/v3/stream_path` - Streaming topology\n- `/api/v3/versions` - Version information\n- `/api/v3/badge.svg` - Dynamic badges\n- `/api/v3/allmetrics` - Export metrics\n- `/api/v3/context` - Single context info\n- `/api/v3/variable` - Variable information\n- `/api/v3/config` - Dynamic configuration\n- `/api/v3/settings` - Agent settings\n- `/api/v3/me` - Current user information\n- `/api/v3/claim` - Agent claiming\n- Additional management and streaming endpoints\n\n**Note:** V1 and V2 APIs are deprecated and maintained for backwards compatibility only. New integrations should use V3 exclusively.\n\n\nContact Support:\n Name: Netdata Agent API\n Email: info@netdata.cloud",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "createdAt": "2026-07-28T02:17:43.000Z",
+    "updatedAt": "2026-07-28T02:17:44.000Z",
+    "lastUpdatedBy": "35240",
+    "uid": "35240-1f505d62-a7c9-47c7-b149-750417f7b8e8"
+  },
+  "item": [
+    {
+      "name": "api",
+      "item": [
+        {
+          "name": "v3",
+          "item": [
+            {
+              "name": "settings",
+              "item": [
+                {
+                  "name": "Retrieve user settings/preferences (GET)",
+                  "id": "975ad3fe-55b2-4177-9647-ef786e5fb6ac",
+                  "protocolProfileBehavior": {
+                    "disableBodyPruning": true
+                  },
+                  "request": {
+                    "method": "GET",
+                    "header": [
+                      {
+                        "key": "Accept",
+                        "value": "application/json"
+                      }
+                    ],
+                    "url": {
+                      "raw": "{{baseUrl}}/api/v3/settings?file=default",
+                      "host": [
+                        "{{baseUrl}}"
+                      ],
+                      "path": [
+                        "api",
+                        "v3",
+                        "settings"
+                      ],
+                      "query": [
+                        {
+                          "description": "Name of the settings file to retrieve.\n\n**File Naming Rules:**\n- Alphanumeric characters only\n- Dashes (-) and underscores (_) allowed\n- No spaces or special characters\n- Case-sensitive\n\n**Access Control:**\n- **Anonymous users**: Only `file=default` allowed\n- **Authenticated users (bearer token)**: Any valid file name\n\n**Examples:**\n- `default` - Default settings file\n- `my-dashboard` - Custom dashboard settings\n- `prod-alerts` - Production alert preferences\n- `mobile-view` - Mobile UI settings\n\n**Invalid File Names:**\n- Missing or empty: Returns 400 Bad Request\n- Special characters: Returns 400 Bad Request\n- Non-default for anonymous: Returns 400 Bad Request\n",
+                          "key": "file",
+                          "value": "default"
+                        }
+                      ]
+                    },
+                    "description": "**V3 SPECIFIC ENDPOINT**\n\nRetrieves stored user settings and preferences from Netdata's settings storage.\nThe settings API provides persistent key-value storage for UI preferences, dashboard layouts,\nalert configurations, and other user-specific data.\n\n**Settings System:**\n- **Persistent storage**: Settings survive agent restarts\n- **Version-controlled**: Each update increments version for conflict detection\n- **User-scoped**: Authenticated users can have multiple named settings files\n- **Anonymous access**: Limited to 'default' file only\n- **JSON format**: All settings stored as JSON with mandatory 'version' field\n\n**File-Based Storage:**\nSettings are stored as individual files in Netdata's var/lib directory:\n- Anonymous users: Only `file=default` allowed\n- Authenticated users: Can create custom files (e.g., `file=my-dashboard`)\n- File names: Alphanumeric, dashes, underscores only\n\n**Version Control:**\nEach settings object has a `version` field:\n- Starts at version 1 for new files\n- Auto-incremented on each PUT operation\n- Used for optimistic locking to prevent conflicts\n\n**Use Cases:**\n- **Dashboard preferences**: Store layout, theme, selected metrics\n- **Alert customization**: Save user-specific alert thresholds\n- **UI state**: Remember filters, time ranges, node selections\n- **Multi-device sync**: Share settings across browsers/devices (for authenticated users)\n\n**Common Usage Patterns:**\n\n1. **Get default settings (anonymous user):**\n   ```\n   GET /api/v3/settings?file=default\n   ```\n\n2. **Get named settings file (authenticated):**\n   ```\n   GET /api/v3/settings?file=production-dashboard\n   ```\n\n**Response Structure:**\n```json\n{\n  \"version\": 3,\n  \"theme\": \"dark\",\n  \"defaultTimeRange\": \"-3600\",\n  \"favoriteMetrics\": [\"system.cpu\", \"system.ram\"]\n}\n```\n\n**New Files:**\nIf requested file doesn't exist, returns initial version:\n```json\n{\n  \"version\": 1\n}\n```\n\n**Size Limit:**\nMaximum settings file size: 20 MiB\n\n**Security & Access Control:**\n- \ud83d\udd13 **Always Public API** - This endpoint is always accessible without authentication\n- **No Restrictions:** Not subject to bearer protection or IP-based ACL restrictions\n- **No Authentication:** Cannot be restricted by any configuration\n- **Access:** Available to anyone who can reach the agent's HTTP endpoint\n"
+                  },
+                  "response": [
+                    {
+                      "id": "7da6c228-7014-4b95-9b9c-ab860049b58a",
+                      "name": "Settings file retrieved successfully.\n\nReturns JSON object with at minimum a `version` field.\nMay contain any additional user-defined fields.\n",
+                      "originalRequest": {
+                        "method": "GET",
+                        "header": [
+                          {
+                            "key": "Accept",
+                            "value": "application/json"
+                          }
+                        ],
+                        "url": {
+                          "raw": "{{baseUrl}}/api/v3/settings?file=default",
+                          "host": [
+                            "{{baseUrl}}"
+                          ],
+                          "path": [
+                            "api",
+                            "v3",
+                            "settings"
+                          ],
+                          "query": [
+                            {
+                              "description": "Name of the settings file to retrieve.\n\n**File Naming Rules:**\n- Alphanumeric characters only\n- Dashes (-) and underscores (_) allowed\n- No spaces or special characters\n- Case-sensitive\n\n**Access Control:**\n- **Anonymous users**: Only `file=default` allowed\n- **Authenticated users (bearer token)**: Any valid file name\n\n**Examples:**\n- `default` - Default settings file\n- `my-dashboard` - Custom dashboard settings\n- `prod-alerts` - Production alert preferences\n- `mobile-view` - Mobile UI settings\n\n**Invalid File Names:**\n- Missing or empty: Returns 400 Bad Request\n- Special characters: Returns 400 Bad Request\n- Non-default for anonymous: Returns 400 Bad Request\n",
+                              "key": "file",
+                              "value": "default"
+                            }
+                          ]
+                        }
+                      },
+                      "status": "OK",
+                      "code": 200,
+                      "_postman_previewlanguage": "json",
+                      "header": [
+                        {
+                          "key": "Content-Type",
+                          "value": "application/json"
+                        }
+                      ],
+                      "cookie": [],
+                      "responseTime": null,
+                      "body": "{\n  \"version\": \"<integer>\"\n}",
+                      "createdAt": "2026-07-28T02:17:44.000Z",
+                      "updatedAt": "2026-07-28T02:17:44.000Z",
+                      "uid": "35240-7da6c228-7014-4b95-9b9c-ab860049b58a"
+                    },
+                    {
+                      "id": "95a03afa-0979-495b-b933-efb2f7fd0d40",
+                      "name": "Bad request. Common causes:\n- Invalid file name (contains special characters)\n- Anonymous user trying to access non-default file\n- Empty file name\n",
+                      "originalRequest": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                          "raw": "{{baseUrl}}/api/v3/settings?file=default",
+                          "host": [
+                            "{{baseUrl}}"
+                          ],
+                          "path": [
+                            "api",
+                            "v3",
+                            "settings"
+                          ],
+                          "query": [
+                            {
+                              "description": "Name of the settings file to retrieve.\n\n**File Naming Rules:**\n- Alphanumeric characters only\n- Dashes (-) and underscores (_) allowed\n- No spaces or special characters\n- Case-sensitive\n\n**Access Control:**\n- **Anonymous users**: Only `file=default` allowed\n- **Authenticated users (bearer token)**: Any valid file name\n\n**Examples:**\n- `default` - Default settings file\n- `my-dashboard` - Custom dashboard settings\n- `prod-alerts` - Production alert preferences\n- `mobile-view` - Mobile UI settings\n\n**Invalid File Names:**\n- Missing or empty: Returns 400 Bad Request\n- Special characters: Returns 400 Bad Request\n- Non-default for anonymous: Returns 400 Bad Request\n",
+                              "key": "file",
+                              "value": "default"
+                            }
+                          ]
+                        }
+                      },
+                      "status": "Bad Request",
+                      "code": 400,
+                      "_postman_previewlanguage": "text",
+                      "header": [],
+                      "cookie": [],
+                      "responseTime": null,
+                      "body": null,
+                      "createdAt": "2026-07-28T02:17:44.000Z",
+                      "updatedAt": "2026-07-28T02:17:44.000Z",
+                      "uid": "35240-95a03afa-0979-495b-b933-efb2f7fd0d40"
+                    },
+                    {
+                      "id": "6aca7636-8252-4ba7-ac46-4fbaad0f9cb6",
+                      "name": "Internal server error during settings retrieval.",
+                      "originalRequest": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                          "raw": "{{baseUrl}}/api/v3/settings?file=default",
+                          "host": [
+                            "{{baseUrl}}"
+                          ],
+                          "path": [
+                            "api",
+                            "v3",
+                            "settings"
+                          ],
+                          "query": [
+                            {
+                              "description": "Name of the settings file to retrieve.\n\n**File Naming Rules:**\n- Alphanumeric characters only\n- Dashes (-) and underscores (_) allowed\n- No spaces or special characters\n- Case-sensitive\n\n**Access Control:**\n- **Anonymous users**: Only `file=default` allowed\n- **Authenticated users (bearer token)**: Any valid file name\n\n**Examples:**\n- `default` - Default settings file\n- `my-dashboard` - Custom dashboard settings\n- `prod-alerts` - Production alert preferences\n- `mobile-view` - Mobile UI settings\n\n**Invalid File Names:**\n- Missing or empty: Returns 400 Bad Request\n- Special characters: Returns 400 Bad Request\n- Non-default for anonymous: Returns 400 Bad Request\n",
+                              "key": "file",
+                              "value": "default"
+                            }
+                          ]
+                        }
+                      },
+                      "status": "Internal Server Error",
+                      "code": 500,
+                      "_postman_previewlanguage": "text",
+                      "header": [],
+                      "cookie": [],
+                      "responseTime": null,
+                      "body": null,
+                      "createdAt": "2026-07-28T02:17:44.000Z",
+                      "updatedAt": "2026-07-28T02:17:44.000Z",
+                      "uid": "35240-6aca7636-8252-4ba7-ac46-4fbaad0f9cb6"
+                    }
+                  ],
+                  "createdAt": "2026-07-28T02:17:44.000Z",
+                  "updatedAt": "2026-07-28T02:17:44.000Z",
+                  "uid": "35240-975ad3fe-55b2-4177-9647-ef786e5fb6ac"
+                },
+                {
+                  "name": "Create or update user settings/preferences (PUT)",
+                  "id": "c2d29ec2-9e60-4aec-80b0-b92e8afdabdd",
+                  "protocolProfileBehavior": {
+                    "disableBodyPruning": true
+                  },
+                  "request": {
+                    "method": "PUT",
+                    "header": [
+                      {
+                        "key": "Content-Type",
+                        "value": "application/json"
+                      },
+                      {
+                        "key": "Accept",
+                        "value": "application/json"
+                      }
+                    ],
+                    "body": {
+                      "mode": "raw",
+                      "raw": "{\n  \"version\": \"<integer>\"\n}",
+                      "options": {
+                        "raw": {
+                          "headerFamily": "json",
+                          "language": "json"
+                        }
+                      }
+                    },
+                    "url": {
+                      "raw": "{{baseUrl}}/api/v3/settings?file=default",
+                      "host": [
+                        "{{baseUrl}}"
+                      ],
+                      "path": [
+                        "api",
+                        "v3",
+                        "settings"
+                      ],
+                      "query": [
+                        {
+                          "description": "Name of the settings file to create or update.\n\n**File Naming Rules:**\n- Alphanumeric characters only\n- Dashes (-) and underscores (_) allowed\n- No spaces or special characters\n- Case-sensitive\n\n**Access Control:**\n- **Anonymous users**: Only `file=default` allowed\n- **Authenticated users (bearer token)**: Any valid file name\n\n**File Creation:**\n- If file doesn't exist: Created with initial payload\n- If file exists: Updated with new payload (version check applies)\n",
+                          "key": "file",
+                          "value": "default"
+                        }
+                      ]
+                    },
+                    "description": "**V3 SPECIFIC ENDPOINT**\n\nCreates or updates user settings with optimistic locking to prevent concurrent modification conflicts.\n\n**Update Process:**\n1. Client GET current settings (to get current version)\n2. Client modifies settings locally\n3. Client PUT updated settings WITH ORIGINAL VERSION\n4. Netdata validates version matches current file\n5. If match: Update succeeds, version auto-incremented\n6. If mismatch: Returns 409 Conflict\n\n**Conflict Resolution (409 Response):**\nWhen you receive 409 Conflict:\n1. Another client updated the file\n2. GET the file again to retrieve latest version\n3. Reapply your changes to the new version\n4. PUT again with the new version number\n\n**Optimistic Locking Flow:**\n```javascript\n// 1. Get current settings\nconst response = await fetch('/api/v3/settings?file=my-dashboard');\nconst settings = await response.json(); // { version: 3, ... }\n\n// 2. Modify settings\nsettings.theme = 'dark';\n\n// 3. PUT with ORIGINAL version (still 3)\nconst result = await fetch('/api/v3/settings?file=my-dashboard', {\n  method: 'PUT',\n  headers: { 'Content-Type': 'application/json' },\n  body: JSON.stringify(settings) // version: 3\n});\n\nif (result.status === 409) {\n  // Conflict! File was updated by another client\n  // Must GET again and retry\n}\n// If successful, file now has version: 4\n```\n\n**Payload Requirements:**\n- MUST be valid JSON\n- MUST include `version` field with current file version\n- MAY include any additional fields\n- Maximum size: 20 MiB\n\n**Version Management:**\n- Client provides current version in payload\n- Netdata verifies version matches file on disk\n- Netdata increments version before saving\n- Saved file has version + 1\n\n**Use Cases:**\n- Save dashboard configuration changes\n- Update user preferences\n- Store UI state\n- Persist alert customizations\n"
+                  },
+                  "response": [
+                    {
+                      "id": "18fa2882-00c6-4944-8506-0d5221927f5a",
+                      "name": "Settings updated successfully. Version has been incremented.\n",
+                      "originalRequest": {
+                        "method": "PUT",
+                        "header": [
+                          {
+                            "key": "Content-Type",
+                            "value": "application/json"
+                          },
+                          {
+                            "key": "Accept",
+                            "value": "application/json"
+                          }
+                        ],
+                        "body": {
+                          "mode": "raw",
+                          "raw": "{\n  \"version\": \"<integer>\"\n}",
+                          "options": {
+                            "raw": {
+                              "headerFamily": "json",
+                              "language": "json"
+                            }
+                          }
+                        },
+                        "url": {
+                          "raw": "{{baseUrl}}/api/v3/settings?file=default",
+                          "host": [
+                            "{{baseUrl}}"
+                          ],
+                          "path": [
+                            "api",
+                            "v3",
+                            "settings"
+                          ],
+                          "query": [
+                            {
+                              "description": "Name of the settings file to create or update.\n\n**File Naming Rules:**\n- Alphanumeric characters only\n- Dashes (-) and underscores (_) allowed\n- No spaces or special characters\n- Case-sensitive\n\n**Access Control:**\n- **Anonymous users**: Only `file=default` allowed\n- **Authenticated users (bearer token)**: Any valid file name\n\n**File Creation:**\n- If file doesn't exist: Created with initial payload\n- If file exists: Updated with new payload (version check applies)\n",
+                              "key": "file",
+                              "value": "default"
+                            }
+                          ]
+                        }
+                      },
+                      "status": "OK",
+                      "code": 200,
+                      "_postman_previewlanguage": "json",
+                      "header": [
+                        {
+                          "key": "Content-Type",
+                          "value": "application/json"
+                        }
+                      ],
+                      "cookie": [],
+                      "responseTime": null,
+                      "body": "{\n  \"message\": \"<string>\"\n}",
+                      "createdAt": "2026-07-28T02:17:44.000Z",
+                      "updatedAt": "2026-07-28T02:17:44.000Z",
+                      "uid": "35240-18fa2882-00c6-4944-8506-0d5221927f5a"
+                    },
+                    {
+                      "id": "d9d190f2-bc55-41ec-af80-9089e4e45bcb",
+                      "name": "Bad request. Common causes:\n- Invalid file name\n- Missing `version` field in payload\n- Invalid JSON payload\n- Empty payload\n- Payload exceeds 20 MiB\n- Anonymous user trying to access non-default file\n",
+                      "originalRequest": {
+                        "method": "PUT",
+                        "header": [
+                          {
+                            "key": "Content-Type",
+                            "value": "application/json"
+                          }
+                        ],
+                        "body": {
+                          "mode": "raw",
+                          "raw": "{\n  \"version\": \"<integer>\"\n}",
+                          "options": {
+                            "raw": {
+                              "headerFamily": "json",
+                              "language": "json"
+                            }
+                          }
+                        },
+                        "url": {
+                          "raw": "{{baseUrl}}/api/v3/settings?file=default",
+                          "host": [
+                            "{{baseUrl}}"
+                          ],
+                          "path": [
+                            "api",
+                            "v3",
+                            "settings"
+                          ],
+                          "query": [
+                            {
+                              "description": "Name of the settings file to create or update.\n\n**File Naming Rules:**\n- Alphanumeric characters only\n- Dashes (-) and underscores (_) allowed\n- No spaces or special characters\n- Case-sensitive\n\n**Access Control:**\n- **Anonymous users**: Only `file=default` allowed\n- **Authenticated users (bearer token)**: Any valid file name\n\n**File Creation:**\n- If file doesn't exist: Created with initial payload\n- If file exists: Updated with new payload (version check applies)\n",
+                              "key": "file",
+                              "value": "default"
+                            }
+                          ]
+                        }
+                      },
+                      "status": "Bad Request",
+                      "code": 400,
+                      "_postman_previewlanguage": "text",
+                      "header": [],
+                      "cookie": [],
+                      "responseTime": null,
+                      "body": null,
+                      "createdAt": "2026-07-28T02:17:44.000Z",
+                      "updatedAt": "2026-07-28T02:17:44.000Z",
+                      "uid": "35240-d9d190f2-bc55-41ec-af80-9089e4e45bcb"
+                    },
+                    {
+                      "id": "b80701f3-a777-4837-a4f9-49501569a3f4",
+                      "name": "Conflict. Version mismatch detected.\n\n**Resolution Steps:**\n1. GET current settings to retrieve latest version\n2. Reapply your changes to the new version\n3. PUT again with updated version number\n\nThis prevents lost updates when multiple clients modify set",
+                      "originalRequest": {
+                        "method": "PUT",
+                        "header": [
+                          {
+                            "key": "Content-Type",
+                            "value": "application/json"
+                          },
+                          {
+                            "key": "Accept",
+                            "value": "application/json"
+                          }
+                        ],
+                        "body": {
+                          "mode": "raw",
+                          "raw": "{\n  \"version\": \"<integer>\"\n}",
+                          "options": {
+                            "raw": {
+                              "headerFamily": "json",
+                              "language": "json"
+                            }
+                          }
+                        },
+                        "url": {
+                          "raw": "{{baseUrl}}/api/v3/settings?file=default",
+                          "host": [
+                            "{{baseUrl}}"
+                          ],
+                          "path": [
+                            "api",
+                            "v3",
+                            "settings"
+                          ],
+                          "query": [
+                            {
+                              "description": "Name of the settings file to create or update.\n\n**File Naming Rules:**\n- Alphanumeric characters only\n- Dashes (-) and underscores (_) allowed\n- No spaces or special characters\n- Case-sensitive\n\n**Access Control:**\n- **Anonymous users**: Only `file=default` allowed\n- **Authenticated users (bearer token)**: Any valid file name\n\n**File Creation:**\n- If file doesn't exist: Created with initial payload\n- If file exists: Updated with new payload (version check applies)\n",
+                              "key": "file",
+                              "value": "default"
+                            }
+                          ]
+                        }
+                      },
+                      "status": "Conflict",
+                      "code": 409,
+                      "_postman_previewlanguage": "json",
+                      "header": [
+                        {
+                          "key": "Content-Type",
+                          "value": "application/json"
+                        }
+                      ],
+                      "cookie": [],
+                      "responseTime": null,
+                      "body": "{\n  \"message\": \"<string>\"\n}",
+                      "createdAt": "2026-07-28T02:17:44.000Z",
+                      "updatedAt": "2026-07-28T02:17:44.000Z",
+                      "uid": "35240-b80701f3-a777-4837-a4f9-49501569a3f4"
+                    },
+                    {
+                      "id": "52415763-b353-4690-9361-eb2a3cc1dba1",
+                      "name": "Internal server error during settings update.",
+                      "originalRequest": {
+                        "method": "PUT",
+                        "header": [
+                          {
+                            "key": "Content-Type",
+                            "value": "application/json"
+                          }
+                        ],
+                        "body": {
+                          "mode": "raw",
+                          "raw": "{\n  \"version\": \"<integer>\"\n}",
+                          "options": {
+                            "raw": {
+                              "headerFamily": "json",
+                              "language": "json"
+                            }
+                          }
+                        },
+                        "url": {
+                          "raw": "{{baseUrl}}/api/v3/settings?file=default",
+                          "host": [
+                            "{{baseUrl}}"
+                          ],
+                          "path": [
+                            "api",
+                            "v3",
+                            "settings"
+                          ],
+                          "query": [
+                            {
+                              "description": "Name of the settings file to create or update.\n\n**File Naming Rules:**\n- Alphanumeric characters only\n- Dashes (-) and underscores (_) allowed\n- No spaces or special characters\n- Case-sensitive\n\n**Access Control:**\n- **Anonymous users**: Only `file=default` allowed\n- **Authenticated users (bearer token)**: Any valid file name\n\n**File Creation:**\n- If file doesn't exist: Created with initial payload\n- If file exists: Updated with new payload (version check applies)\n",
+                              "key": "file",
+                              "value": "default"
+                            }
+                          ]
+                        }
+                      },
+                      "status": "Internal Server Error",
+                      "code": 500,
+                      "_postman_previewlanguage": "text",
+                      "header": [],
+                      "cookie": [],
+                      "responseTime": null,
+                      "body": null,
+                      "createdAt": "2026-07-28T02:17:44.000Z",
+                      "updatedAt": "2026-07-28T02:17:44.000Z",
+                      "uid": "35240-52415763-b353-4690-9361-eb2a3cc1dba1"
+                    }
+                  ],
+                  "createdAt": "2026-07-28T02:17:44.000Z",
+                  "updatedAt": "2026-07-28T02:17:44.000Z",
+                  "uid": "35240-c2d29ec2-9e60-4aec-80b0-b92e8afdabdd"
+                }
+              ],
+              "id": "754856cc-4ccc-4a56-97d2-ce6b94d77712",
+              "createdAt": "2026-07-28T02:17:44.000Z",
+              "updatedAt": "2026-07-28T02:17:44.000Z",
+              "uid": "35240-754856cc-4ccc-4a56-97d2-ce6b94d77712"
+            }
+          ],
+          "id": "3ee17d94-4c3f-4be1-9f19-c42a20a5b8fe",
+          "createdAt": "2026-07-28T02:17:44.000Z",
+          "updatedAt": "2026-07-28T02:17:44.000Z",
+          "uid": "35240-3ee17d94-4c3f-4be1-9f19-c42a20a5b8fe"
+        }
+      ],
+      "id": "e0dea6d0-cac8-4ddd-9c3d-7039ba9b2c6e",
+      "createdAt": "2026-07-28T02:17:44.000Z",
+      "updatedAt": "2026-07-28T02:17:44.000Z",
+      "uid": "35240-e0dea6d0-cac8-4ddd-9c3d-7039ba9b2c6e"
+    }
+  ],
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "https://registry.my-netdata.io"
+    }
+  ]
+}

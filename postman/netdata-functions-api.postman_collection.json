@@ -1,0 +1,2195 @@
+{
+  "info": {
+    "_postman_id": "b72977b0-824b-4f16-a09c-77d4ec576397",
+    "name": "Netdata agent functions API",
+    "description": "Real-time performance and health monitoring.\n\n## API Versions\n\nNetdata provides three API versions:\n- **v1**: The original API, focused on single-node operations\n- **v2**: Multi-node API with advanced grouping and aggregation capabilities\n- **v3**: The latest API version that combines v1 and v2 endpoints and may include additional features\n\n### v3 API Endpoints\n\nThe v3 API provides the current, actively maintained endpoints:\n- `/api/v3/data` - Multi-dimensional data queries\n- `/api/v3/weights` - Metric scoring/correlation\n- `/api/v3/contexts` - Context metadata\n- `/api/v3/nodes` - Node information\n- `/api/v3/q` - Full-text search\n- `/api/v3/alerts` - Alert information\n- `/api/v3/alert_transitions` - Alert state transitions\n- `/api/v3/alert_config` - Alert configuration\n- `/api/v3/functions` - Available functions\n- `/api/v3/function` - Execute functions\n- `/api/v3/info` - Agent information\n- `/api/v3/node_instances` - Node instance information\n- `/api/v3/stream_path` - Streaming topology\n- `/api/v3/versions` - Version information\n- `/api/v3/badge.svg` - Dynamic badges\n- `/api/v3/allmetrics` - Export metrics\n- `/api/v3/context` - Single context info\n- `/api/v3/variable` - Variable information\n- `/api/v3/config` - Dynamic configuration\n- `/api/v3/settings` - Agent settings\n- `/api/v3/me` - Current user information\n- `/api/v3/claim` - Agent claiming\n- Additional management and streaming endpoints\n\n**Note:** V1 and V2 APIs are deprecated and maintained for backwards compatibility only. New integrations should use V3 exclusively.\n\n\nContact Support:\n Name: Netdata Agent API\n Email: info@netdata.cloud",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "createdAt": "2026-07-28T02:17:31.000Z",
+    "updatedAt": "2026-07-28T02:17:32.000Z",
+    "lastUpdatedBy": "35240",
+    "uid": "35240-b72977b0-824b-4f16-a09c-77d4ec576397"
+  },
+  "item": [
+    {
+      "name": "api",
+      "item": [
+        {
+          "name": "v3",
+          "item": [
+            {
+              "name": "progress",
+              "item": [
+                {
+                  "name": "Track progress of long-running function executions",
+                  "id": "57145725-1973-40a3-a8c2-2187cda7c805",
+                  "protocolProfileBehavior": {
+                    "disableBodyPruning": true
+                  },
+                  "request": {
+                    "method": "GET",
+                    "header": [
+                      {
+                        "key": "Accept",
+                        "value": "application/json"
+                      }
+                    ],
+                    "url": {
+                      "raw": "{{baseUrl}}/api/v3/progress?transaction=<uuid>",
+                      "host": [
+                        "{{baseUrl}}"
+                      ],
+                      "path": [
+                        "api",
+                        "v3",
+                        "progress"
+                      ],
+                      "query": [
+                        {
+                          "description": "(Required) Transaction ID (UUID) of the function execution to track. This ID is returned\nwhen initiating a function execution via `/api/v3/function` or similar endpoints.\n\n**UUID Format:**\n- Standard UUID v4 format\n- Example: `550e8400-e29b-41d4-a716-446655440000`\n- Case-insensitive\n\n**Transaction Lifecycle:**\n- **Created**: When function execution starts\n- **Active**: While function is running\n- **Expired**: After completion, failure, or timeout\n- **Retention**: Transaction state kept briefly after completion for final status retrieval\n\n**Invalid Transaction Handling:**\n- Missing transaction: Returns 400 Bad Request\n- Malformed UUID: Returns 400 Bad Request\n- Expired transaction: Returns 404 Not Found\n- Unknown transaction: Returns 404 Not Found\n",
+                          "key": "transaction",
+                          "value": "<uuid>"
+                        }
+                      ]
+                    },
+                    "description": "Monitors the progress of long-running Netdata function executions identified by a transaction ID.\nWhen executing functions that may take significant time (e.g., data collection, analysis, exports),\nthis endpoint allows clients to poll for progress updates and track completion status.\n\n**Function Execution Flow:**\n1. Client initiates a function execution (e.g., via `/api/v3/function`)\n2. Function returns immediately with a transaction ID\n3. Client polls `/api/v3/progress?transaction=<id>` for status updates\n4. Progress endpoint returns completion percentage and status\n5. When complete, client retrieves final results\n\n**Progress Information Includes:**\n- **Percentage complete**: 0-100% progress indicator\n- **Status**: running, completed, failed, cancelled\n- **Message**: Human-readable status description\n- **Remaining time estimate**: If available\n\n**Use Cases:**\n- **Long data exports**: Track progress of large data export operations\n- **Analysis functions**: Monitor CPU-intensive analysis tasks\n- **Batch operations**: Track multi-step batch processing\n- **User experience**: Provide progress feedback in UI applications\n\n**Polling Best Practices:**\n- Poll every 1-2 seconds for responsive updates\n- Implement exponential backoff for completed/failed states\n- Set reasonable timeouts (functions may take minutes)\n- Handle cancellation gracefully\n\n**Common Usage Patterns:**\n\n1. **Poll for function progress:**\n   ```\n   /api/v3/progress?transaction=550e8400-e29b-41d4-a716-446655440000\n   ```\n\n2. **Integration with function execution:**\n   ```javascript\n   // 1. Start function\n   const response = await fetch('/api/v3/function?...');\n   const { transaction } = await response.json();\n\n   // 2. Poll for progress\n   const interval = setInterval(async () => {\n     const progress = await fetch(`/api/v3/progress?transaction=${transaction}`);\n     const { percentage, status } = await progress.json();\n\n     if (status === 'completed') {\n       clearInterval(interval);\n       // Fetch final results\n     }\n   }, 1000);\n   ```\n\n**Transaction ID Format:**\n- UUID v4 format: `xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx`\n- Returned by function execution endpoints\n- Valid for the lifetime of the function execution\n- Expires after completion or timeout\n\n**Security & Access Control:**\n- \ud83d\udd13 **Always Public API** - This endpoint is always accessible without authentication\n- **No Restrictions:** Not subject to bearer protection or IP-based ACL restrictions\n- **No Authentication:** Cannot be restricted by any configuration\n- **Access:** Available to anyone who can reach the agent's HTTP endpoint\n"
+                  },
+                  "response": [
+                    {
+                      "id": "714dc12b-34ed-404d-9375-aaf13a4be782",
+                      "name": "Successfully retrieved progress information for the transaction.\n\nReturns current progress status including percentage complete, state, and optional message.\n",
+                      "originalRequest": {
+                        "method": "GET",
+                        "header": [
+                          {
+                            "key": "Accept",
+                            "value": "application/json"
+                          }
+                        ],
+                        "url": {
+                          "raw": "{{baseUrl}}/api/v3/progress?transaction=<uuid>",
+                          "host": [
+                            "{{baseUrl}}"
+                          ],
+                          "path": [
+                            "api",
+                            "v3",
+                            "progress"
+                          ],
+                          "query": [
+                            {
+                              "description": "(Required) Transaction ID (UUID) of the function execution to track. This ID is returned\nwhen initiating a function execution via `/api/v3/function` or similar endpoints.\n\n**UUID Format:**\n- Standard UUID v4 format\n- Example: `550e8400-e29b-41d4-a716-446655440000`\n- Case-insensitive\n\n**Transaction Lifecycle:**\n- **Created**: When function execution starts\n- **Active**: While function is running\n- **Expired**: After completion, failure, or timeout\n- **Retention**: Transaction state kept briefly after completion for final status retrieval\n\n**Invalid Transaction Handling:**\n- Missing transaction: Returns 400 Bad Request\n- Malformed UUID: Returns 400 Bad Request\n- Expired transaction: Returns 404 Not Found\n- Unknown transaction: Returns 404 Not Found\n",
+                              "key": "transaction",
+                              "value": "<uuid>"
+                            }
+                          ]
+                        }
+                      },
+                      "status": "OK",
+                      "code": 200,
+                      "_postman_previewlanguage": "json",
+                      "header": [
+                        {
+                          "key": "Content-Type",
+                          "value": "application/json"
+                        }
+                      ],
+                      "cookie": [],
+                      "responseTime": null,
+                      "body": "{\n  \"transaction\": \"<uuid>\",\n  \"status\": \"cancelled\",\n  \"percentage\": \"<integer>\",\n  \"message\": \"<string>\",\n  \"done\": \"<integer>\",\n  \"all\": \"<integer>\",\n  \"eta_seconds\": \"<integer>\"\n}",
+                      "createdAt": "2026-07-28T02:17:32.000Z",
+                      "updatedAt": "2026-07-28T02:17:32.000Z",
+                      "uid": "35240-714dc12b-34ed-404d-9375-aaf13a4be782"
+                    },
+                    {
+                      "id": "b39fb950-cc96-4ae1-a6b9-c144bd532ad5",
+                      "name": "Bad request. Common causes:\n- Missing transaction parameter\n- Malformed UUID format\n- Invalid transaction ID format\n",
+                      "originalRequest": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                          "raw": "{{baseUrl}}/api/v3/progress?transaction=<uuid>",
+                          "host": [
+                            "{{baseUrl}}"
+                          ],
+                          "path": [
+                            "api",
+                            "v3",
+                            "progress"
+                          ],
+                          "query": [
+                            {
+                              "description": "(Required) Transaction ID (UUID) of the function execution to track. This ID is returned\nwhen initiating a function execution via `/api/v3/function` or similar endpoints.\n\n**UUID Format:**\n- Standard UUID v4 format\n- Example: `550e8400-e29b-41d4-a716-446655440000`\n- Case-insensitive\n\n**Transaction Lifecycle:**\n- **Created**: When function execution starts\n- **Active**: While function is running\n- **Expired**: After completion, failure, or timeout\n- **Retention**: Transaction state kept briefly after completion for final status retrieval\n\n**Invalid Transaction Handling:**\n- Missing transaction: Returns 400 Bad Request\n- Malformed UUID: Returns 400 Bad Request\n- Expired transaction: Returns 404 Not Found\n- Unknown transaction: Returns 404 Not Found\n",
+                              "key": "transaction",
+                              "value": "<uuid>"
+                            }
+                          ]
+                        }
+                      },
+                      "status": "Bad Request",
+                      "code": 400,
+                      "_postman_previewlanguage": "text",
+                      "header": [],
+                      "cookie": [],
+                      "responseTime": null,
+                      "body": null,
+                      "createdAt": "2026-07-28T02:17:32.000Z",
+                      "updatedAt": "2026-07-28T02:17:32.000Z",
+                      "uid": "35240-b39fb950-cc96-4ae1-a6b9-c144bd532ad5"
+                    },
+                    {
+                      "id": "5fc0c71b-1bcc-4554-a7e8-f538e9d1172b",
+                      "name": "Transaction not found. Possible reasons:\n- Transaction ID does not exist\n- Transaction has expired (completed/failed long ago)\n- Transaction was never created\n",
+                      "originalRequest": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                          "raw": "{{baseUrl}}/api/v3/progress?transaction=<uuid>",
+                          "host": [
+                            "{{baseUrl}}"
+                          ],
+                          "path": [
+                            "api",
+                            "v3",
+                            "progress"
+                          ],
+                          "query": [
+                            {
+                              "description": "(Required) Transaction ID (UUID) of the function execution to track. This ID is returned\nwhen initiating a function execution via `/api/v3/function` or similar endpoints.\n\n**UUID Format:**\n- Standard UUID v4 format\n- Example: `550e8400-e29b-41d4-a716-446655440000`\n- Case-insensitive\n\n**Transaction Lifecycle:**\n- **Created**: When function execution starts\n- **Active**: While function is running\n- **Expired**: After completion, failure, or timeout\n- **Retention**: Transaction state kept briefly after completion for final status retrieval\n\n**Invalid Transaction Handling:**\n- Missing transaction: Returns 400 Bad Request\n- Malformed UUID: Returns 400 Bad Request\n- Expired transaction: Returns 404 Not Found\n- Unknown transaction: Returns 404 Not Found\n",
+                              "key": "transaction",
+                              "value": "<uuid>"
+                            }
+                          ]
+                        }
+                      },
+                      "status": "Not Found",
+                      "code": 404,
+                      "_postman_previewlanguage": "text",
+                      "header": [],
+                      "cookie": [],
+                      "responseTime": null,
+                      "body": null,
+                      "createdAt": "2026-07-28T02:17:32.000Z",
+                      "updatedAt": "2026-07-28T02:17:32.000Z",
+                      "uid": "35240-5fc0c71b-1bcc-4554-a7e8-f538e9d1172b"
+                    },
+                    {
+                      "id": "dbd1bf15-a545-4a49-a5b0-0591169f6fd3",
+                      "name": "Internal server error during progress tracking.",
+                      "originalRequest": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                          "raw": "{{baseUrl}}/api/v3/progress?transaction=<uuid>",
+                          "host": [
+                            "{{baseUrl}}"
+                          ],
+                          "path": [
+                            "api",
+                            "v3",
+                            "progress"
+                          ],
+                          "query": [
+                            {
+                              "description": "(Required) Transaction ID (UUID) of the function execution to track. This ID is returned\nwhen initiating a function execution via `/api/v3/function` or similar endpoints.\n\n**UUID Format:**\n- Standard UUID v4 format\n- Example: `550e8400-e29b-41d4-a716-446655440000`\n- Case-insensitive\n\n**Transaction Lifecycle:**\n- **Created**: When function execution starts\n- **Active**: While function is running\n- **Expired**: After completion, failure, or timeout\n- **Retention**: Transaction state kept briefly after completion for final status retrieval\n\n**Invalid Transaction Handling:**\n- Missing transaction: Returns 400 Bad Request\n- Malformed UUID: Returns 400 Bad Request\n- Expired transaction: Returns 404 Not Found\n- Unknown transaction: Returns 404 Not Found\n",
+                              "key": "transaction",
+                              "value": "<uuid>"
+                            }
+                          ]
+                        }
+                      },
+                      "status": "Internal Server Error",
+                      "code": 500,
+                      "_postman_previewlanguage": "text",
+                      "header": [],
+                      "cookie": [],
+                      "responseTime": null,
+                      "body": null,
+                      "createdAt": "2026-07-28T02:17:32.000Z",
+                      "updatedAt": "2026-07-28T02:17:32.000Z",
+                      "uid": "35240-dbd1bf15-a545-4a49-a5b0-0591169f6fd3"
+                    }
+                  ],
+                  "createdAt": "2026-07-28T02:17:32.000Z",
+                  "updatedAt": "2026-07-28T02:17:32.000Z",
+                  "uid": "35240-57145725-1973-40a3-a8c2-2187cda7c805"
+                }
+              ],
+              "id": "0cede328-65b6-445a-8175-cce8fbd4bf0d",
+              "createdAt": "2026-07-28T02:17:32.000Z",
+              "updatedAt": "2026-07-28T02:17:32.000Z",
+              "uid": "35240-0cede328-65b6-445a-8175-cce8fbd4bf0d"
+            },
+            {
+              "name": "function",
+              "item": [
+                {
+                  "name": "Execute a Netdata function on a specific node",
+                  "id": "a511bded-a48b-49b5-b677-b6b99b5f0360",
+                  "protocolProfileBehavior": {
+                    "disableBodyPruning": true
+                  },
+                  "request": {
+                    "auth": {
+                      "type": "noauth"
+                    },
+                    "method": "GET",
+                    "header": [
+                      {
+                        "key": "Accept",
+                        "value": "application/json"
+                      }
+                    ],
+                    "url": {
+                      "raw": "{{baseUrl}}/api/v3/function?function=<string>&timeout=60",
+                      "host": [
+                        "{{baseUrl}}"
+                      ],
+                      "path": [
+                        "api",
+                        "v3",
+                        "function"
+                      ],
+                      "query": [
+                        {
+                          "description": "(Required) Name of the function to execute. Each Netdata plugin can provide multiple functions\nwith different capabilities.\n\n**Function Names:**\n- Kebab-case naming: `function-name-here`\n- Provided by plugins: different plugins provide different functions\n- Discoverable via `/api/v3/functions` endpoint\n- Case-sensitive\n\n**Common Built-in Functions:**\n- `systemd-list-units` - List systemd services\n- `processes` - Running processes with CPU/memory usage\n- `network-connections` - Active network connections and sockets\n- `mount-points` - Mounted filesystems and usage\n- `ipmi-sensors` - IPMI hardware sensors (if available)\n\n**Plugin-Specific Functions:**\n- Docker plugin: `docker-containers`, `docker-images`\n- Apps plugin: `apps-processes`\n- Logs plugin: `logs-query`\n- And many more depending on enabled plugins\n\n**Invalid Function Names:**\n- Missing function: Returns 400 Bad Request\n- Unknown function: Returns 404 Not Found or function-specific error\n- Disabled function: Returns 403 Forbidden\n",
+                          "key": "function",
+                          "value": "<string>"
+                        },
+                        {
+                          "description": "Maximum time in seconds to wait for function execution before timing out.\nDifferent functions have different execution times.\n\n**Timeout Guidelines by Function Type:**\n- **Fast queries** (< 1s): processes, mount-points\n  Recommended: 10-30 seconds\n- **Medium queries** (1-5s): systemd-list-units, network-connections\n  Recommended: 30-60 seconds\n- **Slow operations** (5-30s): docker operations, log queries\n  Recommended: 60-300 seconds\n\n**Timeout Behavior:**\n- If execution completes before timeout: Returns results immediately\n- If timeout expires: Function is cancelled and error returned\n- For async functions: Returns transaction ID immediately, timeout applies to overall operation\n\n**Best Practices:**\n- Set conservative timeouts for production systems\n- Consider network latency for remote nodes\n- Monitor timeout errors and adjust accordingly\n",
+                          "key": "timeout",
+                          "value": "60"
+                        }
+                      ]
+                    },
+                    "description": "Executes a named function on a Netdata agent to retrieve live information or trigger actions.\nFunctions are plugin-provided operations that can query system state, collect real-time data,\nor perform administrative tasks.\n\n**What are Netdata Functions?**\nFunctions extend Netdata beyond passive metric collection by allowing:\n- **Live data queries**: Get current system state (processes, connections, services)\n- **Interactive diagnostics**: Run on-demand checks and analysis\n- **Administrative operations**: Trigger actions like cache clearing or config reloading\n- **Plugin-specific features**: Access specialized capabilities provided by plugins\n\n**Common Functions Include:**\n- `systemd-list-units` - List systemd services and their status\n- `processes` - List currently running processes with resource usage\n- `network-connections` - Show active network connections\n- `mount-points` - Display mounted filesystems\n- `docker-containers` - List Docker containers (if Docker plugin enabled)\n- Many more plugin-specific functions\n\n**Function Discovery:**\nUse `/api/v3/functions` to discover available functions on each node.\n\n**Execution Model:**\n- Functions execute on the target node's agent\n- Results are collected and returned in real-time\n- Long-running functions return a transaction ID for progress tracking\n- Functions may require specific permissions or capabilities\n\n**Use Cases:**\n- **System diagnostics**: Query live system state for troubleshooting\n- **Capacity planning**: Get current resource utilization details\n- **Security auditing**: List processes, connections, open ports\n- **Service management**: Check service status across infrastructure\n- **Interactive dashboards**: Provide drill-down capabilities\n\n**Common Usage Patterns:**\n\n1. **List running processes:**\n   ```\n   /api/v3/function?function=processes\n   ```\n\n2. **List systemd services:**\n   ```\n   /api/v3/function?function=systemd-list-units&timeout=30\n   ```\n\n3. **Get network connections:**\n   ```\n   /api/v3/function?function=network-connections\n   ```\n\n4. **Execute with custom timeout for slow operations:**\n   ```\n   /api/v3/function?function=docker-containers&timeout=60\n   ```\n\n**Function Response Formats:**\n- Most functions return JSON data\n- Some may return plain text or formatted output\n- Check Content-Type header for response format\n- Long operations may return transaction ID for `/api/v3/progress` polling\n\n**Security Considerations:**\n- Functions respect user authentication and authorization\n- Some functions may require elevated permissions\n- Function execution is subject to ACL checks\n- Sensitive operations may be restricted by configuration\n\n**Security & Access Control:**\n- \ud83d\udcca **Public Data API** - Bearer token optional, IP-based ACL restrictions apply\n- **Default Access:** Public (no authentication required)\n- **Bearer Protection:** When enabled via `/api/v3/bearer_protection`, requires bearer token\n- **IP Restrictions:** Subject to `allow dashboard from` in netdata.conf\n- **Access Methods:** Direct HTTP/HTTPS, Netdata Cloud, external tools\n"
+                  },
+                  "response": [
+                    {
+                      "id": "a2708444-4536-44a8-bd01-567f65cd3e84",
+                      "name": "Function executed successfully and returned results.\n\nThe response format depends on the specific function:\n- Most functions return JSON data\n- Some return plain text or formatted output\n- Check Content-Type header\n",
+                      "originalRequest": {
+                        "method": "GET",
+                        "header": [
+                          {
+                            "key": "Accept",
+                            "value": "application/json"
+                          }
+                        ],
+                        "url": {
+                          "raw": "{{baseUrl}}/api/v3/function?function=<string>&timeout=60",
+                          "host": [
+                            "{{baseUrl}}"
+                          ],
+                          "path": [
+                            "api",
+                            "v3",
+                            "function"
+                          ],
+                          "query": [
+                            {
+                              "description": "(Required) Name of the function to execute. Each Netdata plugin can provide multiple functions\nwith different capabilities.\n\n**Function Names:**\n- Kebab-case naming: `function-name-here`\n- Provided by plugins: different plugins provide different functions\n- Discoverable via `/api/v3/functions` endpoint\n- Case-sensitive\n\n**Common Built-in Functions:**\n- `systemd-list-units` - List systemd services\n- `processes` - Running processes with CPU/memory usage\n- `network-connections` - Active network connections and sockets\n- `mount-points` - Mounted filesystems and usage\n- `ipmi-sensors` - IPMI hardware sensors (if available)\n\n**Plugin-Specific Functions:**\n- Docker plugin: `docker-containers`, `docker-images`\n- Apps plugin: `apps-processes`\n- Logs plugin: `logs-query`\n- And many more depending on enabled plugins\n\n**Invalid Function Names:**\n- Missing function: Returns 400 Bad Request\n- Unknown function: Returns 404 Not Found or function-specific error\n- Disabled function: Returns 403 Forbidden\n",
+                              "key": "function",
+                              "value": "<string>"
+                            },
+                            {
+                              "description": "Maximum time in seconds to wait for function execution before timing out.\nDifferent functions have different execution times.\n\n**Timeout Guidelines by Function Type:**\n- **Fast queries** (< 1s): processes, mount-points\n  Recommended: 10-30 seconds\n- **Medium queries** (1-5s): systemd-list-units, network-connections\n  Recommended: 30-60 seconds\n- **Slow operations** (5-30s): docker operations, log queries\n  Recommended: 60-300 seconds\n\n**Timeout Behavior:**\n- If execution completes before timeout: Returns results immediately\n- If timeout expires: Function is cancelled and error returned\n- For async functions: Returns transaction ID immediately, timeout applies to overall operation\n\n**Best Practices:**\n- Set conservative timeouts for production systems\n- Consider network latency for remote nodes\n- Monitor timeout errors and adjust accordingly\n",
+                              "key": "timeout",
+                              "value": "60"
+                            }
+                          ]
+                        }
+                      },
+                      "status": "OK",
+                      "code": 200,
+                      "_postman_previewlanguage": "json",
+                      "header": [
+                        {
+                          "key": "Content-Type",
+                          "value": "application/json"
+                        }
+                      ],
+                      "cookie": [],
+                      "responseTime": null,
+                      "body": "{}",
+                      "createdAt": "2026-07-28T02:17:32.000Z",
+                      "updatedAt": "2026-07-28T02:17:32.000Z",
+                      "uid": "35240-a2708444-4536-44a8-bd01-567f65cd3e84"
+                    },
+                    {
+                      "id": "9b199d2f-7e78-4702-8214-f0eb4783b3de",
+                      "name": "Function execution started asynchronously. Use the returned transaction ID\nto poll `/api/v3/progress` for status and results.\n",
+                      "originalRequest": {
+                        "method": "GET",
+                        "header": [
+                          {
+                            "key": "Accept",
+                            "value": "application/json"
+                          }
+                        ],
+                        "url": {
+                          "raw": "{{baseUrl}}/api/v3/function?function=<string>&timeout=60",
+                          "host": [
+                            "{{baseUrl}}"
+                          ],
+                          "path": [
+                            "api",
+                            "v3",
+                            "function"
+                          ],
+                          "query": [
+                            {
+                              "description": "(Required) Name of the function to execute. Each Netdata plugin can provide multiple functions\nwith different capabilities.\n\n**Function Names:**\n- Kebab-case naming: `function-name-here`\n- Provided by plugins: different plugins provide different functions\n- Discoverable via `/api/v3/functions` endpoint\n- Case-sensitive\n\n**Common Built-in Functions:**\n- `systemd-list-units` - List systemd services\n- `processes` - Running processes with CPU/memory usage\n- `network-connections` - Active network connections and sockets\n- `mount-points` - Mounted filesystems and usage\n- `ipmi-sensors` - IPMI hardware sensors (if available)\n\n**Plugin-Specific Functions:**\n- Docker plugin: `docker-containers`, `docker-images`\n- Apps plugin: `apps-processes`\n- Logs plugin: `logs-query`\n- And many more depending on enabled plugins\n\n**Invalid Function Names:**\n- Missing function: Returns 400 Bad Request\n- Unknown function: Returns 404 Not Found or function-specific error\n- Disabled function: Returns 403 Forbidden\n",
+                              "key": "function",
+                              "value": "<string>"
+                            },
+                            {
+                              "description": "Maximum time in seconds to wait for function execution before timing out.\nDifferent functions have different execution times.\n\n**Timeout Guidelines by Function Type:**\n- **Fast queries** (< 1s): processes, mount-points\n  Recommended: 10-30 seconds\n- **Medium queries** (1-5s): systemd-list-units, network-connections\n  Recommended: 30-60 seconds\n- **Slow operations** (5-30s): docker operations, log queries\n  Recommended: 60-300 seconds\n\n**Timeout Behavior:**\n- If execution completes before timeout: Returns results immediately\n- If timeout expires: Function is cancelled and error returned\n- For async functions: Returns transaction ID immediately, timeout applies to overall operation\n\n**Best Practices:**\n- Set conservative timeouts for production systems\n- Consider network latency for remote nodes\n- Monitor timeout errors and adjust accordingly\n",
+                              "key": "timeout",
+                              "value": "60"
+                            }
+                          ]
+                        }
+                      },
+                      "status": "Accepted",
+                      "code": 202,
+                      "_postman_previewlanguage": "json",
+                      "header": [
+                        {
+                          "key": "Content-Type",
+                          "value": "application/json"
+                        }
+                      ],
+                      "cookie": [],
+                      "responseTime": null,
+                      "body": "{\n  \"transaction\": \"<uuid>\",\n  \"message\": \"<string>\"\n}",
+                      "createdAt": "2026-07-28T02:17:32.000Z",
+                      "updatedAt": "2026-07-28T02:17:32.000Z",
+                      "uid": "35240-9b199d2f-7e78-4702-8214-f0eb4783b3de"
+                    },
+                    {
+                      "id": "4628eb98-2286-4fe6-bc95-5eb9b28ae24c",
+                      "name": "Bad request. Common causes:\n- Missing required `function` parameter\n- Invalid function name format\n- Invalid request body for the function\n",
+                      "originalRequest": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                          "raw": "{{baseUrl}}/api/v3/function?function=<string>&timeout=60",
+                          "host": [
+                            "{{baseUrl}}"
+                          ],
+                          "path": [
+                            "api",
+                            "v3",
+                            "function"
+                          ],
+                          "query": [
+                            {
+                              "description": "(Required) Name of the function to execute. Each Netdata plugin can provide multiple functions\nwith different capabilities.\n\n**Function Names:**\n- Kebab-case naming: `function-name-here`\n- Provided by plugins: different plugins provide different functions\n- Discoverable via `/api/v3/functions` endpoint\n- Case-sensitive\n\n**Common Built-in Functions:**\n- `systemd-list-units` - List systemd services\n- `processes` - Running processes with CPU/memory usage\n- `network-connections` - Active network connections and sockets\n- `mount-points` - Mounted filesystems and usage\n- `ipmi-sensors` - IPMI hardware sensors (if available)\n\n**Plugin-Specific Functions:**\n- Docker plugin: `docker-containers`, `docker-images`\n- Apps plugin: `apps-processes`\n- Logs plugin: `logs-query`\n- And many more depending on enabled plugins\n\n**Invalid Function Names:**\n- Missing function: Returns 400 Bad Request\n- Unknown function: Returns 404 Not Found or function-specific error\n- Disabled function: Returns 403 Forbidden\n",
+                              "key": "function",
+                              "value": "<string>"
+                            },
+                            {
+                              "description": "Maximum time in seconds to wait for function execution before timing out.\nDifferent functions have different execution times.\n\n**Timeout Guidelines by Function Type:**\n- **Fast queries** (< 1s): processes, mount-points\n  Recommended: 10-30 seconds\n- **Medium queries** (1-5s): systemd-list-units, network-connections\n  Recommended: 30-60 seconds\n- **Slow operations** (5-30s): docker operations, log queries\n  Recommended: 60-300 seconds\n\n**Timeout Behavior:**\n- If execution completes before timeout: Returns results immediately\n- If timeout expires: Function is cancelled and error returned\n- For async functions: Returns transaction ID immediately, timeout applies to overall operation\n\n**Best Practices:**\n- Set conservative timeouts for production systems\n- Consider network latency for remote nodes\n- Monitor timeout errors and adjust accordingly\n",
+                              "key": "timeout",
+                              "value": "60"
+                            }
+                          ]
+                        }
+                      },
+                      "status": "Bad Request",
+                      "code": 400,
+                      "_postman_previewlanguage": "text",
+                      "header": [],
+                      "cookie": [],
+                      "responseTime": null,
+                      "body": null,
+                      "createdAt": "2026-07-28T02:17:32.000Z",
+                      "updatedAt": "2026-07-28T02:17:32.000Z",
+                      "uid": "35240-4628eb98-2286-4fe6-bc95-5eb9b28ae24c"
+                    },
+                    {
+                      "id": "4f2dcc1d-14d6-43ac-9706-58307c0b024c",
+                      "name": "Forbidden. Possible reasons:\n- Function requires higher permissions than current user has\n- Function is disabled in configuration\n- ACL restrictions prevent execution\n",
+                      "originalRequest": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                          "raw": "{{baseUrl}}/api/v3/function?function=<string>&timeout=60",
+                          "host": [
+                            "{{baseUrl}}"
+                          ],
+                          "path": [
+                            "api",
+                            "v3",
+                            "function"
+                          ],
+                          "query": [
+                            {
+                              "description": "(Required) Name of the function to execute. Each Netdata plugin can provide multiple functions\nwith different capabilities.\n\n**Function Names:**\n- Kebab-case naming: `function-name-here`\n- Provided by plugins: different plugins provide different functions\n- Discoverable via `/api/v3/functions` endpoint\n- Case-sensitive\n\n**Common Built-in Functions:**\n- `systemd-list-units` - List systemd services\n- `processes` - Running processes with CPU/memory usage\n- `network-connections` - Active network connections and sockets\n- `mount-points` - Mounted filesystems and usage\n- `ipmi-sensors` - IPMI hardware sensors (if available)\n\n**Plugin-Specific Functions:**\n- Docker plugin: `docker-containers`, `docker-images`\n- Apps plugin: `apps-processes`\n- Logs plugin: `logs-query`\n- And many more depending on enabled plugins\n\n**Invalid Function Names:**\n- Missing function: Returns 400 Bad Request\n- Unknown function: Returns 404 Not Found or function-specific error\n- Disabled function: Returns 403 Forbidden\n",
+                              "key": "function",
+                              "value": "<string>"
+                            },
+                            {
+                              "description": "Maximum time in seconds to wait for function execution before timing out.\nDifferent functions have different execution times.\n\n**Timeout Guidelines by Function Type:**\n- **Fast queries** (< 1s): processes, mount-points\n  Recommended: 10-30 seconds\n- **Medium queries** (1-5s): systemd-list-units, network-connections\n  Recommended: 30-60 seconds\n- **Slow operations** (5-30s): docker operations, log queries\n  Recommended: 60-300 seconds\n\n**Timeout Behavior:**\n- If execution completes before timeout: Returns results immediately\n- If timeout expires: Function is cancelled and error returned\n- For async functions: Returns transaction ID immediately, timeout applies to overall operation\n\n**Best Practices:**\n- Set conservative timeouts for production systems\n- Consider network latency for remote nodes\n- Monitor timeout errors and adjust accordingly\n",
+                              "key": "timeout",
+                              "value": "60"
+                            }
+                          ]
+                        }
+                      },
+                      "status": "Forbidden",
+                      "code": 403,
+                      "_postman_previewlanguage": "text",
+                      "header": [],
+                      "cookie": [],
+                      "responseTime": null,
+                      "body": null,
+                      "createdAt": "2026-07-28T02:17:32.000Z",
+                      "updatedAt": "2026-07-28T02:17:32.000Z",
+                      "uid": "35240-4f2dcc1d-14d6-43ac-9706-58307c0b024c"
+                    },
+                    {
+                      "id": "ff706b2e-f6c0-4d0b-8a65-c0930628af2f",
+                      "name": "Function not found. The specified function does not exist or is not available on this node.\n",
+                      "originalRequest": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                          "raw": "{{baseUrl}}/api/v3/function?function=<string>&timeout=60",
+                          "host": [
+                            "{{baseUrl}}"
+                          ],
+                          "path": [
+                            "api",
+                            "v3",
+                            "function"
+                          ],
+                          "query": [
+                            {
+                              "description": "(Required) Name of the function to execute. Each Netdata plugin can provide multiple functions\nwith different capabilities.\n\n**Function Names:**\n- Kebab-case naming: `function-name-here`\n- Provided by plugins: different plugins provide different functions\n- Discoverable via `/api/v3/functions` endpoint\n- Case-sensitive\n\n**Common Built-in Functions:**\n- `systemd-list-units` - List systemd services\n- `processes` - Running processes with CPU/memory usage\n- `network-connections` - Active network connections and sockets\n- `mount-points` - Mounted filesystems and usage\n- `ipmi-sensors` - IPMI hardware sensors (if available)\n\n**Plugin-Specific Functions:**\n- Docker plugin: `docker-containers`, `docker-images`\n- Apps plugin: `apps-processes`\n- Logs plugin: `logs-query`\n- And many more depending on enabled plugins\n\n**Invalid Function Names:**\n- Missing function: Returns 400 Bad Request\n- Unknown function: Returns 404 Not Found or function-specific error\n- Disabled function: Returns 403 Forbidden\n",
+                              "key": "function",
+                              "value": "<string>"
+                            },
+                            {
+                              "description": "Maximum time in seconds to wait for function execution before timing out.\nDifferent functions have different execution times.\n\n**Timeout Guidelines by Function Type:**\n- **Fast queries** (< 1s): processes, mount-points\n  Recommended: 10-30 seconds\n- **Medium queries** (1-5s): systemd-list-units, network-connections\n  Recommended: 30-60 seconds\n- **Slow operations** (5-30s): docker operations, log queries\n  Recommended: 60-300 seconds\n\n**Timeout Behavior:**\n- If execution completes before timeout: Returns results immediately\n- If timeout expires: Function is cancelled and error returned\n- For async functions: Returns transaction ID immediately, timeout applies to overall operation\n\n**Best Practices:**\n- Set conservative timeouts for production systems\n- Consider network latency for remote nodes\n- Monitor timeout errors and adjust accordingly\n",
+                              "key": "timeout",
+                              "value": "60"
+                            }
+                          ]
+                        }
+                      },
+                      "status": "Not Found",
+                      "code": 404,
+                      "_postman_previewlanguage": "text",
+                      "header": [],
+                      "cookie": [],
+                      "responseTime": null,
+                      "body": null,
+                      "createdAt": "2026-07-28T02:17:32.000Z",
+                      "updatedAt": "2026-07-28T02:17:32.000Z",
+                      "uid": "35240-ff706b2e-f6c0-4d0b-8a65-c0930628af2f"
+                    },
+                    {
+                      "id": "d975a55f-530b-4212-8f03-6f64126bd0a4",
+                      "name": "Internal server error during function execution.",
+                      "originalRequest": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                          "raw": "{{baseUrl}}/api/v3/function?function=<string>&timeout=60",
+                          "host": [
+                            "{{baseUrl}}"
+                          ],
+                          "path": [
+                            "api",
+                            "v3",
+                            "function"
+                          ],
+                          "query": [
+                            {
+                              "description": "(Required) Name of the function to execute. Each Netdata plugin can provide multiple functions\nwith different capabilities.\n\n**Function Names:**\n- Kebab-case naming: `function-name-here`\n- Provided by plugins: different plugins provide different functions\n- Discoverable via `/api/v3/functions` endpoint\n- Case-sensitive\n\n**Common Built-in Functions:**\n- `systemd-list-units` - List systemd services\n- `processes` - Running processes with CPU/memory usage\n- `network-connections` - Active network connections and sockets\n- `mount-points` - Mounted filesystems and usage\n- `ipmi-sensors` - IPMI hardware sensors (if available)\n\n**Plugin-Specific Functions:**\n- Docker plugin: `docker-containers`, `docker-images`\n- Apps plugin: `apps-processes`\n- Logs plugin: `logs-query`\n- And many more depending on enabled plugins\n\n**Invalid Function Names:**\n- Missing function: Returns 400 Bad Request\n- Unknown function: Returns 404 Not Found or function-specific error\n- Disabled function: Returns 403 Forbidden\n",
+                              "key": "function",
+                              "value": "<string>"
+                            },
+                            {
+                              "description": "Maximum time in seconds to wait for function execution before timing out.\nDifferent functions have different execution times.\n\n**Timeout Guidelines by Function Type:**\n- **Fast queries** (< 1s): processes, mount-points\n  Recommended: 10-30 seconds\n- **Medium queries** (1-5s): systemd-list-units, network-connections\n  Recommended: 30-60 seconds\n- **Slow operations** (5-30s): docker operations, log queries\n  Recommended: 60-300 seconds\n\n**Timeout Behavior:**\n- If execution completes before timeout: Returns results immediately\n- If timeout expires: Function is cancelled and error returned\n- For async functions: Returns transaction ID immediately, timeout applies to overall operation\n\n**Best Practices:**\n- Set conservative timeouts for production systems\n- Consider network latency for remote nodes\n- Monitor timeout errors and adjust accordingly\n",
+                              "key": "timeout",
+                              "value": "60"
+                            }
+                          ]
+                        }
+                      },
+                      "status": "Internal Server Error",
+                      "code": 500,
+                      "_postman_previewlanguage": "text",
+                      "header": [],
+                      "cookie": [],
+                      "responseTime": null,
+                      "body": null,
+                      "createdAt": "2026-07-28T02:17:32.000Z",
+                      "updatedAt": "2026-07-28T02:17:32.000Z",
+                      "uid": "35240-d975a55f-530b-4212-8f03-6f64126bd0a4"
+                    },
+                    {
+                      "id": "59b59746-659b-43e7-8f1b-248041e85af6",
+                      "name": "Service unavailable. Netdata agent is not ready or function execution system is overloaded.\n",
+                      "originalRequest": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                          "raw": "{{baseUrl}}/api/v3/function?function=<string>&timeout=60",
+                          "host": [
+                            "{{baseUrl}}"
+                          ],
+                          "path": [
+                            "api",
+                            "v3",
+                            "function"
+                          ],
+                          "query": [
+                            {
+                              "description": "(Required) Name of the function to execute. Each Netdata plugin can provide multiple functions\nwith different capabilities.\n\n**Function Names:**\n- Kebab-case naming: `function-name-here`\n- Provided by plugins: different plugins provide different functions\n- Discoverable via `/api/v3/functions` endpoint\n- Case-sensitive\n\n**Common Built-in Functions:**\n- `systemd-list-units` - List systemd services\n- `processes` - Running processes with CPU/memory usage\n- `network-connections` - Active network connections and sockets\n- `mount-points` - Mounted filesystems and usage\n- `ipmi-sensors` - IPMI hardware sensors (if available)\n\n**Plugin-Specific Functions:**\n- Docker plugin: `docker-containers`, `docker-images`\n- Apps plugin: `apps-processes`\n- Logs plugin: `logs-query`\n- And many more depending on enabled plugins\n\n**Invalid Function Names:**\n- Missing function: Returns 400 Bad Request\n- Unknown function: Returns 404 Not Found or function-specific error\n- Disabled function: Returns 403 Forbidden\n",
+                              "key": "function",
+                              "value": "<string>"
+                            },
+                            {
+                              "description": "Maximum time in seconds to wait for function execution before timing out.\nDifferent functions have different execution times.\n\n**Timeout Guidelines by Function Type:**\n- **Fast queries** (< 1s): processes, mount-points\n  Recommended: 10-30 seconds\n- **Medium queries** (1-5s): systemd-list-units, network-connections\n  Recommended: 30-60 seconds\n- **Slow operations** (5-30s): docker operations, log queries\n  Recommended: 60-300 seconds\n\n**Timeout Behavior:**\n- If execution completes before timeout: Returns results immediately\n- If timeout expires: Function is cancelled and error returned\n- For async functions: Returns transaction ID immediately, timeout applies to overall operation\n\n**Best Practices:**\n- Set conservative timeouts for production systems\n- Consider network latency for remote nodes\n- Monitor timeout errors and adjust accordingly\n",
+                              "key": "timeout",
+                              "value": "60"
+                            }
+                          ]
+                        }
+                      },
+                      "status": "Service Unavailable",
+                      "code": 503,
+                      "_postman_previewlanguage": "text",
+                      "header": [],
+                      "cookie": [],
+                      "responseTime": null,
+                      "body": null,
+                      "createdAt": "2026-07-28T02:17:32.000Z",
+                      "updatedAt": "2026-07-28T02:17:32.000Z",
+                      "uid": "35240-59b59746-659b-43e7-8f1b-248041e85af6"
+                    },
+                    {
+                      "id": "0423b158-1bd6-456c-bc1b-933aea19c58d",
+                      "name": "Function execution timeout - operation took longer than specified timeout.",
+                      "originalRequest": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                          "raw": "{{baseUrl}}/api/v3/function?function=<string>&timeout=60",
+                          "host": [
+                            "{{baseUrl}}"
+                          ],
+                          "path": [
+                            "api",
+                            "v3",
+                            "function"
+                          ],
+                          "query": [
+                            {
+                              "description": "(Required) Name of the function to execute. Each Netdata plugin can provide multiple functions\nwith different capabilities.\n\n**Function Names:**\n- Kebab-case naming: `function-name-here`\n- Provided by plugins: different plugins provide different functions\n- Discoverable via `/api/v3/functions` endpoint\n- Case-sensitive\n\n**Common Built-in Functions:**\n- `systemd-list-units` - List systemd services\n- `processes` - Running processes with CPU/memory usage\n- `network-connections` - Active network connections and sockets\n- `mount-points` - Mounted filesystems and usage\n- `ipmi-sensors` - IPMI hardware sensors (if available)\n\n**Plugin-Specific Functions:**\n- Docker plugin: `docker-containers`, `docker-images`\n- Apps plugin: `apps-processes`\n- Logs plugin: `logs-query`\n- And many more depending on enabled plugins\n\n**Invalid Function Names:**\n- Missing function: Returns 400 Bad Request\n- Unknown function: Returns 404 Not Found or function-specific error\n- Disabled function: Returns 403 Forbidden\n",
+                              "key": "function",
+                              "value": "<string>"
+                            },
+                            {
+                              "description": "Maximum time in seconds to wait for function execution before timing out.\nDifferent functions have different execution times.\n\n**Timeout Guidelines by Function Type:**\n- **Fast queries** (< 1s): processes, mount-points\n  Recommended: 10-30 seconds\n- **Medium queries** (1-5s): systemd-list-units, network-connections\n  Recommended: 30-60 seconds\n- **Slow operations** (5-30s): docker operations, log queries\n  Recommended: 60-300 seconds\n\n**Timeout Behavior:**\n- If execution completes before timeout: Returns results immediately\n- If timeout expires: Function is cancelled and error returned\n- For async functions: Returns transaction ID immediately, timeout applies to overall operation\n\n**Best Practices:**\n- Set conservative timeouts for production systems\n- Consider network latency for remote nodes\n- Monitor timeout errors and adjust accordingly\n",
+                              "key": "timeout",
+                              "value": "60"
+                            }
+                          ]
+                        }
+                      },
+                      "status": "Gateway Timeout",
+                      "code": 504,
+                      "_postman_previewlanguage": "text",
+                      "header": [],
+                      "cookie": [],
+                      "responseTime": null,
+                      "body": null,
+                      "createdAt": "2026-07-28T02:17:32.000Z",
+                      "updatedAt": "2026-07-28T02:17:32.000Z",
+                      "uid": "35240-0423b158-1bd6-456c-bc1b-933aea19c58d"
+                    }
+                  ],
+                  "createdAt": "2026-07-28T02:17:32.000Z",
+                  "updatedAt": "2026-07-28T02:17:32.000Z",
+                  "uid": "35240-a511bded-a48b-49b5-b677-b6b99b5f0360"
+                },
+                {
+                  "name": "Execute a Netdata function with request body parameters",
+                  "id": "8b6f9978-a9b7-4b17-9fd9-14b67629c2fe",
+                  "protocolProfileBehavior": {
+                    "disableBodyPruning": true
+                  },
+                  "request": {
+                    "auth": {
+                      "type": "noauth"
+                    },
+                    "method": "POST",
+                    "header": [
+                      {
+                        "key": "Content-Type",
+                        "value": "application/json"
+                      },
+                      {
+                        "key": "Accept",
+                        "value": "application/json"
+                      }
+                    ],
+                    "body": {
+                      "mode": "raw",
+                      "raw": "{}",
+                      "options": {
+                        "raw": {
+                          "headerFamily": "json",
+                          "language": "json"
+                        }
+                      }
+                    },
+                    "url": {
+                      "raw": "{{baseUrl}}/api/v3/function?function=<string>&timeout=60",
+                      "host": [
+                        "{{baseUrl}}"
+                      ],
+                      "path": [
+                        "api",
+                        "v3",
+                        "function"
+                      ],
+                      "query": [
+                        {
+                          "description": "(Required) Name of the function to execute (see GET method for details)",
+                          "key": "function",
+                          "value": "<string>"
+                        },
+                        {
+                          "description": "Maximum time in seconds to wait for function execution (see GET method for details)",
+                          "key": "timeout",
+                          "value": "60"
+                        }
+                      ]
+                    },
+                    "description": "Same as GET /api/v3/function, but allows passing parameters via request body for functions\nthat require complex input or configuration data.\n\nUse this method when:\n- Function requires complex parameters that don't fit in query string\n- Passing sensitive data that shouldn't be in URL\n- Function accepts JSON configuration or structured data\n\nSee GET /api/v3/function for complete documentation on functions, timeouts, and responses.\n"
+                  },
+                  "response": [
+                    {
+                      "id": "68a6e518-117a-422b-95e6-b64998fc423a",
+                      "name": "Function executed successfully (see GET method for response details)",
+                      "originalRequest": {
+                        "method": "POST",
+                        "header": [
+                          {
+                            "key": "Content-Type",
+                            "value": "application/json"
+                          },
+                          {
+                            "key": "Accept",
+                            "value": "application/json"
+                          }
+                        ],
+                        "body": {
+                          "mode": "raw",
+                          "raw": "{}",
+                          "options": {
+                            "raw": {
+                              "headerFamily": "json",
+                              "language": "json"
+                            }
+                          }
+                        },
+                        "url": {
+                          "raw": "{{baseUrl}}/api/v3/function?function=<string>&timeout=60",
+                          "host": [
+                            "{{baseUrl}}"
+                          ],
+                          "path": [
+                            "api",
+                            "v3",
+                            "function"
+                          ],
+                          "query": [
+                            {
+                              "description": "(Required) Name of the function to execute (see GET method for details)",
+                              "key": "function",
+                              "value": "<string>"
+                            },
+                            {
+                              "description": "Maximum time in seconds to wait for function execution (see GET method for details)",
+                              "key": "timeout",
+                              "value": "60"
+                            }
+                          ]
+                        }
+                      },
+                      "status": "OK",
+                      "code": 200,
+                      "_postman_previewlanguage": "json",
+                      "header": [
+                        {
+                          "key": "Content-Type",
+                          "value": "application/json"
+                        }
+                      ],
+                      "cookie": [],
+                      "responseTime": null,
+                      "body": "{}",
+                      "createdAt": "2026-07-28T02:17:32.000Z",
+                      "updatedAt": "2026-07-28T02:17:32.000Z",
+                      "uid": "35240-68a6e518-117a-422b-95e6-b64998fc423a"
+                    },
+                    {
+                      "id": "03aafec1-1ed6-4c7c-8cc2-7997c5e45382",
+                      "name": "Function execution started asynchronously (see GET method for details)",
+                      "originalRequest": {
+                        "method": "POST",
+                        "header": [
+                          {
+                            "key": "Content-Type",
+                            "value": "application/json"
+                          }
+                        ],
+                        "body": {
+                          "mode": "raw",
+                          "raw": "{}",
+                          "options": {
+                            "raw": {
+                              "headerFamily": "json",
+                              "language": "json"
+                            }
+                          }
+                        },
+                        "url": {
+                          "raw": "{{baseUrl}}/api/v3/function?function=<string>&timeout=60",
+                          "host": [
+                            "{{baseUrl}}"
+                          ],
+                          "path": [
+                            "api",
+                            "v3",
+                            "function"
+                          ],
+                          "query": [
+                            {
+                              "description": "(Required) Name of the function to execute (see GET method for details)",
+                              "key": "function",
+                              "value": "<string>"
+                            },
+                            {
+                              "description": "Maximum time in seconds to wait for function execution (see GET method for details)",
+                              "key": "timeout",
+                              "value": "60"
+                            }
+                          ]
+                        }
+                      },
+                      "status": "Accepted",
+                      "code": 202,
+                      "_postman_previewlanguage": "text",
+                      "header": [],
+                      "cookie": [],
+                      "responseTime": null,
+                      "body": null,
+                      "createdAt": "2026-07-28T02:17:32.000Z",
+                      "updatedAt": "2026-07-28T02:17:32.000Z",
+                      "uid": "35240-03aafec1-1ed6-4c7c-8cc2-7997c5e45382"
+                    },
+                    {
+                      "id": "ef095926-8dea-4225-863f-fc62dac126d8",
+                      "name": "Bad request (see GET method for details)",
+                      "originalRequest": {
+                        "method": "POST",
+                        "header": [
+                          {
+                            "key": "Content-Type",
+                            "value": "application/json"
+                          }
+                        ],
+                        "body": {
+                          "mode": "raw",
+                          "raw": "{}",
+                          "options": {
+                            "raw": {
+                              "headerFamily": "json",
+                              "language": "json"
+                            }
+                          }
+                        },
+                        "url": {
+                          "raw": "{{baseUrl}}/api/v3/function?function=<string>&timeout=60",
+                          "host": [
+                            "{{baseUrl}}"
+                          ],
+                          "path": [
+                            "api",
+                            "v3",
+                            "function"
+                          ],
+                          "query": [
+                            {
+                              "description": "(Required) Name of the function to execute (see GET method for details)",
+                              "key": "function",
+                              "value": "<string>"
+                            },
+                            {
+                              "description": "Maximum time in seconds to wait for function execution (see GET method for details)",
+                              "key": "timeout",
+                              "value": "60"
+                            }
+                          ]
+                        }
+                      },
+                      "status": "Bad Request",
+                      "code": 400,
+                      "_postman_previewlanguage": "text",
+                      "header": [],
+                      "cookie": [],
+                      "responseTime": null,
+                      "body": null,
+                      "createdAt": "2026-07-28T02:17:32.000Z",
+                      "updatedAt": "2026-07-28T02:17:32.000Z",
+                      "uid": "35240-ef095926-8dea-4225-863f-fc62dac126d8"
+                    },
+                    {
+                      "id": "b05557a7-50e3-4f9d-8eca-143ba458b765",
+                      "name": "Forbidden (see GET method for details)",
+                      "originalRequest": {
+                        "method": "POST",
+                        "header": [
+                          {
+                            "key": "Content-Type",
+                            "value": "application/json"
+                          }
+                        ],
+                        "body": {
+                          "mode": "raw",
+                          "raw": "{}",
+                          "options": {
+                            "raw": {
+                              "headerFamily": "json",
+                              "language": "json"
+                            }
+                          }
+                        },
+                        "url": {
+                          "raw": "{{baseUrl}}/api/v3/function?function=<string>&timeout=60",
+                          "host": [
+                            "{{baseUrl}}"
+                          ],
+                          "path": [
+                            "api",
+                            "v3",
+                            "function"
+                          ],
+                          "query": [
+                            {
+                              "description": "(Required) Name of the function to execute (see GET method for details)",
+                              "key": "function",
+                              "value": "<string>"
+                            },
+                            {
+                              "description": "Maximum time in seconds to wait for function execution (see GET method for details)",
+                              "key": "timeout",
+                              "value": "60"
+                            }
+                          ]
+                        }
+                      },
+                      "status": "Forbidden",
+                      "code": 403,
+                      "_postman_previewlanguage": "text",
+                      "header": [],
+                      "cookie": [],
+                      "responseTime": null,
+                      "body": null,
+                      "createdAt": "2026-07-28T02:17:32.000Z",
+                      "updatedAt": "2026-07-28T02:17:32.000Z",
+                      "uid": "35240-b05557a7-50e3-4f9d-8eca-143ba458b765"
+                    },
+                    {
+                      "id": "ca8cc333-f934-4349-b123-cf4d4c351fc2",
+                      "name": "Function not found (see GET method for details)",
+                      "originalRequest": {
+                        "method": "POST",
+                        "header": [
+                          {
+                            "key": "Content-Type",
+                            "value": "application/json"
+                          }
+                        ],
+                        "body": {
+                          "mode": "raw",
+                          "raw": "{}",
+                          "options": {
+                            "raw": {
+                              "headerFamily": "json",
+                              "language": "json"
+                            }
+                          }
+                        },
+                        "url": {
+                          "raw": "{{baseUrl}}/api/v3/function?function=<string>&timeout=60",
+                          "host": [
+                            "{{baseUrl}}"
+                          ],
+                          "path": [
+                            "api",
+                            "v3",
+                            "function"
+                          ],
+                          "query": [
+                            {
+                              "description": "(Required) Name of the function to execute (see GET method for details)",
+                              "key": "function",
+                              "value": "<string>"
+                            },
+                            {
+                              "description": "Maximum time in seconds to wait for function execution (see GET method for details)",
+                              "key": "timeout",
+                              "value": "60"
+                            }
+                          ]
+                        }
+                      },
+                      "status": "Not Found",
+                      "code": 404,
+                      "_postman_previewlanguage": "text",
+                      "header": [],
+                      "cookie": [],
+                      "responseTime": null,
+                      "body": null,
+                      "createdAt": "2026-07-28T02:17:32.000Z",
+                      "updatedAt": "2026-07-28T02:17:32.000Z",
+                      "uid": "35240-ca8cc333-f934-4349-b123-cf4d4c351fc2"
+                    },
+                    {
+                      "id": "cac27ef1-8839-4448-8fa6-9bfde32c2d99",
+                      "name": "Internal server error (see GET method for details)",
+                      "originalRequest": {
+                        "method": "POST",
+                        "header": [
+                          {
+                            "key": "Content-Type",
+                            "value": "application/json"
+                          }
+                        ],
+                        "body": {
+                          "mode": "raw",
+                          "raw": "{}",
+                          "options": {
+                            "raw": {
+                              "headerFamily": "json",
+                              "language": "json"
+                            }
+                          }
+                        },
+                        "url": {
+                          "raw": "{{baseUrl}}/api/v3/function?function=<string>&timeout=60",
+                          "host": [
+                            "{{baseUrl}}"
+                          ],
+                          "path": [
+                            "api",
+                            "v3",
+                            "function"
+                          ],
+                          "query": [
+                            {
+                              "description": "(Required) Name of the function to execute (see GET method for details)",
+                              "key": "function",
+                              "value": "<string>"
+                            },
+                            {
+                              "description": "Maximum time in seconds to wait for function execution (see GET method for details)",
+                              "key": "timeout",
+                              "value": "60"
+                            }
+                          ]
+                        }
+                      },
+                      "status": "Internal Server Error",
+                      "code": 500,
+                      "_postman_previewlanguage": "text",
+                      "header": [],
+                      "cookie": [],
+                      "responseTime": null,
+                      "body": null,
+                      "createdAt": "2026-07-28T02:17:32.000Z",
+                      "updatedAt": "2026-07-28T02:17:32.000Z",
+                      "uid": "35240-cac27ef1-8839-4448-8fa6-9bfde32c2d99"
+                    },
+                    {
+                      "id": "9f5a2533-1bee-4352-9c3d-1b00d2e76d54",
+                      "name": "Service unavailable (see GET method for details)",
+                      "originalRequest": {
+                        "method": "POST",
+                        "header": [
+                          {
+                            "key": "Content-Type",
+                            "value": "application/json"
+                          }
+                        ],
+                        "body": {
+                          "mode": "raw",
+                          "raw": "{}",
+                          "options": {
+                            "raw": {
+                              "headerFamily": "json",
+                              "language": "json"
+                            }
+                          }
+                        },
+                        "url": {
+                          "raw": "{{baseUrl}}/api/v3/function?function=<string>&timeout=60",
+                          "host": [
+                            "{{baseUrl}}"
+                          ],
+                          "path": [
+                            "api",
+                            "v3",
+                            "function"
+                          ],
+                          "query": [
+                            {
+                              "description": "(Required) Name of the function to execute (see GET method for details)",
+                              "key": "function",
+                              "value": "<string>"
+                            },
+                            {
+                              "description": "Maximum time in seconds to wait for function execution (see GET method for details)",
+                              "key": "timeout",
+                              "value": "60"
+                            }
+                          ]
+                        }
+                      },
+                      "status": "Service Unavailable",
+                      "code": 503,
+                      "_postman_previewlanguage": "text",
+                      "header": [],
+                      "cookie": [],
+                      "responseTime": null,
+                      "body": null,
+                      "createdAt": "2026-07-28T02:17:32.000Z",
+                      "updatedAt": "2026-07-28T02:17:32.000Z",
+                      "uid": "35240-9f5a2533-1bee-4352-9c3d-1b00d2e76d54"
+                    },
+                    {
+                      "id": "c4d8be92-61ef-4e34-b0b0-47f94566ff16",
+                      "name": "Function execution timeout (see GET method for details)",
+                      "originalRequest": {
+                        "method": "POST",
+                        "header": [
+                          {
+                            "key": "Content-Type",
+                            "value": "application/json"
+                          }
+                        ],
+                        "body": {
+                          "mode": "raw",
+                          "raw": "{}",
+                          "options": {
+                            "raw": {
+                              "headerFamily": "json",
+                              "language": "json"
+                            }
+                          }
+                        },
+                        "url": {
+                          "raw": "{{baseUrl}}/api/v3/function?function=<string>&timeout=60",
+                          "host": [
+                            "{{baseUrl}}"
+                          ],
+                          "path": [
+                            "api",
+                            "v3",
+                            "function"
+                          ],
+                          "query": [
+                            {
+                              "description": "(Required) Name of the function to execute (see GET method for details)",
+                              "key": "function",
+                              "value": "<string>"
+                            },
+                            {
+                              "description": "Maximum time in seconds to wait for function execution (see GET method for details)",
+                              "key": "timeout",
+                              "value": "60"
+                            }
+                          ]
+                        }
+                      },
+                      "status": "Gateway Timeout",
+                      "code": 504,
+                      "_postman_previewlanguage": "text",
+                      "header": [],
+                      "cookie": [],
+                      "responseTime": null,
+                      "body": null,
+                      "createdAt": "2026-07-28T02:17:32.000Z",
+                      "updatedAt": "2026-07-28T02:17:32.000Z",
+                      "uid": "35240-c4d8be92-61ef-4e34-b0b0-47f94566ff16"
+                    }
+                  ],
+                  "createdAt": "2026-07-28T02:17:32.000Z",
+                  "updatedAt": "2026-07-28T02:17:32.000Z",
+                  "uid": "35240-8b6f9978-a9b7-4b17-9fd9-14b67629c2fe"
+                }
+              ],
+              "id": "b49c76b2-2fbf-495b-ba78-6f869467bb0d",
+              "createdAt": "2026-07-28T02:17:32.000Z",
+              "updatedAt": "2026-07-28T02:17:32.000Z",
+              "uid": "35240-b49c76b2-2fbf-495b-ba78-6f869467bb0d"
+            },
+            {
+              "name": "functions",
+              "item": [
+                {
+                  "name": "List available functions across all nodes",
+                  "id": "083abc1d-41e7-485b-9c6a-d5530df98f3c",
+                  "protocolProfileBehavior": {
+                    "disableBodyPruning": true
+                  },
+                  "request": {
+                    "auth": {
+                      "type": "noauth"
+                    },
+                    "method": "GET",
+                    "header": [
+                      {
+                        "key": "Accept",
+                        "value": "application/json"
+                      }
+                    ],
+                    "url": {
+                      "raw": "{{baseUrl}}/api/v3/functions?scope_nodes=*&nodes=*&options=<string>&timeout=60&cardinality=1000",
+                      "host": [
+                        "{{baseUrl}}"
+                      ],
+                      "path": [
+                        "api",
+                        "v3",
+                        "functions"
+                      ],
+                      "query": [
+                        {
+                          "description": "Simple pattern to match node hostnames for scope filtering. Uses Netdata's simple pattern\nmatching (not regex). Matched nodes define the scope for function discovery.\n\n**Pattern Syntax:**\n- `*` matches any number of characters\n- Use `|` to separate multiple patterns (OR logic)\n- Matches are case-insensitive\n- No regex support - only simple wildcards\n\n**Examples:**\n- `prod-*` - All production nodes\n- `*-web-*` - All web server nodes\n- `db-*|cache-*` - All database or cache nodes\n- `*` - All nodes (default)\n",
+                          "key": "scope_nodes",
+                          "value": "*"
+                        },
+                        {
+                          "description": "Simple pattern to filter which nodes to include in the functions list.\nAfter scope is determined, this filters the results. Uses the same pattern syntax as scope_nodes.\n\n**Difference from scope_nodes:**\n- `scope_nodes` defines what nodes to query for functions\n- `nodes` filters which nodes appear in the output\n\n**Examples:**\n- `web-*` - Only show functions from web servers\n- Specific hostnames: `node1|node2|node3`\n",
+                          "key": "nodes",
+                          "value": "*"
+                        },
+                        {
+                          "description": "Comma-separated list of options to control response content and format.\n\n**Available Options:**\n- `minify` - Minimize JSON output (no pretty-printing)\n- `debug` - Include detailed function metadata and plugin information\n- `raw` - Include raw function definitions\n\n**Examples:**\n- `minify` - Compact JSON response\n- `debug,raw` - Full debug information\n",
+                          "key": "options",
+                          "value": "<string>"
+                        },
+                        {
+                          "description": "Maximum time in seconds to wait for the query to complete before timing out.\n\n**Guidelines:**\n- Recommended: 10-30 seconds for most queries\n- Function listing is usually fast\n- Timeout mainly applies to very large infrastructures\n",
+                          "key": "timeout",
+                          "value": "60"
+                        },
+                        {
+                          "description": "Maximum number of nodes to include in the response to prevent overwhelming large responses.\nWhen this limit is exceeded, the response will indicate how many nodes were omitted.\n\n**Purpose:**\n- Prevent memory exhaustion from very large infrastructures\n- Control response size for performance\n- Useful when exploring large node sets incrementally\n\n**Recommendations:**\n- Small infrastructures (< 100 nodes): Use default\n- Medium infrastructures (100-1000 nodes): 500-1000\n- Large infrastructures (> 1000 nodes): Use filtering or increase limit carefully\n",
+                          "key": "cardinality",
+                          "value": "1000"
+                        }
+                      ]
+                    },
+                    "description": "Retrieves a catalog of available functions across the monitored infrastructure.\nFunctions are plugin-provided operations that extend Netdata's capabilities beyond\npassive metric collection, allowing live queries, diagnostics, and administrative actions.\n\n**What This Endpoint Returns:**\n- **Function inventory**: All functions available across your nodes\n- **Per-node availability**: Which functions each node supports\n- **Function metadata**: Descriptions, parameters, requirements\n- **Plugin information**: Which plugin provides each function\n\n**Function Categories:**\n- **System queries**: processes, mount-points, network-connections\n- **Service management**: systemd-list-units, docker-containers\n- **Hardware**: ipmi-sensors, smart-disk-info\n- **Application-specific**: mysql-queries, redis-info, nginx-status\n- **Diagnostics**: performance-analysis, log-queries\n- **Administrative**: config-reload, cache-clear\n\n**Use Cases:**\n- **Capability discovery**: Determine what operations are available\n- **Multi-node comparison**: See which nodes support which functions\n- **Plugin verification**: Confirm plugins are loaded and functional\n- **UI generation**: Build dynamic interfaces based on available functions\n- **Documentation**: Generate function reference for your infrastructure\n\n**Common Usage Patterns:**\n\n1. **List all functions across all nodes:**\n   ```\n   /api/v3/functions\n   ```\n\n2. **Functions for specific nodes:**\n   ```\n   /api/v3/functions?nodes=web-*\n   ```\n\n3. **Scope to production infrastructure:**\n   ```\n   /api/v3/functions?scope_nodes=prod-*\n   ```\n\n4. **Get detailed function information:**\n   ```\n   /api/v3/functions?options=debug\n   ```\n\n**Response Organization:**\nResults grouped by:\n- **Node**: Functions available on each node\n- **Function name**: Unique identifier\n- **Plugin**: Source plugin providing the function\n- **Capabilities**: What the function can do\n\n**Integration with /api/v3/function:**\n1. Use `/api/v3/functions` to discover available functions\n2. Use `/api/v3/function?function=<name>` to execute specific functions\n3. Results tell you which nodes support which operations\n\n**Security & Access Control:**\n- \ud83d\udcca **Public Data API** - Bearer token optional, IP-based ACL restrictions apply\n- **Default Access:** Public (no authentication required)\n- **Bearer Protection:** When enabled via `/api/v3/bearer_protection`, requires bearer token\n- **IP Restrictions:** Subject to `allow dashboard from` in netdata.conf\n- **Access Methods:** Direct HTTP/HTTPS, Netdata Cloud, external tools\n"
+                  },
+                  "response": [
+                    {
+                      "id": "d492df89-84ea-4d2b-841b-caebc1a63fbc",
+                      "name": "Successfully retrieved functions catalog.\n\nReturns available functions organized by node, with metadata about each function\nincluding name, description, plugin source, and parameter requirements.\n",
+                      "originalRequest": {
+                        "method": "GET",
+                        "header": [
+                          {
+                            "key": "Accept",
+                            "value": "application/json"
+                          }
+                        ],
+                        "url": {
+                          "raw": "{{baseUrl}}/api/v3/functions?scope_nodes=*&nodes=*&options=<string>&timeout=60&cardinality=1000",
+                          "host": [
+                            "{{baseUrl}}"
+                          ],
+                          "path": [
+                            "api",
+                            "v3",
+                            "functions"
+                          ],
+                          "query": [
+                            {
+                              "description": "Simple pattern to match node hostnames for scope filtering. Uses Netdata's simple pattern\nmatching (not regex). Matched nodes define the scope for function discovery.\n\n**Pattern Syntax:**\n- `*` matches any number of characters\n- Use `|` to separate multiple patterns (OR logic)\n- Matches are case-insensitive\n- No regex support - only simple wildcards\n\n**Examples:**\n- `prod-*` - All production nodes\n- `*-web-*` - All web server nodes\n- `db-*|cache-*` - All database or cache nodes\n- `*` - All nodes (default)\n",
+                              "key": "scope_nodes",
+                              "value": "*"
+                            },
+                            {
+                              "description": "Simple pattern to filter which nodes to include in the functions list.\nAfter scope is determined, this filters the results. Uses the same pattern syntax as scope_nodes.\n\n**Difference from scope_nodes:**\n- `scope_nodes` defines what nodes to query for functions\n- `nodes` filters which nodes appear in the output\n\n**Examples:**\n- `web-*` - Only show functions from web servers\n- Specific hostnames: `node1|node2|node3`\n",
+                              "key": "nodes",
+                              "value": "*"
+                            },
+                            {
+                              "description": "Comma-separated list of options to control response content and format.\n\n**Available Options:**\n- `minify` - Minimize JSON output (no pretty-printing)\n- `debug` - Include detailed function metadata and plugin information\n- `raw` - Include raw function definitions\n\n**Examples:**\n- `minify` - Compact JSON response\n- `debug,raw` - Full debug information\n",
+                              "key": "options",
+                              "value": "<string>"
+                            },
+                            {
+                              "description": "Maximum time in seconds to wait for the query to complete before timing out.\n\n**Guidelines:**\n- Recommended: 10-30 seconds for most queries\n- Function listing is usually fast\n- Timeout mainly applies to very large infrastructures\n",
+                              "key": "timeout",
+                              "value": "60"
+                            },
+                            {
+                              "description": "Maximum number of nodes to include in the response to prevent overwhelming large responses.\nWhen this limit is exceeded, the response will indicate how many nodes were omitted.\n\n**Purpose:**\n- Prevent memory exhaustion from very large infrastructures\n- Control response size for performance\n- Useful when exploring large node sets incrementally\n\n**Recommendations:**\n- Small infrastructures (< 100 nodes): Use default\n- Medium infrastructures (100-1000 nodes): 500-1000\n- Large infrastructures (> 1000 nodes): Use filtering or increase limit carefully\n",
+                              "key": "cardinality",
+                              "value": "1000"
+                            }
+                          ]
+                        }
+                      },
+                      "status": "OK",
+                      "code": 200,
+                      "_postman_previewlanguage": "json",
+                      "header": [
+                        {
+                          "key": "Content-Type",
+                          "value": "application/json"
+                        }
+                      ],
+                      "cookie": [],
+                      "responseTime": null,
+                      "body": "{\n  \"nodes\": [\n    {\n      \"hostname\": \"<string>\",\n      \"machine_guid\": \"<string>\",\n      \"functions\": [\n        {\n          \"name\": \"<string>\",\n          \"plugin\": \"<string>\",\n          \"description\": \"<string>\",\n          \"parameters\": [\n            {\n              \"name\": \"<string>\",\n              \"required\": \"<boolean>\",\n              \"description\": \"<string>\"\n            },\n            {\n              \"name\": \"<string>\",\n              \"required\": \"<boolean>\",\n              \"description\": \"<string>\"\n            }\n          ]\n        },\n        {\n          \"name\": \"<string>\",\n          \"plugin\": \"<string>\",\n          \"description\": \"<string>\",\n          \"parameters\": [\n            {\n              \"name\": \"<string>\",\n              \"required\": \"<boolean>\",\n              \"description\": \"<string>\"\n            },\n            {\n              \"name\": \"<string>\",\n              \"required\": \"<boolean>\",\n              \"description\": \"<string>\"\n            }\n          ]\n        }\n      ]\n    },\n    {\n      \"hostname\": \"<string>\",\n      \"machine_guid\": \"<string>\",\n      \"functions\": [\n        {\n          \"name\": \"<string>\",\n          \"plugin\": \"<string>\",\n          \"description\": \"<string>\",\n          \"parameters\": [\n            {\n              \"name\": \"<string>\",\n              \"required\": \"<boolean>\",\n              \"description\": \"<string>\"\n            },\n            {\n              \"name\": \"<string>\",\n              \"required\": \"<boolean>\",\n              \"description\": \"<string>\"\n            }\n          ]\n        },\n        {\n          \"name\": \"<string>\",\n          \"plugin\": \"<string>\",\n          \"description\": \"<string>\",\n          \"parameters\": [\n            {\n              \"name\": \"<string>\",\n              \"required\": \"<boolean>\",\n              \"description\": \"<string>\"\n            },\n            {\n              \"name\": \"<string>\",\n              \"required\": \"<boolean>\",\n              \"description\": \"<string>\"\n            }\n          ]\n        }\n      ]\n    }\n  ],\n  \"omitted\": \"<integer>\"\n}",
+                      "createdAt": "2026-07-28T02:17:32.000Z",
+                      "updatedAt": "2026-07-28T02:17:32.000Z",
+                      "uid": "35240-d492df89-84ea-4d2b-841b-caebc1a63fbc"
+                    },
+                    {
+                      "id": "3dee9aaa-548f-4a33-8d22-9e8f3df1275f",
+                      "name": "Invalid parameters provided (e.g., invalid pattern syntax).",
+                      "originalRequest": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                          "raw": "{{baseUrl}}/api/v3/functions?scope_nodes=*&nodes=*&options=<string>&timeout=60&cardinality=1000",
+                          "host": [
+                            "{{baseUrl}}"
+                          ],
+                          "path": [
+                            "api",
+                            "v3",
+                            "functions"
+                          ],
+                          "query": [
+                            {
+                              "description": "Simple pattern to match node hostnames for scope filtering. Uses Netdata's simple pattern\nmatching (not regex). Matched nodes define the scope for function discovery.\n\n**Pattern Syntax:**\n- `*` matches any number of characters\n- Use `|` to separate multiple patterns (OR logic)\n- Matches are case-insensitive\n- No regex support - only simple wildcards\n\n**Examples:**\n- `prod-*` - All production nodes\n- `*-web-*` - All web server nodes\n- `db-*|cache-*` - All database or cache nodes\n- `*` - All nodes (default)\n",
+                              "key": "scope_nodes",
+                              "value": "*"
+                            },
+                            {
+                              "description": "Simple pattern to filter which nodes to include in the functions list.\nAfter scope is determined, this filters the results. Uses the same pattern syntax as scope_nodes.\n\n**Difference from scope_nodes:**\n- `scope_nodes` defines what nodes to query for functions\n- `nodes` filters which nodes appear in the output\n\n**Examples:**\n- `web-*` - Only show functions from web servers\n- Specific hostnames: `node1|node2|node3`\n",
+                              "key": "nodes",
+                              "value": "*"
+                            },
+                            {
+                              "description": "Comma-separated list of options to control response content and format.\n\n**Available Options:**\n- `minify` - Minimize JSON output (no pretty-printing)\n- `debug` - Include detailed function metadata and plugin information\n- `raw` - Include raw function definitions\n\n**Examples:**\n- `minify` - Compact JSON response\n- `debug,raw` - Full debug information\n",
+                              "key": "options",
+                              "value": "<string>"
+                            },
+                            {
+                              "description": "Maximum time in seconds to wait for the query to complete before timing out.\n\n**Guidelines:**\n- Recommended: 10-30 seconds for most queries\n- Function listing is usually fast\n- Timeout mainly applies to very large infrastructures\n",
+                              "key": "timeout",
+                              "value": "60"
+                            },
+                            {
+                              "description": "Maximum number of nodes to include in the response to prevent overwhelming large responses.\nWhen this limit is exceeded, the response will indicate how many nodes were omitted.\n\n**Purpose:**\n- Prevent memory exhaustion from very large infrastructures\n- Control response size for performance\n- Useful when exploring large node sets incrementally\n\n**Recommendations:**\n- Small infrastructures (< 100 nodes): Use default\n- Medium infrastructures (100-1000 nodes): 500-1000\n- Large infrastructures (> 1000 nodes): Use filtering or increase limit carefully\n",
+                              "key": "cardinality",
+                              "value": "1000"
+                            }
+                          ]
+                        }
+                      },
+                      "status": "Bad Request",
+                      "code": 400,
+                      "_postman_previewlanguage": "text",
+                      "header": [],
+                      "cookie": [],
+                      "responseTime": null,
+                      "body": null,
+                      "createdAt": "2026-07-28T02:17:32.000Z",
+                      "updatedAt": "2026-07-28T02:17:32.000Z",
+                      "uid": "35240-3dee9aaa-548f-4a33-8d22-9e8f3df1275f"
+                    },
+                    {
+                      "id": "b31404e8-f00b-46a2-9811-fce0b0c5455c",
+                      "name": "Internal server error during functions listing.",
+                      "originalRequest": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                          "raw": "{{baseUrl}}/api/v3/functions?scope_nodes=*&nodes=*&options=<string>&timeout=60&cardinality=1000",
+                          "host": [
+                            "{{baseUrl}}"
+                          ],
+                          "path": [
+                            "api",
+                            "v3",
+                            "functions"
+                          ],
+                          "query": [
+                            {
+                              "description": "Simple pattern to match node hostnames for scope filtering. Uses Netdata's simple pattern\nmatching (not regex). Matched nodes define the scope for function discovery.\n\n**Pattern Syntax:**\n- `*` matches any number of characters\n- Use `|` to separate multiple patterns (OR logic)\n- Matches are case-insensitive\n- No regex support - only simple wildcards\n\n**Examples:**\n- `prod-*` - All production nodes\n- `*-web-*` - All web server nodes\n- `db-*|cache-*` - All database or cache nodes\n- `*` - All nodes (default)\n",
+                              "key": "scope_nodes",
+                              "value": "*"
+                            },
+                            {
+                              "description": "Simple pattern to filter which nodes to include in the functions list.\nAfter scope is determined, this filters the results. Uses the same pattern syntax as scope_nodes.\n\n**Difference from scope_nodes:**\n- `scope_nodes` defines what nodes to query for functions\n- `nodes` filters which nodes appear in the output\n\n**Examples:**\n- `web-*` - Only show functions from web servers\n- Specific hostnames: `node1|node2|node3`\n",
+                              "key": "nodes",
+                              "value": "*"
+                            },
+                            {
+                              "description": "Comma-separated list of options to control response content and format.\n\n**Available Options:**\n- `minify` - Minimize JSON output (no pretty-printing)\n- `debug` - Include detailed function metadata and plugin information\n- `raw` - Include raw function definitions\n\n**Examples:**\n- `minify` - Compact JSON response\n- `debug,raw` - Full debug information\n",
+                              "key": "options",
+                              "value": "<string>"
+                            },
+                            {
+                              "description": "Maximum time in seconds to wait for the query to complete before timing out.\n\n**Guidelines:**\n- Recommended: 10-30 seconds for most queries\n- Function listing is usually fast\n- Timeout mainly applies to very large infrastructures\n",
+                              "key": "timeout",
+                              "value": "60"
+                            },
+                            {
+                              "description": "Maximum number of nodes to include in the response to prevent overwhelming large responses.\nWhen this limit is exceeded, the response will indicate how many nodes were omitted.\n\n**Purpose:**\n- Prevent memory exhaustion from very large infrastructures\n- Control response size for performance\n- Useful when exploring large node sets incrementally\n\n**Recommendations:**\n- Small infrastructures (< 100 nodes): Use default\n- Medium infrastructures (100-1000 nodes): 500-1000\n- Large infrastructures (> 1000 nodes): Use filtering or increase limit carefully\n",
+                              "key": "cardinality",
+                              "value": "1000"
+                            }
+                          ]
+                        }
+                      },
+                      "status": "Internal Server Error",
+                      "code": 500,
+                      "_postman_previewlanguage": "text",
+                      "header": [],
+                      "cookie": [],
+                      "responseTime": null,
+                      "body": null,
+                      "createdAt": "2026-07-28T02:17:32.000Z",
+                      "updatedAt": "2026-07-28T02:17:32.000Z",
+                      "uid": "35240-b31404e8-f00b-46a2-9811-fce0b0c5455c"
+                    },
+                    {
+                      "id": "3d102210-ecea-4e19-8dc0-95e7fcec777c",
+                      "name": "Query timeout - functions collection took too long.",
+                      "originalRequest": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                          "raw": "{{baseUrl}}/api/v3/functions?scope_nodes=*&nodes=*&options=<string>&timeout=60&cardinality=1000",
+                          "host": [
+                            "{{baseUrl}}"
+                          ],
+                          "path": [
+                            "api",
+                            "v3",
+                            "functions"
+                          ],
+                          "query": [
+                            {
+                              "description": "Simple pattern to match node hostnames for scope filtering. Uses Netdata's simple pattern\nmatching (not regex). Matched nodes define the scope for function discovery.\n\n**Pattern Syntax:**\n- `*` matches any number of characters\n- Use `|` to separate multiple patterns (OR logic)\n- Matches are case-insensitive\n- No regex support - only simple wildcards\n\n**Examples:**\n- `prod-*` - All production nodes\n- `*-web-*` - All web server nodes\n- `db-*|cache-*` - All database or cache nodes\n- `*` - All nodes (default)\n",
+                              "key": "scope_nodes",
+                              "value": "*"
+                            },
+                            {
+                              "description": "Simple pattern to filter which nodes to include in the functions list.\nAfter scope is determined, this filters the results. Uses the same pattern syntax as scope_nodes.\n\n**Difference from scope_nodes:**\n- `scope_nodes` defines what nodes to query for functions\n- `nodes` filters which nodes appear in the output\n\n**Examples:**\n- `web-*` - Only show functions from web servers\n- Specific hostnames: `node1|node2|node3`\n",
+                              "key": "nodes",
+                              "value": "*"
+                            },
+                            {
+                              "description": "Comma-separated list of options to control response content and format.\n\n**Available Options:**\n- `minify` - Minimize JSON output (no pretty-printing)\n- `debug` - Include detailed function metadata and plugin information\n- `raw` - Include raw function definitions\n\n**Examples:**\n- `minify` - Compact JSON response\n- `debug,raw` - Full debug information\n",
+                              "key": "options",
+                              "value": "<string>"
+                            },
+                            {
+                              "description": "Maximum time in seconds to wait for the query to complete before timing out.\n\n**Guidelines:**\n- Recommended: 10-30 seconds for most queries\n- Function listing is usually fast\n- Timeout mainly applies to very large infrastructures\n",
+                              "key": "timeout",
+                              "value": "60"
+                            },
+                            {
+                              "description": "Maximum number of nodes to include in the response to prevent overwhelming large responses.\nWhen this limit is exceeded, the response will indicate how many nodes were omitted.\n\n**Purpose:**\n- Prevent memory exhaustion from very large infrastructures\n- Control response size for performance\n- Useful when exploring large node sets incrementally\n\n**Recommendations:**\n- Small infrastructures (< 100 nodes): Use default\n- Medium infrastructures (100-1000 nodes): 500-1000\n- Large infrastructures (> 1000 nodes): Use filtering or increase limit carefully\n",
+                              "key": "cardinality",
+                              "value": "1000"
+                            }
+                          ]
+                        }
+                      },
+                      "status": "Gateway Timeout",
+                      "code": 504,
+                      "_postman_previewlanguage": "text",
+                      "header": [],
+                      "cookie": [],
+                      "responseTime": null,
+                      "body": null,
+                      "createdAt": "2026-07-28T02:17:32.000Z",
+                      "updatedAt": "2026-07-28T02:17:32.000Z",
+                      "uid": "35240-3d102210-ecea-4e19-8dc0-95e7fcec777c"
+                    }
+                  ],
+                  "createdAt": "2026-07-28T02:17:32.000Z",
+                  "updatedAt": "2026-07-28T02:17:32.000Z",
+                  "uid": "35240-083abc1d-41e7-485b-9c6a-d5530df98f3c"
+                }
+              ],
+              "id": "a863d51e-071d-48e9-a293-6ab259150204",
+              "createdAt": "2026-07-28T02:17:32.000Z",
+              "updatedAt": "2026-07-28T02:17:32.000Z",
+              "uid": "35240-a863d51e-071d-48e9-a293-6ab259150204"
+            }
+          ],
+          "id": "312074e4-14d8-4bab-956c-238c5f22530f",
+          "createdAt": "2026-07-28T02:17:32.000Z",
+          "updatedAt": "2026-07-28T02:17:32.000Z",
+          "uid": "35240-312074e4-14d8-4bab-956c-238c5f22530f"
+        },
+        {
+          "name": "v2",
+          "item": [
+            {
+              "name": "progress",
+              "item": [
+                {
+                  "name": "OBSOLETE: Track async operation progress (use /api/v3/progress instead)",
+                  "id": "a545e843-974b-4359-bcb6-5cb49d2ad1b9",
+                  "protocolProfileBehavior": {
+                    "disableBodyPruning": true
+                  },
+                  "request": {
+                    "method": "GET",
+                    "header": [],
+                    "url": {
+                      "raw": "{{baseUrl}}/api/v2/progress?transaction=<uuid>",
+                      "host": [
+                        "{{baseUrl}}"
+                      ],
+                      "path": [
+                        "api",
+                        "v2",
+                        "progress"
+                      ],
+                      "query": [
+                        {
+                          "description": "(Required) Transaction UUID from async operation",
+                          "key": "transaction",
+                          "value": "<uuid>"
+                        }
+                      ]
+                    },
+                    "description": "**\u26a0\ufe0f OBSOLETE API - Will be removed in future versions**\n\nThis endpoint is deprecated. Use `/api/v3/progress` instead, which provides the same functionality.\n\n**Migration:** Replace `/api/v2/progress` with `/api/v3/progress` in all API calls.\n\nTracks progress of long-running asynchronous operations using transaction UUID.\nUsed for polling function execution status and completion percentage.\n\n**Security & Access Control:**\n- \ud83d\udd13 **Always Public API** - This endpoint is always accessible without authentication\n- **No Restrictions:** Not subject to bearer protection or IP-based ACL restrictions\n- **No Authentication:** Cannot be restricted by any configuration\n- **Access:** Available to anyone who can reach the agent's HTTP endpoint\n"
+                  },
+                  "response": [
+                    {
+                      "id": "d8d8bd1e-98c5-4b47-98c5-ea842de928b9",
+                      "name": "Progress information successfully retrieved",
+                      "originalRequest": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                          "raw": "{{baseUrl}}/api/v2/progress?transaction=<uuid>",
+                          "host": [
+                            "{{baseUrl}}"
+                          ],
+                          "path": [
+                            "api",
+                            "v2",
+                            "progress"
+                          ],
+                          "query": [
+                            {
+                              "description": "(Required) Transaction UUID from async operation",
+                              "key": "transaction",
+                              "value": "<uuid>"
+                            }
+                          ]
+                        }
+                      },
+                      "status": "OK",
+                      "code": 200,
+                      "_postman_previewlanguage": "text",
+                      "header": [],
+                      "cookie": [],
+                      "responseTime": null,
+                      "body": null,
+                      "createdAt": "2026-07-28T02:17:32.000Z",
+                      "updatedAt": "2026-07-28T02:17:32.000Z",
+                      "uid": "35240-d8d8bd1e-98c5-4b47-98c5-ea842de928b9"
+                    },
+                    {
+                      "id": "d0161459-91ec-455b-8c3a-48302ecb6dd9",
+                      "name": "Missing or invalid transaction parameter",
+                      "originalRequest": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                          "raw": "{{baseUrl}}/api/v2/progress?transaction=<uuid>",
+                          "host": [
+                            "{{baseUrl}}"
+                          ],
+                          "path": [
+                            "api",
+                            "v2",
+                            "progress"
+                          ],
+                          "query": [
+                            {
+                              "description": "(Required) Transaction UUID from async operation",
+                              "key": "transaction",
+                              "value": "<uuid>"
+                            }
+                          ]
+                        }
+                      },
+                      "status": "Bad Request",
+                      "code": 400,
+                      "_postman_previewlanguage": "text",
+                      "header": [],
+                      "cookie": [],
+                      "responseTime": null,
+                      "body": null,
+                      "createdAt": "2026-07-28T02:17:32.000Z",
+                      "updatedAt": "2026-07-28T02:17:32.000Z",
+                      "uid": "35240-d0161459-91ec-455b-8c3a-48302ecb6dd9"
+                    }
+                  ],
+                  "createdAt": "2026-07-28T02:17:32.000Z",
+                  "updatedAt": "2026-07-28T02:17:32.000Z",
+                  "uid": "35240-a545e843-974b-4359-bcb6-5cb49d2ad1b9"
+                }
+              ],
+              "id": "b7789300-317e-4b8f-8db6-8fe089039b8f",
+              "createdAt": "2026-07-28T02:17:32.000Z",
+              "updatedAt": "2026-07-28T02:17:32.000Z",
+              "uid": "35240-b7789300-317e-4b8f-8db6-8fe089039b8f"
+            },
+            {
+              "name": "functions",
+              "item": [
+                {
+                  "name": "OBSOLETE: List available functions (use /api/v3/functions instead)",
+                  "id": "a576ba17-41bb-4267-bec2-7c7a0f44b120",
+                  "protocolProfileBehavior": {
+                    "disableBodyPruning": true
+                  },
+                  "request": {
+                    "auth": {
+                      "type": "noauth"
+                    },
+                    "method": "GET",
+                    "header": [],
+                    "url": {
+                      "raw": "{{baseUrl}}/api/v2/functions?scope_nodes=*&nodes=*&options=seconds&options=jsonwrap&timeout=0&cardinality_limit=10000",
+                      "host": [
+                        "{{baseUrl}}"
+                      ],
+                      "path": [
+                        "api",
+                        "v2",
+                        "functions"
+                      ],
+                      "query": [
+                        {
+                          "description": "A simple pattern limiting the nodes scope of the query. The scope controls both data and metadata response. The simple pattern is checked against the nodes' machine guid, node id and hostname. The default nodes scope is all nodes for which this Agent has data for. Usually the nodes scope is used to slice the entire dashboard (e.g. the Global Nodes Selector at the Netdata Cloud overview dashboard). Both positive and negative simple pattern expressions are supported.\n",
+                          "key": "scope_nodes",
+                          "value": "*"
+                        },
+                        {
+                          "description": "A simple pattern matching the nodes to be queried. This only controls the data response, not the metadata. The simple pattern is checked against the nodes' machine guid, node id, hostname. The default nodes selector is all the nodes matched by the nodes scope. Both positive and negative simple pattern expressions are supported.\n",
+                          "key": "nodes",
+                          "value": "*"
+                        },
+                        {
+                          "description": "Options that affect data generation.\n* `jsonwrap` - Wrap the output in a JSON object with metadata about the query.\n* `raw` - change the output so that it is aggregatable across multiple such queries. Supported by `/api/v2` data queries and `json2` format.\n* `minify` - Remove unnecessary spaces and newlines from the output.\n* `debug` - Provide additional information in `jsonwrap` output to help tracing issues.\n* `nonzero` - Do not return dimensions that all their values are zero, to improve the visual appearance of charts. They will still be returned if all the dimensions are entirely zero.\n* `null2zero` - Replace `null` values with `0`.\n* `absolute` or `abs` - Traditionally Netdata returns select dimensions negative to improve visual appearance. This option turns this feature off.\n* `display-absolute` - Only used by badges, to do color calculation using the signed value, but render the value without a sign.\n* `flip` or `reversed` - Order the timestamps array in reverse order (newest to oldest).\n* `min2max` - When flattening multi-dimensional data into a single metric format, use `max - min` instead of `sum`. This is EOL - use `/api/v2` to control aggregation across dimensions.\n* `percentage` - Convert all values into a percentage vs the row total. When enabled, Netdata will query all dimensions, even the ones that have not been selected or are hidden, to find the row total, in order to calculate the percentage of each dimension selected.\n* `seconds` - Output timestamps in seconds instead of dates.\n* `milliseconds` or `ms` - Output timestamps in milliseconds instead of dates.\n* `unaligned` - by default queries are aligned to the the view, so that as time passes past data returned do not change. When a data query will not be used for visualization, `unaligned` can be given to avoid aligning the query time-frame for visual precision.\n* `match-ids`, `match-names`. By default filters match both IDs and names when they are available. Setting either of the two options will disable the other.\n* `anomaly-bit` - query the anomaly information instead of metric values. This is EOL, use `/api/v2` and `json2` format which always returns this information and many more.\n* `jw-anomaly-rates` - return anomaly rates as a separate result set in the same `json` format response. This is EOL, use `/api/v2` and `json2` format which always returns information and many more. \n* `details` - `/api/v2/data` returns in `jsonwrap` the full tree of dimensions that have been matched by the query.\n* `group-by-labels` - `/api/v2/data` returns in `jsonwrap` flattened labels per output dimension. These are used to identify the instances that have been aggregated into each dimension, making it possible to provide a map, like Netdata does for Kubernetes.\n* `natural-points` - return timestamps as found in the database. The result is again fixed-step, but the query engine attempts to align them with the timestamps found in the database.\n* `virtual-points` - return timestamps independent of the database alignment. This is needed aggregating data across multiple Netdata Agents, to ensure that their outputs do not need to be interpolated to be merged.\n* `selected-tier` - use data exclusively from the selected tier given with the `tier` parameter. This option is set automatically when the `tier` parameter is set.\n* `all-dimensions` - In `/api/v1` `jsonwrap` include metadata for all candidate metrics examined. In `/api/v2` this is standard behavior and no option is needed.\n* `label-quotes` - In `csv` output format, enclose each header label in quotes.\n* `objectrows` - Each row of value should be an object, not an array (only for `json` format).\n* `google_json` - Comply with google JSON/JSONP specs (only for `json` format).\n* `minimal-stats` or `minimal` - Reduce the amount of statistics returned in `jsonwrap` format to save bandwidth.\n* `long-json-keys` or `long-keys` - Use descriptive key names in JSON output instead of abbreviated ones.\n* `mcp-info` - Include additional metadata useful for the Model Context Protocol (MCP) integration.\n* `rfc3339` - Return timestamps in RFC3339 format (e.g., \"2023-01-01T00:00:00Z\") instead of Unix timestamps.\n",
+                          "key": "options",
+                          "value": "seconds"
+                        },
+                        {
+                          "description": "Options that affect data generation.\n* `jsonwrap` - Wrap the output in a JSON object with metadata about the query.\n* `raw` - change the output so that it is aggregatable across multiple such queries. Supported by `/api/v2` data queries and `json2` format.\n* `minify` - Remove unnecessary spaces and newlines from the output.\n* `debug` - Provide additional information in `jsonwrap` output to help tracing issues.\n* `nonzero` - Do not return dimensions that all their values are zero, to improve the visual appearance of charts. They will still be returned if all the dimensions are entirely zero.\n* `null2zero` - Replace `null` values with `0`.\n* `absolute` or `abs` - Traditionally Netdata returns select dimensions negative to improve visual appearance. This option turns this feature off.\n* `display-absolute` - Only used by badges, to do color calculation using the signed value, but render the value without a sign.\n* `flip` or `reversed` - Order the timestamps array in reverse order (newest to oldest).\n* `min2max` - When flattening multi-dimensional data into a single metric format, use `max - min` instead of `sum`. This is EOL - use `/api/v2` to control aggregation across dimensions.\n* `percentage` - Convert all values into a percentage vs the row total. When enabled, Netdata will query all dimensions, even the ones that have not been selected or are hidden, to find the row total, in order to calculate the percentage of each dimension selected.\n* `seconds` - Output timestamps in seconds instead of dates.\n* `milliseconds` or `ms` - Output timestamps in milliseconds instead of dates.\n* `unaligned` - by default queries are aligned to the the view, so that as time passes past data returned do not change. When a data query will not be used for visualization, `unaligned` can be given to avoid aligning the query time-frame for visual precision.\n* `match-ids`, `match-names`. By default filters match both IDs and names when they are available. Setting either of the two options will disable the other.\n* `anomaly-bit` - query the anomaly information instead of metric values. This is EOL, use `/api/v2` and `json2` format which always returns this information and many more.\n* `jw-anomaly-rates` - return anomaly rates as a separate result set in the same `json` format response. This is EOL, use `/api/v2` and `json2` format which always returns information and many more. \n* `details` - `/api/v2/data` returns in `jsonwrap` the full tree of dimensions that have been matched by the query.\n* `group-by-labels` - `/api/v2/data` returns in `jsonwrap` flattened labels per output dimension. These are used to identify the instances that have been aggregated into each dimension, making it possible to provide a map, like Netdata does for Kubernetes.\n* `natural-points` - return timestamps as found in the database. The result is again fixed-step, but the query engine attempts to align them with the timestamps found in the database.\n* `virtual-points` - return timestamps independent of the database alignment. This is needed aggregating data across multiple Netdata Agents, to ensure that their outputs do not need to be interpolated to be merged.\n* `selected-tier` - use data exclusively from the selected tier given with the `tier` parameter. This option is set automatically when the `tier` parameter is set.\n* `all-dimensions` - In `/api/v1` `jsonwrap` include metadata for all candidate metrics examined. In `/api/v2` this is standard behavior and no option is needed.\n* `label-quotes` - In `csv` output format, enclose each header label in quotes.\n* `objectrows` - Each row of value should be an object, not an array (only for `json` format).\n* `google_json` - Comply with google JSON/JSONP specs (only for `json` format).\n* `minimal-stats` or `minimal` - Reduce the amount of statistics returned in `jsonwrap` format to save bandwidth.\n* `long-json-keys` or `long-keys` - Use descriptive key names in JSON output instead of abbreviated ones.\n* `mcp-info` - Include additional metadata useful for the Model Context Protocol (MCP) integration.\n* `rfc3339` - Return timestamps in RFC3339 format (e.g., \"2023-01-01T00:00:00Z\") instead of Unix timestamps.\n",
+                          "key": "options",
+                          "value": "jsonwrap"
+                        },
+                        {
+                          "description": "Specify a timeout value in milliseconds after which the Agent will abort the query and return a 503 error. A value of 0 indicates no timeout.\n",
+                          "key": "timeout",
+                          "value": "0"
+                        },
+                        {
+                          "description": "Limits the number of unique items (contexts, instances, dimensions) returned in the query result. This is useful for preventing excessive memory usage and response sizes when queries match a large number of metrics. The query engine will return the most relevant items up to this limit.\n",
+                          "key": "cardinality_limit",
+                          "value": "10000"
+                        }
+                      ]
+                    },
+                    "description": "**\u26a0\ufe0f OBSOLETE API - Will be removed in future versions**\n\nThis endpoint is deprecated. Use `/api/v3/functions` instead, which provides the same functionality.\n\n**Migration:** Replace `/api/v2/functions` with `/api/v3/functions` in all API calls.\n\nLists all functions available on agents, including their descriptions, parameters, and capabilities.\nFunctions provide live operational data and diagnostic capabilities.\n\n**Security & Access Control:**\n- \ud83d\udcca **Public Data API** - Bearer token optional, IP-based ACL restrictions apply\n- **Default Access:** Public (no authentication required)\n- **Bearer Protection:** When enabled via `/api/v3/bearer_protection`, requires bearer token\n- **IP Restrictions:** Subject to `allow dashboard from` in netdata.conf\n- **Access Methods:** Direct HTTP/HTTPS, Netdata Cloud, external tools\n"
+                  },
+                  "response": [
+                    {
+                      "id": "ab5e3709-a8bd-4435-84ef-ee0e294b54b7",
+                      "name": "Functions list successfully retrieved",
+                      "originalRequest": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                          "raw": "{{baseUrl}}/api/v2/functions?scope_nodes=*&nodes=*&options=jsonwrap&timeout=0&cardinality_limit=10000",
+                          "host": [
+                            "{{baseUrl}}"
+                          ],
+                          "path": [
+                            "api",
+                            "v2",
+                            "functions"
+                          ],
+                          "query": [
+                            {
+                              "description": "A simple pattern limiting the nodes scope of the query. The scope controls both data and metadata response. The simple pattern is checked against the nodes' machine guid, node id and hostname. The default nodes scope is all nodes for which this Agent has data for. Usually the nodes scope is used to slice the entire dashboard (e.g. the Global Nodes Selector at the Netdata Cloud overview dashboard). Both positive and negative simple pattern expressions are supported.\n",
+                              "key": "scope_nodes",
+                              "value": "*"
+                            },
+                            {
+                              "description": "A simple pattern matching the nodes to be queried. This only controls the data response, not the metadata. The simple pattern is checked against the nodes' machine guid, node id, hostname. The default nodes selector is all the nodes matched by the nodes scope. Both positive and negative simple pattern expressions are supported.\n",
+                              "key": "nodes",
+                              "value": "*"
+                            },
+                            {
+                              "description": "Options that affect data generation.\n* `jsonwrap` - Wrap the output in a JSON object with metadata about the query.\n* `raw` - change the output so that it is aggregatable across multiple such queries. Supported by `/api/v2` data queries and `json2` format.\n* `minify` - Remove unnecessary spaces and newlines from the output.\n* `debug` - Provide additional information in `jsonwrap` output to help tracing issues.\n* `nonzero` - Do not return dimensions that all their values are zero, to improve the visual appearance of charts. They will still be returned if all the dimensions are entirely zero.\n* `null2zero` - Replace `null` values with `0`.\n* `absolute` or `abs` - Traditionally Netdata returns select dimensions negative to improve visual appearance. This option turns this feature off.\n* `display-absolute` - Only used by badges, to do color calculation using the signed value, but render the value without a sign.\n* `flip` or `reversed` - Order the timestamps array in reverse order (newest to oldest).\n* `min2max` - When flattening multi-dimensional data into a single metric format, use `max - min` instead of `sum`. This is EOL - use `/api/v2` to control aggregation across dimensions.\n* `percentage` - Convert all values into a percentage vs the row total. When enabled, Netdata will query all dimensions, even the ones that have not been selected or are hidden, to find the row total, in order to calculate the percentage of each dimension selected.\n* `seconds` - Output timestamps in seconds instead of dates.\n* `milliseconds` or `ms` - Output timestamps in milliseconds instead of dates.\n* `unaligned` - by default queries are aligned to the the view, so that as time passes past data returned do not change. When a data query will not be used for visualization, `unaligned` can be given to avoid aligning the query time-frame for visual precision.\n* `match-ids`, `match-names`. By default filters match both IDs and names when they are available. Setting either of the two options will disable the other.\n* `anomaly-bit` - query the anomaly information instead of metric values. This is EOL, use `/api/v2` and `json2` format which always returns this information and many more.\n* `jw-anomaly-rates` - return anomaly rates as a separate result set in the same `json` format response. This is EOL, use `/api/v2` and `json2` format which always returns information and many more. \n* `details` - `/api/v2/data` returns in `jsonwrap` the full tree of dimensions that have been matched by the query.\n* `group-by-labels` - `/api/v2/data` returns in `jsonwrap` flattened labels per output dimension. These are used to identify the instances that have been aggregated into each dimension, making it possible to provide a map, like Netdata does for Kubernetes.\n* `natural-points` - return timestamps as found in the database. The result is again fixed-step, but the query engine attempts to align them with the timestamps found in the database.\n* `virtual-points` - return timestamps independent of the database alignment. This is needed aggregating data across multiple Netdata Agents, to ensure that their outputs do not need to be interpolated to be merged.\n* `selected-tier` - use data exclusively from the selected tier given with the `tier` parameter. This option is set automatically when the `tier` parameter is set.\n* `all-dimensions` - In `/api/v1` `jsonwrap` include metadata for all candidate metrics examined. In `/api/v2` this is standard behavior and no option is needed.\n* `label-quotes` - In `csv` output format, enclose each header label in quotes.\n* `objectrows` - Each row of value should be an object, not an array (only for `json` format).\n* `google_json` - Comply with google JSON/JSONP specs (only for `json` format).\n* `minimal-stats` or `minimal` - Reduce the amount of statistics returned in `jsonwrap` format to save bandwidth.\n* `long-json-keys` or `long-keys` - Use descriptive key names in JSON output instead of abbreviated ones.\n* `mcp-info` - Include additional metadata useful for the Model Context Protocol (MCP) integration.\n* `rfc3339` - Return timestamps in RFC3339 format (e.g., \"2023-01-01T00:00:00Z\") instead of Unix timestamps.\n",
+                              "key": "options",
+                              "value": "jsonwrap"
+                            },
+                            {
+                              "description": "Specify a timeout value in milliseconds after which the Agent will abort the query and return a 503 error. A value of 0 indicates no timeout.\n",
+                              "key": "timeout",
+                              "value": "0"
+                            },
+                            {
+                              "description": "Limits the number of unique items (contexts, instances, dimensions) returned in the query result. This is useful for preventing excessive memory usage and response sizes when queries match a large number of metrics. The query engine will return the most relevant items up to this limit.\n",
+                              "key": "cardinality_limit",
+                              "value": "10000"
+                            }
+                          ]
+                        }
+                      },
+                      "status": "OK",
+                      "code": 200,
+                      "_postman_previewlanguage": "text",
+                      "header": [],
+                      "cookie": [],
+                      "responseTime": null,
+                      "body": null,
+                      "createdAt": "2026-07-28T02:17:32.000Z",
+                      "updatedAt": "2026-07-28T02:17:32.000Z",
+                      "uid": "35240-ab5e3709-a8bd-4435-84ef-ee0e294b54b7"
+                    },
+                    {
+                      "id": "990c8a25-22b1-40ab-9b61-98d479828a77",
+                      "name": "Invalid parameters",
+                      "originalRequest": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                          "raw": "{{baseUrl}}/api/v2/functions?scope_nodes=*&nodes=*&options=jsonwrap&timeout=0&cardinality_limit=10000",
+                          "host": [
+                            "{{baseUrl}}"
+                          ],
+                          "path": [
+                            "api",
+                            "v2",
+                            "functions"
+                          ],
+                          "query": [
+                            {
+                              "description": "A simple pattern limiting the nodes scope of the query. The scope controls both data and metadata response. The simple pattern is checked against the nodes' machine guid, node id and hostname. The default nodes scope is all nodes for which this Agent has data for. Usually the nodes scope is used to slice the entire dashboard (e.g. the Global Nodes Selector at the Netdata Cloud overview dashboard). Both positive and negative simple pattern expressions are supported.\n",
+                              "key": "scope_nodes",
+                              "value": "*"
+                            },
+                            {
+                              "description": "A simple pattern matching the nodes to be queried. This only controls the data response, not the metadata. The simple pattern is checked against the nodes' machine guid, node id, hostname. The default nodes selector is all the nodes matched by the nodes scope. Both positive and negative simple pattern expressions are supported.\n",
+                              "key": "nodes",
+                              "value": "*"
+                            },
+                            {
+                              "description": "Options that affect data generation.\n* `jsonwrap` - Wrap the output in a JSON object with metadata about the query.\n* `raw` - change the output so that it is aggregatable across multiple such queries. Supported by `/api/v2` data queries and `json2` format.\n* `minify` - Remove unnecessary spaces and newlines from the output.\n* `debug` - Provide additional information in `jsonwrap` output to help tracing issues.\n* `nonzero` - Do not return dimensions that all their values are zero, to improve the visual appearance of charts. They will still be returned if all the dimensions are entirely zero.\n* `null2zero` - Replace `null` values with `0`.\n* `absolute` or `abs` - Traditionally Netdata returns select dimensions negative to improve visual appearance. This option turns this feature off.\n* `display-absolute` - Only used by badges, to do color calculation using the signed value, but render the value without a sign.\n* `flip` or `reversed` - Order the timestamps array in reverse order (newest to oldest).\n* `min2max` - When flattening multi-dimensional data into a single metric format, use `max - min` instead of `sum`. This is EOL - use `/api/v2` to control aggregation across dimensions.\n* `percentage` - Convert all values into a percentage vs the row total. When enabled, Netdata will query all dimensions, even the ones that have not been selected or are hidden, to find the row total, in order to calculate the percentage of each dimension selected.\n* `seconds` - Output timestamps in seconds instead of dates.\n* `milliseconds` or `ms` - Output timestamps in milliseconds instead of dates.\n* `unaligned` - by default queries are aligned to the the view, so that as time passes past data returned do not change. When a data query will not be used for visualization, `unaligned` can be given to avoid aligning the query time-frame for visual precision.\n* `match-ids`, `match-names`. By default filters match both IDs and names when they are available. Setting either of the two options will disable the other.\n* `anomaly-bit` - query the anomaly information instead of metric values. This is EOL, use `/api/v2` and `json2` format which always returns this information and many more.\n* `jw-anomaly-rates` - return anomaly rates as a separate result set in the same `json` format response. This is EOL, use `/api/v2` and `json2` format which always returns information and many more. \n* `details` - `/api/v2/data` returns in `jsonwrap` the full tree of dimensions that have been matched by the query.\n* `group-by-labels` - `/api/v2/data` returns in `jsonwrap` flattened labels per output dimension. These are used to identify the instances that have been aggregated into each dimension, making it possible to provide a map, like Netdata does for Kubernetes.\n* `natural-points` - return timestamps as found in the database. The result is again fixed-step, but the query engine attempts to align them with the timestamps found in the database.\n* `virtual-points` - return timestamps independent of the database alignment. This is needed aggregating data across multiple Netdata Agents, to ensure that their outputs do not need to be interpolated to be merged.\n* `selected-tier` - use data exclusively from the selected tier given with the `tier` parameter. This option is set automatically when the `tier` parameter is set.\n* `all-dimensions` - In `/api/v1` `jsonwrap` include metadata for all candidate metrics examined. In `/api/v2` this is standard behavior and no option is needed.\n* `label-quotes` - In `csv` output format, enclose each header label in quotes.\n* `objectrows` - Each row of value should be an object, not an array (only for `json` format).\n* `google_json` - Comply with google JSON/JSONP specs (only for `json` format).\n* `minimal-stats` or `minimal` - Reduce the amount of statistics returned in `jsonwrap` format to save bandwidth.\n* `long-json-keys` or `long-keys` - Use descriptive key names in JSON output instead of abbreviated ones.\n* `mcp-info` - Include additional metadata useful for the Model Context Protocol (MCP) integration.\n* `rfc3339` - Return timestamps in RFC3339 format (e.g., \"2023-01-01T00:00:00Z\") instead of Unix timestamps.\n",
+                              "key": "options",
+                              "value": "jsonwrap"
+                            },
+                            {
+                              "description": "Specify a timeout value in milliseconds after which the Agent will abort the query and return a 503 error. A value of 0 indicates no timeout.\n",
+                              "key": "timeout",
+                              "value": "0"
+                            },
+                            {
+                              "description": "Limits the number of unique items (contexts, instances, dimensions) returned in the query result. This is useful for preventing excessive memory usage and response sizes when queries match a large number of metrics. The query engine will return the most relevant items up to this limit.\n",
+                              "key": "cardinality_limit",
+                              "value": "10000"
+                            }
+                          ]
+                        }
+                      },
+                      "status": "Bad Request",
+                      "code": 400,
+                      "_postman_previewlanguage": "text",
+                      "header": [],
+                      "cookie": [],
+                      "responseTime": null,
+                      "body": null,
+                      "createdAt": "2026-07-28T02:17:32.000Z",
+                      "updatedAt": "2026-07-28T02:17:32.000Z",
+                      "uid": "35240-990c8a25-22b1-40ab-9b61-98d479828a77"
+                    }
+                  ],
+                  "createdAt": "2026-07-28T02:17:32.000Z",
+                  "updatedAt": "2026-07-28T02:17:32.000Z",
+                  "uid": "35240-a576ba17-41bb-4267-bec2-7c7a0f44b120"
+                }
+              ],
+              "id": "5293efa9-bb55-41da-9a17-2a14449a5219",
+              "createdAt": "2026-07-28T02:17:32.000Z",
+              "updatedAt": "2026-07-28T02:17:32.000Z",
+              "uid": "35240-5293efa9-bb55-41da-9a17-2a14449a5219"
+            }
+          ],
+          "id": "f6e44a23-f858-4f89-a30e-8b732e95c565",
+          "createdAt": "2026-07-28T02:17:32.000Z",
+          "updatedAt": "2026-07-28T02:17:32.000Z",
+          "uid": "35240-f6e44a23-f858-4f89-a30e-8b732e95c565"
+        },
+        {
+          "name": "v1",
+          "item": [
+            {
+              "name": "function",
+              "item": [
+                {
+                  "name": "function1",
+                  "id": "6de483d0-6bce-497c-a6fc-f5f265c58258",
+                  "protocolProfileBehavior": {
+                    "disableBodyPruning": true
+                  },
+                  "request": {
+                    "auth": {
+                      "type": "noauth"
+                    },
+                    "method": "GET",
+                    "header": [],
+                    "url": {
+                      "raw": "{{baseUrl}}/api/v1/function?function=<string>&timeout=0",
+                      "host": [
+                        "{{baseUrl}}"
+                      ],
+                      "path": [
+                        "api",
+                        "v1",
+                        "function"
+                      ],
+                      "query": [
+                        {
+                          "description": "(Required) The name of the function, as returned by the collector.",
+                          "key": "function",
+                          "value": "<string>"
+                        },
+                        {
+                          "description": "Specify a timeout value in seconds after which the Agent will abort the query and return a 504 error. A value of 0 indicates no timeout, but some endpoints, like `weights`, do not accept infinite timeouts (they have a predefined default), so to disable the timeout it must be set to a really high value.\n",
+                          "key": "timeout",
+                          "value": "0"
+                        }
+                      ]
+                    },
+                    "description": "|\n\n**Security & Access Control:**\n- \ud83d\udcca **Public Data API** - Bearer token optional, IP-based ACL restrictions apply\n- **Default Access:** Public (no authentication required)\n- **Bearer Protection:** When enabled via `/api/v3/bearer_protection`, requires bearer token\n- **IP Restrictions:** Subject to `allow dashboard from` in netdata.conf\n- **Access Methods:** Direct HTTP/HTTPS, Netdata Cloud, external tools\n"
+                  },
+                  "response": [
+                    {
+                      "id": "ef495e01-31ea-453b-b1ed-42be50486e07",
+                      "name": "The collector function has been executed successfully. Each collector may return a different type of content.",
+                      "originalRequest": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                          "raw": "{{baseUrl}}/api/v1/function?function=<string>&timeout=0",
+                          "host": [
+                            "{{baseUrl}}"
+                          ],
+                          "path": [
+                            "api",
+                            "v1",
+                            "function"
+                          ],
+                          "query": [
+                            {
+                              "description": "(Required) The name of the function, as returned by the collector.",
+                              "key": "function",
+                              "value": "<string>"
+                            },
+                            {
+                              "description": "Specify a timeout value in seconds after which the Agent will abort the query and return a 504 error. A value of 0 indicates no timeout, but some endpoints, like `weights`, do not accept infinite timeouts (they have a predefined default), so to disable the timeout it must be set to a really high value.\n",
+                              "key": "timeout",
+                              "value": "0"
+                            }
+                          ]
+                        }
+                      },
+                      "status": "OK",
+                      "code": 200,
+                      "_postman_previewlanguage": "text",
+                      "header": [],
+                      "cookie": [],
+                      "responseTime": null,
+                      "body": null,
+                      "createdAt": "2026-07-28T02:17:32.000Z",
+                      "updatedAt": "2026-07-28T02:17:32.000Z",
+                      "uid": "35240-ef495e01-31ea-453b-b1ed-42be50486e07"
+                    },
+                    {
+                      "id": "9964d4ef-4def-42b9-a2f3-9ae16d252d7f",
+                      "name": "The request was rejected by the collector.",
+                      "originalRequest": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                          "raw": "{{baseUrl}}/api/v1/function?function=<string>&timeout=0",
+                          "host": [
+                            "{{baseUrl}}"
+                          ],
+                          "path": [
+                            "api",
+                            "v1",
+                            "function"
+                          ],
+                          "query": [
+                            {
+                              "description": "(Required) The name of the function, as returned by the collector.",
+                              "key": "function",
+                              "value": "<string>"
+                            },
+                            {
+                              "description": "Specify a timeout value in seconds after which the Agent will abort the query and return a 504 error. A value of 0 indicates no timeout, but some endpoints, like `weights`, do not accept infinite timeouts (they have a predefined default), so to disable the timeout it must be set to a really high value.\n",
+                              "key": "timeout",
+                              "value": "0"
+                            }
+                          ]
+                        }
+                      },
+                      "status": "Bad Request",
+                      "code": 400,
+                      "_postman_previewlanguage": "text",
+                      "header": [],
+                      "cookie": [],
+                      "responseTime": null,
+                      "body": null,
+                      "createdAt": "2026-07-28T02:17:32.000Z",
+                      "updatedAt": "2026-07-28T02:17:32.000Z",
+                      "uid": "35240-9964d4ef-4def-42b9-a2f3-9ae16d252d7f"
+                    },
+                    {
+                      "id": "7e221ee4-96a5-47d5-b543-5b091ad12482",
+                      "name": "The requested function is not found.",
+                      "originalRequest": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                          "raw": "{{baseUrl}}/api/v1/function?function=<string>&timeout=0",
+                          "host": [
+                            "{{baseUrl}}"
+                          ],
+                          "path": [
+                            "api",
+                            "v1",
+                            "function"
+                          ],
+                          "query": [
+                            {
+                              "description": "(Required) The name of the function, as returned by the collector.",
+                              "key": "function",
+                              "value": "<string>"
+                            },
+                            {
+                              "description": "Specify a timeout value in seconds after which the Agent will abort the query and return a 504 error. A value of 0 indicates no timeout, but some endpoints, like `weights`, do not accept infinite timeouts (they have a predefined default), so to disable the timeout it must be set to a really high value.\n",
+                              "key": "timeout",
+                              "value": "0"
+                            }
+                          ]
+                        }
+                      },
+                      "status": "Not Found",
+                      "code": 404,
+                      "_postman_previewlanguage": "text",
+                      "header": [],
+                      "cookie": [],
+                      "responseTime": null,
+                      "body": null,
+                      "createdAt": "2026-07-28T02:17:32.000Z",
+                      "updatedAt": "2026-07-28T02:17:32.000Z",
+                      "uid": "35240-7e221ee4-96a5-47d5-b543-5b091ad12482"
+                    },
+                    {
+                      "id": "e9ef6136-80ae-4192-9772-748143f6e150",
+                      "name": "Other internal error, getting this error means there is a bug in Netdata.",
+                      "originalRequest": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                          "raw": "{{baseUrl}}/api/v1/function?function=<string>&timeout=0",
+                          "host": [
+                            "{{baseUrl}}"
+                          ],
+                          "path": [
+                            "api",
+                            "v1",
+                            "function"
+                          ],
+                          "query": [
+                            {
+                              "description": "(Required) The name of the function, as returned by the collector.",
+                              "key": "function",
+                              "value": "<string>"
+                            },
+                            {
+                              "description": "Specify a timeout value in seconds after which the Agent will abort the query and return a 504 error. A value of 0 indicates no timeout, but some endpoints, like `weights`, do not accept infinite timeouts (they have a predefined default), so to disable the timeout it must be set to a really high value.\n",
+                              "key": "timeout",
+                              "value": "0"
+                            }
+                          ]
+                        }
+                      },
+                      "status": "Internal Server Error",
+                      "code": 500,
+                      "_postman_previewlanguage": "text",
+                      "header": [],
+                      "cookie": [],
+                      "responseTime": null,
+                      "body": null,
+                      "createdAt": "2026-07-28T02:17:32.000Z",
+                      "updatedAt": "2026-07-28T02:17:32.000Z",
+                      "uid": "35240-e9ef6136-80ae-4192-9772-748143f6e150"
+                    },
+                    {
+                      "id": "21acc4d1-b8e6-4485-ae1d-20ed5885b137",
+                      "name": "The collector to execute the function is not currently available.",
+                      "originalRequest": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                          "raw": "{{baseUrl}}/api/v1/function?function=<string>&timeout=0",
+                          "host": [
+                            "{{baseUrl}}"
+                          ],
+                          "path": [
+                            "api",
+                            "v1",
+                            "function"
+                          ],
+                          "query": [
+                            {
+                              "description": "(Required) The name of the function, as returned by the collector.",
+                              "key": "function",
+                              "value": "<string>"
+                            },
+                            {
+                              "description": "Specify a timeout value in seconds after which the Agent will abort the query and return a 504 error. A value of 0 indicates no timeout, but some endpoints, like `weights`, do not accept infinite timeouts (they have a predefined default), so to disable the timeout it must be set to a really high value.\n",
+                              "key": "timeout",
+                              "value": "0"
+                            }
+                          ]
+                        }
+                      },
+                      "status": "Service Unavailable",
+                      "code": 503,
+                      "_postman_previewlanguage": "text",
+                      "header": [],
+                      "cookie": [],
+                      "responseTime": null,
+                      "body": null,
+                      "createdAt": "2026-07-28T02:17:32.000Z",
+                      "updatedAt": "2026-07-28T02:17:32.000Z",
+                      "uid": "35240-21acc4d1-b8e6-4485-ae1d-20ed5885b137"
+                    },
+                    {
+                      "id": "b71a53fe-239b-48c0-9b85-b3f23734d20a",
+                      "name": "Timeout while waiting for the collector to execute the function.",
+                      "originalRequest": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                          "raw": "{{baseUrl}}/api/v1/function?function=<string>&timeout=0",
+                          "host": [
+                            "{{baseUrl}}"
+                          ],
+                          "path": [
+                            "api",
+                            "v1",
+                            "function"
+                          ],
+                          "query": [
+                            {
+                              "description": "(Required) The name of the function, as returned by the collector.",
+                              "key": "function",
+                              "value": "<string>"
+                            },
+                            {
+                              "description": "Specify a timeout value in seconds after which the Agent will abort the query and return a 504 error. A value of 0 indicates no timeout, but some endpoints, like `weights`, do not accept infinite timeouts (they have a predefined default), so to disable the timeout it must be set to a really high value.\n",
+                              "key": "timeout",
+                              "value": "0"
+                            }
+                          ]
+                        }
+                      },
+                      "status": "Gateway Timeout",
+                      "code": 504,
+                      "_postman_previewlanguage": "text",
+                      "header": [],
+                      "cookie": [],
+                      "responseTime": null,
+                      "body": null,
+                      "createdAt": "2026-07-28T02:17:32.000Z",
+                      "updatedAt": "2026-07-28T02:17:32.000Z",
+                      "uid": "35240-b71a53fe-239b-48c0-9b85-b3f23734d20a"
+                    },
+                    {
+                      "id": "81dd1a7e-4795-4b18-a096-555dea27731f",
+                      "name": "The collector sent a response, but it was invalid or corrupted.",
+                      "originalRequest": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                          "raw": "{{baseUrl}}/api/v1/function?function=<string>&timeout=0",
+                          "host": [
+                            "{{baseUrl}}"
+                          ],
+                          "path": [
+                            "api",
+                            "v1",
+                            "function"
+                          ],
+                          "query": [
+                            {
+                              "description": "(Required) The name of the function, as returned by the collector.",
+                              "key": "function",
+                              "value": "<string>"
+                            },
+                            {
+                              "description": "Specify a timeout value in seconds after which the Agent will abort the query and return a 504 error. A value of 0 indicates no timeout, but some endpoints, like `weights`, do not accept infinite timeouts (they have a predefined default), so to disable the timeout it must be set to a really high value.\n",
+                              "key": "timeout",
+                              "value": "0"
+                            }
+                          ]
+                        }
+                      },
+                      "_postman_previewlanguage": "text",
+                      "header": [],
+                      "cookie": [],
+                      "responseTime": null,
+                      "body": null,
+                      "createdAt": "2026-07-28T02:17:32.000Z",
+                      "updatedAt": "2026-07-28T02:17:32.000Z",
+                      "uid": "35240-81dd1a7e-4795-4b18-a096-555dea27731f"
+                    }
+                  ],
+                  "createdAt": "2026-07-28T02:17:32.000Z",
+                  "updatedAt": "2026-07-28T02:17:32.000Z",
+                  "uid": "35240-6de483d0-6bce-497c-a6fc-f5f265c58258"
+                }
+              ],
+              "id": "ae113e22-00d7-4997-ba49-2761bccb629b",
+              "createdAt": "2026-07-28T02:17:32.000Z",
+              "updatedAt": "2026-07-28T02:17:32.000Z",
+              "uid": "35240-ae113e22-00d7-4997-ba49-2761bccb629b"
+            },
+            {
+              "name": "functions",
+              "item": [
+                {
+                  "name": "Get a list of all registered collector functions.",
+                  "id": "7a2a32c0-c058-4c97-9bfa-678259e1796a",
+                  "protocolProfileBehavior": {
+                    "disableBodyPruning": true
+                  },
+                  "request": {
+                    "auth": {
+                      "type": "noauth"
+                    },
+                    "method": "GET",
+                    "header": [],
+                    "url": {
+                      "raw": "{{baseUrl}}/api/v1/functions",
+                      "host": [
+                        "{{baseUrl}}"
+                      ],
+                      "path": [
+                        "api",
+                        "v1",
+                        "functions"
+                      ]
+                    },
+                    "description": "Collector functions are programs that can be executed on demand.\n\n**Security & Access Control:**\n- \ud83d\udcca **Public Data API** - Bearer token optional, IP-based ACL restrictions apply\n- **Default Access:** Public (no authentication required)\n- **Bearer Protection:** When enabled via `/api/v3/bearer_protection`, requires bearer token\n- **IP Restrictions:** Subject to `allow dashboard from` in netdata.conf\n- **Access Methods:** Direct HTTP/HTTPS, Netdata Cloud, external tools\n"
+                  },
+                  "response": [
+                    {
+                      "id": "82cfdb5a-5e77-4a61-887c-67c8a75bdd1e",
+                      "name": "A JSON object containing one object per supported function.",
+                      "originalRequest": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                          "raw": "{{baseUrl}}/api/v1/functions",
+                          "host": [
+                            "{{baseUrl}}"
+                          ],
+                          "path": [
+                            "api",
+                            "v1",
+                            "functions"
+                          ]
+                        }
+                      },
+                      "status": "OK",
+                      "code": 200,
+                      "_postman_previewlanguage": "text",
+                      "header": [],
+                      "cookie": [],
+                      "responseTime": null,
+                      "body": null,
+                      "createdAt": "2026-07-28T02:17:32.000Z",
+                      "updatedAt": "2026-07-28T02:17:32.000Z",
+                      "uid": "35240-82cfdb5a-5e77-4a61-887c-67c8a75bdd1e"
+                    }
+                  ],
+                  "createdAt": "2026-07-28T02:17:32.000Z",
+                  "updatedAt": "2026-07-28T02:17:32.000Z",
+                  "uid": "35240-7a2a32c0-c058-4c97-9bfa-678259e1796a"
+                }
+              ],
+              "id": "16e7d870-40fb-4ed9-8067-c51e1479ec31",
+              "createdAt": "2026-07-28T02:17:32.000Z",
+              "updatedAt": "2026-07-28T02:17:32.000Z",
+              "uid": "35240-16e7d870-40fb-4ed9-8067-c51e1479ec31"
+            }
+          ],
+          "id": "38528b1d-6be8-45c1-b3b7-c6cfb1ceccb6",
+          "createdAt": "2026-07-28T02:17:32.000Z",
+          "updatedAt": "2026-07-28T02:17:32.000Z",
+          "uid": "35240-38528b1d-6be8-45c1-b3b7-c6cfb1ceccb6"
+        }
+      ],
+      "id": "3c9f0f24-75f1-452d-aa8c-179e70da5abe",
+      "createdAt": "2026-07-28T02:17:32.000Z",
+      "updatedAt": "2026-07-28T02:17:32.000Z",
+      "uid": "35240-3c9f0f24-75f1-452d-aa8c-179e70da5abe"
+    }
+  ],
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "https://registry.my-netdata.io"
+    }
+  ]
+}

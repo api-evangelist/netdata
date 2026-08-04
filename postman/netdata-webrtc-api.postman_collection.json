@@ -1,0 +1,430 @@
+{
+  "info": {
+    "_postman_id": "3f731f64-e7de-4813-93fe-fdaf1b201625",
+    "name": "Netdata agent webrtc API",
+    "description": "Real-time performance and health monitoring.\n\n## API Versions\n\nNetdata provides three API versions:\n- **v1**: The original API, focused on single-node operations\n- **v2**: Multi-node API with advanced grouping and aggregation capabilities\n- **v3**: The latest API version that combines v1 and v2 endpoints and may include additional features\n\n### v3 API Endpoints\n\nThe v3 API provides the current, actively maintained endpoints:\n- `/api/v3/data` - Multi-dimensional data queries\n- `/api/v3/weights` - Metric scoring/correlation\n- `/api/v3/contexts` - Context metadata\n- `/api/v3/nodes` - Node information\n- `/api/v3/q` - Full-text search\n- `/api/v3/alerts` - Alert information\n- `/api/v3/alert_transitions` - Alert state transitions\n- `/api/v3/alert_config` - Alert configuration\n- `/api/v3/functions` - Available functions\n- `/api/v3/function` - Execute functions\n- `/api/v3/info` - Agent information\n- `/api/v3/node_instances` - Node instance information\n- `/api/v3/stream_path` - Streaming topology\n- `/api/v3/versions` - Version information\n- `/api/v3/badge.svg` - Dynamic badges\n- `/api/v3/allmetrics` - Export metrics\n- `/api/v3/context` - Single context info\n- `/api/v3/variable` - Variable information\n- `/api/v3/config` - Dynamic configuration\n- `/api/v3/settings` - Agent settings\n- `/api/v3/me` - Current user information\n- `/api/v3/claim` - Agent claiming\n- Additional management and streaming endpoints\n\n**Note:** V1 and V2 APIs are deprecated and maintained for backwards compatibility only. New integrations should use V3 exclusively.\n\n\nContact Support:\n Name: Netdata Agent API\n Email: info@netdata.cloud",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "createdAt": "2026-07-28T02:20:31.000Z",
+    "updatedAt": "2026-07-28T02:20:31.000Z",
+    "lastUpdatedBy": "35240",
+    "uid": "35240-3f731f64-e7de-4813-93fe-fdaf1b201625"
+  },
+  "item": [
+    {
+      "name": "api",
+      "item": [
+        {
+          "name": "v3",
+          "item": [
+            {
+              "name": "rtc_offer",
+              "item": [
+                {
+                  "name": "Establish WebRTC peer connection by exchanging SDP offer/answer",
+                  "id": "3eb4f769-5ecb-471e-a3f4-74a51772b2bc",
+                  "protocolProfileBehavior": {
+                    "disableBodyPruning": true
+                  },
+                  "request": {
+                    "auth": {
+                      "type": "bearer",
+                      "bearer": [
+                        {
+                          "key": "token",
+                          "value": "{{bearerToken}}",
+                          "type": "string"
+                        }
+                      ]
+                    },
+                    "method": "POST",
+                    "header": [
+                      {
+                        "key": "Content-Type",
+                        "value": "text/plain"
+                      },
+                      {
+                        "key": "Accept",
+                        "value": "application/json"
+                      }
+                    ],
+                    "body": {
+                      "mode": "raw",
+                      "raw": "<string>"
+                    },
+                    "url": {
+                      "raw": "{{baseUrl}}/api/v3/rtc_offer",
+                      "host": [
+                        "{{baseUrl}}"
+                      ],
+                      "path": [
+                        "api",
+                        "v3",
+                        "rtc_offer"
+                      ]
+                    },
+                    "description": "**WebRTC Connection Establishment**\n\nThis endpoint implements the WebRTC signaling process for establishing peer-to-peer data connections with the Netdata agent. It follows the standard WebRTC negotiation flow using SDP (Session Description Protocol) offer/answer exchange.\n\n**How It Works:**\n1. Client creates a WebRTC peer connection and generates an SDP offer\n2. Client sends the SDP offer to this endpoint via POST request body\n3. Server processes the offer, configures ICE servers and connection parameters\n4. Server generates and returns an SDP answer with ICE candidates\n5. Client sets the answer to complete the WebRTC connection handshake\n6. Data channels can then be established for real-time communication\n\n**Use Cases:**\n- **Real-time dashboards:** Stream live metrics with minimal latency using WebRTC data channels\n- **Browser-based monitoring:** Enable direct peer-to-peer connections from web browsers to agents\n- **NAT traversal:** Establish connections through firewalls and NATs using ICE/STUN/TURN\n- **Low-latency updates:** Bypass HTTP polling for instant metric updates via WebRTC\n- **Bi-directional communication:** Enable interactive control and monitoring in real-time\n\n**Connection Configuration:**\n- Maximum message size: 5 MiB (local), negotiated with remote peer\n- ICE transport policy: All (both UDP and TCP)\n- Automatic ICE candidate gathering\n- Support for STUN/TURN servers\n- Automatic port range selection\n- MTU auto-detection\n\n**Important Notes:**\n- WebRTC must be enabled in agent configuration (enabled by default in debug builds)\n- The endpoint waits for ICE gathering to complete before returning the answer\n- The SDP offer must be valid and include media descriptions\n- Response includes both SDP answer and gathered ICE candidates\n- Connections are automatically cleaned up on timeout or disconnection\n\n**Example SDP Offer Structure:**\n```\nv=0\no=- 123456789 2 IN IP4 127.0.0.1\ns=-\nt=0 0\na=group:BUNDLE 0\na=msid-semantic: WMS\nm=application 9 UDP/DTLS/SCTP webrtc-datachannel\nc=IN IP4 0.0.0.0\na=ice-ufrag:XXXX\na=ice-pwd:YYYY\na=fingerprint:sha-256 ZZ:ZZ:...\na=setup:actpass\na=mid:0\na=sctp-port:5000\na=max-message-size:65536\n```\n\n**Performance Characteristics:**\n- Synchronous operation (blocks until ICE gathering completes)\n- Typical response time: 100-500ms (depending on ICE gathering)\n- Supports multiple concurrent connections\n- Automatic connection cleanup on idle timeout\n\n**Security & Access Control:**\n- \u26a0\ufe0f **ACLK-Only API** - This endpoint is ONLY accessible via Netdata Cloud (ACLK connection)\n- **NOT accessible via:** Direct HTTP/HTTPS to agent, local dashboard, or external tools\n- **Authentication:** Requires Netdata Cloud authentication (`SIGNED_ID` + `SAME_SPACE`)\n- **User Requirements:** User must be authenticated and in the same cloud space as the agent\n- **Development Mode:** Can be enabled for testing with `ACL_DEV_OPEN_ACCESS` flag\n"
+                  },
+                  "response": [
+                    {
+                      "id": "4b2c9ae7-f15e-4c4c-ac87-cb9758554f93",
+                      "name": "SDP answer successfully generated. The response contains the server's SDP answer\nincluding all gathered ICE candidates. The client should set this as the remote\ndescription to complete the WebRTC handshake.\n",
+                      "originalRequest": {
+                        "method": "POST",
+                        "header": [
+                          {
+                            "key": "Content-Type",
+                            "value": "text/plain"
+                          },
+                          {
+                            "key": "Accept",
+                            "value": "application/json"
+                          },
+                          {
+                            "description": "Added as a part of security scheme: bearer",
+                            "key": "Authorization",
+                            "value": "Bearer <token>"
+                          }
+                        ],
+                        "body": {
+                          "mode": "raw",
+                          "raw": "<string>"
+                        },
+                        "url": {
+                          "raw": "{{baseUrl}}/api/v3/rtc_offer",
+                          "host": [
+                            "{{baseUrl}}"
+                          ],
+                          "path": [
+                            "api",
+                            "v3",
+                            "rtc_offer"
+                          ]
+                        }
+                      },
+                      "status": "OK",
+                      "code": 200,
+                      "_postman_previewlanguage": "json",
+                      "header": [
+                        {
+                          "key": "Content-Type",
+                          "value": "application/json"
+                        }
+                      ],
+                      "cookie": [],
+                      "responseTime": null,
+                      "body": "{\n  \"sdp\": \"<string>\",\n  \"type\": \"answer\"\n}",
+                      "createdAt": "2026-07-28T02:20:31.000Z",
+                      "updatedAt": "2026-07-28T02:20:31.000Z",
+                      "uid": "35240-4b2c9ae7-f15e-4c4c-ac87-cb9758554f93"
+                    },
+                    {
+                      "id": "4899f3ba-6f27-4f4a-8984-2f1f740535af",
+                      "name": "Bad request due to one of the following reasons:\n- WebRTC is not enabled on this agent (check configuration)\n- No SDP offer provided in request body\n- Invalid SDP format or content\n- Missing required SDP fields (ice-ufrag, ice-pwd, fingerprint)\n",
+                      "originalRequest": {
+                        "method": "POST",
+                        "header": [
+                          {
+                            "key": "Content-Type",
+                            "value": "text/plain"
+                          },
+                          {
+                            "description": "Added as a part of security scheme: bearer",
+                            "key": "Authorization",
+                            "value": "Bearer <token>"
+                          }
+                        ],
+                        "body": {
+                          "mode": "raw",
+                          "raw": "<string>"
+                        },
+                        "url": {
+                          "raw": "{{baseUrl}}/api/v3/rtc_offer",
+                          "host": [
+                            "{{baseUrl}}"
+                          ],
+                          "path": [
+                            "api",
+                            "v3",
+                            "rtc_offer"
+                          ]
+                        }
+                      },
+                      "status": "Bad Request",
+                      "code": 400,
+                      "_postman_previewlanguage": "text",
+                      "header": [],
+                      "cookie": [],
+                      "responseTime": null,
+                      "body": null,
+                      "createdAt": "2026-07-28T02:20:31.000Z",
+                      "updatedAt": "2026-07-28T02:20:31.000Z",
+                      "uid": "35240-4899f3ba-6f27-4f4a-8984-2f1f740535af"
+                    },
+                    {
+                      "id": "a68a7afc-3c0c-4bd9-afef-d62b758486ce",
+                      "name": "Internal server error during WebRTC connection establishment or ICE gathering.",
+                      "originalRequest": {
+                        "method": "POST",
+                        "header": [
+                          {
+                            "key": "Content-Type",
+                            "value": "text/plain"
+                          },
+                          {
+                            "description": "Added as a part of security scheme: bearer",
+                            "key": "Authorization",
+                            "value": "Bearer <token>"
+                          }
+                        ],
+                        "body": {
+                          "mode": "raw",
+                          "raw": "<string>"
+                        },
+                        "url": {
+                          "raw": "{{baseUrl}}/api/v3/rtc_offer",
+                          "host": [
+                            "{{baseUrl}}"
+                          ],
+                          "path": [
+                            "api",
+                            "v3",
+                            "rtc_offer"
+                          ]
+                        }
+                      },
+                      "status": "Internal Server Error",
+                      "code": 500,
+                      "_postman_previewlanguage": "text",
+                      "header": [],
+                      "cookie": [],
+                      "responseTime": null,
+                      "body": null,
+                      "createdAt": "2026-07-28T02:20:31.000Z",
+                      "updatedAt": "2026-07-28T02:20:31.000Z",
+                      "uid": "35240-a68a7afc-3c0c-4bd9-afef-d62b758486ce"
+                    }
+                  ],
+                  "createdAt": "2026-07-28T02:20:31.000Z",
+                  "updatedAt": "2026-07-28T02:20:31.000Z",
+                  "uid": "35240-3eb4f769-5ecb-471e-a3f4-74a51772b2bc"
+                }
+              ],
+              "id": "519f7516-f62e-42aa-bfa2-77002df38baa",
+              "createdAt": "2026-07-28T02:20:31.000Z",
+              "updatedAt": "2026-07-28T02:20:31.000Z",
+              "uid": "35240-519f7516-f62e-42aa-bfa2-77002df38baa"
+            }
+          ],
+          "id": "8717b443-2b3e-4c38-8379-8654f8a59611",
+          "createdAt": "2026-07-28T02:20:31.000Z",
+          "updatedAt": "2026-07-28T02:20:31.000Z",
+          "uid": "35240-8717b443-2b3e-4c38-8379-8654f8a59611"
+        },
+        {
+          "name": "v2",
+          "item": [
+            {
+              "name": "rtc_offer",
+              "item": [
+                {
+                  "name": "OBSOLETE: Establish WebRTC connection (use /api/v3/rtc_offer instead)",
+                  "id": "5960194c-6893-4561-b299-5b7f195ae53d",
+                  "protocolProfileBehavior": {
+                    "disableBodyPruning": true
+                  },
+                  "request": {
+                    "auth": {
+                      "type": "bearer",
+                      "bearer": [
+                        {
+                          "key": "token",
+                          "value": "{{bearerToken}}",
+                          "type": "string"
+                        }
+                      ]
+                    },
+                    "method": "POST",
+                    "header": [
+                      {
+                        "key": "Content-Type",
+                        "value": "text/plain"
+                      }
+                    ],
+                    "body": {
+                      "mode": "raw",
+                      "raw": "<string>"
+                    },
+                    "url": {
+                      "raw": "{{baseUrl}}/api/v2/rtc_offer",
+                      "host": [
+                        "{{baseUrl}}"
+                      ],
+                      "path": [
+                        "api",
+                        "v2",
+                        "rtc_offer"
+                      ]
+                    },
+                    "description": "**\u26a0\ufe0f OBSOLETE API - Will be removed in future versions**\n\nThis endpoint is deprecated. Use `/api/v3/rtc_offer` instead, which provides the same functionality.\n\n**Migration:** Replace `/api/v2/rtc_offer` with `/api/v3/rtc_offer` in all API calls.\n\nEstablishes WebRTC peer-to-peer connection by exchanging SDP offer/answer for real-time data channels.\n\n**Security & Access Control:**\n- \u26a0\ufe0f **ACLK-Only API** - Accessible only via Netdata Cloud (ACLK connection)\n- Same access requirements as v3 version\n"
+                  },
+                  "response": [
+                    {
+                      "id": "295fcbfd-2474-4503-a7d7-1845838e4c85",
+                      "name": "SDP answer successfully generated",
+                      "originalRequest": {
+                        "method": "POST",
+                        "header": [
+                          {
+                            "key": "Content-Type",
+                            "value": "text/plain"
+                          },
+                          {
+                            "description": "Added as a part of security scheme: bearer",
+                            "key": "Authorization",
+                            "value": "Bearer <token>"
+                          }
+                        ],
+                        "body": {
+                          "mode": "raw",
+                          "raw": "<string>"
+                        },
+                        "url": {
+                          "raw": "{{baseUrl}}/api/v2/rtc_offer",
+                          "host": [
+                            "{{baseUrl}}"
+                          ],
+                          "path": [
+                            "api",
+                            "v2",
+                            "rtc_offer"
+                          ]
+                        }
+                      },
+                      "status": "OK",
+                      "code": 200,
+                      "_postman_previewlanguage": "text",
+                      "header": [],
+                      "cookie": [],
+                      "responseTime": null,
+                      "body": null,
+                      "createdAt": "2026-07-28T02:20:31.000Z",
+                      "updatedAt": "2026-07-28T02:20:31.000Z",
+                      "uid": "35240-295fcbfd-2474-4503-a7d7-1845838e4c85"
+                    },
+                    {
+                      "id": "84a77e24-8504-4321-b514-cdde532cd879",
+                      "name": "Invalid or missing SDP offer",
+                      "originalRequest": {
+                        "method": "POST",
+                        "header": [
+                          {
+                            "key": "Content-Type",
+                            "value": "text/plain"
+                          },
+                          {
+                            "description": "Added as a part of security scheme: bearer",
+                            "key": "Authorization",
+                            "value": "Bearer <token>"
+                          }
+                        ],
+                        "body": {
+                          "mode": "raw",
+                          "raw": "<string>"
+                        },
+                        "url": {
+                          "raw": "{{baseUrl}}/api/v2/rtc_offer",
+                          "host": [
+                            "{{baseUrl}}"
+                          ],
+                          "path": [
+                            "api",
+                            "v2",
+                            "rtc_offer"
+                          ]
+                        }
+                      },
+                      "status": "Bad Request",
+                      "code": 400,
+                      "_postman_previewlanguage": "text",
+                      "header": [],
+                      "cookie": [],
+                      "responseTime": null,
+                      "body": null,
+                      "createdAt": "2026-07-28T02:20:31.000Z",
+                      "updatedAt": "2026-07-28T02:20:31.000Z",
+                      "uid": "35240-84a77e24-8504-4321-b514-cdde532cd879"
+                    },
+                    {
+                      "id": "ab0c30d3-7673-496c-b46b-11e21a2abbcf",
+                      "name": "Internal error during WebRTC connection establishment",
+                      "originalRequest": {
+                        "method": "POST",
+                        "header": [
+                          {
+                            "key": "Content-Type",
+                            "value": "text/plain"
+                          },
+                          {
+                            "description": "Added as a part of security scheme: bearer",
+                            "key": "Authorization",
+                            "value": "Bearer <token>"
+                          }
+                        ],
+                        "body": {
+                          "mode": "raw",
+                          "raw": "<string>"
+                        },
+                        "url": {
+                          "raw": "{{baseUrl}}/api/v2/rtc_offer",
+                          "host": [
+                            "{{baseUrl}}"
+                          ],
+                          "path": [
+                            "api",
+                            "v2",
+                            "rtc_offer"
+                          ]
+                        }
+                      },
+                      "status": "Internal Server Error",
+                      "code": 500,
+                      "_postman_previewlanguage": "text",
+                      "header": [],
+                      "cookie": [],
+                      "responseTime": null,
+                      "body": null,
+                      "createdAt": "2026-07-28T02:20:31.000Z",
+                      "updatedAt": "2026-07-28T02:20:31.000Z",
+                      "uid": "35240-ab0c30d3-7673-496c-b46b-11e21a2abbcf"
+                    }
+                  ],
+                  "createdAt": "2026-07-28T02:20:31.000Z",
+                  "updatedAt": "2026-07-28T02:20:31.000Z",
+                  "uid": "35240-5960194c-6893-4561-b299-5b7f195ae53d"
+                }
+              ],
+              "id": "5b18b1b8-7442-4d77-a5a2-3722eb953c8e",
+              "createdAt": "2026-07-28T02:20:31.000Z",
+              "updatedAt": "2026-07-28T02:20:31.000Z",
+              "uid": "35240-5b18b1b8-7442-4d77-a5a2-3722eb953c8e"
+            }
+          ],
+          "id": "c6e21b21-da89-409d-83ca-7f2697bad1b5",
+          "createdAt": "2026-07-28T02:20:31.000Z",
+          "updatedAt": "2026-07-28T02:20:31.000Z",
+          "uid": "35240-c6e21b21-da89-409d-83ca-7f2697bad1b5"
+        }
+      ],
+      "id": "3436bcf7-660a-4f39-8047-fbc30a41472e",
+      "createdAt": "2026-07-28T02:20:31.000Z",
+      "updatedAt": "2026-07-28T02:20:31.000Z",
+      "uid": "35240-3436bcf7-660a-4f39-8047-fbc30a41472e"
+    }
+  ],
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "https://registry.my-netdata.io"
+    }
+  ]
+}

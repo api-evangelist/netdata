@@ -1,0 +1,671 @@
+{
+  "info": {
+    "_postman_id": "59e874fd-ea7b-459c-9f16-6184a639fa11",
+    "name": "Netdata agent charts API",
+    "description": "Real-time performance and health monitoring.\n\n## API Versions\n\nNetdata provides three API versions:\n- **v1**: The original API, focused on single-node operations\n- **v2**: Multi-node API with advanced grouping and aggregation capabilities\n- **v3**: The latest API version that combines v1 and v2 endpoints and may include additional features\n\n### v3 API Endpoints\n\nThe v3 API provides the current, actively maintained endpoints:\n- `/api/v3/data` - Multi-dimensional data queries\n- `/api/v3/weights` - Metric scoring/correlation\n- `/api/v3/contexts` - Context metadata\n- `/api/v3/nodes` - Node information\n- `/api/v3/q` - Full-text search\n- `/api/v3/alerts` - Alert information\n- `/api/v3/alert_transitions` - Alert state transitions\n- `/api/v3/alert_config` - Alert configuration\n- `/api/v3/functions` - Available functions\n- `/api/v3/function` - Execute functions\n- `/api/v3/info` - Agent information\n- `/api/v3/node_instances` - Node instance information\n- `/api/v3/stream_path` - Streaming topology\n- `/api/v3/versions` - Version information\n- `/api/v3/badge.svg` - Dynamic badges\n- `/api/v3/allmetrics` - Export metrics\n- `/api/v3/context` - Single context info\n- `/api/v3/variable` - Variable information\n- `/api/v3/config` - Dynamic configuration\n- `/api/v3/settings` - Agent settings\n- `/api/v3/me` - Current user information\n- `/api/v3/claim` - Agent claiming\n- Additional management and streaming endpoints\n\n**Note:** V1 and V2 APIs are deprecated and maintained for backwards compatibility only. New integrations should use V3 exclusively.\n\n\nContact Support:\n Name: Netdata Agent API\n Email: info@netdata.cloud",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "createdAt": "2026-07-28T02:17:14.000Z",
+    "updatedAt": "2026-07-28T02:17:14.000Z",
+    "lastUpdatedBy": "35240",
+    "uid": "35240-59e874fd-ea7b-459c-9f16-6184a639fa11"
+  },
+  "item": [
+    {
+      "name": "api",
+      "item": [
+        {
+          "name": "v1",
+          "item": [
+            {
+              "name": "charts",
+              "item": [
+                {
+                  "name": "List all charts v1 - EOL",
+                  "id": "529f894d-a902-486c-93f8-dcdeda9b085c",
+                  "protocolProfileBehavior": {
+                    "disableBodyPruning": true
+                  },
+                  "request": {
+                    "auth": {
+                      "type": "noauth"
+                    },
+                    "method": "GET",
+                    "header": [
+                      {
+                        "key": "Accept",
+                        "value": "application/json"
+                      }
+                    ],
+                    "url": {
+                      "raw": "{{baseUrl}}/api/v1/charts",
+                      "host": [
+                        "{{baseUrl}}"
+                      ],
+                      "path": [
+                        "api",
+                        "v1",
+                        "charts"
+                      ]
+                    },
+                    "description": "The charts endpoint returns a summary about all charts stored in the netdata server.\n**Security & Access Control:** - \ud83d\udcca **Public Data API** - Bearer token optional, IP-based ACL restrictions apply - **Default Access:** Public (no authentication required) - **Bearer Protection:** When enabled via `/api/v3/bearer_protection`, requires bearer token - **IP Restrictions:** Subject to `allow dashboard from` in netdata.conf - **Access Methods:** Direct HTTP/HTTPS, Netdata Cloud, external tools"
+                  },
+                  "response": [
+                    {
+                      "id": "b7176639-8ea9-4047-9b79-c17a01894dce",
+                      "name": "An array of charts.",
+                      "originalRequest": {
+                        "method": "GET",
+                        "header": [
+                          {
+                            "key": "Accept",
+                            "value": "application/json"
+                          }
+                        ],
+                        "url": {
+                          "raw": "{{baseUrl}}/api/v1/charts",
+                          "host": [
+                            "{{baseUrl}}"
+                          ],
+                          "path": [
+                            "api",
+                            "v1",
+                            "charts"
+                          ]
+                        }
+                      },
+                      "status": "OK",
+                      "code": 200,
+                      "_postman_previewlanguage": "json",
+                      "header": [
+                        {
+                          "key": "Content-Type",
+                          "value": "application/json"
+                        }
+                      ],
+                      "cookie": [],
+                      "responseTime": null,
+                      "body": "{\n  \"hostname\": \"<string>\",\n  \"version\": \"<string>\",\n  \"release_channel\": \"<string>\",\n  \"timezone\": \"<string>\",\n  \"os\": \"freebsd\",\n  \"history\": \"<number>\",\n  \"memory_mode\": \"<string>\",\n  \"update_every\": \"<number>\",\n  \"charts\": {\n    \"quis7\": {\n      \"id\": \"<string>\",\n      \"name\": \"<string>\",\n      \"type\": \"<string>\",\n      \"family\": \"<string>\",\n      \"title\": \"<string>\",\n      \"priority\": \"<number>\",\n      \"enabled\": \"<boolean>\",\n      \"units\": \"<string>\",\n      \"data_url\": \"<string>\",\n      \"chart_type\": \"area\",\n      \"duration\": \"<number>\",\n      \"first_entry\": \"<number>\",\n      \"last_entry\": \"<number>\",\n      \"update_every\": \"<number>\",\n      \"dimensions\": {\n        \"aliqua0\": {\n          \"name\": \"<string>\"\n        },\n        \"ipsum_3\": {\n          \"name\": \"<string>\"\n        }\n      },\n      \"chart_variables\": {\n        \"tempor_35_\": {\n          \"varname1\": \"<float>\",\n          \"varname2\": \"<float>\"\n        },\n        \"nulla_d25\": {\n          \"varname1\": \"<float>\",\n          \"varname2\": \"<float>\"\n        }\n      },\n      \"green\": \"<number>\",\n      \"red\": \"<number>\"\n    },\n    \"minim_631\": {\n      \"id\": \"<string>\",\n      \"name\": \"<string>\",\n      \"type\": \"<string>\",\n      \"family\": \"<string>\",\n      \"title\": \"<string>\",\n      \"priority\": \"<number>\",\n      \"enabled\": \"<boolean>\",\n      \"units\": \"<string>\",\n      \"data_url\": \"<string>\",\n      \"chart_type\": \"line\",\n      \"duration\": \"<number>\",\n      \"first_entry\": \"<number>\",\n      \"last_entry\": \"<number>\",\n      \"update_every\": \"<number>\",\n      \"dimensions\": {\n        \"irure__\": {\n          \"name\": \"<string>\"\n        }\n      },\n      \"chart_variables\": {\n        \"quis_22_\": {\n          \"varname1\": \"<float>\",\n          \"varname2\": \"<float>\"\n        },\n        \"in_30\": {\n          \"varname1\": \"<float>\",\n          \"varname2\": \"<float>\"\n        },\n        \"non90\": {\n          \"varname1\": \"<float>\",\n          \"varname2\": \"<float>\"\n        }\n      },\n      \"green\": \"<number>\",\n      \"red\": \"<number>\"\n    },\n    \"ipsum_8_b\": {\n      \"id\": \"<string>\",\n      \"name\": \"<string>\",\n      \"type\": \"<string>\",\n      \"family\": \"<string>\",\n      \"title\": \"<string>\",\n      \"priority\": \"<number>\",\n      \"enabled\": \"<boolean>\",\n      \"units\": \"<string>\",\n      \"data_url\": \"<string>\",\n      \"chart_type\": \"stacked\",\n      \"duration\": \"<number>\",\n      \"first_entry\": \"<number>\",\n      \"last_entry\": \"<number>\",\n      \"update_every\": \"<number>\",\n      \"dimensions\": {\n        \"dolorec\": {\n          \"name\": \"<string>\"\n        },\n        \"ex_b\": {\n          \"name\": \"<string>\"\n        }\n      },\n      \"chart_variables\": {\n        \"eiusmod_e_\": {\n          \"varname1\": \"<float>\",\n          \"varname2\": \"<float>\"\n        }\n      },\n      \"green\": \"<number>\",\n      \"red\": \"<number>\"\n    },\n    \"irure_a16\": {\n      \"id\": \"<string>\",\n      \"name\": \"<string>\",\n      \"type\": \"<string>\",\n      \"family\": \"<string>\",\n      \"title\": \"<string>\",\n      \"priority\": \"<number>\",\n      \"enabled\": \"<boolean>\",\n      \"units\": \"<string>\",\n      \"data_url\": \"<string>\",\n      \"chart_type\": \"area\",\n      \"duration\": \"<number>\",\n      \"first_entry\": \"<number>\",\n      \"last_entry\": \"<number>\",\n      \"update_every\": \"<number>\",\n      \"dimensions\": {\n        \"dolore_d\": {\n          \"name\": \"<string>\"\n        }\n      },\n      \"chart_variables\": {\n        \"elit_e1\": {\n          \"varname1\": \"<float>\",\n          \"varname2\": \"<float>\"\n        },\n        \"reprehenderit_f1\": {\n          \"varname1\": \"<float>\",\n          \"varname2\": \"<float>\"\n        }\n      },\n      \"green\": \"<number>\",\n      \"red\": \"<number>\"\n    }\n  },\n  \"charts_count\": \"<number>\",\n  \"dimensions_count\": \"<number>\",\n  \"alarms_count\": \"<number>\",\n  \"rrd_memory_bytes\": \"<number>\"\n}",
+                      "createdAt": "2026-07-28T02:17:15.000Z",
+                      "updatedAt": "2026-07-28T02:17:15.000Z",
+                      "uid": "35240-b7176639-8ea9-4047-9b79-c17a01894dce"
+                    }
+                  ],
+                  "createdAt": "2026-07-28T02:17:15.000Z",
+                  "updatedAt": "2026-07-28T02:17:15.000Z",
+                  "uid": "35240-529f894d-a902-486c-93f8-dcdeda9b085c"
+                }
+              ],
+              "id": "4b78e752-1721-458c-a975-e996f78a9b03",
+              "createdAt": "2026-07-28T02:17:15.000Z",
+              "updatedAt": "2026-07-28T02:17:15.000Z",
+              "uid": "35240-4b78e752-1721-458c-a975-e996f78a9b03"
+            },
+            {
+              "name": "chart",
+              "item": [
+                {
+                  "name": "Get one chart v1 - EOL",
+                  "id": "0451b7a9-0e63-4a54-9628-9c6bd6996dd7",
+                  "protocolProfileBehavior": {
+                    "disableBodyPruning": true
+                  },
+                  "request": {
+                    "auth": {
+                      "type": "noauth"
+                    },
+                    "method": "GET",
+                    "header": [
+                      {
+                        "key": "Accept",
+                        "value": "application/json"
+                      }
+                    ],
+                    "url": {
+                      "raw": "{{baseUrl}}/api/v1/chart?chart=<string>",
+                      "host": [
+                        "{{baseUrl}}"
+                      ],
+                      "path": [
+                        "api",
+                        "v1",
+                        "chart"
+                      ],
+                      "query": [
+                        {
+                          "description": "The id of the chart as returned by the `/api/v1/charts` call.",
+                          "key": "chart",
+                          "value": "<string>"
+                        }
+                      ]
+                    },
+                    "description": "The chart endpoint returns detailed information about a chart.\n**Security & Access Control:** - \ud83d\udcca **Public Data API** - Bearer token optional, IP-based ACL restrictions apply - **Default Access:** Public (no authentication required) - **Bearer Protection:** When enabled via `/api/v3/bearer_protection`, requires bearer token - **IP Restrictions:** Subject to `allow dashboard from` in netdata.conf - **Access Methods:** Direct HTTP/HTTPS, Netdata Cloud, external tools"
+                  },
+                  "response": [
+                    {
+                      "id": "7afb8ae3-5505-4454-b619-6004e9c11865",
+                      "name": "A javascript object with detailed information about the chart.",
+                      "originalRequest": {
+                        "method": "GET",
+                        "header": [
+                          {
+                            "key": "Accept",
+                            "value": "application/json"
+                          }
+                        ],
+                        "url": {
+                          "raw": "{{baseUrl}}/api/v1/chart?chart=<string>",
+                          "host": [
+                            "{{baseUrl}}"
+                          ],
+                          "path": [
+                            "api",
+                            "v1",
+                            "chart"
+                          ],
+                          "query": [
+                            {
+                              "description": "The id of the chart as returned by the `/api/v1/charts` call.",
+                              "key": "chart",
+                              "value": "<string>"
+                            }
+                          ]
+                        }
+                      },
+                      "status": "OK",
+                      "code": 200,
+                      "_postman_previewlanguage": "json",
+                      "header": [
+                        {
+                          "key": "Content-Type",
+                          "value": "application/json"
+                        }
+                      ],
+                      "cookie": [],
+                      "responseTime": null,
+                      "body": "{\n  \"id\": \"<string>\",\n  \"name\": \"<string>\",\n  \"type\": \"<string>\",\n  \"family\": \"<string>\",\n  \"title\": \"<string>\",\n  \"priority\": \"<number>\",\n  \"enabled\": \"<boolean>\",\n  \"units\": \"<string>\",\n  \"data_url\": \"<string>\",\n  \"chart_type\": \"stacked\",\n  \"duration\": \"<number>\",\n  \"first_entry\": \"<number>\",\n  \"last_entry\": \"<number>\",\n  \"update_every\": \"<number>\",\n  \"dimensions\": {\n    \"tempor4a\": {\n      \"name\": \"<string>\"\n    },\n    \"aliquip_a8\": {\n      \"name\": \"<string>\"\n    },\n    \"ea_59\": {\n      \"name\": \"<string>\"\n    }\n  },\n  \"chart_variables\": {\n    \"deserunt_66\": {\n      \"varname1\": \"<float>\",\n      \"varname2\": \"<float>\"\n    }\n  },\n  \"green\": \"<number>\",\n  \"red\": \"<number>\"\n}",
+                      "createdAt": "2026-07-28T02:17:15.000Z",
+                      "updatedAt": "2026-07-28T02:17:15.000Z",
+                      "uid": "35240-7afb8ae3-5505-4454-b619-6004e9c11865"
+                    },
+                    {
+                      "id": "f610e39f-cac4-4879-bcc6-9321fb9dcf40",
+                      "name": "No chart id was supplied in the request.",
+                      "originalRequest": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                          "raw": "{{baseUrl}}/api/v1/chart?chart=<string>",
+                          "host": [
+                            "{{baseUrl}}"
+                          ],
+                          "path": [
+                            "api",
+                            "v1",
+                            "chart"
+                          ],
+                          "query": [
+                            {
+                              "description": "The id of the chart as returned by the `/api/v1/charts` call.",
+                              "key": "chart",
+                              "value": "<string>"
+                            }
+                          ]
+                        }
+                      },
+                      "status": "Bad Request",
+                      "code": 400,
+                      "_postman_previewlanguage": "text",
+                      "header": [],
+                      "cookie": [],
+                      "responseTime": null,
+                      "body": null,
+                      "createdAt": "2026-07-28T02:17:15.000Z",
+                      "updatedAt": "2026-07-28T02:17:15.000Z",
+                      "uid": "35240-f610e39f-cac4-4879-bcc6-9321fb9dcf40"
+                    },
+                    {
+                      "id": "292a4459-178b-4211-901b-0bec68c7fc73",
+                      "name": "No chart with the given id is found.",
+                      "originalRequest": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                          "raw": "{{baseUrl}}/api/v1/chart?chart=<string>",
+                          "host": [
+                            "{{baseUrl}}"
+                          ],
+                          "path": [
+                            "api",
+                            "v1",
+                            "chart"
+                          ],
+                          "query": [
+                            {
+                              "description": "The id of the chart as returned by the `/api/v1/charts` call.",
+                              "key": "chart",
+                              "value": "<string>"
+                            }
+                          ]
+                        }
+                      },
+                      "status": "Not Found",
+                      "code": 404,
+                      "_postman_previewlanguage": "text",
+                      "header": [],
+                      "cookie": [],
+                      "responseTime": null,
+                      "body": null,
+                      "createdAt": "2026-07-28T02:17:15.000Z",
+                      "updatedAt": "2026-07-28T02:17:15.000Z",
+                      "uid": "35240-292a4459-178b-4211-901b-0bec68c7fc73"
+                    }
+                  ],
+                  "createdAt": "2026-07-28T02:17:15.000Z",
+                  "updatedAt": "2026-07-28T02:17:15.000Z",
+                  "uid": "35240-0451b7a9-0e63-4a54-9628-9c6bd6996dd7"
+                }
+              ],
+              "id": "a21dcfd1-7b78-43cc-9ae4-bbcd24fb901b",
+              "createdAt": "2026-07-28T02:17:15.000Z",
+              "updatedAt": "2026-07-28T02:17:15.000Z",
+              "uid": "35240-a21dcfd1-7b78-43cc-9ae4-bbcd24fb901b"
+            }
+          ],
+          "id": "70b37a38-3d8a-412f-ab27-49eed89cb21b",
+          "createdAt": "2026-07-28T02:17:15.000Z",
+          "updatedAt": "2026-07-28T02:17:15.000Z",
+          "uid": "35240-70b37a38-3d8a-412f-ab27-49eed89cb21b"
+        },
+        {
+          "name": "v3",
+          "item": [
+            {
+              "name": "spaces",
+              "item": [
+                {
+                  "name": "{spaceID}",
+                  "item": [
+                    {
+                      "name": "rooms",
+                      "item": [
+                        {
+                          "name": "{roomID}",
+                          "item": [
+                            {
+                              "name": "data",
+                              "item": [
+                                {
+                                  "name": "Time series data queries",
+                                  "id": "1edf3e1a-55f0-4a9d-b44d-6a128e73eee0",
+                                  "protocolProfileBehavior": {
+                                    "disableBodyPruning": true
+                                  },
+                                  "request": {
+                                    "method": "POST",
+                                    "header": [
+                                      {
+                                        "key": "Content-Type",
+                                        "value": "application/json"
+                                      },
+                                      {
+                                        "key": "Accept",
+                                        "value": "application/json"
+                                      }
+                                    ],
+                                    "body": {
+                                      "mode": "raw",
+                                      "raw": "{\n  \"aggregations\": {\n    \"metrics\": [\n      {\n        \"aggregation\": \"average\",\n        \"group_by\": [\n          \"units\",\n          \"node\"\n        ],\n        \"group_by_label\": [\n          \"<string>\",\n          \"<string>\"\n        ]\n      },\n      {\n        \"aggregation\": \"average\",\n        \"group_by\": [\n          \"selected\",\n          \"dimension\"\n        ],\n        \"group_by_label\": [\n          \"<string>\",\n          \"<string>\"\n        ]\n      }\n    ],\n    \"time\": {\n      \"time_group\": \"average\",\n      \"time_group_options\": \"trimmed-median\",\n      \"time_resampling\": \"<integer>\"\n    }\n  },\n  \"format\": \"json2\",\n  \"options\": [\n    \"flip\",\n    \"all-dimensions\"\n  ],\n  \"scope\": {\n    \"contexts\": [\n      \"<string>\",\n      \"<string>\"\n    ],\n    \"dimensions\": [\n      \"<string>\",\n      \"<string>\"\n    ],\n    \"instances\": [\n      \"<string>\",\n      \"<string>\"\n    ],\n    \"labels\": [\n      \"<string>\",\n      \"<string>\"\n    ],\n    \"nodes\": [\n      \"<string>\",\n      \"<string>\"\n    ]\n  },\n  \"selectors\": {\n    \"alerts\": [\n      \"<string>\",\n      \"<string>\"\n    ],\n    \"contexts\": [\n      \"<string>\",\n      \"<string>\"\n    ],\n    \"dimensions\": [\n      \"<string>\",\n      \"<string>\"\n    ],\n    \"instances\": [\n      \"<string>\",\n      \"<string>\"\n    ],\n    \"labels\": [\n      \"<string>\",\n      \"<string>\"\n    ],\n    \"nodes\": [\n      \"<string>\",\n      \"<string>\"\n    ]\n  },\n  \"timeout\": 10000,\n  \"window\": {\n    \"after\": \"<integer>\",\n    \"baseline\": {\n      \"after\": \"<integer>\",\n      \"before\": \"<integer>\",\n      \"duration\": \"<integer>\",\n      \"points\": \"<integer>\"\n    },\n    \"before\": \"<integer>\",\n    \"duration\": \"<integer>\",\n    \"points\": \"<integer>\",\n    \"tier\": \"<integer>\"\n  }\n}",
+                                      "options": {
+                                        "raw": {
+                                          "headerFamily": "json",
+                                          "language": "json"
+                                        }
+                                      }
+                                    },
+                                    "url": {
+                                      "raw": "{{baseUrl}}/api/v3/spaces/:spaceID/rooms/:roomID/data",
+                                      "host": [
+                                        "{{baseUrl}}"
+                                      ],
+                                      "path": [
+                                        "api",
+                                        "v3",
+                                        "spaces",
+                                        ":spaceID",
+                                        "rooms",
+                                        ":roomID",
+                                        "data"
+                                      ],
+                                      "variable": [
+                                        {
+                                          "id": "b9600acd-d855-44d2-9f7d-06d1af0d1c28",
+                                          "key": "spaceID",
+                                          "value": "<uuid>",
+                                          "description": "(Required) The unique identifier of the requested space."
+                                        },
+                                        {
+                                          "id": "8e3101cc-3d6d-4c2e-baa0-c61a86c60299",
+                                          "key": "roomID",
+                                          "value": "<uuid>",
+                                          "description": "(Required) The unique identifier of the requested room."
+                                        }
+                                      ]
+                                    },
+                                    "description": "Multi-node, multi-context, multi-instance, multi-dimension data queries, with time and metric aggregation."
+                                  },
+                                  "response": [
+                                    {
+                                      "id": "de3b22fc-2a4e-41f0-adda-0232e95f06d9",
+                                      "name": "OK",
+                                      "originalRequest": {
+                                        "method": "POST",
+                                        "header": [
+                                          {
+                                            "key": "Content-Type",
+                                            "value": "application/json"
+                                          },
+                                          {
+                                            "key": "Accept",
+                                            "value": "application/json"
+                                          }
+                                        ],
+                                        "body": {
+                                          "mode": "raw",
+                                          "raw": "{\n  \"aggregations\": {\n    \"metrics\": [\n      {\n        \"aggregation\": \"average\",\n        \"group_by\": [\n          \"units\",\n          \"node\"\n        ],\n        \"group_by_label\": [\n          \"<string>\",\n          \"<string>\"\n        ]\n      },\n      {\n        \"aggregation\": \"average\",\n        \"group_by\": [\n          \"selected\",\n          \"dimension\"\n        ],\n        \"group_by_label\": [\n          \"<string>\",\n          \"<string>\"\n        ]\n      }\n    ],\n    \"time\": {\n      \"time_group\": \"average\",\n      \"time_group_options\": \"trimmed-median\",\n      \"time_resampling\": \"<integer>\"\n    }\n  },\n  \"format\": \"json2\",\n  \"options\": [\n    \"flip\",\n    \"all-dimensions\"\n  ],\n  \"scope\": {\n    \"contexts\": [\n      \"<string>\",\n      \"<string>\"\n    ],\n    \"dimensions\": [\n      \"<string>\",\n      \"<string>\"\n    ],\n    \"instances\": [\n      \"<string>\",\n      \"<string>\"\n    ],\n    \"labels\": [\n      \"<string>\",\n      \"<string>\"\n    ],\n    \"nodes\": [\n      \"<string>\",\n      \"<string>\"\n    ]\n  },\n  \"selectors\": {\n    \"alerts\": [\n      \"<string>\",\n      \"<string>\"\n    ],\n    \"contexts\": [\n      \"<string>\",\n      \"<string>\"\n    ],\n    \"dimensions\": [\n      \"<string>\",\n      \"<string>\"\n    ],\n    \"instances\": [\n      \"<string>\",\n      \"<string>\"\n    ],\n    \"labels\": [\n      \"<string>\",\n      \"<string>\"\n    ],\n    \"nodes\": [\n      \"<string>\",\n      \"<string>\"\n    ]\n  },\n  \"timeout\": 10000,\n  \"window\": {\n    \"after\": \"<integer>\",\n    \"baseline\": {\n      \"after\": \"<integer>\",\n      \"before\": \"<integer>\",\n      \"duration\": \"<integer>\",\n      \"points\": \"<integer>\"\n    },\n    \"before\": \"<integer>\",\n    \"duration\": \"<integer>\",\n    \"points\": \"<integer>\",\n    \"tier\": \"<integer>\"\n  }\n}",
+                                          "options": {
+                                            "raw": {
+                                              "headerFamily": "json",
+                                              "language": "json"
+                                            }
+                                          }
+                                        },
+                                        "url": {
+                                          "raw": "{{baseUrl}}/api/v3/spaces/:spaceID/rooms/:roomID/data",
+                                          "host": [
+                                            "{{baseUrl}}"
+                                          ],
+                                          "path": [
+                                            "api",
+                                            "v3",
+                                            "spaces",
+                                            ":spaceID",
+                                            "rooms",
+                                            ":roomID",
+                                            "data"
+                                          ],
+                                          "variable": [
+                                            {
+                                              "key": "spaceID"
+                                            },
+                                            {
+                                              "key": "roomID"
+                                            }
+                                          ]
+                                        }
+                                      },
+                                      "status": "OK",
+                                      "code": 200,
+                                      "_postman_previewlanguage": "json",
+                                      "header": [
+                                        {
+                                          "key": "Content-Type",
+                                          "value": "application/json"
+                                        }
+                                      ],
+                                      "cookie": [],
+                                      "responseTime": null,
+                                      "body": "{\n  \"agents\": [\n    {\n      \"ai\": \"<integer>\",\n      \"claim_id\": \"<uuid>\",\n      \"mg\": \"<uuid>\",\n      \"nd\": \"<uuid>\",\n      \"nm\": \"<string>\",\n      \"timings\": {\n        \"cloud_ms\": \"<number>\",\n        \"node_max_ms\": \"<number>\",\n        \"output_ms\": \"<number>\",\n        \"prep_ms\": \"<number>\",\n        \"query_ms\": \"<number>\",\n        \"routing_ms\": \"<number>\",\n        \"total_ms\": \"<number>\"\n      }\n    },\n    {\n      \"ai\": \"<integer>\",\n      \"claim_id\": \"<uuid>\",\n      \"mg\": \"<uuid>\",\n      \"nd\": \"<uuid>\",\n      \"nm\": \"<string>\",\n      \"timings\": {\n        \"cloud_ms\": \"<number>\",\n        \"node_max_ms\": \"<number>\",\n        \"output_ms\": \"<number>\",\n        \"prep_ms\": \"<number>\",\n        \"query_ms\": \"<number>\",\n        \"routing_ms\": \"<number>\",\n        \"total_ms\": \"<number>\"\n      }\n    }\n  ],\n  \"api\": \"<integer>\",\n  \"db\": {\n    \"dimensions\": {\n      \"ids\": [\n        \"<string>\",\n        \"<string>\"\n      ],\n      \"sts\": {\n        \"arc\": [\n          \"<number>\",\n          \"<number>\"\n        ],\n        \"arp\": [\n          \"<number>\",\n          \"<number>\"\n        ],\n        \"avg\": [\n          \"<number>\",\n          \"<number>\"\n        ],\n        \"cnt\": [\n          \"<number>\",\n          \"<number>\"\n        ],\n        \"con\": [\n          \"<number>\",\n          \"<number>\"\n        ],\n        \"max\": [\n          \"<number>\",\n          \"<number>\"\n        ],\n        \"min\": [\n          \"<number>\",\n          \"<number>\"\n        ],\n        \"sum\": [\n          \"<number>\",\n          \"<number>\"\n        ],\n        \"vol\": [\n          \"<number>\",\n          \"<number>\"\n        ]\n      },\n      \"units\": [\n        \"<string>\",\n        \"<string>\"\n      ]\n    },\n    \"first_entry\": \"<integer>\",\n    \"last_entry\": \"<integer>\",\n    \"per_tier\": [\n      {\n        \"first_entry\": \"<integer>\",\n        \"last_entry\": \"<integer>\",\n        \"points\": \"<integer>\",\n        \"queries\": \"<integer>\",\n        \"tier\": \"<integer>\",\n        \"update_every\": \"<integer>\"\n      },\n      {\n        \"first_entry\": \"<integer>\",\n        \"last_entry\": \"<integer>\",\n        \"points\": \"<integer>\",\n        \"queries\": \"<integer>\",\n        \"tier\": \"<integer>\",\n        \"update_every\": \"<integer>\"\n      }\n    ],\n    \"tiers\": \"<integer>\",\n    \"units\": [\n      \"<integer>\",\n      \"<integer>\"\n    ],\n    \"update_every\": \"<integer>\"\n  },\n  \"functions\": [\n    \"<string>\",\n    \"<string>\"\n  ],\n  \"result\": {\n    \"data\": [\n      [],\n      []\n    ],\n    \"labels\": [\n      \"<string>\",\n      \"<string>\"\n    ],\n    \"point\": {\n      \"voluptateac_\": \"<integer>\"\n    }\n  },\n  \"summary\": {\n    \"alerts\": [\n      {\n        \"cl\": \"<integer>\",\n        \"cr\": \"<integer>\",\n        \"nm\": \"<string>\",\n        \"ot\": \"<integer>\",\n        \"wr\": \"<integer>\"\n      },\n      {\n        \"cl\": \"<integer>\",\n        \"cr\": \"<integer>\",\n        \"nm\": \"<string>\",\n        \"ot\": \"<integer>\",\n        \"wr\": \"<integer>\"\n      }\n    ],\n    \"contexts\": [\n      {\n        \"al\": {\n          \"cl\": \"<integer>\",\n          \"cr\": \"<integer>\",\n          \"nm\": \"<string>\",\n          \"ot\": \"<integer>\",\n          \"wr\": \"<integer>\"\n        },\n        \"ds\": {\n          \"ex\": \"<integer>\",\n          \"fl\": \"<integer>\",\n          \"qr\": \"<integer>\",\n          \"sl\": \"<integer>\"\n        },\n        \"id\": \"<string>\",\n        \"is\": {\n          \"ex\": \"<integer>\",\n          \"fl\": \"<integer>\",\n          \"qr\": \"<integer>\",\n          \"sl\": \"<integer>\"\n        },\n        \"sts\": [\n          \"<integer>\",\n          \"<integer>\"\n        ]\n      },\n      {\n        \"al\": {\n          \"cl\": \"<integer>\",\n          \"cr\": \"<integer>\",\n          \"nm\": \"<string>\",\n          \"ot\": \"<integer>\",\n          \"wr\": \"<integer>\"\n        },\n        \"ds\": {\n          \"ex\": \"<integer>\",\n          \"fl\": \"<integer>\",\n          \"qr\": \"<integer>\",\n          \"sl\": \"<integer>\"\n        },\n        \"id\": \"<string>\",\n        \"is\": {\n          \"ex\": \"<integer>\",\n          \"fl\": \"<integer>\",\n          \"qr\": \"<integer>\",\n          \"sl\": \"<integer>\"\n        },\n        \"sts\": [\n          \"<integer>\",\n          \"<integer>\"\n        ]\n      }\n    ],\n    \"dimensions\": [\n      {\n        \"ds\": {\n          \"ex\": \"<integer>\",\n          \"fl\": \"<integer>\",\n          \"qr\": \"<integer>\",\n          \"sl\": \"<integer>\"\n        },\n        \"id\": \"<string>\",\n        \"nm\": \"<string>\",\n        \"pri\": \"<integer>\",\n        \"sts\": [\n          \"<integer>\",\n          \"<integer>\"\n        ]\n      },\n      {\n        \"ds\": {\n          \"ex\": \"<integer>\",\n          \"fl\": \"<integer>\",\n          \"qr\": \"<integer>\",\n          \"sl\": \"<integer>\"\n        },\n        \"id\": \"<string>\",\n        \"nm\": \"<string>\",\n        \"pri\": \"<integer>\",\n        \"sts\": [\n          \"<integer>\",\n          \"<integer>\"\n        ]\n      }\n    ],\n    \"globals\": {\n      \"sts\": [\n        \"<integer>\",\n        \"<integer>\"\n      ]\n    },\n    \"instances\": [\n      {\n        \"al\": {\n          \"cl\": \"<integer>\",\n          \"cr\": \"<integer>\",\n          \"nm\": \"<string>\",\n          \"ot\": \"<integer>\",\n          \"wr\": \"<integer>\"\n        },\n        \"ds\": {\n          \"ex\": \"<integer>\",\n          \"fl\": \"<integer>\",\n          \"qr\": \"<integer>\",\n          \"sl\": \"<integer>\"\n        },\n        \"id\": \"<string>\",\n        \"ni\": \"<integer>\",\n        \"nm\": \"<string>\",\n        \"sts\": [\n          \"<integer>\",\n          \"<integer>\"\n        ]\n      },\n      {\n        \"al\": {\n          \"cl\": \"<integer>\",\n          \"cr\": \"<integer>\",\n          \"nm\": \"<string>\",\n          \"ot\": \"<integer>\",\n          \"wr\": \"<integer>\"\n        },\n        \"ds\": {\n          \"ex\": \"<integer>\",\n          \"fl\": \"<integer>\",\n          \"qr\": \"<integer>\",\n          \"sl\": \"<integer>\"\n        },\n        \"id\": \"<string>\",\n        \"ni\": \"<integer>\",\n        \"nm\": \"<string>\",\n        \"sts\": [\n          \"<integer>\",\n          \"<integer>\"\n        ]\n      }\n    ],\n    \"labels\": [\n      {\n        \"ds\": {\n          \"ex\": \"<integer>\",\n          \"fl\": \"<integer>\",\n          \"qr\": \"<integer>\",\n          \"sl\": \"<integer>\"\n        },\n        \"id\": \"<string>\",\n        \"sts\": [\n          \"<integer>\",\n          \"<integer>\"\n        ],\n        \"vl\": [\n          {\n            \"ds\": {\n              \"ex\": \"<integer>\",\n              \"fl\": \"<integer>\",\n              \"qr\": \"<integer>\",\n              \"sl\": \"<integer>\"\n            },\n            \"id\": \"<string>\",\n            \"sts\": [\n              \"<integer>\",\n              \"<integer>\"\n            ]\n          },\n          {\n            \"ds\": {\n              \"ex\": \"<integer>\",\n              \"fl\": \"<integer>\",\n              \"qr\": \"<integer>\",\n              \"sl\": \"<integer>\"\n            },\n            \"id\": \"<string>\",\n            \"sts\": [\n              \"<integer>\",\n              \"<integer>\"\n            ]\n          }\n        ]\n      },\n      {\n        \"ds\": {\n          \"ex\": \"<integer>\",\n          \"fl\": \"<integer>\",\n          \"qr\": \"<integer>\",\n          \"sl\": \"<integer>\"\n        },\n        \"id\": \"<string>\",\n        \"sts\": [\n          \"<integer>\",\n          \"<integer>\"\n        ],\n        \"vl\": [\n          {\n            \"ds\": {\n              \"ex\": \"<integer>\",\n              \"fl\": \"<integer>\",\n              \"qr\": \"<integer>\",\n              \"sl\": \"<integer>\"\n            },\n            \"id\": \"<string>\",\n            \"sts\": [\n              \"<integer>\",\n              \"<integer>\"\n            ]\n          },\n          {\n            \"ds\": {\n              \"ex\": \"<integer>\",\n              \"fl\": \"<integer>\",\n              \"qr\": \"<integer>\",\n              \"sl\": \"<integer>\"\n            },\n            \"id\": \"<string>\",\n            \"sts\": [\n              \"<integer>\",\n              \"<integer>\"\n            ]\n          }\n        ]\n      }\n    ],\n    \"nodes\": [\n      {\n        \"al\": {\n          \"cl\": \"<integer>\",\n          \"cr\": \"<integer>\",\n          \"nm\": \"<string>\",\n          \"ot\": \"<integer>\",\n          \"wr\": \"<integer>\"\n        },\n        \"ds\": {\n          \"ex\": \"<integer>\",\n          \"fl\": \"<integer>\",\n          \"qr\": \"<integer>\",\n          \"sl\": \"<integer>\"\n        },\n        \"is\": {\n          \"ex\": \"<integer>\",\n          \"fl\": \"<integer>\",\n          \"qr\": \"<integer>\",\n          \"sl\": \"<integer>\"\n        },\n        \"mg\": \"<uuid>\",\n        \"nd\": \"<uuid>\",\n        \"ni\": \"<integer>\",\n        \"nm\": \"<string>\",\n        \"st\": {\n          \"ai\": \"<integer>\",\n          \"code\": \"<integer>\",\n          \"ms\": \"<number>\",\n          \"msg\": \"<string>\"\n        },\n        \"sts\": [\n          \"<integer>\",\n          \"<integer>\"\n        ]\n      },\n      {\n        \"al\": {\n          \"cl\": \"<integer>\",\n          \"cr\": \"<integer>\",\n          \"nm\": \"<string>\",\n          \"ot\": \"<integer>\",\n          \"wr\": \"<integer>\"\n        },\n        \"ds\": {\n          \"ex\": \"<integer>\",\n          \"fl\": \"<integer>\",\n          \"qr\": \"<integer>\",\n          \"sl\": \"<integer>\"\n        },\n        \"is\": {\n          \"ex\": \"<integer>\",\n          \"fl\": \"<integer>\",\n          \"qr\": \"<integer>\",\n          \"sl\": \"<integer>\"\n        },\n        \"mg\": \"<uuid>\",\n        \"nd\": \"<uuid>\",\n        \"ni\": \"<integer>\",\n        \"nm\": \"<string>\",\n        \"st\": {\n          \"ai\": \"<integer>\",\n          \"code\": \"<integer>\",\n          \"ms\": \"<number>\",\n          \"msg\": \"<string>\"\n        },\n        \"sts\": [\n          \"<integer>\",\n          \"<integer>\"\n        ]\n      }\n    ]\n  },\n  \"timings\": {\n    \"cloud_ms\": \"<number>\",\n    \"node_max_ms\": \"<number>\",\n    \"output_ms\": \"<number>\",\n    \"prep_ms\": \"<number>\",\n    \"query_ms\": \"<number>\",\n    \"routing_ms\": \"<number>\",\n    \"total_ms\": \"<number>\"\n  },\n  \"totals\": {\n    \"contexts\": {\n      \"ex\": \"<integer>\",\n      \"fl\": \"<integer>\",\n      \"qr\": \"<integer>\",\n      \"sl\": \"<integer>\"\n    },\n    \"dimensions\": {\n      \"ex\": \"<integer>\",\n      \"fl\": \"<integer>\",\n      \"qr\": \"<integer>\",\n      \"sl\": \"<integer>\"\n    },\n    \"instances\": {\n      \"ex\": \"<integer>\",\n      \"fl\": \"<integer>\",\n      \"qr\": \"<integer>\",\n      \"sl\": \"<integer>\"\n    },\n    \"label_key_values\": {\n      \"ex\": \"<integer>\",\n      \"fl\": \"<integer>\",\n      \"qr\": \"<integer>\",\n      \"sl\": \"<integer>\"\n    },\n    \"label_keys\": {\n      \"ex\": \"<integer>\",\n      \"fl\": \"<integer>\",\n      \"qr\": \"<integer>\",\n      \"sl\": \"<integer>\"\n    },\n    \"nodes\": {\n      \"ex\": \"<integer>\",\n      \"fl\": \"<integer>\",\n      \"qr\": \"<integer>\",\n      \"sl\": \"<integer>\"\n    }\n  },\n  \"versions\": {\n    \"alerts_hard_hash\": \"<integer>\",\n    \"alerts_soft_hash\": \"<integer>\",\n    \"contexts_hard_hash\": \"<integer>\",\n    \"contexts_soft_hash\": \"<integer>\",\n    \"nodes_hard_hash\": \"<integer>\"\n  },\n  \"view\": {\n    \"after\": \"<integer>\",\n    \"before\": \"<integer>\",\n    \"chart_type\": \"<string>\",\n    \"dimensions\": {\n      \"aggregated\": [\n        \"<integer>\",\n        \"<integer>\"\n      ],\n      \"grouped_by\": [\n        \"<string>\",\n        \"<string>\"\n      ],\n      \"ids\": [\n        \"<string>\",\n        \"<string>\"\n      ],\n      \"labels\": {\n        \"id_2\": [\n          [\n            \"<string>\",\n            \"<string>\"\n          ],\n          [\n            \"<string>\",\n            \"<string>\"\n          ]\n        ]\n      },\n      \"names\": [\n        \"<string>\",\n        \"<string>\"\n      ],\n      \"priorities\": [\n        \"<integer>\",\n        \"<integer>\"\n      ],\n      \"sts\": {\n        \"arc\": [\n          \"<number>\",\n          \"<number>\"\n        ],\n        \"arp\": [\n          \"<number>\",\n          \"<number>\"\n        ],\n        \"avg\": [\n          \"<number>\",\n          \"<number>\"\n        ],\n        \"cnt\": [\n          \"<number>\",\n          \"<number>\"\n        ],\n        \"con\": [\n          \"<number>\",\n          \"<number>\"\n        ],\n        \"max\": [\n          \"<number>\",\n          \"<number>\"\n        ],\n        \"min\": [\n          \"<number>\",\n          \"<number>\"\n        ],\n        \"sum\": [\n          \"<number>\",\n          \"<number>\"\n        ],\n        \"vol\": [\n          \"<number>\",\n          \"<number>\"\n        ]\n      },\n      \"units\": [\n        \"<string>\",\n        \"<string>\"\n      ]\n    },\n    \"max\": \"<number>\",\n    \"min\": \"<number>\",\n    \"partial_data_trimming\": {\n      \"expected_after\": \"<integer>\",\n      \"max_update_every\": \"<integer>\",\n      \"trimmed_after\": \"<integer>\"\n    },\n    \"points\": \"<integer>\",\n    \"title\": \"<string>\",\n    \"units\": [\n      \"<integer>\",\n      \"<integer>\"\n    ],\n    \"update_every\": \"<integer>\"\n  }\n}",
+                                      "createdAt": "2026-07-28T02:17:15.000Z",
+                                      "updatedAt": "2026-07-28T02:17:15.000Z",
+                                      "uid": "35240-de3b22fc-2a4e-41f0-adda-0232e95f06d9"
+                                    },
+                                    {
+                                      "id": "35d86efd-fae2-4c88-8814-b4f1ee489cbd",
+                                      "name": " `\"errorCode\": \"ErrBadRequest\"`: when invalid query parameters/req. payload are provided <br /> `\"errorCode\": \"ErrBigAgentResponses\"`: when Agents return big responses and the caller needs to filter further, reduce the amount of requested `points` or use ",
+                                      "originalRequest": {
+                                        "method": "POST",
+                                        "header": [
+                                          {
+                                            "key": "Content-Type",
+                                            "value": "application/json"
+                                          },
+                                          {
+                                            "key": "Accept",
+                                            "value": "application/json"
+                                          }
+                                        ],
+                                        "body": {
+                                          "mode": "raw",
+                                          "raw": "{\n  \"aggregations\": {\n    \"metrics\": [\n      {\n        \"aggregation\": \"average\",\n        \"group_by\": [\n          \"units\",\n          \"node\"\n        ],\n        \"group_by_label\": [\n          \"<string>\",\n          \"<string>\"\n        ]\n      },\n      {\n        \"aggregation\": \"average\",\n        \"group_by\": [\n          \"selected\",\n          \"dimension\"\n        ],\n        \"group_by_label\": [\n          \"<string>\",\n          \"<string>\"\n        ]\n      }\n    ],\n    \"time\": {\n      \"time_group\": \"average\",\n      \"time_group_options\": \"trimmed-median\",\n      \"time_resampling\": \"<integer>\"\n    }\n  },\n  \"format\": \"json2\",\n  \"options\": [\n    \"flip\",\n    \"all-dimensions\"\n  ],\n  \"scope\": {\n    \"contexts\": [\n      \"<string>\",\n      \"<string>\"\n    ],\n    \"dimensions\": [\n      \"<string>\",\n      \"<string>\"\n    ],\n    \"instances\": [\n      \"<string>\",\n      \"<string>\"\n    ],\n    \"labels\": [\n      \"<string>\",\n      \"<string>\"\n    ],\n    \"nodes\": [\n      \"<string>\",\n      \"<string>\"\n    ]\n  },\n  \"selectors\": {\n    \"alerts\": [\n      \"<string>\",\n      \"<string>\"\n    ],\n    \"contexts\": [\n      \"<string>\",\n      \"<string>\"\n    ],\n    \"dimensions\": [\n      \"<string>\",\n      \"<string>\"\n    ],\n    \"instances\": [\n      \"<string>\",\n      \"<string>\"\n    ],\n    \"labels\": [\n      \"<string>\",\n      \"<string>\"\n    ],\n    \"nodes\": [\n      \"<string>\",\n      \"<string>\"\n    ]\n  },\n  \"timeout\": 10000,\n  \"window\": {\n    \"after\": \"<integer>\",\n    \"baseline\": {\n      \"after\": \"<integer>\",\n      \"before\": \"<integer>\",\n      \"duration\": \"<integer>\",\n      \"points\": \"<integer>\"\n    },\n    \"before\": \"<integer>\",\n    \"duration\": \"<integer>\",\n    \"points\": \"<integer>\",\n    \"tier\": \"<integer>\"\n  }\n}",
+                                          "options": {
+                                            "raw": {
+                                              "headerFamily": "json",
+                                              "language": "json"
+                                            }
+                                          }
+                                        },
+                                        "url": {
+                                          "raw": "{{baseUrl}}/api/v3/spaces/:spaceID/rooms/:roomID/data",
+                                          "host": [
+                                            "{{baseUrl}}"
+                                          ],
+                                          "path": [
+                                            "api",
+                                            "v3",
+                                            "spaces",
+                                            ":spaceID",
+                                            "rooms",
+                                            ":roomID",
+                                            "data"
+                                          ],
+                                          "variable": [
+                                            {
+                                              "key": "spaceID"
+                                            },
+                                            {
+                                              "key": "roomID"
+                                            }
+                                          ]
+                                        }
+                                      },
+                                      "status": "Bad Request",
+                                      "code": 400,
+                                      "_postman_previewlanguage": "json",
+                                      "header": [
+                                        {
+                                          "key": "Content-Type",
+                                          "value": "application/json"
+                                        }
+                                      ],
+                                      "cookie": [],
+                                      "responseTime": null,
+                                      "body": "{\n  \"details\": {\n    \"quis_7a\": {}\n  },\n  \"errorCode\": \"<string>\",\n  \"errorMessage\": \"<string>\",\n  \"errorMsgKey\": \"<string>\",\n  \"validationErrors\": {\n    \"est_bf\": {\n      \"code\": \"<string>\",\n      \"message\": \"<string>\"\n    }\n  }\n}",
+                                      "createdAt": "2026-07-28T02:17:15.000Z",
+                                      "updatedAt": "2026-07-28T02:17:15.000Z",
+                                      "uid": "35240-35d86efd-fae2-4c88-8814-b4f1ee489cbd"
+                                    },
+                                    {
+                                      "id": "047984cf-b436-476f-bd85-e8195c32d48d",
+                                      "name": " `\"errorCode\": \"ErrUnauthorized\"`: when the caller is not authenticated or not authorized to access this resource ",
+                                      "originalRequest": {
+                                        "method": "POST",
+                                        "header": [
+                                          {
+                                            "key": "Content-Type",
+                                            "value": "application/json"
+                                          },
+                                          {
+                                            "key": "Accept",
+                                            "value": "application/json"
+                                          }
+                                        ],
+                                        "body": {
+                                          "mode": "raw",
+                                          "raw": "{\n  \"aggregations\": {\n    \"metrics\": [\n      {\n        \"aggregation\": \"average\",\n        \"group_by\": [\n          \"units\",\n          \"node\"\n        ],\n        \"group_by_label\": [\n          \"<string>\",\n          \"<string>\"\n        ]\n      },\n      {\n        \"aggregation\": \"average\",\n        \"group_by\": [\n          \"selected\",\n          \"dimension\"\n        ],\n        \"group_by_label\": [\n          \"<string>\",\n          \"<string>\"\n        ]\n      }\n    ],\n    \"time\": {\n      \"time_group\": \"average\",\n      \"time_group_options\": \"trimmed-median\",\n      \"time_resampling\": \"<integer>\"\n    }\n  },\n  \"format\": \"json2\",\n  \"options\": [\n    \"flip\",\n    \"all-dimensions\"\n  ],\n  \"scope\": {\n    \"contexts\": [\n      \"<string>\",\n      \"<string>\"\n    ],\n    \"dimensions\": [\n      \"<string>\",\n      \"<string>\"\n    ],\n    \"instances\": [\n      \"<string>\",\n      \"<string>\"\n    ],\n    \"labels\": [\n      \"<string>\",\n      \"<string>\"\n    ],\n    \"nodes\": [\n      \"<string>\",\n      \"<string>\"\n    ]\n  },\n  \"selectors\": {\n    \"alerts\": [\n      \"<string>\",\n      \"<string>\"\n    ],\n    \"contexts\": [\n      \"<string>\",\n      \"<string>\"\n    ],\n    \"dimensions\": [\n      \"<string>\",\n      \"<string>\"\n    ],\n    \"instances\": [\n      \"<string>\",\n      \"<string>\"\n    ],\n    \"labels\": [\n      \"<string>\",\n      \"<string>\"\n    ],\n    \"nodes\": [\n      \"<string>\",\n      \"<string>\"\n    ]\n  },\n  \"timeout\": 10000,\n  \"window\": {\n    \"after\": \"<integer>\",\n    \"baseline\": {\n      \"after\": \"<integer>\",\n      \"before\": \"<integer>\",\n      \"duration\": \"<integer>\",\n      \"points\": \"<integer>\"\n    },\n    \"before\": \"<integer>\",\n    \"duration\": \"<integer>\",\n    \"points\": \"<integer>\",\n    \"tier\": \"<integer>\"\n  }\n}",
+                                          "options": {
+                                            "raw": {
+                                              "headerFamily": "json",
+                                              "language": "json"
+                                            }
+                                          }
+                                        },
+                                        "url": {
+                                          "raw": "{{baseUrl}}/api/v3/spaces/:spaceID/rooms/:roomID/data",
+                                          "host": [
+                                            "{{baseUrl}}"
+                                          ],
+                                          "path": [
+                                            "api",
+                                            "v3",
+                                            "spaces",
+                                            ":spaceID",
+                                            "rooms",
+                                            ":roomID",
+                                            "data"
+                                          ],
+                                          "variable": [
+                                            {
+                                              "key": "spaceID"
+                                            },
+                                            {
+                                              "key": "roomID"
+                                            }
+                                          ]
+                                        }
+                                      },
+                                      "status": "Unauthorized",
+                                      "code": 401,
+                                      "_postman_previewlanguage": "json",
+                                      "header": [
+                                        {
+                                          "key": "Content-Type",
+                                          "value": "application/json"
+                                        }
+                                      ],
+                                      "cookie": [],
+                                      "responseTime": null,
+                                      "body": "{\n  \"details\": {\n    \"quis_7a\": {}\n  },\n  \"errorCode\": \"<string>\",\n  \"errorMessage\": \"<string>\",\n  \"errorMsgKey\": \"<string>\",\n  \"validationErrors\": {\n    \"est_bf\": {\n      \"code\": \"<string>\",\n      \"message\": \"<string>\"\n    }\n  }\n}",
+                                      "createdAt": "2026-07-28T02:17:15.000Z",
+                                      "updatedAt": "2026-07-28T02:17:15.000Z",
+                                      "uid": "35240-047984cf-b436-476f-bd85-e8195c32d48d"
+                                    },
+                                    {
+                                      "id": "65275668-84a1-4ead-99f1-730a85971fdd",
+                                      "name": " `\"errorCode\": \"ErrInternal\"`: when some Internal Server Error has occurred ",
+                                      "originalRequest": {
+                                        "method": "POST",
+                                        "header": [
+                                          {
+                                            "key": "Content-Type",
+                                            "value": "application/json"
+                                          },
+                                          {
+                                            "key": "Accept",
+                                            "value": "application/json"
+                                          }
+                                        ],
+                                        "body": {
+                                          "mode": "raw",
+                                          "raw": "{\n  \"aggregations\": {\n    \"metrics\": [\n      {\n        \"aggregation\": \"average\",\n        \"group_by\": [\n          \"units\",\n          \"node\"\n        ],\n        \"group_by_label\": [\n          \"<string>\",\n          \"<string>\"\n        ]\n      },\n      {\n        \"aggregation\": \"average\",\n        \"group_by\": [\n          \"selected\",\n          \"dimension\"\n        ],\n        \"group_by_label\": [\n          \"<string>\",\n          \"<string>\"\n        ]\n      }\n    ],\n    \"time\": {\n      \"time_group\": \"average\",\n      \"time_group_options\": \"trimmed-median\",\n      \"time_resampling\": \"<integer>\"\n    }\n  },\n  \"format\": \"json2\",\n  \"options\": [\n    \"flip\",\n    \"all-dimensions\"\n  ],\n  \"scope\": {\n    \"contexts\": [\n      \"<string>\",\n      \"<string>\"\n    ],\n    \"dimensions\": [\n      \"<string>\",\n      \"<string>\"\n    ],\n    \"instances\": [\n      \"<string>\",\n      \"<string>\"\n    ],\n    \"labels\": [\n      \"<string>\",\n      \"<string>\"\n    ],\n    \"nodes\": [\n      \"<string>\",\n      \"<string>\"\n    ]\n  },\n  \"selectors\": {\n    \"alerts\": [\n      \"<string>\",\n      \"<string>\"\n    ],\n    \"contexts\": [\n      \"<string>\",\n      \"<string>\"\n    ],\n    \"dimensions\": [\n      \"<string>\",\n      \"<string>\"\n    ],\n    \"instances\": [\n      \"<string>\",\n      \"<string>\"\n    ],\n    \"labels\": [\n      \"<string>\",\n      \"<string>\"\n    ],\n    \"nodes\": [\n      \"<string>\",\n      \"<string>\"\n    ]\n  },\n  \"timeout\": 10000,\n  \"window\": {\n    \"after\": \"<integer>\",\n    \"baseline\": {\n      \"after\": \"<integer>\",\n      \"before\": \"<integer>\",\n      \"duration\": \"<integer>\",\n      \"points\": \"<integer>\"\n    },\n    \"before\": \"<integer>\",\n    \"duration\": \"<integer>\",\n    \"points\": \"<integer>\",\n    \"tier\": \"<integer>\"\n  }\n}",
+                                          "options": {
+                                            "raw": {
+                                              "headerFamily": "json",
+                                              "language": "json"
+                                            }
+                                          }
+                                        },
+                                        "url": {
+                                          "raw": "{{baseUrl}}/api/v3/spaces/:spaceID/rooms/:roomID/data",
+                                          "host": [
+                                            "{{baseUrl}}"
+                                          ],
+                                          "path": [
+                                            "api",
+                                            "v3",
+                                            "spaces",
+                                            ":spaceID",
+                                            "rooms",
+                                            ":roomID",
+                                            "data"
+                                          ],
+                                          "variable": [
+                                            {
+                                              "key": "spaceID"
+                                            },
+                                            {
+                                              "key": "roomID"
+                                            }
+                                          ]
+                                        }
+                                      },
+                                      "status": "Internal Server Error",
+                                      "code": 500,
+                                      "_postman_previewlanguage": "json",
+                                      "header": [
+                                        {
+                                          "key": "Content-Type",
+                                          "value": "application/json"
+                                        }
+                                      ],
+                                      "cookie": [],
+                                      "responseTime": null,
+                                      "body": "{\n  \"details\": {\n    \"quis_7a\": {}\n  },\n  \"errorCode\": \"<string>\",\n  \"errorMessage\": \"<string>\",\n  \"errorMsgKey\": \"<string>\",\n  \"validationErrors\": {\n    \"est_bf\": {\n      \"code\": \"<string>\",\n      \"message\": \"<string>\"\n    }\n  }\n}",
+                                      "createdAt": "2026-07-28T02:17:15.000Z",
+                                      "updatedAt": "2026-07-28T02:17:15.000Z",
+                                      "uid": "35240-65275668-84a1-4ead-99f1-730a85971fdd"
+                                    }
+                                  ],
+                                  "createdAt": "2026-07-28T02:17:15.000Z",
+                                  "updatedAt": "2026-07-28T02:17:15.000Z",
+                                  "uid": "35240-1edf3e1a-55f0-4a9d-b44d-6a128e73eee0"
+                                }
+                              ],
+                              "id": "1f38a319-525c-48c6-8d2e-b780ffebf222",
+                              "createdAt": "2026-07-28T02:17:15.000Z",
+                              "updatedAt": "2026-07-28T02:17:15.000Z",
+                              "uid": "35240-1f38a319-525c-48c6-8d2e-b780ffebf222"
+                            }
+                          ],
+                          "id": "676a666f-80d0-4536-9abd-ed304ad3e5a2",
+                          "createdAt": "2026-07-28T02:17:15.000Z",
+                          "updatedAt": "2026-07-28T02:17:15.000Z",
+                          "uid": "35240-676a666f-80d0-4536-9abd-ed304ad3e5a2"
+                        }
+                      ],
+                      "id": "ea77ccd6-fffe-47cb-99ec-48059b3ebdc4",
+                      "createdAt": "2026-07-28T02:17:15.000Z",
+                      "updatedAt": "2026-07-28T02:17:15.000Z",
+                      "uid": "35240-ea77ccd6-fffe-47cb-99ec-48059b3ebdc4"
+                    }
+                  ],
+                  "id": "711c0496-86d2-4472-b241-de7720a6d825",
+                  "createdAt": "2026-07-28T02:17:15.000Z",
+                  "updatedAt": "2026-07-28T02:17:15.000Z",
+                  "uid": "35240-711c0496-86d2-4472-b241-de7720a6d825"
+                }
+              ],
+              "id": "cd0a04a1-9a57-4a25-add9-df765dd40c6f",
+              "createdAt": "2026-07-28T02:17:15.000Z",
+              "updatedAt": "2026-07-28T02:17:15.000Z",
+              "uid": "35240-cd0a04a1-9a57-4a25-add9-df765dd40c6f"
+            }
+          ],
+          "id": "d3499978-2f18-4239-b1af-6094e430a759",
+          "createdAt": "2026-07-28T02:17:15.000Z",
+          "updatedAt": "2026-07-28T02:17:15.000Z",
+          "uid": "35240-d3499978-2f18-4239-b1af-6094e430a759"
+        }
+      ],
+      "id": "bc9e7b69-a30b-47d9-9f24-428666670754",
+      "createdAt": "2026-07-28T02:17:15.000Z",
+      "updatedAt": "2026-07-28T02:17:15.000Z",
+      "uid": "35240-bc9e7b69-a30b-47d9-9f24-428666670754"
+    }
+  ],
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "https://registry.my-netdata.io"
+    }
+  ]
+}

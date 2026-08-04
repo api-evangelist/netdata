@@ -1,0 +1,341 @@
+{
+  "info": {
+    "_postman_id": "200a2eaa-3eeb-47e1-8bac-d6f4d7a79cbc",
+    "name": "Netdata agent versions API",
+    "description": "Real-time performance and health monitoring.\n\n## API Versions\n\nNetdata provides three API versions:\n- **v1**: The original API, focused on single-node operations\n- **v2**: Multi-node API with advanced grouping and aggregation capabilities\n- **v3**: The latest API version that combines v1 and v2 endpoints and may include additional features\n\n### v3 API Endpoints\n\nThe v3 API provides the current, actively maintained endpoints:\n- `/api/v3/data` - Multi-dimensional data queries\n- `/api/v3/weights` - Metric scoring/correlation\n- `/api/v3/contexts` - Context metadata\n- `/api/v3/nodes` - Node information\n- `/api/v3/q` - Full-text search\n- `/api/v3/alerts` - Alert information\n- `/api/v3/alert_transitions` - Alert state transitions\n- `/api/v3/alert_config` - Alert configuration\n- `/api/v3/functions` - Available functions\n- `/api/v3/function` - Execute functions\n- `/api/v3/info` - Agent information\n- `/api/v3/node_instances` - Node instance information\n- `/api/v3/stream_path` - Streaming topology\n- `/api/v3/versions` - Version information\n- `/api/v3/badge.svg` - Dynamic badges\n- `/api/v3/allmetrics` - Export metrics\n- `/api/v3/context` - Single context info\n- `/api/v3/variable` - Variable information\n- `/api/v3/config` - Dynamic configuration\n- `/api/v3/settings` - Agent settings\n- `/api/v3/me` - Current user information\n- `/api/v3/claim` - Agent claiming\n- Additional management and streaming endpoints\n\n**Note:** V1 and V2 APIs are deprecated and maintained for backwards compatibility only. New integrations should use V3 exclusively.\n\n\nContact Support:\n Name: Netdata Agent API\n Email: info@netdata.cloud",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "createdAt": "2026-07-28T02:20:15.000Z",
+    "updatedAt": "2026-07-28T02:20:15.000Z",
+    "lastUpdatedBy": "35240",
+    "uid": "35240-200a2eaa-3eeb-47e1-8bac-d6f4d7a79cbc"
+  },
+  "item": [
+    {
+      "name": "api",
+      "item": [
+        {
+          "name": "v3",
+          "item": [
+            {
+              "name": "versions",
+              "item": [
+                {
+                  "name": "Retrieve Netdata agent version information across nodes",
+                  "id": "d18577e3-fbbb-4c37-bb20-c19602f7364e",
+                  "protocolProfileBehavior": {
+                    "disableBodyPruning": true
+                  },
+                  "request": {
+                    "method": "GET",
+                    "header": [
+                      {
+                        "key": "Accept",
+                        "value": "application/json"
+                      }
+                    ],
+                    "url": {
+                      "raw": "{{baseUrl}}/api/v3/versions?scope_nodes=*&nodes=*&options=<string>&timeout=60&cardinality=1000",
+                      "host": [
+                        "{{baseUrl}}"
+                      ],
+                      "path": [
+                        "api",
+                        "v3",
+                        "versions"
+                      ],
+                      "query": [
+                        {
+                          "description": "Simple pattern to match node hostnames for scope filtering. Uses Netdata's simple pattern\nmatching (not regex). Matched nodes define the scope for version information retrieval.\n\n**Pattern Syntax:**\n- `*` matches any number of characters\n- Use `|` to separate multiple patterns (OR logic)\n- Matches are case-insensitive\n- No regex support - only simple wildcards\n\n**Examples:**\n- `prod-*` - All production nodes\n- `*-db-*` - All database nodes\n- `web-*|app-*` - All web or application nodes\n- `*` - All nodes (default)\n",
+                          "key": "scope_nodes",
+                          "value": "*"
+                        },
+                        {
+                          "description": "Simple pattern to filter which nodes to include in the version information response.\nAfter scope is determined, this filters the results. Uses the same pattern syntax as scope_nodes.\n\n**Difference from scope_nodes:**\n- `scope_nodes` defines what nodes to analyze\n- `nodes` filters which nodes appear in the output\n\n**Examples:**\n- `old-*` - Only show nodes matching \"old-*\" pattern\n- Specific hostnames: `node1|node2|node3`\n",
+                          "key": "nodes",
+                          "value": "*"
+                        },
+                        {
+                          "description": "Comma-separated list of options to control response content and format.\n\n**Available Options:**\n- `minify` - Minimize JSON output (no pretty-printing)\n- `debug` - Include additional debug information\n- `raw` - Include raw version metadata\n\n**Examples:**\n- `minify` - Compact JSON response\n- `debug,raw` - Debug mode with raw metadata\n",
+                          "key": "options",
+                          "value": "<string>"
+                        },
+                        {
+                          "description": "Maximum time in seconds to wait for the query to complete before timing out.\n\n**Guidelines:**\n- Recommended: 10-30 seconds for most queries\n- Version information is usually quick to retrieve\n- Timeout mainly applies to very large infrastructures\n",
+                          "key": "timeout",
+                          "value": "60"
+                        },
+                        {
+                          "description": "Maximum number of nodes to include in the response to prevent overwhelming large responses.\nWhen this limit is exceeded, the response will indicate how many nodes were omitted.\n\n**Purpose:**\n- Prevent memory exhaustion from very large infrastructures\n- Control response size for performance\n- Useful when exploring large node sets incrementally\n\n**Recommendations:**\n- Small infrastructures (< 100 nodes): Use default\n- Medium infrastructures (100-1000 nodes): 500-1000\n- Large infrastructures (> 1000 nodes): Use filtering or increase limit carefully\n",
+                          "key": "cardinality",
+                          "value": "1000"
+                        }
+                      ]
+                    },
+                    "description": "Returns version information for Netdata agents running on monitored nodes.\nThis endpoint provides visibility into the software versions deployed across your infrastructure,\nhelping identify version mismatches, outdated agents, and upgrade planning.\n\n**Version Information Includes:**\n- Netdata agent version string (e.g., \"v1.40.0\")\n- Build information and commit hash\n- Protocol versions supported\n- Feature capabilities based on version\n\n**Use Cases:**\n- **Version audit**: Identify which nodes run which versions\n- **Upgrade planning**: Find nodes that need updates\n- **Compatibility checking**: Ensure version compatibility across infrastructure\n- **Feature availability**: Determine which features are available on which nodes\n- **Security compliance**: Identify nodes running vulnerable versions\n\n**Common Usage Patterns:**\n\n1. **Get versions of all nodes:**\n   ```\n   /api/v3/versions\n   ```\n\n2. **Check versions of specific nodes:**\n   ```\n   /api/v3/versions?nodes=prod-*\n   ```\n\n3. **Scope to production infrastructure:**\n   ```\n   /api/v3/versions?scope_nodes=prod-*\n   ```\n\n**Response Structure:**\nReturns version information grouped by node, showing:\n- Agent version string\n- Build timestamp\n- Git commit hash\n- Protocol versions\n- Feature flags and capabilities\n\n**Security & Access Control:**\n- \ud83d\udd13 **Always Public API** - This endpoint is always accessible without authentication\n- **No Restrictions:** Not subject to bearer protection or IP-based ACL restrictions\n- **No Authentication:** Cannot be restricted by any configuration\n- **Access:** Available to anyone who can reach the agent's HTTP endpoint\n"
+                  },
+                  "response": [
+                    {
+                      "id": "7c1278f0-8550-47e6-8b01-13859eee2707",
+                      "name": "Successfully retrieved version information.\n\nReturns version data for each node including agent version, build info,\nprotocol versions, and feature capabilities.\n",
+                      "originalRequest": {
+                        "method": "GET",
+                        "header": [
+                          {
+                            "key": "Accept",
+                            "value": "application/json"
+                          }
+                        ],
+                        "url": {
+                          "raw": "{{baseUrl}}/api/v3/versions?scope_nodes=*&nodes=*&options=<string>&timeout=60&cardinality=1000",
+                          "host": [
+                            "{{baseUrl}}"
+                          ],
+                          "path": [
+                            "api",
+                            "v3",
+                            "versions"
+                          ],
+                          "query": [
+                            {
+                              "description": "Simple pattern to match node hostnames for scope filtering. Uses Netdata's simple pattern\nmatching (not regex). Matched nodes define the scope for version information retrieval.\n\n**Pattern Syntax:**\n- `*` matches any number of characters\n- Use `|` to separate multiple patterns (OR logic)\n- Matches are case-insensitive\n- No regex support - only simple wildcards\n\n**Examples:**\n- `prod-*` - All production nodes\n- `*-db-*` - All database nodes\n- `web-*|app-*` - All web or application nodes\n- `*` - All nodes (default)\n",
+                              "key": "scope_nodes",
+                              "value": "*"
+                            },
+                            {
+                              "description": "Simple pattern to filter which nodes to include in the version information response.\nAfter scope is determined, this filters the results. Uses the same pattern syntax as scope_nodes.\n\n**Difference from scope_nodes:**\n- `scope_nodes` defines what nodes to analyze\n- `nodes` filters which nodes appear in the output\n\n**Examples:**\n- `old-*` - Only show nodes matching \"old-*\" pattern\n- Specific hostnames: `node1|node2|node3`\n",
+                              "key": "nodes",
+                              "value": "*"
+                            },
+                            {
+                              "description": "Comma-separated list of options to control response content and format.\n\n**Available Options:**\n- `minify` - Minimize JSON output (no pretty-printing)\n- `debug` - Include additional debug information\n- `raw` - Include raw version metadata\n\n**Examples:**\n- `minify` - Compact JSON response\n- `debug,raw` - Debug mode with raw metadata\n",
+                              "key": "options",
+                              "value": "<string>"
+                            },
+                            {
+                              "description": "Maximum time in seconds to wait for the query to complete before timing out.\n\n**Guidelines:**\n- Recommended: 10-30 seconds for most queries\n- Version information is usually quick to retrieve\n- Timeout mainly applies to very large infrastructures\n",
+                              "key": "timeout",
+                              "value": "60"
+                            },
+                            {
+                              "description": "Maximum number of nodes to include in the response to prevent overwhelming large responses.\nWhen this limit is exceeded, the response will indicate how many nodes were omitted.\n\n**Purpose:**\n- Prevent memory exhaustion from very large infrastructures\n- Control response size for performance\n- Useful when exploring large node sets incrementally\n\n**Recommendations:**\n- Small infrastructures (< 100 nodes): Use default\n- Medium infrastructures (100-1000 nodes): 500-1000\n- Large infrastructures (> 1000 nodes): Use filtering or increase limit carefully\n",
+                              "key": "cardinality",
+                              "value": "1000"
+                            }
+                          ]
+                        }
+                      },
+                      "status": "OK",
+                      "code": 200,
+                      "_postman_previewlanguage": "json",
+                      "header": [
+                        {
+                          "key": "Content-Type",
+                          "value": "application/json"
+                        }
+                      ],
+                      "cookie": [],
+                      "responseTime": null,
+                      "body": "{\n  \"versions\": [\n    {\n      \"hostname\": \"<string>\",\n      \"machine_guid\": \"<string>\",\n      \"version\": \"<string>\",\n      \"build_info\": \"<string>\",\n      \"commit_hash\": \"<string>\",\n      \"protocol_version\": \"<integer>\",\n      \"features\": [\n        \"<string>\",\n        \"<string>\"\n      ]\n    },\n    {\n      \"hostname\": \"<string>\",\n      \"machine_guid\": \"<string>\",\n      \"version\": \"<string>\",\n      \"build_info\": \"<string>\",\n      \"commit_hash\": \"<string>\",\n      \"protocol_version\": \"<integer>\",\n      \"features\": [\n        \"<string>\",\n        \"<string>\"\n      ]\n    }\n  ],\n  \"omitted\": \"<integer>\"\n}",
+                      "createdAt": "2026-07-28T02:20:15.000Z",
+                      "updatedAt": "2026-07-28T02:20:15.000Z",
+                      "uid": "35240-7c1278f0-8550-47e6-8b01-13859eee2707"
+                    },
+                    {
+                      "id": "95b77fae-fdeb-491c-b914-7aa1685aec45",
+                      "name": "Invalid parameters provided (e.g., invalid pattern syntax).",
+                      "originalRequest": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                          "raw": "{{baseUrl}}/api/v3/versions?scope_nodes=*&nodes=*&options=<string>&timeout=60&cardinality=1000",
+                          "host": [
+                            "{{baseUrl}}"
+                          ],
+                          "path": [
+                            "api",
+                            "v3",
+                            "versions"
+                          ],
+                          "query": [
+                            {
+                              "description": "Simple pattern to match node hostnames for scope filtering. Uses Netdata's simple pattern\nmatching (not regex). Matched nodes define the scope for version information retrieval.\n\n**Pattern Syntax:**\n- `*` matches any number of characters\n- Use `|` to separate multiple patterns (OR logic)\n- Matches are case-insensitive\n- No regex support - only simple wildcards\n\n**Examples:**\n- `prod-*` - All production nodes\n- `*-db-*` - All database nodes\n- `web-*|app-*` - All web or application nodes\n- `*` - All nodes (default)\n",
+                              "key": "scope_nodes",
+                              "value": "*"
+                            },
+                            {
+                              "description": "Simple pattern to filter which nodes to include in the version information response.\nAfter scope is determined, this filters the results. Uses the same pattern syntax as scope_nodes.\n\n**Difference from scope_nodes:**\n- `scope_nodes` defines what nodes to analyze\n- `nodes` filters which nodes appear in the output\n\n**Examples:**\n- `old-*` - Only show nodes matching \"old-*\" pattern\n- Specific hostnames: `node1|node2|node3`\n",
+                              "key": "nodes",
+                              "value": "*"
+                            },
+                            {
+                              "description": "Comma-separated list of options to control response content and format.\n\n**Available Options:**\n- `minify` - Minimize JSON output (no pretty-printing)\n- `debug` - Include additional debug information\n- `raw` - Include raw version metadata\n\n**Examples:**\n- `minify` - Compact JSON response\n- `debug,raw` - Debug mode with raw metadata\n",
+                              "key": "options",
+                              "value": "<string>"
+                            },
+                            {
+                              "description": "Maximum time in seconds to wait for the query to complete before timing out.\n\n**Guidelines:**\n- Recommended: 10-30 seconds for most queries\n- Version information is usually quick to retrieve\n- Timeout mainly applies to very large infrastructures\n",
+                              "key": "timeout",
+                              "value": "60"
+                            },
+                            {
+                              "description": "Maximum number of nodes to include in the response to prevent overwhelming large responses.\nWhen this limit is exceeded, the response will indicate how many nodes were omitted.\n\n**Purpose:**\n- Prevent memory exhaustion from very large infrastructures\n- Control response size for performance\n- Useful when exploring large node sets incrementally\n\n**Recommendations:**\n- Small infrastructures (< 100 nodes): Use default\n- Medium infrastructures (100-1000 nodes): 500-1000\n- Large infrastructures (> 1000 nodes): Use filtering or increase limit carefully\n",
+                              "key": "cardinality",
+                              "value": "1000"
+                            }
+                          ]
+                        }
+                      },
+                      "status": "Bad Request",
+                      "code": 400,
+                      "_postman_previewlanguage": "text",
+                      "header": [],
+                      "cookie": [],
+                      "responseTime": null,
+                      "body": null,
+                      "createdAt": "2026-07-28T02:20:15.000Z",
+                      "updatedAt": "2026-07-28T02:20:15.000Z",
+                      "uid": "35240-95b77fae-fdeb-491c-b914-7aa1685aec45"
+                    },
+                    {
+                      "id": "83b55866-a13d-4228-80b1-fa415f4a4bf4",
+                      "name": "Internal server error during version information retrieval.",
+                      "originalRequest": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                          "raw": "{{baseUrl}}/api/v3/versions?scope_nodes=*&nodes=*&options=<string>&timeout=60&cardinality=1000",
+                          "host": [
+                            "{{baseUrl}}"
+                          ],
+                          "path": [
+                            "api",
+                            "v3",
+                            "versions"
+                          ],
+                          "query": [
+                            {
+                              "description": "Simple pattern to match node hostnames for scope filtering. Uses Netdata's simple pattern\nmatching (not regex). Matched nodes define the scope for version information retrieval.\n\n**Pattern Syntax:**\n- `*` matches any number of characters\n- Use `|` to separate multiple patterns (OR logic)\n- Matches are case-insensitive\n- No regex support - only simple wildcards\n\n**Examples:**\n- `prod-*` - All production nodes\n- `*-db-*` - All database nodes\n- `web-*|app-*` - All web or application nodes\n- `*` - All nodes (default)\n",
+                              "key": "scope_nodes",
+                              "value": "*"
+                            },
+                            {
+                              "description": "Simple pattern to filter which nodes to include in the version information response.\nAfter scope is determined, this filters the results. Uses the same pattern syntax as scope_nodes.\n\n**Difference from scope_nodes:**\n- `scope_nodes` defines what nodes to analyze\n- `nodes` filters which nodes appear in the output\n\n**Examples:**\n- `old-*` - Only show nodes matching \"old-*\" pattern\n- Specific hostnames: `node1|node2|node3`\n",
+                              "key": "nodes",
+                              "value": "*"
+                            },
+                            {
+                              "description": "Comma-separated list of options to control response content and format.\n\n**Available Options:**\n- `minify` - Minimize JSON output (no pretty-printing)\n- `debug` - Include additional debug information\n- `raw` - Include raw version metadata\n\n**Examples:**\n- `minify` - Compact JSON response\n- `debug,raw` - Debug mode with raw metadata\n",
+                              "key": "options",
+                              "value": "<string>"
+                            },
+                            {
+                              "description": "Maximum time in seconds to wait for the query to complete before timing out.\n\n**Guidelines:**\n- Recommended: 10-30 seconds for most queries\n- Version information is usually quick to retrieve\n- Timeout mainly applies to very large infrastructures\n",
+                              "key": "timeout",
+                              "value": "60"
+                            },
+                            {
+                              "description": "Maximum number of nodes to include in the response to prevent overwhelming large responses.\nWhen this limit is exceeded, the response will indicate how many nodes were omitted.\n\n**Purpose:**\n- Prevent memory exhaustion from very large infrastructures\n- Control response size for performance\n- Useful when exploring large node sets incrementally\n\n**Recommendations:**\n- Small infrastructures (< 100 nodes): Use default\n- Medium infrastructures (100-1000 nodes): 500-1000\n- Large infrastructures (> 1000 nodes): Use filtering or increase limit carefully\n",
+                              "key": "cardinality",
+                              "value": "1000"
+                            }
+                          ]
+                        }
+                      },
+                      "status": "Internal Server Error",
+                      "code": 500,
+                      "_postman_previewlanguage": "text",
+                      "header": [],
+                      "cookie": [],
+                      "responseTime": null,
+                      "body": null,
+                      "createdAt": "2026-07-28T02:20:15.000Z",
+                      "updatedAt": "2026-07-28T02:20:15.000Z",
+                      "uid": "35240-83b55866-a13d-4228-80b1-fa415f4a4bf4"
+                    },
+                    {
+                      "id": "d15a1827-6d5f-4af7-8fd1-5bb72909b3d3",
+                      "name": "Query timeout - version collection took too long.",
+                      "originalRequest": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                          "raw": "{{baseUrl}}/api/v3/versions?scope_nodes=*&nodes=*&options=<string>&timeout=60&cardinality=1000",
+                          "host": [
+                            "{{baseUrl}}"
+                          ],
+                          "path": [
+                            "api",
+                            "v3",
+                            "versions"
+                          ],
+                          "query": [
+                            {
+                              "description": "Simple pattern to match node hostnames for scope filtering. Uses Netdata's simple pattern\nmatching (not regex). Matched nodes define the scope for version information retrieval.\n\n**Pattern Syntax:**\n- `*` matches any number of characters\n- Use `|` to separate multiple patterns (OR logic)\n- Matches are case-insensitive\n- No regex support - only simple wildcards\n\n**Examples:**\n- `prod-*` - All production nodes\n- `*-db-*` - All database nodes\n- `web-*|app-*` - All web or application nodes\n- `*` - All nodes (default)\n",
+                              "key": "scope_nodes",
+                              "value": "*"
+                            },
+                            {
+                              "description": "Simple pattern to filter which nodes to include in the version information response.\nAfter scope is determined, this filters the results. Uses the same pattern syntax as scope_nodes.\n\n**Difference from scope_nodes:**\n- `scope_nodes` defines what nodes to analyze\n- `nodes` filters which nodes appear in the output\n\n**Examples:**\n- `old-*` - Only show nodes matching \"old-*\" pattern\n- Specific hostnames: `node1|node2|node3`\n",
+                              "key": "nodes",
+                              "value": "*"
+                            },
+                            {
+                              "description": "Comma-separated list of options to control response content and format.\n\n**Available Options:**\n- `minify` - Minimize JSON output (no pretty-printing)\n- `debug` - Include additional debug information\n- `raw` - Include raw version metadata\n\n**Examples:**\n- `minify` - Compact JSON response\n- `debug,raw` - Debug mode with raw metadata\n",
+                              "key": "options",
+                              "value": "<string>"
+                            },
+                            {
+                              "description": "Maximum time in seconds to wait for the query to complete before timing out.\n\n**Guidelines:**\n- Recommended: 10-30 seconds for most queries\n- Version information is usually quick to retrieve\n- Timeout mainly applies to very large infrastructures\n",
+                              "key": "timeout",
+                              "value": "60"
+                            },
+                            {
+                              "description": "Maximum number of nodes to include in the response to prevent overwhelming large responses.\nWhen this limit is exceeded, the response will indicate how many nodes were omitted.\n\n**Purpose:**\n- Prevent memory exhaustion from very large infrastructures\n- Control response size for performance\n- Useful when exploring large node sets incrementally\n\n**Recommendations:**\n- Small infrastructures (< 100 nodes): Use default\n- Medium infrastructures (100-1000 nodes): 500-1000\n- Large infrastructures (> 1000 nodes): Use filtering or increase limit carefully\n",
+                              "key": "cardinality",
+                              "value": "1000"
+                            }
+                          ]
+                        }
+                      },
+                      "status": "Gateway Timeout",
+                      "code": 504,
+                      "_postman_previewlanguage": "text",
+                      "header": [],
+                      "cookie": [],
+                      "responseTime": null,
+                      "body": null,
+                      "createdAt": "2026-07-28T02:20:15.000Z",
+                      "updatedAt": "2026-07-28T02:20:15.000Z",
+                      "uid": "35240-d15a1827-6d5f-4af7-8fd1-5bb72909b3d3"
+                    }
+                  ],
+                  "createdAt": "2026-07-28T02:20:15.000Z",
+                  "updatedAt": "2026-07-28T02:20:15.000Z",
+                  "uid": "35240-d18577e3-fbbb-4c37-bb20-c19602f7364e"
+                }
+              ],
+              "id": "0aa7369c-78b0-4e5e-a6e9-d14e0ad9d19d",
+              "createdAt": "2026-07-28T02:20:15.000Z",
+              "updatedAt": "2026-07-28T02:20:15.000Z",
+              "uid": "35240-0aa7369c-78b0-4e5e-a6e9-d14e0ad9d19d"
+            }
+          ],
+          "id": "50e24ff8-ce33-499e-a65a-917b1aaf5c40",
+          "createdAt": "2026-07-28T02:20:15.000Z",
+          "updatedAt": "2026-07-28T02:20:15.000Z",
+          "uid": "35240-50e24ff8-ce33-499e-a65a-917b1aaf5c40"
+        }
+      ],
+      "id": "f5bd2d2d-0d3f-44d7-92ba-0efe6d10c5e8",
+      "createdAt": "2026-07-28T02:20:15.000Z",
+      "updatedAt": "2026-07-28T02:20:15.000Z",
+      "uid": "35240-f5bd2d2d-0d3f-44d7-92ba-0efe6d10c5e8"
+    }
+  ],
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "https://registry.my-netdata.io"
+    }
+  ]
+}

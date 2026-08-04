@@ -1,0 +1,646 @@
+{
+  "info": {
+    "_postman_id": "78d4ddee-19d2-472f-861e-c651f680d192",
+    "name": "Netdata agent dyncfg API",
+    "description": "Real-time performance and health monitoring.\n\n## API Versions\n\nNetdata provides three API versions:\n- **v1**: The original API, focused on single-node operations\n- **v2**: Multi-node API with advanced grouping and aggregation capabilities\n- **v3**: The latest API version that combines v1 and v2 endpoints and may include additional features\n\n### v3 API Endpoints\n\nThe v3 API provides the current, actively maintained endpoints:\n- `/api/v3/data` - Multi-dimensional data queries\n- `/api/v3/weights` - Metric scoring/correlation\n- `/api/v3/contexts` - Context metadata\n- `/api/v3/nodes` - Node information\n- `/api/v3/q` - Full-text search\n- `/api/v3/alerts` - Alert information\n- `/api/v3/alert_transitions` - Alert state transitions\n- `/api/v3/alert_config` - Alert configuration\n- `/api/v3/functions` - Available functions\n- `/api/v3/function` - Execute functions\n- `/api/v3/info` - Agent information\n- `/api/v3/node_instances` - Node instance information\n- `/api/v3/stream_path` - Streaming topology\n- `/api/v3/versions` - Version information\n- `/api/v3/badge.svg` - Dynamic badges\n- `/api/v3/allmetrics` - Export metrics\n- `/api/v3/context` - Single context info\n- `/api/v3/variable` - Variable information\n- `/api/v3/config` - Dynamic configuration\n- `/api/v3/settings` - Agent settings\n- `/api/v3/me` - Current user information\n- `/api/v3/claim` - Agent claiming\n- Additional management and streaming endpoints\n\n**Note:** V1 and V2 APIs are deprecated and maintained for backwards compatibility only. New integrations should use V3 exclusively.\n\n\nContact Support:\n Name: Netdata Agent API\n Email: info@netdata.cloud",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "createdAt": "2026-07-28T02:17:25.000Z",
+    "updatedAt": "2026-07-28T02:17:25.000Z",
+    "lastUpdatedBy": "35240",
+    "uid": "35240-78d4ddee-19d2-472f-861e-c651f680d192"
+  },
+  "item": [
+    {
+      "name": "api",
+      "item": [
+        {
+          "name": "v1",
+          "item": [
+            {
+              "name": "config",
+              "item": [
+                {
+                  "name": "get Config",
+                  "id": "7db972a9-cd6b-409b-8730-d7cc44107810",
+                  "protocolProfileBehavior": {
+                    "disableBodyPruning": true
+                  },
+                  "request": {
+                    "auth": {
+                      "type": "noauth"
+                    },
+                    "method": "GET",
+                    "header": [
+                      {
+                        "key": "Accept",
+                        "value": "application/json"
+                      }
+                    ],
+                    "url": {
+                      "raw": "{{baseUrl}}/api/v1/config?action=tree&id=<string>&path=/&timeout=120",
+                      "host": [
+                        "{{baseUrl}}"
+                      ],
+                      "path": [
+                        "api",
+                        "v1",
+                        "config"
+                      ],
+                      "query": [
+                        {
+                          "description": "The type of information required",
+                          "key": "action",
+                          "value": "tree"
+                        },
+                        {
+                          "description": "The ID of the dynamic configuration entity",
+                          "key": "id",
+                          "value": "<string>"
+                        },
+                        {
+                          "description": "Top level path of the configuration entities, used with action 'tree'",
+                          "key": "path",
+                          "value": "/"
+                        },
+                        {
+                          "description": "The timeout in seconds",
+                          "key": "timeout",
+                          "value": "120"
+                        }
+                      ]
+                    },
+                    "description": "Get dynamic configuration information.\n\n**Security & Access Control:**\n- \ud83d\udcca **Public Data API** - Bearer token optional, IP-based ACL restrictions apply\n- **Default Access:** Public (no authentication required)\n- **Bearer Protection:** When enabled via `/api/v3/bearer_protection`, requires bearer token\n- **IP Restrictions:** Subject to `allow dashboard from` in netdata.conf\n- **Access Methods:** Direct HTTP/HTTPS, Netdata Cloud, external tools\n"
+                  },
+                  "response": [
+                    {
+                      "id": "292ca480-38fb-4022-907c-17070842db04",
+                      "name": "The call was successful.",
+                      "originalRequest": {
+                        "method": "GET",
+                        "header": [
+                          {
+                            "key": "Accept",
+                            "value": "application/json"
+                          }
+                        ],
+                        "url": {
+                          "raw": "{{baseUrl}}/api/v1/config?action=tree&id=<string>&path=/&timeout=120",
+                          "host": [
+                            "{{baseUrl}}"
+                          ],
+                          "path": [
+                            "api",
+                            "v1",
+                            "config"
+                          ],
+                          "query": [
+                            {
+                              "description": "The type of information required",
+                              "key": "action",
+                              "value": "tree"
+                            },
+                            {
+                              "description": "The ID of the dynamic configuration entity",
+                              "key": "id",
+                              "value": "<string>"
+                            },
+                            {
+                              "description": "Top level path of the configuration entities, used with action 'tree'",
+                              "key": "path",
+                              "value": "/"
+                            },
+                            {
+                              "description": "The timeout in seconds",
+                              "key": "timeout",
+                              "value": "120"
+                            }
+                          ]
+                        }
+                      },
+                      "status": "OK",
+                      "code": 200,
+                      "_postman_previewlanguage": "json",
+                      "header": [
+                        {
+                          "key": "Content-Type",
+                          "value": "application/json"
+                        }
+                      ],
+                      "cookie": [],
+                      "responseTime": null,
+                      "body": "{\n  \"status\": \"<integer>\",\n  \"message\": \"<string>\",\n  \"data\": {\n    \"aliquip4\": -23170203,\n    \"dolor_7\": false\n  }\n}",
+                      "createdAt": "2026-07-28T02:17:25.000Z",
+                      "updatedAt": "2026-07-28T02:17:25.000Z",
+                      "uid": "35240-292ca480-38fb-4022-907c-17070842db04"
+                    },
+                    {
+                      "id": "aea2e87f-ad8d-4199-8338-d35fef274c18",
+                      "name": "Something is wrong with the request.",
+                      "originalRequest": {
+                        "method": "GET",
+                        "header": [
+                          {
+                            "key": "Accept",
+                            "value": "application/json"
+                          }
+                        ],
+                        "url": {
+                          "raw": "{{baseUrl}}/api/v1/config?action=tree&id=<string>&path=/&timeout=120",
+                          "host": [
+                            "{{baseUrl}}"
+                          ],
+                          "path": [
+                            "api",
+                            "v1",
+                            "config"
+                          ],
+                          "query": [
+                            {
+                              "description": "The type of information required",
+                              "key": "action",
+                              "value": "tree"
+                            },
+                            {
+                              "description": "The ID of the dynamic configuration entity",
+                              "key": "id",
+                              "value": "<string>"
+                            },
+                            {
+                              "description": "Top level path of the configuration entities, used with action 'tree'",
+                              "key": "path",
+                              "value": "/"
+                            },
+                            {
+                              "description": "The timeout in seconds",
+                              "key": "timeout",
+                              "value": "120"
+                            }
+                          ]
+                        }
+                      },
+                      "status": "Bad Request",
+                      "code": 400,
+                      "_postman_previewlanguage": "json",
+                      "header": [
+                        {
+                          "key": "Content-Type",
+                          "value": "application/json"
+                        }
+                      ],
+                      "cookie": [],
+                      "responseTime": null,
+                      "body": "{\n  \"status\": \"<integer>\",\n  \"message\": \"<string>\",\n  \"data\": {\n    \"aliquip4\": -23170203,\n    \"dolor_7\": false\n  }\n}",
+                      "createdAt": "2026-07-28T02:17:25.000Z",
+                      "updatedAt": "2026-07-28T02:17:25.000Z",
+                      "uid": "35240-aea2e87f-ad8d-4199-8338-d35fef274c18"
+                    },
+                    {
+                      "id": "491e9ca2-992e-4a83-b65e-bfd4ed99aeca",
+                      "name": "The configurable entity requests is not found.",
+                      "originalRequest": {
+                        "method": "GET",
+                        "header": [
+                          {
+                            "key": "Accept",
+                            "value": "application/json"
+                          }
+                        ],
+                        "url": {
+                          "raw": "{{baseUrl}}/api/v1/config?action=tree&id=<string>&path=/&timeout=120",
+                          "host": [
+                            "{{baseUrl}}"
+                          ],
+                          "path": [
+                            "api",
+                            "v1",
+                            "config"
+                          ],
+                          "query": [
+                            {
+                              "description": "The type of information required",
+                              "key": "action",
+                              "value": "tree"
+                            },
+                            {
+                              "description": "The ID of the dynamic configuration entity",
+                              "key": "id",
+                              "value": "<string>"
+                            },
+                            {
+                              "description": "Top level path of the configuration entities, used with action 'tree'",
+                              "key": "path",
+                              "value": "/"
+                            },
+                            {
+                              "description": "The timeout in seconds",
+                              "key": "timeout",
+                              "value": "120"
+                            }
+                          ]
+                        }
+                      },
+                      "status": "Not Found",
+                      "code": 404,
+                      "_postman_previewlanguage": "json",
+                      "header": [
+                        {
+                          "key": "Content-Type",
+                          "value": "application/json"
+                        }
+                      ],
+                      "cookie": [],
+                      "responseTime": null,
+                      "body": "{\n  \"status\": \"<integer>\",\n  \"message\": \"<string>\",\n  \"data\": {\n    \"aliquip4\": -23170203,\n    \"dolor_7\": false\n  }\n}",
+                      "createdAt": "2026-07-28T02:17:25.000Z",
+                      "updatedAt": "2026-07-28T02:17:25.000Z",
+                      "uid": "35240-491e9ca2-992e-4a83-b65e-bfd4ed99aeca"
+                    }
+                  ],
+                  "createdAt": "2026-07-28T02:17:25.000Z",
+                  "updatedAt": "2026-07-28T02:17:25.000Z",
+                  "uid": "35240-7db972a9-cd6b-409b-8730-d7cc44107810"
+                },
+                {
+                  "name": "post Config",
+                  "id": "00cbf849-5c3c-42de-8686-a61c98a1d047",
+                  "protocolProfileBehavior": {
+                    "disableBodyPruning": true
+                  },
+                  "request": {
+                    "method": "POST",
+                    "header": [
+                      {
+                        "key": "Accept",
+                        "value": "application/json"
+                      }
+                    ],
+                    "url": {
+                      "raw": "{{baseUrl}}/api/v1/config?action=update&id=<string>&name=<string>&timeout=120",
+                      "host": [
+                        "{{baseUrl}}"
+                      ],
+                      "path": [
+                        "api",
+                        "v1",
+                        "config"
+                      ],
+                      "query": [
+                        {
+                          "description": "The type of action required.",
+                          "key": "action",
+                          "value": "update"
+                        },
+                        {
+                          "description": "The ID of the dynamic configuration entity to configure.",
+                          "key": "id",
+                          "value": "<string>"
+                        },
+                        {
+                          "description": "Name of the dynamic configuration entity, used with action 'add'",
+                          "key": "name",
+                          "value": "<string>"
+                        },
+                        {
+                          "description": "The timeout in seconds",
+                          "key": "timeout",
+                          "value": "120"
+                        }
+                      ]
+                    },
+                    "description": "Post dynamic configuration to Netdata.\n"
+                  },
+                  "response": [
+                    {
+                      "id": "6176230d-dba6-40ce-b228-c98f24edefa3",
+                      "name": "The call was successful. This also means the configuration is currently running.",
+                      "originalRequest": {
+                        "method": "POST",
+                        "header": [
+                          {
+                            "key": "Accept",
+                            "value": "application/json"
+                          }
+                        ],
+                        "url": {
+                          "raw": "{{baseUrl}}/api/v1/config?action=update&id=<string>&name=<string>&timeout=120",
+                          "host": [
+                            "{{baseUrl}}"
+                          ],
+                          "path": [
+                            "api",
+                            "v1",
+                            "config"
+                          ],
+                          "query": [
+                            {
+                              "description": "The type of action required.",
+                              "key": "action",
+                              "value": "update"
+                            },
+                            {
+                              "description": "The ID of the dynamic configuration entity to configure.",
+                              "key": "id",
+                              "value": "<string>"
+                            },
+                            {
+                              "description": "Name of the dynamic configuration entity, used with action 'add'",
+                              "key": "name",
+                              "value": "<string>"
+                            },
+                            {
+                              "description": "The timeout in seconds",
+                              "key": "timeout",
+                              "value": "120"
+                            }
+                          ]
+                        }
+                      },
+                      "status": "OK",
+                      "code": 200,
+                      "_postman_previewlanguage": "json",
+                      "header": [
+                        {
+                          "key": "Content-Type",
+                          "value": "application/json"
+                        }
+                      ],
+                      "cookie": [],
+                      "responseTime": null,
+                      "body": "{\n  \"status\": \"<integer>\",\n  \"message\": \"<string>\",\n  \"data\": {\n    \"aliquip4\": -23170203,\n    \"dolor_7\": false\n  }\n}",
+                      "createdAt": "2026-07-28T02:17:25.000Z",
+                      "updatedAt": "2026-07-28T02:17:25.000Z",
+                      "uid": "35240-6176230d-dba6-40ce-b228-c98f24edefa3"
+                    },
+                    {
+                      "id": "26b965e1-780a-4fce-8cdd-522b09bc1912",
+                      "name": "The call was successful. The configuration has been accepted, but its status is not yet known.",
+                      "originalRequest": {
+                        "method": "POST",
+                        "header": [
+                          {
+                            "key": "Accept",
+                            "value": "application/json"
+                          }
+                        ],
+                        "url": {
+                          "raw": "{{baseUrl}}/api/v1/config?action=update&id=<string>&name=<string>&timeout=120",
+                          "host": [
+                            "{{baseUrl}}"
+                          ],
+                          "path": [
+                            "api",
+                            "v1",
+                            "config"
+                          ],
+                          "query": [
+                            {
+                              "description": "The type of action required.",
+                              "key": "action",
+                              "value": "update"
+                            },
+                            {
+                              "description": "The ID of the dynamic configuration entity to configure.",
+                              "key": "id",
+                              "value": "<string>"
+                            },
+                            {
+                              "description": "Name of the dynamic configuration entity, used with action 'add'",
+                              "key": "name",
+                              "value": "<string>"
+                            },
+                            {
+                              "description": "The timeout in seconds",
+                              "key": "timeout",
+                              "value": "120"
+                            }
+                          ]
+                        }
+                      },
+                      "status": "Accepted",
+                      "code": 202,
+                      "_postman_previewlanguage": "json",
+                      "header": [
+                        {
+                          "key": "Content-Type",
+                          "value": "application/json"
+                        }
+                      ],
+                      "cookie": [],
+                      "responseTime": null,
+                      "body": "{\n  \"status\": \"<integer>\",\n  \"message\": \"<string>\",\n  \"data\": {\n    \"aliquip4\": -23170203,\n    \"dolor_7\": false\n  }\n}",
+                      "createdAt": "2026-07-28T02:17:25.000Z",
+                      "updatedAt": "2026-07-28T02:17:25.000Z",
+                      "uid": "35240-26b965e1-780a-4fce-8cdd-522b09bc1912"
+                    },
+                    {
+                      "id": "4ffe0d74-61ac-4f61-a5e3-b9b8d64afcb5",
+                      "name": "The call was successful. The configuration has been accepted, but a restart is required to apply it.",
+                      "originalRequest": {
+                        "method": "POST",
+                        "header": [
+                          {
+                            "key": "Accept",
+                            "value": "application/json"
+                          }
+                        ],
+                        "url": {
+                          "raw": "{{baseUrl}}/api/v1/config?action=update&id=<string>&name=<string>&timeout=120",
+                          "host": [
+                            "{{baseUrl}}"
+                          ],
+                          "path": [
+                            "api",
+                            "v1",
+                            "config"
+                          ],
+                          "query": [
+                            {
+                              "description": "The type of action required.",
+                              "key": "action",
+                              "value": "update"
+                            },
+                            {
+                              "description": "The ID of the dynamic configuration entity to configure.",
+                              "key": "id",
+                              "value": "<string>"
+                            },
+                            {
+                              "description": "Name of the dynamic configuration entity, used with action 'add'",
+                              "key": "name",
+                              "value": "<string>"
+                            },
+                            {
+                              "description": "The timeout in seconds",
+                              "key": "timeout",
+                              "value": "120"
+                            }
+                          ]
+                        }
+                      },
+                      "_postman_previewlanguage": "json",
+                      "header": [
+                        {
+                          "key": "Content-Type",
+                          "value": "application/json"
+                        }
+                      ],
+                      "cookie": [],
+                      "responseTime": null,
+                      "body": "{\n  \"status\": \"<integer>\",\n  \"message\": \"<string>\",\n  \"data\": {\n    \"aliquip4\": -23170203,\n    \"dolor_7\": false\n  }\n}",
+                      "createdAt": "2026-07-28T02:17:25.000Z",
+                      "updatedAt": "2026-07-28T02:17:25.000Z",
+                      "uid": "35240-4ffe0d74-61ac-4f61-a5e3-b9b8d64afcb5"
+                    },
+                    {
+                      "id": "b07c1517-a705-4e6c-a8e8-510abc9858c5",
+                      "name": "Something is wrong with the request.",
+                      "originalRequest": {
+                        "method": "POST",
+                        "header": [
+                          {
+                            "key": "Accept",
+                            "value": "application/json"
+                          }
+                        ],
+                        "url": {
+                          "raw": "{{baseUrl}}/api/v1/config?action=update&id=<string>&name=<string>&timeout=120",
+                          "host": [
+                            "{{baseUrl}}"
+                          ],
+                          "path": [
+                            "api",
+                            "v1",
+                            "config"
+                          ],
+                          "query": [
+                            {
+                              "description": "The type of action required.",
+                              "key": "action",
+                              "value": "update"
+                            },
+                            {
+                              "description": "The ID of the dynamic configuration entity to configure.",
+                              "key": "id",
+                              "value": "<string>"
+                            },
+                            {
+                              "description": "Name of the dynamic configuration entity, used with action 'add'",
+                              "key": "name",
+                              "value": "<string>"
+                            },
+                            {
+                              "description": "The timeout in seconds",
+                              "key": "timeout",
+                              "value": "120"
+                            }
+                          ]
+                        }
+                      },
+                      "status": "Bad Request",
+                      "code": 400,
+                      "_postman_previewlanguage": "json",
+                      "header": [
+                        {
+                          "key": "Content-Type",
+                          "value": "application/json"
+                        }
+                      ],
+                      "cookie": [],
+                      "responseTime": null,
+                      "body": "{\n  \"status\": \"<integer>\",\n  \"message\": \"<string>\",\n  \"data\": {\n    \"aliquip4\": -23170203,\n    \"dolor_7\": false\n  }\n}",
+                      "createdAt": "2026-07-28T02:17:25.000Z",
+                      "updatedAt": "2026-07-28T02:17:25.000Z",
+                      "uid": "35240-b07c1517-a705-4e6c-a8e8-510abc9858c5"
+                    },
+                    {
+                      "id": "2d538ca6-3264-4490-a0c6-1f94291ab4d3",
+                      "name": "The configurable entity requests is not found.",
+                      "originalRequest": {
+                        "method": "POST",
+                        "header": [
+                          {
+                            "key": "Accept",
+                            "value": "application/json"
+                          }
+                        ],
+                        "url": {
+                          "raw": "{{baseUrl}}/api/v1/config?action=update&id=<string>&name=<string>&timeout=120",
+                          "host": [
+                            "{{baseUrl}}"
+                          ],
+                          "path": [
+                            "api",
+                            "v1",
+                            "config"
+                          ],
+                          "query": [
+                            {
+                              "description": "The type of action required.",
+                              "key": "action",
+                              "value": "update"
+                            },
+                            {
+                              "description": "The ID of the dynamic configuration entity to configure.",
+                              "key": "id",
+                              "value": "<string>"
+                            },
+                            {
+                              "description": "Name of the dynamic configuration entity, used with action 'add'",
+                              "key": "name",
+                              "value": "<string>"
+                            },
+                            {
+                              "description": "The timeout in seconds",
+                              "key": "timeout",
+                              "value": "120"
+                            }
+                          ]
+                        }
+                      },
+                      "status": "Not Found",
+                      "code": 404,
+                      "_postman_previewlanguage": "json",
+                      "header": [
+                        {
+                          "key": "Content-Type",
+                          "value": "application/json"
+                        }
+                      ],
+                      "cookie": [],
+                      "responseTime": null,
+                      "body": "{\n  \"status\": \"<integer>\",\n  \"message\": \"<string>\",\n  \"data\": {\n    \"aliquip4\": -23170203,\n    \"dolor_7\": false\n  }\n}",
+                      "createdAt": "2026-07-28T02:17:25.000Z",
+                      "updatedAt": "2026-07-28T02:17:25.000Z",
+                      "uid": "35240-2d538ca6-3264-4490-a0c6-1f94291ab4d3"
+                    }
+                  ],
+                  "createdAt": "2026-07-28T02:17:25.000Z",
+                  "updatedAt": "2026-07-28T02:17:25.000Z",
+                  "uid": "35240-00cbf849-5c3c-42de-8686-a61c98a1d047"
+                }
+              ],
+              "id": "1c0cb799-6151-4090-85d3-9940c78e5b16",
+              "createdAt": "2026-07-28T02:17:25.000Z",
+              "updatedAt": "2026-07-28T02:17:25.000Z",
+              "uid": "35240-1c0cb799-6151-4090-85d3-9940c78e5b16"
+            }
+          ],
+          "id": "c944c077-04a0-44b9-ae44-2b23962d47ff",
+          "createdAt": "2026-07-28T02:17:25.000Z",
+          "updatedAt": "2026-07-28T02:17:25.000Z",
+          "uid": "35240-c944c077-04a0-44b9-ae44-2b23962d47ff"
+        }
+      ],
+      "id": "9899afe6-b5b2-42e6-b171-5ac1018c2623",
+      "createdAt": "2026-07-28T02:17:25.000Z",
+      "updatedAt": "2026-07-28T02:17:25.000Z",
+      "uid": "35240-9899afe6-b5b2-42e6-b171-5ac1018c2623"
+    }
+  ],
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "https://registry.my-netdata.io"
+    }
+  ]
+}

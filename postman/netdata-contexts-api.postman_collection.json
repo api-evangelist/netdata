@@ -1,0 +1,1392 @@
+{
+  "info": {
+    "_postman_id": "84e7a858-86e9-440e-86ef-00bdbcd01aea",
+    "name": "Netdata agent contexts API",
+    "description": "Real-time performance and health monitoring.\n\n## API Versions\n\nNetdata provides three API versions:\n- **v1**: The original API, focused on single-node operations\n- **v2**: Multi-node API with advanced grouping and aggregation capabilities\n- **v3**: The latest API version that combines v1 and v2 endpoints and may include additional features\n\n### v3 API Endpoints\n\nThe v3 API provides the current, actively maintained endpoints:\n- `/api/v3/data` - Multi-dimensional data queries\n- `/api/v3/weights` - Metric scoring/correlation\n- `/api/v3/contexts` - Context metadata\n- `/api/v3/nodes` - Node information\n- `/api/v3/q` - Full-text search\n- `/api/v3/alerts` - Alert information\n- `/api/v3/alert_transitions` - Alert state transitions\n- `/api/v3/alert_config` - Alert configuration\n- `/api/v3/functions` - Available functions\n- `/api/v3/function` - Execute functions\n- `/api/v3/info` - Agent information\n- `/api/v3/node_instances` - Node instance information\n- `/api/v3/stream_path` - Streaming topology\n- `/api/v3/versions` - Version information\n- `/api/v3/badge.svg` - Dynamic badges\n- `/api/v3/allmetrics` - Export metrics\n- `/api/v3/context` - Single context info\n- `/api/v3/variable` - Variable information\n- `/api/v3/config` - Dynamic configuration\n- `/api/v3/settings` - Agent settings\n- `/api/v3/me` - Current user information\n- `/api/v3/claim` - Agent claiming\n- Additional management and streaming endpoints\n\n**Note:** V1 and V2 APIs are deprecated and maintained for backwards compatibility only. New integrations should use V3 exclusively.\n\n\nContact Support:\n Name: Netdata Agent API\n Email: info@netdata.cloud",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "createdAt": "2026-07-28T02:17:20.000Z",
+    "updatedAt": "2026-07-28T02:17:20.000Z",
+    "lastUpdatedBy": "35240",
+    "uid": "35240-84e7a858-86e9-440e-86ef-00bdbcd01aea"
+  },
+  "item": [
+    {
+      "name": "api",
+      "item": [
+        {
+          "name": "v2",
+          "item": [
+            {
+              "name": "contexts",
+              "item": [
+                {
+                  "name": "Contexts Info v2",
+                  "id": "5360bec9-327f-4ca6-8cc5-24ef849b0280",
+                  "protocolProfileBehavior": {
+                    "disableBodyPruning": true
+                  },
+                  "request": {
+                    "auth": {
+                      "type": "noauth"
+                    },
+                    "method": "GET",
+                    "header": [
+                      {
+                        "key": "Accept",
+                        "value": "application/json"
+                      }
+                    ],
+                    "url": {
+                      "raw": "{{baseUrl}}/api/v2/contexts?scope_nodes=*&scope_contexts=*&nodes=*&contexts=*",
+                      "host": [
+                        "{{baseUrl}}"
+                      ],
+                      "path": [
+                        "api",
+                        "v2",
+                        "contexts"
+                      ],
+                      "query": [
+                        {
+                          "description": "A simple pattern limiting the nodes scope of the query. The scope controls both data and metadata response. The simple pattern is checked against the nodes' machine guid, node id and hostname. The default nodes scope is all nodes for which this Agent has data for. Usually the nodes scope is used to slice the entire dashboard (e.g. the Global Nodes Selector at the Netdata Cloud overview dashboard). Both positive and negative simple pattern expressions are supported.\n",
+                          "key": "scope_nodes",
+                          "value": "*"
+                        },
+                        {
+                          "description": "A simple pattern limiting the contexts scope of the query. The scope controls both data and metadata response. The default contexts scope is all contexts for which this Agent has data for. Usually the contexts scope is used to slice data on the dashboard (e.g. each context based chart has its own contexts scope, limiting the chart to all the instances of the selected context). Both positive and negative simple pattern expressions are supported.\n",
+                          "key": "scope_contexts",
+                          "value": "*"
+                        },
+                        {
+                          "description": "A simple pattern matching the nodes to be queried. This only controls the data response, not the metadata. The simple pattern is checked against the nodes' machine guid, node id, hostname. The default nodes selector is all the nodes matched by the nodes scope. Both positive and negative simple pattern expressions are supported.\n",
+                          "key": "nodes",
+                          "value": "*"
+                        },
+                        {
+                          "description": "A simple pattern matching the contexts to be queried. This only controls the data response, not the metadata. Both positive and negative simple pattern expressions are supported.\n",
+                          "key": "contexts",
+                          "value": "*"
+                        }
+                      ]
+                    },
+                    "description": "Get a list of all contexts, across all nodes, hosted by this Netdata Agent.\n\n**Security & Access Control:**\n- \ud83d\udcca **Public Data API** - Bearer token optional, IP-based ACL restrictions apply\n- **Default Access:** Public (no authentication required)\n- **Bearer Protection:** When enabled via `/api/v3/bearer_protection`, requires bearer token\n- **IP Restrictions:** Subject to `allow dashboard from` in netdata.conf\n- **Access Methods:** Direct HTTP/HTTPS, Netdata Cloud, external tools\n"
+                  },
+                  "response": [
+                    {
+                      "id": "dc3de602-04b0-4412-84b8-3e7e7dc10f38",
+                      "name": "OK",
+                      "originalRequest": {
+                        "method": "GET",
+                        "header": [
+                          {
+                            "key": "Accept",
+                            "value": "application/json"
+                          }
+                        ],
+                        "url": {
+                          "raw": "{{baseUrl}}/api/v2/contexts?scope_nodes=*&scope_contexts=*&nodes=*&contexts=*",
+                          "host": [
+                            "{{baseUrl}}"
+                          ],
+                          "path": [
+                            "api",
+                            "v2",
+                            "contexts"
+                          ],
+                          "query": [
+                            {
+                              "description": "A simple pattern limiting the nodes scope of the query. The scope controls both data and metadata response. The simple pattern is checked against the nodes' machine guid, node id and hostname. The default nodes scope is all nodes for which this Agent has data for. Usually the nodes scope is used to slice the entire dashboard (e.g. the Global Nodes Selector at the Netdata Cloud overview dashboard). Both positive and negative simple pattern expressions are supported.\n",
+                              "key": "scope_nodes",
+                              "value": "*"
+                            },
+                            {
+                              "description": "A simple pattern limiting the contexts scope of the query. The scope controls both data and metadata response. The default contexts scope is all contexts for which this Agent has data for. Usually the contexts scope is used to slice data on the dashboard (e.g. each context based chart has its own contexts scope, limiting the chart to all the instances of the selected context). Both positive and negative simple pattern expressions are supported.\n",
+                              "key": "scope_contexts",
+                              "value": "*"
+                            },
+                            {
+                              "description": "A simple pattern matching the nodes to be queried. This only controls the data response, not the metadata. The simple pattern is checked against the nodes' machine guid, node id, hostname. The default nodes selector is all the nodes matched by the nodes scope. Both positive and negative simple pattern expressions are supported.\n",
+                              "key": "nodes",
+                              "value": "*"
+                            },
+                            {
+                              "description": "A simple pattern matching the contexts to be queried. This only controls the data response, not the metadata. Both positive and negative simple pattern expressions are supported.\n",
+                              "key": "contexts",
+                              "value": "*"
+                            }
+                          ]
+                        }
+                      },
+                      "status": "OK",
+                      "code": 200,
+                      "_postman_previewlanguage": "json",
+                      "header": [
+                        {
+                          "key": "Content-Type",
+                          "value": "application/json"
+                        }
+                      ],
+                      "cookie": [],
+                      "responseTime": null,
+                      "body": "{\n  \"api\": \"<integer>\",\n  \"agents\": [\n    {\n      \"mg\": \"<uuid>\",\n      \"nd\": \"<uuid>\",\n      \"nm\": \"<string>\",\n      \"ai\": \"<integer>\",\n      \"now\": \"<integer>\"\n    },\n    {\n      \"mg\": \"<uuid>\",\n      \"nd\": \"<uuid>\",\n      \"nm\": \"<string>\",\n      \"ai\": \"<integer>\",\n      \"now\": \"<integer>\"\n    }\n  ],\n  \"versions\": {\n    \"nodes_hard_hash\": \"<integer>\",\n    \"contexts_hard_hash\": \"<integer>\",\n    \"contexts_soft_hash\": \"<integer>\",\n    \"alerts_hard_hash\": \"<integer>\",\n    \"alerts_soft_hash\": \"<integer>\"\n  },\n  \"contexts\": {\n    \"labore5\": {\n      \"family\": \"<string>\",\n      \"priority\": \"<integer>\",\n      \"first_entry\": \"<integer>\",\n      \"last_entry\": \"<integer>\",\n      \"live\": \"<boolean>\"\n    }\n  }\n}",
+                      "createdAt": "2026-07-28T02:17:21.000Z",
+                      "updatedAt": "2026-07-28T02:17:21.000Z",
+                      "uid": "35240-dc3de602-04b0-4412-84b8-3e7e7dc10f38"
+                    }
+                  ],
+                  "createdAt": "2026-07-28T02:17:21.000Z",
+                  "updatedAt": "2026-07-28T02:17:21.000Z",
+                  "uid": "35240-5360bec9-327f-4ca6-8cc5-24ef849b0280"
+                }
+              ],
+              "id": "a98e0c1f-e74f-4f54-af0c-729838818be8",
+              "createdAt": "2026-07-28T02:17:21.000Z",
+              "updatedAt": "2026-07-28T02:17:21.000Z",
+              "uid": "35240-a98e0c1f-e74f-4f54-af0c-729838818be8"
+            },
+            {
+              "name": "q",
+              "item": [
+                {
+                  "name": "Full Text Search v2",
+                  "id": "2f103ee1-4ebf-4eaf-8465-d87d70ee991a",
+                  "protocolProfileBehavior": {
+                    "disableBodyPruning": true
+                  },
+                  "request": {
+                    "auth": {
+                      "type": "noauth"
+                    },
+                    "method": "GET",
+                    "header": [
+                      {
+                        "key": "Accept",
+                        "value": "application/json"
+                      }
+                    ],
+                    "url": {
+                      "raw": "{{baseUrl}}/api/v2/q?q=<string>&scope_nodes=*&scope_contexts=*&nodes=*&contexts=*",
+                      "host": [
+                        "{{baseUrl}}"
+                      ],
+                      "path": [
+                        "api",
+                        "v2",
+                        "q"
+                      ],
+                      "query": [
+                        {
+                          "description": "(Required) The strings to search for, formatted as a simple pattern",
+                          "key": "q",
+                          "value": "<string>"
+                        },
+                        {
+                          "description": "A simple pattern limiting the nodes scope of the query. The scope controls both data and metadata response. The simple pattern is checked against the nodes' machine guid, node id and hostname. The default nodes scope is all nodes for which this Agent has data for. Usually the nodes scope is used to slice the entire dashboard (e.g. the Global Nodes Selector at the Netdata Cloud overview dashboard). Both positive and negative simple pattern expressions are supported.\n",
+                          "key": "scope_nodes",
+                          "value": "*"
+                        },
+                        {
+                          "description": "A simple pattern limiting the contexts scope of the query. The scope controls both data and metadata response. The default contexts scope is all contexts for which this Agent has data for. Usually the contexts scope is used to slice data on the dashboard (e.g. each context based chart has its own contexts scope, limiting the chart to all the instances of the selected context). Both positive and negative simple pattern expressions are supported.\n",
+                          "key": "scope_contexts",
+                          "value": "*"
+                        },
+                        {
+                          "description": "A simple pattern matching the nodes to be queried. This only controls the data response, not the metadata. The simple pattern is checked against the nodes' machine guid, node id, hostname. The default nodes selector is all the nodes matched by the nodes scope. Both positive and negative simple pattern expressions are supported.\n",
+                          "key": "nodes",
+                          "value": "*"
+                        },
+                        {
+                          "description": "A simple pattern matching the contexts to be queried. This only controls the data response, not the metadata. Both positive and negative simple pattern expressions are supported.\n",
+                          "key": "contexts",
+                          "value": "*"
+                        }
+                      ]
+                    },
+                    "description": "Get a list of contexts, across all nodes, hosted by this Netdata Agent, matching a string expression\n\n**Security & Access Control:**\n- \ud83d\udcca **Public Data API** - Bearer token optional, IP-based ACL restrictions apply\n- **Default Access:** Public (no authentication required)\n- **Bearer Protection:** When enabled via `/api/v3/bearer_protection`, requires bearer token\n- **IP Restrictions:** Subject to `allow dashboard from` in netdata.conf\n- **Access Methods:** Direct HTTP/HTTPS, Netdata Cloud, external tools\n"
+                  },
+                  "response": [
+                    {
+                      "id": "241256d9-7618-4807-a08d-e1245b8f2f82",
+                      "name": "OK",
+                      "originalRequest": {
+                        "method": "GET",
+                        "header": [
+                          {
+                            "key": "Accept",
+                            "value": "application/json"
+                          }
+                        ],
+                        "url": {
+                          "raw": "{{baseUrl}}/api/v2/q?q=<string>&scope_nodes=*&scope_contexts=*&nodes=*&contexts=*",
+                          "host": [
+                            "{{baseUrl}}"
+                          ],
+                          "path": [
+                            "api",
+                            "v2",
+                            "q"
+                          ],
+                          "query": [
+                            {
+                              "description": "(Required) The strings to search for, formatted as a simple pattern",
+                              "key": "q",
+                              "value": "<string>"
+                            },
+                            {
+                              "description": "A simple pattern limiting the nodes scope of the query. The scope controls both data and metadata response. The simple pattern is checked against the nodes' machine guid, node id and hostname. The default nodes scope is all nodes for which this Agent has data for. Usually the nodes scope is used to slice the entire dashboard (e.g. the Global Nodes Selector at the Netdata Cloud overview dashboard). Both positive and negative simple pattern expressions are supported.\n",
+                              "key": "scope_nodes",
+                              "value": "*"
+                            },
+                            {
+                              "description": "A simple pattern limiting the contexts scope of the query. The scope controls both data and metadata response. The default contexts scope is all contexts for which this Agent has data for. Usually the contexts scope is used to slice data on the dashboard (e.g. each context based chart has its own contexts scope, limiting the chart to all the instances of the selected context). Both positive and negative simple pattern expressions are supported.\n",
+                              "key": "scope_contexts",
+                              "value": "*"
+                            },
+                            {
+                              "description": "A simple pattern matching the nodes to be queried. This only controls the data response, not the metadata. The simple pattern is checked against the nodes' machine guid, node id, hostname. The default nodes selector is all the nodes matched by the nodes scope. Both positive and negative simple pattern expressions are supported.\n",
+                              "key": "nodes",
+                              "value": "*"
+                            },
+                            {
+                              "description": "A simple pattern matching the contexts to be queried. This only controls the data response, not the metadata. Both positive and negative simple pattern expressions are supported.\n",
+                              "key": "contexts",
+                              "value": "*"
+                            }
+                          ]
+                        }
+                      },
+                      "status": "OK",
+                      "code": 200,
+                      "_postman_previewlanguage": "json",
+                      "header": [
+                        {
+                          "key": "Content-Type",
+                          "value": "application/json"
+                        }
+                      ],
+                      "cookie": [],
+                      "responseTime": null,
+                      "body": "{\n  \"api\": \"<integer>\",\n  \"agents\": [\n    {\n      \"mg\": \"<uuid>\",\n      \"nd\": \"<uuid>\",\n      \"nm\": \"<string>\",\n      \"ai\": \"<integer>\",\n      \"now\": \"<integer>\"\n    },\n    {\n      \"mg\": \"<uuid>\",\n      \"nd\": \"<uuid>\",\n      \"nm\": \"<string>\",\n      \"ai\": \"<integer>\",\n      \"now\": \"<integer>\"\n    }\n  ],\n  \"versions\": {\n    \"nodes_hard_hash\": \"<integer>\",\n    \"contexts_hard_hash\": \"<integer>\",\n    \"contexts_soft_hash\": \"<integer>\",\n    \"alerts_hard_hash\": \"<integer>\",\n    \"alerts_soft_hash\": \"<integer>\"\n  },\n  \"contexts\": {\n    \"labore5\": {\n      \"family\": \"<string>\",\n      \"priority\": \"<integer>\",\n      \"first_entry\": \"<integer>\",\n      \"last_entry\": \"<integer>\",\n      \"live\": \"<boolean>\"\n    }\n  }\n}",
+                      "createdAt": "2026-07-28T02:17:21.000Z",
+                      "updatedAt": "2026-07-28T02:17:21.000Z",
+                      "uid": "35240-241256d9-7618-4807-a08d-e1245b8f2f82"
+                    }
+                  ],
+                  "createdAt": "2026-07-28T02:17:21.000Z",
+                  "updatedAt": "2026-07-28T02:17:21.000Z",
+                  "uid": "35240-2f103ee1-4ebf-4eaf-8465-d87d70ee991a"
+                }
+              ],
+              "id": "b0707597-d7b9-428a-bffc-35381ddd9445",
+              "createdAt": "2026-07-28T02:17:21.000Z",
+              "updatedAt": "2026-07-28T02:17:21.000Z",
+              "uid": "35240-b0707597-d7b9-428a-bffc-35381ddd9445"
+            }
+          ],
+          "id": "7a0dea8a-ed6d-4e6a-b1cb-121cd99b58c0",
+          "createdAt": "2026-07-28T02:17:21.000Z",
+          "updatedAt": "2026-07-28T02:17:21.000Z",
+          "uid": "35240-7a0dea8a-ed6d-4e6a-b1cb-121cd99b58c0"
+        },
+        {
+          "name": "v3",
+          "item": [
+            {
+              "name": "contexts",
+              "item": [
+                {
+                  "name": "Contexts Info v3",
+                  "id": "cc30f3c0-b930-4262-ae37-acaeaf83f640",
+                  "protocolProfileBehavior": {
+                    "disableBodyPruning": true
+                  },
+                  "request": {
+                    "auth": {
+                      "type": "noauth"
+                    },
+                    "method": "GET",
+                    "header": [
+                      {
+                        "key": "Accept",
+                        "value": "application/json"
+                      }
+                    ],
+                    "url": {
+                      "raw": "{{baseUrl}}/api/v3/contexts?scope_nodes=*&scope_contexts=*&nodes=*&contexts=*",
+                      "host": [
+                        "{{baseUrl}}"
+                      ],
+                      "path": [
+                        "api",
+                        "v3",
+                        "contexts"
+                      ],
+                      "query": [
+                        {
+                          "description": "A simple pattern limiting the nodes scope of the query. The scope controls both data and metadata response. The simple pattern is checked against the nodes' machine guid, node id and hostname. The default nodes scope is all nodes for which this Agent has data for. Usually the nodes scope is used to slice the entire dashboard (e.g. the Global Nodes Selector at the Netdata Cloud overview dashboard). Both positive and negative simple pattern expressions are supported.\n",
+                          "key": "scope_nodes",
+                          "value": "*"
+                        },
+                        {
+                          "description": "A simple pattern limiting the contexts scope of the query. The scope controls both data and metadata response. The default contexts scope is all contexts for which this Agent has data for. Usually the contexts scope is used to slice data on the dashboard (e.g. each context based chart has its own contexts scope, limiting the chart to all the instances of the selected context). Both positive and negative simple pattern expressions are supported.\n",
+                          "key": "scope_contexts",
+                          "value": "*"
+                        },
+                        {
+                          "description": "A simple pattern matching the nodes to be queried. This only controls the data response, not the metadata. The simple pattern is checked against the nodes' machine guid, node id, hostname. The default nodes selector is all the nodes matched by the nodes scope. Both positive and negative simple pattern expressions are supported.\n",
+                          "key": "nodes",
+                          "value": "*"
+                        },
+                        {
+                          "description": "A simple pattern matching the contexts to be queried. This only controls the data response, not the metadata. Both positive and negative simple pattern expressions are supported.\n",
+                          "key": "contexts",
+                          "value": "*"
+                        }
+                      ]
+                    },
+                    "description": "Get a list of all contexts, across all nodes, hosted by this Netdata Agent.\n\n**Security & Access Control:**\n- \ud83d\udcca **Public Data API** - Bearer token optional, IP-based ACL restrictions apply\n- **Default Access:** Public (no authentication required)\n- **Bearer Protection:** When enabled via `/api/v3/bearer_protection`, requires bearer token\n- **IP Restrictions:** Subject to `allow dashboard from` in netdata.conf\n- **Access Methods:** Direct HTTP/HTTPS, Netdata Cloud, external tools\n"
+                  },
+                  "response": [
+                    {
+                      "id": "46af085c-4d0e-49d4-bb3a-a19184ac894c",
+                      "name": "OK",
+                      "originalRequest": {
+                        "method": "GET",
+                        "header": [
+                          {
+                            "key": "Accept",
+                            "value": "application/json"
+                          }
+                        ],
+                        "url": {
+                          "raw": "{{baseUrl}}/api/v3/contexts?scope_nodes=*&scope_contexts=*&nodes=*&contexts=*",
+                          "host": [
+                            "{{baseUrl}}"
+                          ],
+                          "path": [
+                            "api",
+                            "v3",
+                            "contexts"
+                          ],
+                          "query": [
+                            {
+                              "description": "A simple pattern limiting the nodes scope of the query. The scope controls both data and metadata response. The simple pattern is checked against the nodes' machine guid, node id and hostname. The default nodes scope is all nodes for which this Agent has data for. Usually the nodes scope is used to slice the entire dashboard (e.g. the Global Nodes Selector at the Netdata Cloud overview dashboard). Both positive and negative simple pattern expressions are supported.\n",
+                              "key": "scope_nodes",
+                              "value": "*"
+                            },
+                            {
+                              "description": "A simple pattern limiting the contexts scope of the query. The scope controls both data and metadata response. The default contexts scope is all contexts for which this Agent has data for. Usually the contexts scope is used to slice data on the dashboard (e.g. each context based chart has its own contexts scope, limiting the chart to all the instances of the selected context). Both positive and negative simple pattern expressions are supported.\n",
+                              "key": "scope_contexts",
+                              "value": "*"
+                            },
+                            {
+                              "description": "A simple pattern matching the nodes to be queried. This only controls the data response, not the metadata. The simple pattern is checked against the nodes' machine guid, node id, hostname. The default nodes selector is all the nodes matched by the nodes scope. Both positive and negative simple pattern expressions are supported.\n",
+                              "key": "nodes",
+                              "value": "*"
+                            },
+                            {
+                              "description": "A simple pattern matching the contexts to be queried. This only controls the data response, not the metadata. Both positive and negative simple pattern expressions are supported.\n",
+                              "key": "contexts",
+                              "value": "*"
+                            }
+                          ]
+                        }
+                      },
+                      "status": "OK",
+                      "code": 200,
+                      "_postman_previewlanguage": "json",
+                      "header": [
+                        {
+                          "key": "Content-Type",
+                          "value": "application/json"
+                        }
+                      ],
+                      "cookie": [],
+                      "responseTime": null,
+                      "body": "{\n  \"api\": \"<integer>\",\n  \"agents\": [\n    {\n      \"mg\": \"<uuid>\",\n      \"nd\": \"<uuid>\",\n      \"nm\": \"<string>\",\n      \"ai\": \"<integer>\",\n      \"now\": \"<integer>\"\n    },\n    {\n      \"mg\": \"<uuid>\",\n      \"nd\": \"<uuid>\",\n      \"nm\": \"<string>\",\n      \"ai\": \"<integer>\",\n      \"now\": \"<integer>\"\n    }\n  ],\n  \"versions\": {\n    \"nodes_hard_hash\": \"<integer>\",\n    \"contexts_hard_hash\": \"<integer>\",\n    \"contexts_soft_hash\": \"<integer>\",\n    \"alerts_hard_hash\": \"<integer>\",\n    \"alerts_soft_hash\": \"<integer>\"\n  },\n  \"contexts\": {\n    \"labore5\": {\n      \"family\": \"<string>\",\n      \"priority\": \"<integer>\",\n      \"first_entry\": \"<integer>\",\n      \"last_entry\": \"<integer>\",\n      \"live\": \"<boolean>\"\n    }\n  }\n}",
+                      "createdAt": "2026-07-28T02:17:21.000Z",
+                      "updatedAt": "2026-07-28T02:17:21.000Z",
+                      "uid": "35240-46af085c-4d0e-49d4-bb3a-a19184ac894c"
+                    }
+                  ],
+                  "createdAt": "2026-07-28T02:17:21.000Z",
+                  "updatedAt": "2026-07-28T02:17:21.000Z",
+                  "uid": "35240-cc30f3c0-b930-4262-ae37-acaeaf83f640"
+                }
+              ],
+              "id": "bf2ff13b-10a8-4079-84b0-b875c6f06848",
+              "createdAt": "2026-07-28T02:17:21.000Z",
+              "updatedAt": "2026-07-28T02:17:21.000Z",
+              "uid": "35240-bf2ff13b-10a8-4079-84b0-b875c6f06848"
+            },
+            {
+              "name": "q",
+              "item": [
+                {
+                  "name": "Full Text Search v3",
+                  "id": "6bb2e2ad-b2cd-4382-a69e-cd43b0e22f7c",
+                  "protocolProfileBehavior": {
+                    "disableBodyPruning": true
+                  },
+                  "request": {
+                    "auth": {
+                      "type": "noauth"
+                    },
+                    "method": "GET",
+                    "header": [
+                      {
+                        "key": "Accept",
+                        "value": "application/json"
+                      }
+                    ],
+                    "url": {
+                      "raw": "{{baseUrl}}/api/v3/q?q=<string>&scope_nodes=*&scope_contexts=*&nodes=*&contexts=*",
+                      "host": [
+                        "{{baseUrl}}"
+                      ],
+                      "path": [
+                        "api",
+                        "v3",
+                        "q"
+                      ],
+                      "query": [
+                        {
+                          "description": "(Required) The strings to search for, formatted as a simple pattern",
+                          "key": "q",
+                          "value": "<string>"
+                        },
+                        {
+                          "description": "A simple pattern limiting the nodes scope of the query. The scope controls both data and metadata response. The simple pattern is checked against the nodes' machine guid, node id and hostname. The default nodes scope is all nodes for which this Agent has data for. Usually the nodes scope is used to slice the entire dashboard (e.g. the Global Nodes Selector at the Netdata Cloud overview dashboard). Both positive and negative simple pattern expressions are supported.\n",
+                          "key": "scope_nodes",
+                          "value": "*"
+                        },
+                        {
+                          "description": "A simple pattern limiting the contexts scope of the query. The scope controls both data and metadata response. The default contexts scope is all contexts for which this Agent has data for. Usually the contexts scope is used to slice data on the dashboard (e.g. each context based chart has its own contexts scope, limiting the chart to all the instances of the selected context). Both positive and negative simple pattern expressions are supported.\n",
+                          "key": "scope_contexts",
+                          "value": "*"
+                        },
+                        {
+                          "description": "A simple pattern matching the nodes to be queried. This only controls the data response, not the metadata. The simple pattern is checked against the nodes' machine guid, node id, hostname. The default nodes selector is all the nodes matched by the nodes scope. Both positive and negative simple pattern expressions are supported.\n",
+                          "key": "nodes",
+                          "value": "*"
+                        },
+                        {
+                          "description": "A simple pattern matching the contexts to be queried. This only controls the data response, not the metadata. Both positive and negative simple pattern expressions are supported.\n",
+                          "key": "contexts",
+                          "value": "*"
+                        }
+                      ]
+                    },
+                    "description": "Get a list of contexts, across all nodes, hosted by this Netdata Agent, matching a string expression.\n\n**Security & Access Control:**\n- \ud83d\udcca **Public Data API** - Bearer token optional, IP-based ACL restrictions apply\n- **Default Access:** Public (no authentication required)\n- **Bearer Protection:** When enabled via `/api/v3/bearer_protection`, requires bearer token\n- **IP Restrictions:** Subject to `allow dashboard from` in netdata.conf\n- **Access Methods:** Direct HTTP/HTTPS, Netdata Cloud, external tools\n"
+                  },
+                  "response": [
+                    {
+                      "id": "f3592063-0576-440d-89e9-783cc3897913",
+                      "name": "OK",
+                      "originalRequest": {
+                        "method": "GET",
+                        "header": [
+                          {
+                            "key": "Accept",
+                            "value": "application/json"
+                          }
+                        ],
+                        "url": {
+                          "raw": "{{baseUrl}}/api/v3/q?q=<string>&scope_nodes=*&scope_contexts=*&nodes=*&contexts=*",
+                          "host": [
+                            "{{baseUrl}}"
+                          ],
+                          "path": [
+                            "api",
+                            "v3",
+                            "q"
+                          ],
+                          "query": [
+                            {
+                              "description": "(Required) The strings to search for, formatted as a simple pattern",
+                              "key": "q",
+                              "value": "<string>"
+                            },
+                            {
+                              "description": "A simple pattern limiting the nodes scope of the query. The scope controls both data and metadata response. The simple pattern is checked against the nodes' machine guid, node id and hostname. The default nodes scope is all nodes for which this Agent has data for. Usually the nodes scope is used to slice the entire dashboard (e.g. the Global Nodes Selector at the Netdata Cloud overview dashboard). Both positive and negative simple pattern expressions are supported.\n",
+                              "key": "scope_nodes",
+                              "value": "*"
+                            },
+                            {
+                              "description": "A simple pattern limiting the contexts scope of the query. The scope controls both data and metadata response. The default contexts scope is all contexts for which this Agent has data for. Usually the contexts scope is used to slice data on the dashboard (e.g. each context based chart has its own contexts scope, limiting the chart to all the instances of the selected context). Both positive and negative simple pattern expressions are supported.\n",
+                              "key": "scope_contexts",
+                              "value": "*"
+                            },
+                            {
+                              "description": "A simple pattern matching the nodes to be queried. This only controls the data response, not the metadata. The simple pattern is checked against the nodes' machine guid, node id, hostname. The default nodes selector is all the nodes matched by the nodes scope. Both positive and negative simple pattern expressions are supported.\n",
+                              "key": "nodes",
+                              "value": "*"
+                            },
+                            {
+                              "description": "A simple pattern matching the contexts to be queried. This only controls the data response, not the metadata. Both positive and negative simple pattern expressions are supported.\n",
+                              "key": "contexts",
+                              "value": "*"
+                            }
+                          ]
+                        }
+                      },
+                      "status": "OK",
+                      "code": 200,
+                      "_postman_previewlanguage": "json",
+                      "header": [
+                        {
+                          "key": "Content-Type",
+                          "value": "application/json"
+                        }
+                      ],
+                      "cookie": [],
+                      "responseTime": null,
+                      "body": "{\n  \"api\": \"<integer>\",\n  \"agents\": [\n    {\n      \"mg\": \"<uuid>\",\n      \"nd\": \"<uuid>\",\n      \"nm\": \"<string>\",\n      \"ai\": \"<integer>\",\n      \"now\": \"<integer>\"\n    },\n    {\n      \"mg\": \"<uuid>\",\n      \"nd\": \"<uuid>\",\n      \"nm\": \"<string>\",\n      \"ai\": \"<integer>\",\n      \"now\": \"<integer>\"\n    }\n  ],\n  \"versions\": {\n    \"nodes_hard_hash\": \"<integer>\",\n    \"contexts_hard_hash\": \"<integer>\",\n    \"contexts_soft_hash\": \"<integer>\",\n    \"alerts_hard_hash\": \"<integer>\",\n    \"alerts_soft_hash\": \"<integer>\"\n  },\n  \"contexts\": {\n    \"labore5\": {\n      \"family\": \"<string>\",\n      \"priority\": \"<integer>\",\n      \"first_entry\": \"<integer>\",\n      \"last_entry\": \"<integer>\",\n      \"live\": \"<boolean>\"\n    }\n  }\n}",
+                      "createdAt": "2026-07-28T02:17:21.000Z",
+                      "updatedAt": "2026-07-28T02:17:21.000Z",
+                      "uid": "35240-f3592063-0576-440d-89e9-783cc3897913"
+                    }
+                  ],
+                  "createdAt": "2026-07-28T02:17:21.000Z",
+                  "updatedAt": "2026-07-28T02:17:21.000Z",
+                  "uid": "35240-6bb2e2ad-b2cd-4382-a69e-cd43b0e22f7c"
+                }
+              ],
+              "id": "75214777-6d89-437e-a700-bc5f1bf63cf6",
+              "createdAt": "2026-07-28T02:17:21.000Z",
+              "updatedAt": "2026-07-28T02:17:21.000Z",
+              "uid": "35240-75214777-6d89-437e-a700-bc5f1bf63cf6"
+            },
+            {
+              "name": "context",
+              "item": [
+                {
+                  "name": "Get info about a specific context - Latest API",
+                  "id": "1064e7d8-3cad-47a5-822e-ee5021e33294",
+                  "protocolProfileBehavior": {
+                    "disableBodyPruning": true
+                  },
+                  "request": {
+                    "auth": {
+                      "type": "noauth"
+                    },
+                    "method": "GET",
+                    "header": [
+                      {
+                        "key": "Accept",
+                        "value": "application/json"
+                      }
+                    ],
+                    "url": {
+                      "raw": "{{baseUrl}}/api/v3/context?context=<string>&dimensions=<string>&chart_label_key=<string>&chart_labels_filter=<string>&options=<string>&after=<long>&before=<long>",
+                      "host": [
+                        "{{baseUrl}}"
+                      ],
+                      "path": [
+                        "api",
+                        "v3",
+                        "context"
+                      ],
+                      "query": [
+                        {
+                          "description": "(Required) The context identifier to query. This is a required parameter.\n\nA context represents a type of metric collected across multiple instances. Each context groups charts that measure the same thing but for different entities.\n\n**Common Context Examples:**\n- `system.cpu` - CPU utilization metrics\n- `system.ram` - RAM usage metrics\n- `disk.io` - Disk I/O operations\n- `disk.ops` - Disk operation counts\n- `net.packets` - Network packet statistics\n- `net.drops` - Network packet drops\n- `cgroup.cpu` - Container CPU usage\n- `nginx.requests` - Nginx request rates\n\n**Finding Available Contexts:**\nUse the `/api/v3/contexts` endpoint to get a list of all available contexts.\n\n**Alias:** Can also be specified as `ctx` for brevity.\n",
+                          "key": "context",
+                          "value": "<string>"
+                        },
+                        {
+                          "description": "a simple pattern matching dimensions (use comma or pipe as separator)",
+                          "key": "dimensions",
+                          "value": "<string>"
+                        },
+                        {
+                          "description": "Specify the chart label keys that need to match for context queries as comma separated values. At least one matching key is needed to match the corresponding chart.\n",
+                          "key": "chart_label_key",
+                          "value": "<string>"
+                        },
+                        {
+                          "description": "Specify the chart label keys and values to match for context queries. All keys/values need to match for the chart to be included in the query. The labels are specified as key1:value1,key2:value2\n",
+                          "key": "chart_labels_filter",
+                          "value": "<string>"
+                        },
+                        {
+                          "description": "Comma or pipe-separated list of options to control the response content and format.\n\n**Available Options:**\n- `full` or `all` - Include all possible information (equivalent to enabling all options below)\n- `charts` - Include the list of charts belonging to this context\n- `dimensions` - Include dimension information for each chart\n- `queue` - Include data collection queue statistics\n- `flags` - Include internal flags and states\n- `labels` - Include chart labels\n- `alerts` - Include alert configurations and states for this context\n\n**Option Combinations:**\nOptions can be combined. For example: `options=charts,dimensions,labels` will include charts with their dimensions and labels.\n\n**Default Behavior:**\nWhen not specified, returns basic context information without detailed chart data.\n\n**Examples:**\n- `options=full` - Complete information\n- `options=charts,dimensions` - Charts with dimension details\n- `options=charts|labels` - Charts with labels (pipe separator)\n",
+                          "key": "options",
+                          "value": "<string>"
+                        },
+                        {
+                          "description": "Return only charts that have collected data after this timestamp.\n\nThis filters charts based on their data collection activity, excluding charts that haven't collected data since the specified time.\n\n**Format:** Unix timestamp in seconds\n\n**Use Cases:**\n- Find recently active charts\n- Exclude stale or obsolete charts\n- Filter charts by collection timeframe\n\n**Example:** `after=1609459200` (charts active after January 1, 2021)\n\nWhen not specified, all charts are included regardless of their last update time.\n",
+                          "key": "after",
+                          "value": "<long>"
+                        },
+                        {
+                          "description": "Return only charts that have collected data before this timestamp.\n\nThis filters charts based on their data collection activity, excluding charts that only have data after the specified time.\n\n**Format:** Unix timestamp in seconds\n\n**Use Cases:**\n- Historical analysis of chart availability\n- Find charts that were active during a specific time period\n- Exclude newer charts from results\n\n**Example:** `before=1640995200` (charts active before January 1, 2022)\n\nWhen combined with `after`, you can specify an exact time window:\n`after=1609459200&before=1640995200` (charts active during 2021)\n\nWhen not specified, all charts are included regardless of their collection timeline.\n",
+                          "key": "before",
+                          "value": "<long>"
+                        }
+                      ]
+                    },
+                    "description": "The context endpoint returns detailed information about a specific monitoring context across all nodes.\n\nThis is the latest version (v3) of the context API. It provides the same functionality as v1 but may include additional features in the future.\n\n**What is a Context?**\nA context is a grouping of charts that monitor the same type of metric across different instances. For example:\n- `system.cpu` - CPU usage (one chart per node)\n- `disk.io` - Disk I/O operations (one chart per disk)\n- `net.packets` - Network packets (one chart per network interface)\n\n**Use Cases:**\n- Get metadata about a specific metric type across all instances and nodes\n- Discover which charts belong to a context\n- Filter charts by labels or dimensions\n- Understand metric families, units, and chart types\n- Build dynamic dashboards that adapt to available instances\n\nThe response includes all charts that belong to the specified context, with their metadata, dimensions, labels, and current availability status.\n\n**Security & Access Control:**\n- \ud83d\udcca **Public Data API** - Bearer token optional, IP-based ACL restrictions apply\n- **Default Access:** Public (no authentication required)\n- **Bearer Protection:** When enabled via `/api/v3/bearer_protection`, requires bearer token\n- **IP Restrictions:** Subject to `allow dashboard from` in netdata.conf\n- **Access Methods:** Direct HTTP/HTTPS, Netdata Cloud, external tools\n"
+                  },
+                  "response": [
+                    {
+                      "id": "2efd528d-4c6f-482e-9cb2-ef3c66c04770",
+                      "name": "Success. Returns detailed information about the requested context.\n\nThe response is a JSON object containing:\n- Context metadata (name, title, family, units, chart type)\n- List of charts belonging to this context (when options=charts)\n- Dimension informat",
+                      "originalRequest": {
+                        "method": "GET",
+                        "header": [
+                          {
+                            "key": "Accept",
+                            "value": "application/json"
+                          }
+                        ],
+                        "url": {
+                          "raw": "{{baseUrl}}/api/v3/context?context=<string>&dimensions=<string>&chart_label_key=<string>&chart_labels_filter=<string>&options=<string>&after=<long>&before=<long>",
+                          "host": [
+                            "{{baseUrl}}"
+                          ],
+                          "path": [
+                            "api",
+                            "v3",
+                            "context"
+                          ],
+                          "query": [
+                            {
+                              "description": "(Required) The context identifier to query. This is a required parameter.\n\nA context represents a type of metric collected across multiple instances. Each context groups charts that measure the same thing but for different entities.\n\n**Common Context Examples:**\n- `system.cpu` - CPU utilization metrics\n- `system.ram` - RAM usage metrics\n- `disk.io` - Disk I/O operations\n- `disk.ops` - Disk operation counts\n- `net.packets` - Network packet statistics\n- `net.drops` - Network packet drops\n- `cgroup.cpu` - Container CPU usage\n- `nginx.requests` - Nginx request rates\n\n**Finding Available Contexts:**\nUse the `/api/v3/contexts` endpoint to get a list of all available contexts.\n\n**Alias:** Can also be specified as `ctx` for brevity.\n",
+                              "key": "context",
+                              "value": "<string>"
+                            },
+                            {
+                              "description": "a simple pattern matching dimensions (use comma or pipe as separator)",
+                              "key": "dimensions",
+                              "value": "<string>"
+                            },
+                            {
+                              "description": "Specify the chart label keys that need to match for context queries as comma separated values. At least one matching key is needed to match the corresponding chart.\n",
+                              "key": "chart_label_key",
+                              "value": "<string>"
+                            },
+                            {
+                              "description": "Specify the chart label keys and values to match for context queries. All keys/values need to match for the chart to be included in the query. The labels are specified as key1:value1,key2:value2\n",
+                              "key": "chart_labels_filter",
+                              "value": "<string>"
+                            },
+                            {
+                              "description": "Comma or pipe-separated list of options to control the response content and format.\n\n**Available Options:**\n- `full` or `all` - Include all possible information (equivalent to enabling all options below)\n- `charts` - Include the list of charts belonging to this context\n- `dimensions` - Include dimension information for each chart\n- `queue` - Include data collection queue statistics\n- `flags` - Include internal flags and states\n- `labels` - Include chart labels\n- `alerts` - Include alert configurations and states for this context\n\n**Option Combinations:**\nOptions can be combined. For example: `options=charts,dimensions,labels` will include charts with their dimensions and labels.\n\n**Default Behavior:**\nWhen not specified, returns basic context information without detailed chart data.\n\n**Examples:**\n- `options=full` - Complete information\n- `options=charts,dimensions` - Charts with dimension details\n- `options=charts|labels` - Charts with labels (pipe separator)\n",
+                              "key": "options",
+                              "value": "<string>"
+                            },
+                            {
+                              "description": "Return only charts that have collected data after this timestamp.\n\nThis filters charts based on their data collection activity, excluding charts that haven't collected data since the specified time.\n\n**Format:** Unix timestamp in seconds\n\n**Use Cases:**\n- Find recently active charts\n- Exclude stale or obsolete charts\n- Filter charts by collection timeframe\n\n**Example:** `after=1609459200` (charts active after January 1, 2021)\n\nWhen not specified, all charts are included regardless of their last update time.\n",
+                              "key": "after",
+                              "value": "<long>"
+                            },
+                            {
+                              "description": "Return only charts that have collected data before this timestamp.\n\nThis filters charts based on their data collection activity, excluding charts that only have data after the specified time.\n\n**Format:** Unix timestamp in seconds\n\n**Use Cases:**\n- Historical analysis of chart availability\n- Find charts that were active during a specific time period\n- Exclude newer charts from results\n\n**Example:** `before=1640995200` (charts active before January 1, 2022)\n\nWhen combined with `after`, you can specify an exact time window:\n`after=1609459200&before=1640995200` (charts active during 2021)\n\nWhen not specified, all charts are included regardless of their collection timeline.\n",
+                              "key": "before",
+                              "value": "<long>"
+                            }
+                          ]
+                        }
+                      },
+                      "status": "OK",
+                      "code": 200,
+                      "_postman_previewlanguage": "json",
+                      "header": [
+                        {
+                          "key": "Content-Type",
+                          "value": "application/json"
+                        }
+                      ],
+                      "cookie": [],
+                      "responseTime": null,
+                      "body": "{\n  \"version\": \"<string>\",\n  \"hub_version\": \"<string>\",\n  \"family\": \"<string>\",\n  \"title\": \"<string>\",\n  \"priority\": \"<number>\",\n  \"units\": \"<string>\",\n  \"chart_type\": \"stacked\",\n  \"first_time_t\": \"<number>\",\n  \"last_time_t\": \"<number>\",\n  \"charts\": {}\n}",
+                      "createdAt": "2026-07-28T02:17:21.000Z",
+                      "updatedAt": "2026-07-28T02:17:21.000Z",
+                      "uid": "35240-2efd528d-4c6f-482e-9cb2-ef3c66c04770"
+                    },
+                    {
+                      "id": "0fe6ac12-6249-4431-bcdd-25f2ebaa2e49",
+                      "name": "Bad request. Common causes:\n- Missing required 'context' parameter\n- Invalid parameter values\n- Malformed filter patterns\n",
+                      "originalRequest": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                          "raw": "{{baseUrl}}/api/v3/context?context=<string>&dimensions=<string>&chart_label_key=<string>&chart_labels_filter=<string>&options=<string>&after=<long>&before=<long>",
+                          "host": [
+                            "{{baseUrl}}"
+                          ],
+                          "path": [
+                            "api",
+                            "v3",
+                            "context"
+                          ],
+                          "query": [
+                            {
+                              "description": "(Required) The context identifier to query. This is a required parameter.\n\nA context represents a type of metric collected across multiple instances. Each context groups charts that measure the same thing but for different entities.\n\n**Common Context Examples:**\n- `system.cpu` - CPU utilization metrics\n- `system.ram` - RAM usage metrics\n- `disk.io` - Disk I/O operations\n- `disk.ops` - Disk operation counts\n- `net.packets` - Network packet statistics\n- `net.drops` - Network packet drops\n- `cgroup.cpu` - Container CPU usage\n- `nginx.requests` - Nginx request rates\n\n**Finding Available Contexts:**\nUse the `/api/v3/contexts` endpoint to get a list of all available contexts.\n\n**Alias:** Can also be specified as `ctx` for brevity.\n",
+                              "key": "context",
+                              "value": "<string>"
+                            },
+                            {
+                              "description": "a simple pattern matching dimensions (use comma or pipe as separator)",
+                              "key": "dimensions",
+                              "value": "<string>"
+                            },
+                            {
+                              "description": "Specify the chart label keys that need to match for context queries as comma separated values. At least one matching key is needed to match the corresponding chart.\n",
+                              "key": "chart_label_key",
+                              "value": "<string>"
+                            },
+                            {
+                              "description": "Specify the chart label keys and values to match for context queries. All keys/values need to match for the chart to be included in the query. The labels are specified as key1:value1,key2:value2\n",
+                              "key": "chart_labels_filter",
+                              "value": "<string>"
+                            },
+                            {
+                              "description": "Comma or pipe-separated list of options to control the response content and format.\n\n**Available Options:**\n- `full` or `all` - Include all possible information (equivalent to enabling all options below)\n- `charts` - Include the list of charts belonging to this context\n- `dimensions` - Include dimension information for each chart\n- `queue` - Include data collection queue statistics\n- `flags` - Include internal flags and states\n- `labels` - Include chart labels\n- `alerts` - Include alert configurations and states for this context\n\n**Option Combinations:**\nOptions can be combined. For example: `options=charts,dimensions,labels` will include charts with their dimensions and labels.\n\n**Default Behavior:**\nWhen not specified, returns basic context information without detailed chart data.\n\n**Examples:**\n- `options=full` - Complete information\n- `options=charts,dimensions` - Charts with dimension details\n- `options=charts|labels` - Charts with labels (pipe separator)\n",
+                              "key": "options",
+                              "value": "<string>"
+                            },
+                            {
+                              "description": "Return only charts that have collected data after this timestamp.\n\nThis filters charts based on their data collection activity, excluding charts that haven't collected data since the specified time.\n\n**Format:** Unix timestamp in seconds\n\n**Use Cases:**\n- Find recently active charts\n- Exclude stale or obsolete charts\n- Filter charts by collection timeframe\n\n**Example:** `after=1609459200` (charts active after January 1, 2021)\n\nWhen not specified, all charts are included regardless of their last update time.\n",
+                              "key": "after",
+                              "value": "<long>"
+                            },
+                            {
+                              "description": "Return only charts that have collected data before this timestamp.\n\nThis filters charts based on their data collection activity, excluding charts that only have data after the specified time.\n\n**Format:** Unix timestamp in seconds\n\n**Use Cases:**\n- Historical analysis of chart availability\n- Find charts that were active during a specific time period\n- Exclude newer charts from results\n\n**Example:** `before=1640995200` (charts active before January 1, 2022)\n\nWhen combined with `after`, you can specify an exact time window:\n`after=1609459200&before=1640995200` (charts active during 2021)\n\nWhen not specified, all charts are included regardless of their collection timeline.\n",
+                              "key": "before",
+                              "value": "<long>"
+                            }
+                          ]
+                        }
+                      },
+                      "status": "Bad Request",
+                      "code": 400,
+                      "_postman_previewlanguage": "text",
+                      "header": [],
+                      "cookie": [],
+                      "responseTime": null,
+                      "body": null,
+                      "createdAt": "2026-07-28T02:17:21.000Z",
+                      "updatedAt": "2026-07-28T02:17:21.000Z",
+                      "uid": "35240-0fe6ac12-6249-4431-bcdd-25f2ebaa2e49"
+                    },
+                    {
+                      "id": "40207872-b9c8-4931-a197-eca9413f9409",
+                      "name": "Not found. The specified context does not exist on this Netdata agent.\n\nThis can occur when:\n- The context name is misspelled\n- The context is not being collected on this agent\n- The context was available but is now obsolete\n",
+                      "originalRequest": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                          "raw": "{{baseUrl}}/api/v3/context?context=<string>&dimensions=<string>&chart_label_key=<string>&chart_labels_filter=<string>&options=<string>&after=<long>&before=<long>",
+                          "host": [
+                            "{{baseUrl}}"
+                          ],
+                          "path": [
+                            "api",
+                            "v3",
+                            "context"
+                          ],
+                          "query": [
+                            {
+                              "description": "(Required) The context identifier to query. This is a required parameter.\n\nA context represents a type of metric collected across multiple instances. Each context groups charts that measure the same thing but for different entities.\n\n**Common Context Examples:**\n- `system.cpu` - CPU utilization metrics\n- `system.ram` - RAM usage metrics\n- `disk.io` - Disk I/O operations\n- `disk.ops` - Disk operation counts\n- `net.packets` - Network packet statistics\n- `net.drops` - Network packet drops\n- `cgroup.cpu` - Container CPU usage\n- `nginx.requests` - Nginx request rates\n\n**Finding Available Contexts:**\nUse the `/api/v3/contexts` endpoint to get a list of all available contexts.\n\n**Alias:** Can also be specified as `ctx` for brevity.\n",
+                              "key": "context",
+                              "value": "<string>"
+                            },
+                            {
+                              "description": "a simple pattern matching dimensions (use comma or pipe as separator)",
+                              "key": "dimensions",
+                              "value": "<string>"
+                            },
+                            {
+                              "description": "Specify the chart label keys that need to match for context queries as comma separated values. At least one matching key is needed to match the corresponding chart.\n",
+                              "key": "chart_label_key",
+                              "value": "<string>"
+                            },
+                            {
+                              "description": "Specify the chart label keys and values to match for context queries. All keys/values need to match for the chart to be included in the query. The labels are specified as key1:value1,key2:value2\n",
+                              "key": "chart_labels_filter",
+                              "value": "<string>"
+                            },
+                            {
+                              "description": "Comma or pipe-separated list of options to control the response content and format.\n\n**Available Options:**\n- `full` or `all` - Include all possible information (equivalent to enabling all options below)\n- `charts` - Include the list of charts belonging to this context\n- `dimensions` - Include dimension information for each chart\n- `queue` - Include data collection queue statistics\n- `flags` - Include internal flags and states\n- `labels` - Include chart labels\n- `alerts` - Include alert configurations and states for this context\n\n**Option Combinations:**\nOptions can be combined. For example: `options=charts,dimensions,labels` will include charts with their dimensions and labels.\n\n**Default Behavior:**\nWhen not specified, returns basic context information without detailed chart data.\n\n**Examples:**\n- `options=full` - Complete information\n- `options=charts,dimensions` - Charts with dimension details\n- `options=charts|labels` - Charts with labels (pipe separator)\n",
+                              "key": "options",
+                              "value": "<string>"
+                            },
+                            {
+                              "description": "Return only charts that have collected data after this timestamp.\n\nThis filters charts based on their data collection activity, excluding charts that haven't collected data since the specified time.\n\n**Format:** Unix timestamp in seconds\n\n**Use Cases:**\n- Find recently active charts\n- Exclude stale or obsolete charts\n- Filter charts by collection timeframe\n\n**Example:** `after=1609459200` (charts active after January 1, 2021)\n\nWhen not specified, all charts are included regardless of their last update time.\n",
+                              "key": "after",
+                              "value": "<long>"
+                            },
+                            {
+                              "description": "Return only charts that have collected data before this timestamp.\n\nThis filters charts based on their data collection activity, excluding charts that only have data after the specified time.\n\n**Format:** Unix timestamp in seconds\n\n**Use Cases:**\n- Historical analysis of chart availability\n- Find charts that were active during a specific time period\n- Exclude newer charts from results\n\n**Example:** `before=1640995200` (charts active before January 1, 2022)\n\nWhen combined with `after`, you can specify an exact time window:\n`after=1609459200&before=1640995200` (charts active during 2021)\n\nWhen not specified, all charts are included regardless of their collection timeline.\n",
+                              "key": "before",
+                              "value": "<long>"
+                            }
+                          ]
+                        }
+                      },
+                      "status": "Not Found",
+                      "code": 404,
+                      "_postman_previewlanguage": "text",
+                      "header": [],
+                      "cookie": [],
+                      "responseTime": null,
+                      "body": null,
+                      "createdAt": "2026-07-28T02:17:21.000Z",
+                      "updatedAt": "2026-07-28T02:17:21.000Z",
+                      "uid": "35240-40207872-b9c8-4931-a197-eca9413f9409"
+                    },
+                    {
+                      "id": "16aac681-060a-40f6-8f34-53baed7184f8",
+                      "name": "Internal server error. Usually indicates the server is out of memory.",
+                      "originalRequest": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                          "raw": "{{baseUrl}}/api/v3/context?context=<string>&dimensions=<string>&chart_label_key=<string>&chart_labels_filter=<string>&options=<string>&after=<long>&before=<long>",
+                          "host": [
+                            "{{baseUrl}}"
+                          ],
+                          "path": [
+                            "api",
+                            "v3",
+                            "context"
+                          ],
+                          "query": [
+                            {
+                              "description": "(Required) The context identifier to query. This is a required parameter.\n\nA context represents a type of metric collected across multiple instances. Each context groups charts that measure the same thing but for different entities.\n\n**Common Context Examples:**\n- `system.cpu` - CPU utilization metrics\n- `system.ram` - RAM usage metrics\n- `disk.io` - Disk I/O operations\n- `disk.ops` - Disk operation counts\n- `net.packets` - Network packet statistics\n- `net.drops` - Network packet drops\n- `cgroup.cpu` - Container CPU usage\n- `nginx.requests` - Nginx request rates\n\n**Finding Available Contexts:**\nUse the `/api/v3/contexts` endpoint to get a list of all available contexts.\n\n**Alias:** Can also be specified as `ctx` for brevity.\n",
+                              "key": "context",
+                              "value": "<string>"
+                            },
+                            {
+                              "description": "a simple pattern matching dimensions (use comma or pipe as separator)",
+                              "key": "dimensions",
+                              "value": "<string>"
+                            },
+                            {
+                              "description": "Specify the chart label keys that need to match for context queries as comma separated values. At least one matching key is needed to match the corresponding chart.\n",
+                              "key": "chart_label_key",
+                              "value": "<string>"
+                            },
+                            {
+                              "description": "Specify the chart label keys and values to match for context queries. All keys/values need to match for the chart to be included in the query. The labels are specified as key1:value1,key2:value2\n",
+                              "key": "chart_labels_filter",
+                              "value": "<string>"
+                            },
+                            {
+                              "description": "Comma or pipe-separated list of options to control the response content and format.\n\n**Available Options:**\n- `full` or `all` - Include all possible information (equivalent to enabling all options below)\n- `charts` - Include the list of charts belonging to this context\n- `dimensions` - Include dimension information for each chart\n- `queue` - Include data collection queue statistics\n- `flags` - Include internal flags and states\n- `labels` - Include chart labels\n- `alerts` - Include alert configurations and states for this context\n\n**Option Combinations:**\nOptions can be combined. For example: `options=charts,dimensions,labels` will include charts with their dimensions and labels.\n\n**Default Behavior:**\nWhen not specified, returns basic context information without detailed chart data.\n\n**Examples:**\n- `options=full` - Complete information\n- `options=charts,dimensions` - Charts with dimension details\n- `options=charts|labels` - Charts with labels (pipe separator)\n",
+                              "key": "options",
+                              "value": "<string>"
+                            },
+                            {
+                              "description": "Return only charts that have collected data after this timestamp.\n\nThis filters charts based on their data collection activity, excluding charts that haven't collected data since the specified time.\n\n**Format:** Unix timestamp in seconds\n\n**Use Cases:**\n- Find recently active charts\n- Exclude stale or obsolete charts\n- Filter charts by collection timeframe\n\n**Example:** `after=1609459200` (charts active after January 1, 2021)\n\nWhen not specified, all charts are included regardless of their last update time.\n",
+                              "key": "after",
+                              "value": "<long>"
+                            },
+                            {
+                              "description": "Return only charts that have collected data before this timestamp.\n\nThis filters charts based on their data collection activity, excluding charts that only have data after the specified time.\n\n**Format:** Unix timestamp in seconds\n\n**Use Cases:**\n- Historical analysis of chart availability\n- Find charts that were active during a specific time period\n- Exclude newer charts from results\n\n**Example:** `before=1640995200` (charts active before January 1, 2022)\n\nWhen combined with `after`, you can specify an exact time window:\n`after=1609459200&before=1640995200` (charts active during 2021)\n\nWhen not specified, all charts are included regardless of their collection timeline.\n",
+                              "key": "before",
+                              "value": "<long>"
+                            }
+                          ]
+                        }
+                      },
+                      "status": "Internal Server Error",
+                      "code": 500,
+                      "_postman_previewlanguage": "text",
+                      "header": [],
+                      "cookie": [],
+                      "responseTime": null,
+                      "body": null,
+                      "createdAt": "2026-07-28T02:17:21.000Z",
+                      "updatedAt": "2026-07-28T02:17:21.000Z",
+                      "uid": "35240-16aac681-060a-40f6-8f34-53baed7184f8"
+                    }
+                  ],
+                  "createdAt": "2026-07-28T02:17:21.000Z",
+                  "updatedAt": "2026-07-28T02:17:21.000Z",
+                  "uid": "35240-1064e7d8-3cad-47a5-822e-ee5021e33294"
+                }
+              ],
+              "id": "52b12916-29d8-4ed0-b0ba-bb6f2643a8a3",
+              "createdAt": "2026-07-28T02:17:21.000Z",
+              "updatedAt": "2026-07-28T02:17:21.000Z",
+              "uid": "35240-52b12916-29d8-4ed0-b0ba-bb6f2643a8a3"
+            }
+          ],
+          "id": "7ff2baeb-7cfd-40d9-9a33-dbb57d901c58",
+          "createdAt": "2026-07-28T02:17:21.000Z",
+          "updatedAt": "2026-07-28T02:17:21.000Z",
+          "uid": "35240-7ff2baeb-7cfd-40d9-9a33-dbb57d901c58"
+        },
+        {
+          "name": "v1",
+          "item": [
+            {
+              "name": "contexts",
+              "item": [
+                {
+                  "name": "Get a list of all node contexts available v1",
+                  "id": "870b2f40-8516-4a8a-8329-e2d939d99ec3",
+                  "protocolProfileBehavior": {
+                    "disableBodyPruning": true
+                  },
+                  "request": {
+                    "auth": {
+                      "type": "noauth"
+                    },
+                    "method": "GET",
+                    "header": [
+                      {
+                        "key": "Accept",
+                        "value": "application/json"
+                      }
+                    ],
+                    "url": {
+                      "raw": "{{baseUrl}}/api/v1/contexts?dimensions=<string>&chart_label_key=<string>&chart_labels_filter=<string>&options=flags&options=queue&after=-600&before=0",
+                      "host": [
+                        "{{baseUrl}}"
+                      ],
+                      "path": [
+                        "api",
+                        "v1",
+                        "contexts"
+                      ],
+                      "query": [
+                        {
+                          "description": "a simple pattern matching dimensions (use comma or pipe as separator)",
+                          "key": "dimensions",
+                          "value": "<string>"
+                        },
+                        {
+                          "description": "Specify the chart label keys that need to match for context queries as comma separated values. At least one matching key is needed to match the corresponding chart.\n",
+                          "key": "chart_label_key",
+                          "value": "<string>"
+                        },
+                        {
+                          "description": "Specify the chart label keys and values to match for context queries. All keys/values need to match for the chart to be included in the query. The labels are specified as key1:value1,key2:value2\n",
+                          "key": "chart_labels_filter",
+                          "value": "<string>"
+                        },
+                        {
+                          "description": "Options that affect data generation.\n* `full` or `all` - Include all available information.\n* `charts` - Include chart information.\n* `dimensions` - Include dimension information.\n* `labels` - Include label information.\n* `uuids` - Include UUIDs in the response.\n* `queue` - Include queue information.\n* `flags` - Include internal flags.\n* `deleted` - Include deleted items.\n* `deepscan` - Perform a deep scan for contexts.\n* `rfc3339` - Return timestamps in RFC3339 format instead of Unix timestamps.\n",
+                          "key": "options",
+                          "value": "flags"
+                        },
+                        {
+                          "description": "Options that affect data generation.\n* `full` or `all` - Include all available information.\n* `charts` - Include chart information.\n* `dimensions` - Include dimension information.\n* `labels` - Include label information.\n* `uuids` - Include UUIDs in the response.\n* `queue` - Include queue information.\n* `flags` - Include internal flags.\n* `deleted` - Include deleted items.\n* `deepscan` - Perform a deep scan for contexts.\n* `rfc3339` - Return timestamps in RFC3339 format instead of Unix timestamps.\n",
+                          "key": "options",
+                          "value": "queue"
+                        },
+                        {
+                          "description": "`after` and `before` define the time-frame of a query. `after` can be a negative number of seconds, up to 3 years (-94608000), relative to `before`. If not set, it is usually assumed to be -600. When non-data endpoints support the `after` and `before`, they use the time-frame to limit their response for objects having data retention within the time-frame given.\n",
+                          "key": "after",
+                          "value": "-600"
+                        },
+                        {
+                          "description": "`after` and `before` define the time-frame of a query. `before` can be a negative number of seconds, up to 3 years (-94608000), relative to current clock. If not set, it is assumed to be the current clock time. When `before` is positive, it is assumed to be a unix epoch timestamp. When non-data endpoints support the `after` and `before`, they use the time-frame to limit their response for objects having data retention within the time-frame given.\n",
+                          "key": "before",
+                          "value": "0"
+                        }
+                      ]
+                    },
+                    "description": "The contexts endpoint returns a summary about all contexts stored in the netdata server.\n**Security & Access Control:** - \ud83d\udcca **Public Data API** - Bearer token optional, IP-based ACL restrictions apply - **Default Access:** Public (no authentication required) - **Bearer Protection:** When enabled via `/api/v3/bearer_protection`, requires bearer token - **IP Restrictions:** Subject to `allow dashboard from` in netdata.conf - **Access Methods:** Direct HTTP/HTTPS, Netdata Cloud, external tools"
+                  },
+                  "response": [
+                    {
+                      "id": "b201299b-9da8-4f5a-bb75-506e238026df",
+                      "name": "An array of contexts.",
+                      "originalRequest": {
+                        "method": "GET",
+                        "header": [
+                          {
+                            "key": "Accept",
+                            "value": "application/json"
+                          }
+                        ],
+                        "url": {
+                          "raw": "{{baseUrl}}/api/v1/contexts?dimensions=<string>&chart_label_key=<string>&chart_labels_filter=<string>&options=queue&after=-600&before=0",
+                          "host": [
+                            "{{baseUrl}}"
+                          ],
+                          "path": [
+                            "api",
+                            "v1",
+                            "contexts"
+                          ],
+                          "query": [
+                            {
+                              "description": "a simple pattern matching dimensions (use comma or pipe as separator)",
+                              "key": "dimensions",
+                              "value": "<string>"
+                            },
+                            {
+                              "description": "Specify the chart label keys that need to match for context queries as comma separated values. At least one matching key is needed to match the corresponding chart.\n",
+                              "key": "chart_label_key",
+                              "value": "<string>"
+                            },
+                            {
+                              "description": "Specify the chart label keys and values to match for context queries. All keys/values need to match for the chart to be included in the query. The labels are specified as key1:value1,key2:value2\n",
+                              "key": "chart_labels_filter",
+                              "value": "<string>"
+                            },
+                            {
+                              "description": "Options that affect data generation.\n* `full` or `all` - Include all available information.\n* `charts` - Include chart information.\n* `dimensions` - Include dimension information.\n* `labels` - Include label information.\n* `uuids` - Include UUIDs in the response.\n* `queue` - Include queue information.\n* `flags` - Include internal flags.\n* `deleted` - Include deleted items.\n* `deepscan` - Perform a deep scan for contexts.\n* `rfc3339` - Return timestamps in RFC3339 format instead of Unix timestamps.\n",
+                              "key": "options",
+                              "value": "queue"
+                            },
+                            {
+                              "description": "`after` and `before` define the time-frame of a query. `after` can be a negative number of seconds, up to 3 years (-94608000), relative to `before`. If not set, it is usually assumed to be -600. When non-data endpoints support the `after` and `before`, they use the time-frame to limit their response for objects having data retention within the time-frame given.\n",
+                              "key": "after",
+                              "value": "-600"
+                            },
+                            {
+                              "description": "`after` and `before` define the time-frame of a query. `before` can be a negative number of seconds, up to 3 years (-94608000), relative to current clock. If not set, it is assumed to be the current clock time. When `before` is positive, it is assumed to be a unix epoch timestamp. When non-data endpoints support the `after` and `before`, they use the time-frame to limit their response for objects having data retention within the time-frame given.\n",
+                              "key": "before",
+                              "value": "0"
+                            }
+                          ]
+                        }
+                      },
+                      "status": "OK",
+                      "code": 200,
+                      "_postman_previewlanguage": "json",
+                      "header": [
+                        {
+                          "key": "Content-Type",
+                          "value": "application/json"
+                        }
+                      ],
+                      "cookie": [],
+                      "responseTime": null,
+                      "body": "{\n  \"hostname\": \"<string>\",\n  \"machine_guid\": \"<string>\",\n  \"node_id\": \"<string>\",\n  \"claim_id\": \"<string>\",\n  \"host_labels\": {},\n  \"context\": {\n    \"sunt_b\": {\n      \"version\": \"<string>\",\n      \"hub_version\": \"<string>\",\n      \"family\": \"<string>\",\n      \"title\": \"<string>\",\n      \"priority\": \"<number>\",\n      \"units\": \"<string>\",\n      \"chart_type\": \"line\",\n      \"first_time_t\": \"<number>\",\n      \"last_time_t\": \"<number>\",\n      \"charts\": {}\n    },\n    \"nulla7\": {\n      \"version\": \"<string>\",\n      \"hub_version\": \"<string>\",\n      \"family\": \"<string>\",\n      \"title\": \"<string>\",\n      \"priority\": \"<number>\",\n      \"units\": \"<string>\",\n      \"chart_type\": \"area\",\n      \"first_time_t\": \"<number>\",\n      \"last_time_t\": \"<number>\",\n      \"charts\": {}\n    },\n    \"Loremfa\": {\n      \"version\": \"<string>\",\n      \"hub_version\": \"<string>\",\n      \"family\": \"<string>\",\n      \"title\": \"<string>\",\n      \"priority\": \"<number>\",\n      \"units\": \"<string>\",\n      \"chart_type\": \"stacked\",\n      \"first_time_t\": \"<number>\",\n      \"last_time_t\": \"<number>\",\n      \"charts\": {}\n    }\n  }\n}",
+                      "createdAt": "2026-07-28T02:17:21.000Z",
+                      "updatedAt": "2026-07-28T02:17:21.000Z",
+                      "uid": "35240-b201299b-9da8-4f5a-bb75-506e238026df"
+                    }
+                  ],
+                  "createdAt": "2026-07-28T02:17:21.000Z",
+                  "updatedAt": "2026-07-28T02:17:21.000Z",
+                  "uid": "35240-870b2f40-8516-4a8a-8329-e2d939d99ec3"
+                }
+              ],
+              "id": "3aa46dd9-bbaf-4e85-a3ac-b965c88a4bf6",
+              "createdAt": "2026-07-28T02:17:21.000Z",
+              "updatedAt": "2026-07-28T02:17:21.000Z",
+              "uid": "35240-3aa46dd9-bbaf-4e85-a3ac-b965c88a4bf6"
+            },
+            {
+              "name": "context",
+              "item": [
+                {
+                  "name": "Get info about a specific context",
+                  "id": "de41dc38-52fa-467d-ac49-079cb252a558",
+                  "protocolProfileBehavior": {
+                    "disableBodyPruning": true
+                  },
+                  "request": {
+                    "auth": {
+                      "type": "noauth"
+                    },
+                    "method": "GET",
+                    "header": [
+                      {
+                        "key": "Accept",
+                        "value": "application/json"
+                      }
+                    ],
+                    "url": {
+                      "raw": "{{baseUrl}}/api/v1/context?context=<string>&dimensions=<string>&chart_label_key=<string>&chart_labels_filter=<string>&options=flags&options=queue&after=-600&before=0",
+                      "host": [
+                        "{{baseUrl}}"
+                      ],
+                      "path": [
+                        "api",
+                        "v1",
+                        "context"
+                      ],
+                      "query": [
+                        {
+                          "description": "The context of the chart as returned by the /charts call.",
+                          "key": "context",
+                          "value": "<string>"
+                        },
+                        {
+                          "description": "a simple pattern matching dimensions (use comma or pipe as separator)",
+                          "key": "dimensions",
+                          "value": "<string>"
+                        },
+                        {
+                          "description": "Specify the chart label keys that need to match for context queries as comma separated values. At least one matching key is needed to match the corresponding chart.\n",
+                          "key": "chart_label_key",
+                          "value": "<string>"
+                        },
+                        {
+                          "description": "Specify the chart label keys and values to match for context queries. All keys/values need to match for the chart to be included in the query. The labels are specified as key1:value1,key2:value2\n",
+                          "key": "chart_labels_filter",
+                          "value": "<string>"
+                        },
+                        {
+                          "description": "Options that affect data generation.\n* `full` or `all` - Include all available information.\n* `charts` - Include chart information.\n* `dimensions` - Include dimension information.\n* `labels` - Include label information.\n* `uuids` - Include UUIDs in the response.\n* `queue` - Include queue information.\n* `flags` - Include internal flags.\n* `deleted` - Include deleted items.\n* `deepscan` - Perform a deep scan for contexts.\n* `rfc3339` - Return timestamps in RFC3339 format instead of Unix timestamps.\n",
+                          "key": "options",
+                          "value": "flags"
+                        },
+                        {
+                          "description": "Options that affect data generation.\n* `full` or `all` - Include all available information.\n* `charts` - Include chart information.\n* `dimensions` - Include dimension information.\n* `labels` - Include label information.\n* `uuids` - Include UUIDs in the response.\n* `queue` - Include queue information.\n* `flags` - Include internal flags.\n* `deleted` - Include deleted items.\n* `deepscan` - Perform a deep scan for contexts.\n* `rfc3339` - Return timestamps in RFC3339 format instead of Unix timestamps.\n",
+                          "key": "options",
+                          "value": "queue"
+                        },
+                        {
+                          "description": "`after` and `before` define the time-frame of a query. `after` can be a negative number of seconds, up to 3 years (-94608000), relative to `before`. If not set, it is usually assumed to be -600. When non-data endpoints support the `after` and `before`, they use the time-frame to limit their response for objects having data retention within the time-frame given.\n",
+                          "key": "after",
+                          "value": "-600"
+                        },
+                        {
+                          "description": "`after` and `before` define the time-frame of a query. `before` can be a negative number of seconds, up to 3 years (-94608000), relative to current clock. If not set, it is assumed to be the current clock time. When `before` is positive, it is assumed to be a unix epoch timestamp. When non-data endpoints support the `after` and `before`, they use the time-frame to limit their response for objects having data retention within the time-frame given.\n",
+                          "key": "before",
+                          "value": "0"
+                        }
+                      ]
+                    },
+                    "description": "The context endpoint returns detailed information about a given context.\nThe `context` parameter is required for this call.\n\n**Security & Access Control:**\n- \ud83d\udcca **Public Data API** - Bearer token optional, IP-based ACL restrictions apply\n- **Default Access:** Public (no authentication required)\n- **Bearer Protection:** When enabled via `/api/v3/bearer_protection`, requires bearer token\n- **IP Restrictions:** Subject to `allow dashboard from` in netdata.conf\n- **Access Methods:** Direct HTTP/HTTPS, Netdata Cloud, external tools\n"
+                  },
+                  "response": [
+                    {
+                      "id": "2013596a-eb20-48b3-9a7f-8196758baca9",
+                      "name": "A javascript object with detailed information about the context.",
+                      "originalRequest": {
+                        "method": "GET",
+                        "header": [
+                          {
+                            "key": "Accept",
+                            "value": "application/json"
+                          }
+                        ],
+                        "url": {
+                          "raw": "{{baseUrl}}/api/v1/context?context=<string>&dimensions=<string>&chart_label_key=<string>&chart_labels_filter=<string>&options=queue&after=-600&before=0",
+                          "host": [
+                            "{{baseUrl}}"
+                          ],
+                          "path": [
+                            "api",
+                            "v1",
+                            "context"
+                          ],
+                          "query": [
+                            {
+                              "description": "The context of the chart as returned by the /charts call.",
+                              "key": "context",
+                              "value": "<string>"
+                            },
+                            {
+                              "description": "a simple pattern matching dimensions (use comma or pipe as separator)",
+                              "key": "dimensions",
+                              "value": "<string>"
+                            },
+                            {
+                              "description": "Specify the chart label keys that need to match for context queries as comma separated values. At least one matching key is needed to match the corresponding chart.\n",
+                              "key": "chart_label_key",
+                              "value": "<string>"
+                            },
+                            {
+                              "description": "Specify the chart label keys and values to match for context queries. All keys/values need to match for the chart to be included in the query. The labels are specified as key1:value1,key2:value2\n",
+                              "key": "chart_labels_filter",
+                              "value": "<string>"
+                            },
+                            {
+                              "description": "Options that affect data generation.\n* `full` or `all` - Include all available information.\n* `charts` - Include chart information.\n* `dimensions` - Include dimension information.\n* `labels` - Include label information.\n* `uuids` - Include UUIDs in the response.\n* `queue` - Include queue information.\n* `flags` - Include internal flags.\n* `deleted` - Include deleted items.\n* `deepscan` - Perform a deep scan for contexts.\n* `rfc3339` - Return timestamps in RFC3339 format instead of Unix timestamps.\n",
+                              "key": "options",
+                              "value": "queue"
+                            },
+                            {
+                              "description": "`after` and `before` define the time-frame of a query. `after` can be a negative number of seconds, up to 3 years (-94608000), relative to `before`. If not set, it is usually assumed to be -600. When non-data endpoints support the `after` and `before`, they use the time-frame to limit their response for objects having data retention within the time-frame given.\n",
+                              "key": "after",
+                              "value": "-600"
+                            },
+                            {
+                              "description": "`after` and `before` define the time-frame of a query. `before` can be a negative number of seconds, up to 3 years (-94608000), relative to current clock. If not set, it is assumed to be the current clock time. When `before` is positive, it is assumed to be a unix epoch timestamp. When non-data endpoints support the `after` and `before`, they use the time-frame to limit their response for objects having data retention within the time-frame given.\n",
+                              "key": "before",
+                              "value": "0"
+                            }
+                          ]
+                        }
+                      },
+                      "status": "OK",
+                      "code": 200,
+                      "_postman_previewlanguage": "json",
+                      "header": [
+                        {
+                          "key": "Content-Type",
+                          "value": "application/json"
+                        }
+                      ],
+                      "cookie": [],
+                      "responseTime": null,
+                      "body": "{\n  \"version\": \"<string>\",\n  \"hub_version\": \"<string>\",\n  \"family\": \"<string>\",\n  \"title\": \"<string>\",\n  \"priority\": \"<number>\",\n  \"units\": \"<string>\",\n  \"chart_type\": \"stacked\",\n  \"first_time_t\": \"<number>\",\n  \"last_time_t\": \"<number>\",\n  \"charts\": {}\n}",
+                      "createdAt": "2026-07-28T02:17:21.000Z",
+                      "updatedAt": "2026-07-28T02:17:21.000Z",
+                      "uid": "35240-2013596a-eb20-48b3-9a7f-8196758baca9"
+                    },
+                    {
+                      "id": "bec6638a-d7d6-4f73-8d7f-031cd4b7e048",
+                      "name": "No context id was supplied in the request.",
+                      "originalRequest": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                          "raw": "{{baseUrl}}/api/v1/context?context=<string>&dimensions=<string>&chart_label_key=<string>&chart_labels_filter=<string>&options=queue&after=-600&before=0",
+                          "host": [
+                            "{{baseUrl}}"
+                          ],
+                          "path": [
+                            "api",
+                            "v1",
+                            "context"
+                          ],
+                          "query": [
+                            {
+                              "description": "The context of the chart as returned by the /charts call.",
+                              "key": "context",
+                              "value": "<string>"
+                            },
+                            {
+                              "description": "a simple pattern matching dimensions (use comma or pipe as separator)",
+                              "key": "dimensions",
+                              "value": "<string>"
+                            },
+                            {
+                              "description": "Specify the chart label keys that need to match for context queries as comma separated values. At least one matching key is needed to match the corresponding chart.\n",
+                              "key": "chart_label_key",
+                              "value": "<string>"
+                            },
+                            {
+                              "description": "Specify the chart label keys and values to match for context queries. All keys/values need to match for the chart to be included in the query. The labels are specified as key1:value1,key2:value2\n",
+                              "key": "chart_labels_filter",
+                              "value": "<string>"
+                            },
+                            {
+                              "description": "Options that affect data generation.\n* `full` or `all` - Include all available information.\n* `charts` - Include chart information.\n* `dimensions` - Include dimension information.\n* `labels` - Include label information.\n* `uuids` - Include UUIDs in the response.\n* `queue` - Include queue information.\n* `flags` - Include internal flags.\n* `deleted` - Include deleted items.\n* `deepscan` - Perform a deep scan for contexts.\n* `rfc3339` - Return timestamps in RFC3339 format instead of Unix timestamps.\n",
+                              "key": "options",
+                              "value": "queue"
+                            },
+                            {
+                              "description": "`after` and `before` define the time-frame of a query. `after` can be a negative number of seconds, up to 3 years (-94608000), relative to `before`. If not set, it is usually assumed to be -600. When non-data endpoints support the `after` and `before`, they use the time-frame to limit their response for objects having data retention within the time-frame given.\n",
+                              "key": "after",
+                              "value": "-600"
+                            },
+                            {
+                              "description": "`after` and `before` define the time-frame of a query. `before` can be a negative number of seconds, up to 3 years (-94608000), relative to current clock. If not set, it is assumed to be the current clock time. When `before` is positive, it is assumed to be a unix epoch timestamp. When non-data endpoints support the `after` and `before`, they use the time-frame to limit their response for objects having data retention within the time-frame given.\n",
+                              "key": "before",
+                              "value": "0"
+                            }
+                          ]
+                        }
+                      },
+                      "status": "Bad Request",
+                      "code": 400,
+                      "_postman_previewlanguage": "text",
+                      "header": [],
+                      "cookie": [],
+                      "responseTime": null,
+                      "body": null,
+                      "createdAt": "2026-07-28T02:17:21.000Z",
+                      "updatedAt": "2026-07-28T02:17:21.000Z",
+                      "uid": "35240-bec6638a-d7d6-4f73-8d7f-031cd4b7e048"
+                    },
+                    {
+                      "id": "f5888df6-f2f9-4743-b8bc-88a9566f4370",
+                      "name": "No context with the given id is found.",
+                      "originalRequest": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                          "raw": "{{baseUrl}}/api/v1/context?context=<string>&dimensions=<string>&chart_label_key=<string>&chart_labels_filter=<string>&options=queue&after=-600&before=0",
+                          "host": [
+                            "{{baseUrl}}"
+                          ],
+                          "path": [
+                            "api",
+                            "v1",
+                            "context"
+                          ],
+                          "query": [
+                            {
+                              "description": "The context of the chart as returned by the /charts call.",
+                              "key": "context",
+                              "value": "<string>"
+                            },
+                            {
+                              "description": "a simple pattern matching dimensions (use comma or pipe as separator)",
+                              "key": "dimensions",
+                              "value": "<string>"
+                            },
+                            {
+                              "description": "Specify the chart label keys that need to match for context queries as comma separated values. At least one matching key is needed to match the corresponding chart.\n",
+                              "key": "chart_label_key",
+                              "value": "<string>"
+                            },
+                            {
+                              "description": "Specify the chart label keys and values to match for context queries. All keys/values need to match for the chart to be included in the query. The labels are specified as key1:value1,key2:value2\n",
+                              "key": "chart_labels_filter",
+                              "value": "<string>"
+                            },
+                            {
+                              "description": "Options that affect data generation.\n* `full` or `all` - Include all available information.\n* `charts` - Include chart information.\n* `dimensions` - Include dimension information.\n* `labels` - Include label information.\n* `uuids` - Include UUIDs in the response.\n* `queue` - Include queue information.\n* `flags` - Include internal flags.\n* `deleted` - Include deleted items.\n* `deepscan` - Perform a deep scan for contexts.\n* `rfc3339` - Return timestamps in RFC3339 format instead of Unix timestamps.\n",
+                              "key": "options",
+                              "value": "queue"
+                            },
+                            {
+                              "description": "`after` and `before` define the time-frame of a query. `after` can be a negative number of seconds, up to 3 years (-94608000), relative to `before`. If not set, it is usually assumed to be -600. When non-data endpoints support the `after` and `before`, they use the time-frame to limit their response for objects having data retention within the time-frame given.\n",
+                              "key": "after",
+                              "value": "-600"
+                            },
+                            {
+                              "description": "`after` and `before` define the time-frame of a query. `before` can be a negative number of seconds, up to 3 years (-94608000), relative to current clock. If not set, it is assumed to be the current clock time. When `before` is positive, it is assumed to be a unix epoch timestamp. When non-data endpoints support the `after` and `before`, they use the time-frame to limit their response for objects having data retention within the time-frame given.\n",
+                              "key": "before",
+                              "value": "0"
+                            }
+                          ]
+                        }
+                      },
+                      "status": "Not Found",
+                      "code": 404,
+                      "_postman_previewlanguage": "text",
+                      "header": [],
+                      "cookie": [],
+                      "responseTime": null,
+                      "body": null,
+                      "createdAt": "2026-07-28T02:17:21.000Z",
+                      "updatedAt": "2026-07-28T02:17:21.000Z",
+                      "uid": "35240-f5888df6-f2f9-4743-b8bc-88a9566f4370"
+                    }
+                  ],
+                  "createdAt": "2026-07-28T02:17:21.000Z",
+                  "updatedAt": "2026-07-28T02:17:21.000Z",
+                  "uid": "35240-de41dc38-52fa-467d-ac49-079cb252a558"
+                }
+              ],
+              "id": "a51380f5-017a-4f30-9b9b-5a9a5ede3b73",
+              "createdAt": "2026-07-28T02:17:21.000Z",
+              "updatedAt": "2026-07-28T02:17:21.000Z",
+              "uid": "35240-a51380f5-017a-4f30-9b9b-5a9a5ede3b73"
+            }
+          ],
+          "id": "1cc226f1-ceba-4f19-b247-caeb72c1b879",
+          "createdAt": "2026-07-28T02:17:21.000Z",
+          "updatedAt": "2026-07-28T02:17:21.000Z",
+          "uid": "35240-1cc226f1-ceba-4f19-b247-caeb72c1b879"
+        }
+      ],
+      "id": "57b6143d-aca5-4b14-bdff-ec49fe56fab8",
+      "createdAt": "2026-07-28T02:17:21.000Z",
+      "updatedAt": "2026-07-28T02:17:21.000Z",
+      "uid": "35240-57b6143d-aca5-4b14-bdff-ec49fe56fab8"
+    }
+  ],
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "https://registry.my-netdata.io"
+    }
+  ]
+}

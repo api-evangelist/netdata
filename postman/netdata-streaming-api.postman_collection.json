@@ -1,0 +1,241 @@
+{
+  "info": {
+    "_postman_id": "c987a8db-536c-40f4-b497-3ef642701151",
+    "name": "Netdata agent streaming API",
+    "description": "Real-time performance and health monitoring.\n\n## API Versions\n\nNetdata provides three API versions:\n- **v1**: The original API, focused on single-node operations\n- **v2**: Multi-node API with advanced grouping and aggregation capabilities\n- **v3**: The latest API version that combines v1 and v2 endpoints and may include additional features\n\n### v3 API Endpoints\n\nThe v3 API provides the current, actively maintained endpoints:\n- `/api/v3/data` - Multi-dimensional data queries\n- `/api/v3/weights` - Metric scoring/correlation\n- `/api/v3/contexts` - Context metadata\n- `/api/v3/nodes` - Node information\n- `/api/v3/q` - Full-text search\n- `/api/v3/alerts` - Alert information\n- `/api/v3/alert_transitions` - Alert state transitions\n- `/api/v3/alert_config` - Alert configuration\n- `/api/v3/functions` - Available functions\n- `/api/v3/function` - Execute functions\n- `/api/v3/info` - Agent information\n- `/api/v3/node_instances` - Node instance information\n- `/api/v3/stream_path` - Streaming topology\n- `/api/v3/versions` - Version information\n- `/api/v3/badge.svg` - Dynamic badges\n- `/api/v3/allmetrics` - Export metrics\n- `/api/v3/context` - Single context info\n- `/api/v3/variable` - Variable information\n- `/api/v3/config` - Dynamic configuration\n- `/api/v3/settings` - Agent settings\n- `/api/v3/me` - Current user information\n- `/api/v3/claim` - Agent claiming\n- Additional management and streaming endpoints\n\n**Note:** V1 and V2 APIs are deprecated and maintained for backwards compatibility only. New integrations should use V3 exclusively.\n\n\nContact Support:\n Name: Netdata Agent API\n Email: info@netdata.cloud",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "createdAt": "2026-07-28T02:20:12.000Z",
+    "updatedAt": "2026-07-28T02:20:13.000Z",
+    "lastUpdatedBy": "35240",
+    "uid": "35240-c987a8db-536c-40f4-b497-3ef642701151"
+  },
+  "item": [
+    {
+      "name": "api",
+      "item": [
+        {
+          "name": "v3",
+          "item": [
+            {
+              "name": "stream_info",
+              "item": [
+                {
+                  "name": "Get streaming information and statistics",
+                  "id": "06eb7f61-c74f-4963-aa46-1dd900da9c28",
+                  "protocolProfileBehavior": {
+                    "disableBodyPruning": true
+                  },
+                  "request": {
+                    "method": "GET",
+                    "header": [
+                      {
+                        "key": "Accept",
+                        "value": "application/json"
+                      }
+                    ],
+                    "url": {
+                      "raw": "{{baseUrl}}/api/v3/stream_info?machine_guid=<uuid>",
+                      "host": [
+                        "{{baseUrl}}"
+                      ],
+                      "path": [
+                        "api",
+                        "v3",
+                        "stream_info"
+                      ],
+                      "query": [
+                        {
+                          "description": "Machine GUID (unique node identifier) to query streaming information for.\nIf not specified, returns streaming information for the local agent.\n\n**GUID Format:**\n- UUID format: `xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx`\n- Case-insensitive\n- Can be obtained from `/api/v3/nodes` endpoint\n\n**Use Cases:**\n- Query specific child node's streaming status\n- Check parent node's connection to specific child\n- Diagnostic queries for particular node\n\n**Examples:**\n- `12345678-1234-1234-1234-123456789012` - Specific node\n- Empty/omitted - Local agent (default)\n\n**Invalid GUIDs:**\n- Malformed UUID: May return error or empty result\n- Non-existent GUID: Returns empty or not-found response\n",
+                          "key": "machine_guid",
+                          "value": "<uuid>"
+                        }
+                      ]
+                    },
+                    "description": "**V3 SPECIFIC ENDPOINT**\n\nReturns detailed information about Netdata's streaming connections, including sender/receiver\nstatistics, buffer usage, compression ratios, and connection health metrics.\n\n**Streaming Overview:**\nNetdata supports hierarchical streaming where:\n- **Child nodes** send metrics to **parent nodes** for centralization\n- **Parent nodes** aggregate and store metrics from multiple children\n- Streaming uses efficient binary protocol with compression\n- Connections can be TLS-encrypted and authenticated\n\n**Information Provided:**\n- **Connection status**: Active, established, disconnected\n- **Streaming statistics**: Bytes sent/received, compression ratios\n- **Buffer usage**: Current buffer fill levels, drops\n- **Performance metrics**: Streaming latency, throughput\n- **Replication status**: Data replication lag and progress\n- **Protocol version**: Streaming protocol version in use\n\n**Use Cases:**\n- **Monitor streaming health**: Ensure children are connected and streaming\n- **Troubleshoot connectivity**: Identify disconnections and buffer issues\n- **Performance analysis**: Check compression ratios and throughput\n- **Capacity planning**: Monitor buffer usage and network bandwidth\n- **Replication monitoring**: Track data replication status\n\n**Common Usage Patterns:**\n\n1. **Get streaming info for localhost:**\n   ```\n   /api/v3/stream_info\n   ```\n\n2. **Get streaming info for specific node:**\n   ```\n   /api/v3/stream_info?machine_guid=12345678-1234-1234-1234-123456789012\n   ```\n\n**Response Structure:**\nReturns streaming information including:\n- Parent/child relationship status\n- Connection uptime and reconnection count\n- Bytes sent/received with compression ratios\n- Buffer usage (current size, maximum size, drops)\n- Replication lag and status\n- Stream protocol version\n\n**Streaming Modes:**\n- **Sender mode**: Node is streaming data TO a parent\n- **Receiver mode**: Node is receiving data FROM children\n- **Both**: Node can be both sender and receiver\n\n**Health Indicators:**\n- `connected: true/false` - Connection status\n- `buffer_used_percentage` - Buffer fill level\n- `compression_ratio` - Data compression efficiency\n- `replication_lag_seconds` - Data replication delay\n\n**Security & Access Control:**\n- \ud83d\udd13 **Always Public API** - This endpoint is always accessible without authentication\n- **No Restrictions:** Not subject to bearer protection or IP-based ACL restrictions\n- **No Authentication:** Cannot be restricted by any configuration\n- **Access:** Available to anyone who can reach the agent's HTTP endpoint\n"
+                  },
+                  "response": [
+                    {
+                      "id": "a95ee108-309a-4288-b6a0-ea68fdb87670",
+                      "name": "Successfully retrieved streaming information.\n\nReturns streaming connection details, statistics, and health metrics.\n",
+                      "originalRequest": {
+                        "method": "GET",
+                        "header": [
+                          {
+                            "key": "Accept",
+                            "value": "application/json"
+                          }
+                        ],
+                        "url": {
+                          "raw": "{{baseUrl}}/api/v3/stream_info?machine_guid=<uuid>",
+                          "host": [
+                            "{{baseUrl}}"
+                          ],
+                          "path": [
+                            "api",
+                            "v3",
+                            "stream_info"
+                          ],
+                          "query": [
+                            {
+                              "description": "Machine GUID (unique node identifier) to query streaming information for.\nIf not specified, returns streaming information for the local agent.\n\n**GUID Format:**\n- UUID format: `xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx`\n- Case-insensitive\n- Can be obtained from `/api/v3/nodes` endpoint\n\n**Use Cases:**\n- Query specific child node's streaming status\n- Check parent node's connection to specific child\n- Diagnostic queries for particular node\n\n**Examples:**\n- `12345678-1234-1234-1234-123456789012` - Specific node\n- Empty/omitted - Local agent (default)\n\n**Invalid GUIDs:**\n- Malformed UUID: May return error or empty result\n- Non-existent GUID: Returns empty or not-found response\n",
+                              "key": "machine_guid",
+                              "value": "<uuid>"
+                            }
+                          ]
+                        }
+                      },
+                      "status": "OK",
+                      "code": 200,
+                      "_postman_previewlanguage": "json",
+                      "header": [
+                        {
+                          "key": "Content-Type",
+                          "value": "application/json"
+                        }
+                      ],
+                      "cookie": [],
+                      "responseTime": null,
+                      "body": "{\n  \"machine_guid\": \"<uuid>\",\n  \"hostname\": \"<string>\",\n  \"streaming_mode\": \"receiver\",\n  \"sender\": {\n    \"connected\": \"<boolean>\",\n    \"parent_hostname\": \"<string>\",\n    \"uptime_seconds\": \"<integer>\",\n    \"reconnects\": \"<integer>\",\n    \"bytes_sent\": \"<integer>\",\n    \"bytes_compressed\": \"<integer>\",\n    \"compression_ratio\": \"<number>\",\n    \"buffer_used_bytes\": \"<integer>\",\n    \"buffer_max_bytes\": \"<integer>\",\n    \"buffer_used_percentage\": \"<number>\",\n    \"drops\": \"<integer>\"\n  },\n  \"receiver\": {\n    \"children\": [\n      {\n        \"machine_guid\": \"<uuid>\",\n        \"hostname\": \"<string>\",\n        \"connected\": \"<boolean>\",\n        \"uptime_seconds\": \"<integer>\",\n        \"bytes_received\": \"<integer>\",\n        \"replication_lag_seconds\": \"<integer>\"\n      },\n      {\n        \"machine_guid\": \"<uuid>\",\n        \"hostname\": \"<string>\",\n        \"connected\": \"<boolean>\",\n        \"uptime_seconds\": \"<integer>\",\n        \"bytes_received\": \"<integer>\",\n        \"replication_lag_seconds\": \"<integer>\"\n      }\n    ]\n  },\n  \"protocol_version\": \"<integer>\"\n}",
+                      "createdAt": "2026-07-28T02:20:13.000Z",
+                      "updatedAt": "2026-07-28T02:20:13.000Z",
+                      "uid": "35240-a95ee108-309a-4288-b6a0-ea68fdb87670"
+                    },
+                    {
+                      "id": "ddac3d64-e0ac-432e-9b10-c7e0447924bc",
+                      "name": "Invalid machine_guid format.",
+                      "originalRequest": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                          "raw": "{{baseUrl}}/api/v3/stream_info?machine_guid=<uuid>",
+                          "host": [
+                            "{{baseUrl}}"
+                          ],
+                          "path": [
+                            "api",
+                            "v3",
+                            "stream_info"
+                          ],
+                          "query": [
+                            {
+                              "description": "Machine GUID (unique node identifier) to query streaming information for.\nIf not specified, returns streaming information for the local agent.\n\n**GUID Format:**\n- UUID format: `xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx`\n- Case-insensitive\n- Can be obtained from `/api/v3/nodes` endpoint\n\n**Use Cases:**\n- Query specific child node's streaming status\n- Check parent node's connection to specific child\n- Diagnostic queries for particular node\n\n**Examples:**\n- `12345678-1234-1234-1234-123456789012` - Specific node\n- Empty/omitted - Local agent (default)\n\n**Invalid GUIDs:**\n- Malformed UUID: May return error or empty result\n- Non-existent GUID: Returns empty or not-found response\n",
+                              "key": "machine_guid",
+                              "value": "<uuid>"
+                            }
+                          ]
+                        }
+                      },
+                      "status": "Bad Request",
+                      "code": 400,
+                      "_postman_previewlanguage": "text",
+                      "header": [],
+                      "cookie": [],
+                      "responseTime": null,
+                      "body": null,
+                      "createdAt": "2026-07-28T02:20:13.000Z",
+                      "updatedAt": "2026-07-28T02:20:13.000Z",
+                      "uid": "35240-ddac3d64-e0ac-432e-9b10-c7e0447924bc"
+                    },
+                    {
+                      "id": "6ff274a6-b862-48a8-b22c-ab5b54fad9d0",
+                      "name": "Node with specified machine_guid not found.",
+                      "originalRequest": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                          "raw": "{{baseUrl}}/api/v3/stream_info?machine_guid=<uuid>",
+                          "host": [
+                            "{{baseUrl}}"
+                          ],
+                          "path": [
+                            "api",
+                            "v3",
+                            "stream_info"
+                          ],
+                          "query": [
+                            {
+                              "description": "Machine GUID (unique node identifier) to query streaming information for.\nIf not specified, returns streaming information for the local agent.\n\n**GUID Format:**\n- UUID format: `xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx`\n- Case-insensitive\n- Can be obtained from `/api/v3/nodes` endpoint\n\n**Use Cases:**\n- Query specific child node's streaming status\n- Check parent node's connection to specific child\n- Diagnostic queries for particular node\n\n**Examples:**\n- `12345678-1234-1234-1234-123456789012` - Specific node\n- Empty/omitted - Local agent (default)\n\n**Invalid GUIDs:**\n- Malformed UUID: May return error or empty result\n- Non-existent GUID: Returns empty or not-found response\n",
+                              "key": "machine_guid",
+                              "value": "<uuid>"
+                            }
+                          ]
+                        }
+                      },
+                      "status": "Not Found",
+                      "code": 404,
+                      "_postman_previewlanguage": "text",
+                      "header": [],
+                      "cookie": [],
+                      "responseTime": null,
+                      "body": null,
+                      "createdAt": "2026-07-28T02:20:13.000Z",
+                      "updatedAt": "2026-07-28T02:20:13.000Z",
+                      "uid": "35240-6ff274a6-b862-48a8-b22c-ab5b54fad9d0"
+                    },
+                    {
+                      "id": "27a2be8d-52ff-41ec-acbc-2c32a4325f1d",
+                      "name": "Internal server error during streaming info retrieval.",
+                      "originalRequest": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                          "raw": "{{baseUrl}}/api/v3/stream_info?machine_guid=<uuid>",
+                          "host": [
+                            "{{baseUrl}}"
+                          ],
+                          "path": [
+                            "api",
+                            "v3",
+                            "stream_info"
+                          ],
+                          "query": [
+                            {
+                              "description": "Machine GUID (unique node identifier) to query streaming information for.\nIf not specified, returns streaming information for the local agent.\n\n**GUID Format:**\n- UUID format: `xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx`\n- Case-insensitive\n- Can be obtained from `/api/v3/nodes` endpoint\n\n**Use Cases:**\n- Query specific child node's streaming status\n- Check parent node's connection to specific child\n- Diagnostic queries for particular node\n\n**Examples:**\n- `12345678-1234-1234-1234-123456789012` - Specific node\n- Empty/omitted - Local agent (default)\n\n**Invalid GUIDs:**\n- Malformed UUID: May return error or empty result\n- Non-existent GUID: Returns empty or not-found response\n",
+                              "key": "machine_guid",
+                              "value": "<uuid>"
+                            }
+                          ]
+                        }
+                      },
+                      "status": "Internal Server Error",
+                      "code": 500,
+                      "_postman_previewlanguage": "text",
+                      "header": [],
+                      "cookie": [],
+                      "responseTime": null,
+                      "body": null,
+                      "createdAt": "2026-07-28T02:20:13.000Z",
+                      "updatedAt": "2026-07-28T02:20:13.000Z",
+                      "uid": "35240-27a2be8d-52ff-41ec-acbc-2c32a4325f1d"
+                    }
+                  ],
+                  "createdAt": "2026-07-28T02:20:13.000Z",
+                  "updatedAt": "2026-07-28T02:20:13.000Z",
+                  "uid": "35240-06eb7f61-c74f-4963-aa46-1dd900da9c28"
+                }
+              ],
+              "id": "cc334b17-8462-45c7-a46f-03bc4ff81f6a",
+              "createdAt": "2026-07-28T02:20:13.000Z",
+              "updatedAt": "2026-07-28T02:20:13.000Z",
+              "uid": "35240-cc334b17-8462-45c7-a46f-03bc4ff81f6a"
+            }
+          ],
+          "id": "65c6ff05-66a9-442d-9a0f-29989ab0a455",
+          "createdAt": "2026-07-28T02:20:13.000Z",
+          "updatedAt": "2026-07-28T02:20:13.000Z",
+          "uid": "35240-65c6ff05-66a9-442d-9a0f-29989ab0a455"
+        }
+      ],
+      "id": "97cb7b41-643e-4194-8bbd-c40487a002fe",
+      "createdAt": "2026-07-28T02:20:13.000Z",
+      "updatedAt": "2026-07-28T02:20:13.000Z",
+      "uid": "35240-97cb7b41-643e-4194-8bbd-c40487a002fe"
+    }
+  ],
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "https://registry.my-netdata.io"
+    }
+  ]
+}

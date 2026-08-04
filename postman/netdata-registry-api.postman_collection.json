@@ -1,0 +1,259 @@
+{
+  "info": {
+    "_postman_id": "94e3ce80-ab4f-49cb-9849-c8073ff46011",
+    "name": "Netdata agent registry API",
+    "description": "Real-time performance and health monitoring.\n\n## API Versions\n\nNetdata provides three API versions:\n- **v1**: The original API, focused on single-node operations\n- **v2**: Multi-node API with advanced grouping and aggregation capabilities\n- **v3**: The latest API version that combines v1 and v2 endpoints and may include additional features\n\n### v3 API Endpoints\n\nThe v3 API provides the current, actively maintained endpoints:\n- `/api/v3/data` - Multi-dimensional data queries\n- `/api/v3/weights` - Metric scoring/correlation\n- `/api/v3/contexts` - Context metadata\n- `/api/v3/nodes` - Node information\n- `/api/v3/q` - Full-text search\n- `/api/v3/alerts` - Alert information\n- `/api/v3/alert_transitions` - Alert state transitions\n- `/api/v3/alert_config` - Alert configuration\n- `/api/v3/functions` - Available functions\n- `/api/v3/function` - Execute functions\n- `/api/v3/info` - Agent information\n- `/api/v3/node_instances` - Node instance information\n- `/api/v3/stream_path` - Streaming topology\n- `/api/v3/versions` - Version information\n- `/api/v3/badge.svg` - Dynamic badges\n- `/api/v3/allmetrics` - Export metrics\n- `/api/v3/context` - Single context info\n- `/api/v3/variable` - Variable information\n- `/api/v3/config` - Dynamic configuration\n- `/api/v3/settings` - Agent settings\n- `/api/v3/me` - Current user information\n- `/api/v3/claim` - Agent claiming\n- Additional management and streaming endpoints\n\n**Note:** V1 and V2 APIs are deprecated and maintained for backwards compatibility only. New integrations should use V3 exclusively.\n\n\nContact Support:\n Name: Netdata Agent API\n Email: info@netdata.cloud",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "createdAt": "2026-07-28T02:17:38.000Z",
+    "updatedAt": "2026-07-28T02:17:38.000Z",
+    "lastUpdatedBy": "35240",
+    "uid": "35240-94e3ce80-ab4f-49cb-9849-c8073ff46011"
+  },
+  "item": [
+    {
+      "name": "api",
+      "item": [
+        {
+          "name": "v1",
+          "item": [
+            {
+              "name": "registry",
+              "item": [
+                {
+                  "name": "[DEPRECATED] Registry operations for tracking dashboard access",
+                  "id": "3cd7b8dd-b632-49a9-984a-f88bd7169018",
+                  "protocolProfileBehavior": {
+                    "disableBodyPruning": true
+                  },
+                  "request": {
+                    "method": "GET",
+                    "header": [
+                      {
+                        "key": "Accept",
+                        "value": "application/json"
+                      }
+                    ],
+                    "url": {
+                      "raw": "{{baseUrl}}/api/v1/registry?action=hello&machine=<uuid>&name=<string>&url=<uri>&delete_url=<uri>&for=<uuid>&to=<uuid>",
+                      "host": [
+                        "{{baseUrl}}"
+                      ],
+                      "path": [
+                        "api",
+                        "v1",
+                        "registry"
+                      ],
+                      "query": [
+                        {
+                          "description": "(Required) Registry action to perform.\n\n**Available Actions:**\n- `hello` - Initial contact with registry\n- `access` - Record dashboard access to agent\n- `delete` - Remove agent URL from dashboard history\n- `search` - Find all agents accessed by dashboard\n- `switch` - Migrate dashboard identity to new person_guid\n",
+                          "key": "action",
+                          "value": "hello"
+                        },
+                        {
+                          "description": "Machine GUID of the dashboard making the request. This is typically stored in browser cookies and identifies the specific browser/client.\n",
+                          "key": "machine",
+                          "value": "<uuid>"
+                        },
+                        {
+                          "description": "Human-readable name for the dashboard/machine (typically hostname). Used for display purposes in registry listings.\n",
+                          "key": "name",
+                          "value": "<string>"
+                        },
+                        {
+                          "description": "URL of the Netdata agent being accessed. This is the full URL including protocol and port.\n",
+                          "key": "url",
+                          "value": "<uri>"
+                        },
+                        {
+                          "description": "URL to delete from the registry (used with action=delete). Must match a previously registered URL.\n",
+                          "key": "delete_url",
+                          "value": "<uri>"
+                        },
+                        {
+                          "description": "Machine GUID to search for (used with action=search). Returns all agents accessed by this machine.\n",
+                          "key": "for",
+                          "value": "<uuid>"
+                        },
+                        {
+                          "description": "New person_guid to switch to (used with action=switch). Migrates the dashboard identity to a new person_guid.\n",
+                          "key": "to",
+                          "value": "<uuid>"
+                        }
+                      ]
+                    },
+                    "description": "**[DEPRECATED - Registry functionality being phased out]**\n\n**Dashboard Access Registry**\n\nThe registry API tracks which dashboards (browsers) have accessed which Netdata agents, enabling features like:\n- Dashboard synchronization across multiple agents\n- Tracking which users/machines accessed which agents\n- Migrating dashboard preferences between agents\n\n**Actions:**\n\n**1. hello** - Initial registry contact\n- Identifies the dashboard to the registry\n- Returns person_guid for tracking this dashboard\n\n**2. access** - Record dashboard accessing an agent\n- Called when a dashboard accesses a Netdata agent\n- Tracks the relationship between dashboard and agent\n- Parameters: machine, url, name\n\n**3. delete** - Remove a tracked agent URL\n- Removes a specific agent URL from dashboard's history\n- Parameters: machine, url, name, delete_url\n\n**4. search** - Find all agents accessed by a dashboard\n- Returns list of all agents this dashboard has accessed\n- Parameter: for (machine_guid to search for)\n\n**5. switch** - Migrate dashboard identity\n- Transfers tracking from one person_guid to another\n- Parameters: machine, url, name, to (new person_guid)\n\n**Use Cases:**\n- **Multi-Agent Dashboards:** Track which agents a user has accessed\n- **Dashboard Migration:** Move identity between browsers/machines\n- **Access History:** See which dashboards accessed an agent\n- **Cleanup:** Remove old/invalid agent entries\n\n**Security Notes:**\n- Registry stores dashboard-agent relationships\n- person_guid is stored in browser cookies\n- machine_guid identifies Netdata agents\n- No authentication required (deprecated functionality)\n\n**Deprecation:**\nRegistry functionality is being phased out. Modern deployments should use Netdata Cloud for multi-agent management.\n\n**Security & Access Control:**\n- \ud83d\udd13 **Always Public API** - This endpoint is always accessible without authentication\n- **Internal ACL:** Manages its own access control internally (not via standard ACL)\n- **No External Restrictions:** Not subject to bearer protection or IP-based ACL\n"
+                  },
+                  "response": [
+                    {
+                      "id": "e6edcd84-eb32-4d93-b80c-25520976e26e",
+                      "name": "Registry operation successful",
+                      "originalRequest": {
+                        "method": "GET",
+                        "header": [
+                          {
+                            "key": "Accept",
+                            "value": "application/json"
+                          }
+                        ],
+                        "url": {
+                          "raw": "{{baseUrl}}/api/v1/registry?action=hello&machine=<uuid>&name=<string>&url=<uri>&delete_url=<uri>&for=<uuid>&to=<uuid>",
+                          "host": [
+                            "{{baseUrl}}"
+                          ],
+                          "path": [
+                            "api",
+                            "v1",
+                            "registry"
+                          ],
+                          "query": [
+                            {
+                              "description": "(Required) Registry action to perform.\n\n**Available Actions:**\n- `hello` - Initial contact with registry\n- `access` - Record dashboard access to agent\n- `delete` - Remove agent URL from dashboard history\n- `search` - Find all agents accessed by dashboard\n- `switch` - Migrate dashboard identity to new person_guid\n",
+                              "key": "action",
+                              "value": "hello"
+                            },
+                            {
+                              "description": "Machine GUID of the dashboard making the request. This is typically stored in browser cookies and identifies the specific browser/client.\n",
+                              "key": "machine",
+                              "value": "<uuid>"
+                            },
+                            {
+                              "description": "Human-readable name for the dashboard/machine (typically hostname). Used for display purposes in registry listings.\n",
+                              "key": "name",
+                              "value": "<string>"
+                            },
+                            {
+                              "description": "URL of the Netdata agent being accessed. This is the full URL including protocol and port.\n",
+                              "key": "url",
+                              "value": "<uri>"
+                            },
+                            {
+                              "description": "URL to delete from the registry (used with action=delete). Must match a previously registered URL.\n",
+                              "key": "delete_url",
+                              "value": "<uri>"
+                            },
+                            {
+                              "description": "Machine GUID to search for (used with action=search). Returns all agents accessed by this machine.\n",
+                              "key": "for",
+                              "value": "<uuid>"
+                            },
+                            {
+                              "description": "New person_guid to switch to (used with action=switch). Migrates the dashboard identity to a new person_guid.\n",
+                              "key": "to",
+                              "value": "<uuid>"
+                            }
+                          ]
+                        }
+                      },
+                      "status": "OK",
+                      "code": 200,
+                      "_postman_previewlanguage": "json",
+                      "header": [
+                        {
+                          "key": "Content-Type",
+                          "value": "application/json"
+                        }
+                      ],
+                      "cookie": [],
+                      "responseTime": null,
+                      "body": "{}",
+                      "createdAt": "2026-07-28T02:17:39.000Z",
+                      "updatedAt": "2026-07-28T02:17:39.000Z",
+                      "uid": "35240-e6edcd84-eb32-4d93-b80c-25520976e26e"
+                    },
+                    {
+                      "id": "0d7b87f6-4424-4d9e-83f2-21a220300e0a",
+                      "name": "Invalid action or missing required parameters",
+                      "originalRequest": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                          "raw": "{{baseUrl}}/api/v1/registry?action=hello&machine=<uuid>&name=<string>&url=<uri>&delete_url=<uri>&for=<uuid>&to=<uuid>",
+                          "host": [
+                            "{{baseUrl}}"
+                          ],
+                          "path": [
+                            "api",
+                            "v1",
+                            "registry"
+                          ],
+                          "query": [
+                            {
+                              "description": "(Required) Registry action to perform.\n\n**Available Actions:**\n- `hello` - Initial contact with registry\n- `access` - Record dashboard access to agent\n- `delete` - Remove agent URL from dashboard history\n- `search` - Find all agents accessed by dashboard\n- `switch` - Migrate dashboard identity to new person_guid\n",
+                              "key": "action",
+                              "value": "hello"
+                            },
+                            {
+                              "description": "Machine GUID of the dashboard making the request. This is typically stored in browser cookies and identifies the specific browser/client.\n",
+                              "key": "machine",
+                              "value": "<uuid>"
+                            },
+                            {
+                              "description": "Human-readable name for the dashboard/machine (typically hostname). Used for display purposes in registry listings.\n",
+                              "key": "name",
+                              "value": "<string>"
+                            },
+                            {
+                              "description": "URL of the Netdata agent being accessed. This is the full URL including protocol and port.\n",
+                              "key": "url",
+                              "value": "<uri>"
+                            },
+                            {
+                              "description": "URL to delete from the registry (used with action=delete). Must match a previously registered URL.\n",
+                              "key": "delete_url",
+                              "value": "<uri>"
+                            },
+                            {
+                              "description": "Machine GUID to search for (used with action=search). Returns all agents accessed by this machine.\n",
+                              "key": "for",
+                              "value": "<uuid>"
+                            },
+                            {
+                              "description": "New person_guid to switch to (used with action=switch). Migrates the dashboard identity to a new person_guid.\n",
+                              "key": "to",
+                              "value": "<uuid>"
+                            }
+                          ]
+                        }
+                      },
+                      "status": "Bad Request",
+                      "code": 400,
+                      "_postman_previewlanguage": "text",
+                      "header": [],
+                      "cookie": [],
+                      "responseTime": null,
+                      "body": null,
+                      "createdAt": "2026-07-28T02:17:39.000Z",
+                      "updatedAt": "2026-07-28T02:17:39.000Z",
+                      "uid": "35240-0d7b87f6-4424-4d9e-83f2-21a220300e0a"
+                    }
+                  ],
+                  "createdAt": "2026-07-28T02:17:39.000Z",
+                  "updatedAt": "2026-07-28T02:17:39.000Z",
+                  "uid": "35240-3cd7b8dd-b632-49a9-984a-f88bd7169018"
+                }
+              ],
+              "id": "23dccc92-da44-4b3d-a02d-5b46e82b3d31",
+              "createdAt": "2026-07-28T02:17:39.000Z",
+              "updatedAt": "2026-07-28T02:17:39.000Z",
+              "uid": "35240-23dccc92-da44-4b3d-a02d-5b46e82b3d31"
+            }
+          ],
+          "id": "8e2d7796-0743-40c6-b798-c65a7f97af45",
+          "createdAt": "2026-07-28T02:17:39.000Z",
+          "updatedAt": "2026-07-28T02:17:39.000Z",
+          "uid": "35240-8e2d7796-0743-40c6-b798-c65a7f97af45"
+        }
+      ],
+      "id": "576584e1-53e2-4e42-a7f2-54d8473d9fb3",
+      "createdAt": "2026-07-28T02:17:39.000Z",
+      "updatedAt": "2026-07-28T02:17:39.000Z",
+      "uid": "35240-576584e1-53e2-4e42-a7f2-54d8473d9fb3"
+    }
+  ],
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "https://registry.my-netdata.io"
+    }
+  ]
+}

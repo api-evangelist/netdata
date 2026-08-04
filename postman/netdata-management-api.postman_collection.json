@@ -1,0 +1,565 @@
+{
+  "info": {
+    "_postman_id": "518e7f58-58e3-4fa2-b7cb-88258a22dcd0",
+    "name": "Netdata agent management API",
+    "description": "Real-time performance and health monitoring.\n\n## API Versions\n\nNetdata provides three API versions:\n- **v1**: The original API, focused on single-node operations\n- **v2**: Multi-node API with advanced grouping and aggregation capabilities\n- **v3**: The latest API version that combines v1 and v2 endpoints and may include additional features\n\n### v3 API Endpoints\n\nThe v3 API provides the current, actively maintained endpoints:\n- `/api/v3/data` - Multi-dimensional data queries\n- `/api/v3/weights` - Metric scoring/correlation\n- `/api/v3/contexts` - Context metadata\n- `/api/v3/nodes` - Node information\n- `/api/v3/q` - Full-text search\n- `/api/v3/alerts` - Alert information\n- `/api/v3/alert_transitions` - Alert state transitions\n- `/api/v3/alert_config` - Alert configuration\n- `/api/v3/functions` - Available functions\n- `/api/v3/function` - Execute functions\n- `/api/v3/info` - Agent information\n- `/api/v3/node_instances` - Node instance information\n- `/api/v3/stream_path` - Streaming topology\n- `/api/v3/versions` - Version information\n- `/api/v3/badge.svg` - Dynamic badges\n- `/api/v3/allmetrics` - Export metrics\n- `/api/v3/context` - Single context info\n- `/api/v3/variable` - Variable information\n- `/api/v3/config` - Dynamic configuration\n- `/api/v3/settings` - Agent settings\n- `/api/v3/me` - Current user information\n- `/api/v3/claim` - Agent claiming\n- Additional management and streaming endpoints\n\n**Note:** V1 and V2 APIs are deprecated and maintained for backwards compatibility only. New integrations should use V3 exclusively.\n\n\nContact Support:\n Name: Netdata Agent API\n Email: info@netdata.cloud",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "createdAt": "2026-07-28T02:17:36.000Z",
+    "updatedAt": "2026-07-28T02:17:36.000Z",
+    "lastUpdatedBy": "35240",
+    "uid": "35240-518e7f58-58e3-4fa2-b7cb-88258a22dcd0"
+  },
+  "item": [
+    {
+      "name": "api",
+      "item": [
+        {
+          "name": "v1",
+          "item": [
+            {
+              "name": "manage",
+              "item": [
+                {
+                  "name": "health",
+                  "item": [
+                    {
+                      "name": "Accesses the health management API to control health checks and notifications at runtime.\n",
+                      "id": "7318d5b4-a7f4-4509-a48f-c711ab88a545",
+                      "protocolProfileBehavior": {
+                        "disableBodyPruning": true
+                      },
+                      "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                          "raw": "{{baseUrl}}/api/v1/manage/health?cmd=DISABLE ALL&alarm=<string>&chart=<string>&context=<string>&hosts=<string>",
+                          "host": [
+                            "{{baseUrl}}"
+                          ],
+                          "path": [
+                            "api",
+                            "v1",
+                            "manage",
+                            "health"
+                          ],
+                          "query": [
+                            {
+                              "description": "DISABLE ALL: No alarm criteria are evaluated, nothing is written in the alarm log. SILENCE ALL: No notifications are sent. RESET: Return to the default state. DISABLE/SILENCE: Set the mode to be used for the alarms matching the criteria of the alarm selectors. LIST: Show active configuration.\n",
+                              "key": "cmd",
+                              "value": "DISABLE ALL"
+                            },
+                            {
+                              "description": "The expression provided will match both `alarm` and `template` names.",
+                              "key": "alarm",
+                              "value": "<string>"
+                            },
+                            {
+                              "description": "Chart ids/names, as shown on the dashboard. These will match the `on` entry of a configured `alarm`.",
+                              "key": "chart",
+                              "value": "<string>"
+                            },
+                            {
+                              "description": "Chart context, as shown on the dashboard. These will match the `on` entry of a configured `template`.",
+                              "key": "context",
+                              "value": "<string>"
+                            },
+                            {
+                              "description": "The hostnames that will need to match.",
+                              "key": "hosts",
+                              "value": "<string>"
+                            }
+                          ]
+                        },
+                        "description": "Available from Netdata v1.12 and above, protected via bearer authorization. Especially useful for maintenance periods, the API allows you to disable health checks completely, silence alarm notifications, or Disable/Silence specific alarms that match selectors on alarm/template name, chart, context, host and family. For the simple disable/silence all scenarios, only the cmd parameter is required. The other parameters are used to define alarm selectors. For more information and examples, refer to the netdata documentation.\n\n**Security & Access Control:**\n- \ud83d\udd27 **Management API** - Subject to management ACL restrictions\n- **IP Restrictions:** Controlled by `allow management from` in netdata.conf (default: localhost only)\n- **Internal Permissions:** Each management action has its own permission requirements\n- **No Bearer Protection:** Not subject to bearer token authentication\n"
+                      },
+                      "response": [
+                        {
+                          "id": "6086234b-e58f-460f-8d92-eca7674a7267",
+                          "name": "A plain text response based on the result of the command.",
+                          "originalRequest": {
+                            "method": "GET",
+                            "header": [],
+                            "url": {
+                              "raw": "{{baseUrl}}/api/v1/manage/health?cmd=DISABLE ALL&alarm=<string>&chart=<string>&context=<string>&hosts=<string>",
+                              "host": [
+                                "{{baseUrl}}"
+                              ],
+                              "path": [
+                                "api",
+                                "v1",
+                                "manage",
+                                "health"
+                              ],
+                              "query": [
+                                {
+                                  "description": "DISABLE ALL: No alarm criteria are evaluated, nothing is written in the alarm log. SILENCE ALL: No notifications are sent. RESET: Return to the default state. DISABLE/SILENCE: Set the mode to be used for the alarms matching the criteria of the alarm selectors. LIST: Show active configuration.\n",
+                                  "key": "cmd",
+                                  "value": "DISABLE ALL"
+                                },
+                                {
+                                  "description": "The expression provided will match both `alarm` and `template` names.",
+                                  "key": "alarm",
+                                  "value": "<string>"
+                                },
+                                {
+                                  "description": "Chart ids/names, as shown on the dashboard. These will match the `on` entry of a configured `alarm`.",
+                                  "key": "chart",
+                                  "value": "<string>"
+                                },
+                                {
+                                  "description": "Chart context, as shown on the dashboard. These will match the `on` entry of a configured `template`.",
+                                  "key": "context",
+                                  "value": "<string>"
+                                },
+                                {
+                                  "description": "The hostnames that will need to match.",
+                                  "key": "hosts",
+                                  "value": "<string>"
+                                }
+                              ]
+                            }
+                          },
+                          "status": "OK",
+                          "code": 200,
+                          "_postman_previewlanguage": "text",
+                          "header": [],
+                          "cookie": [],
+                          "responseTime": null,
+                          "body": null,
+                          "createdAt": "2026-07-28T02:17:36.000Z",
+                          "updatedAt": "2026-07-28T02:17:36.000Z",
+                          "uid": "35240-6086234b-e58f-460f-8d92-eca7674a7267"
+                        },
+                        {
+                          "id": "60b99c82-88ee-4316-865e-feb8e64ce41d",
+                          "name": "Bearer authentication error.",
+                          "originalRequest": {
+                            "method": "GET",
+                            "header": [],
+                            "url": {
+                              "raw": "{{baseUrl}}/api/v1/manage/health?cmd=DISABLE ALL&alarm=<string>&chart=<string>&context=<string>&hosts=<string>",
+                              "host": [
+                                "{{baseUrl}}"
+                              ],
+                              "path": [
+                                "api",
+                                "v1",
+                                "manage",
+                                "health"
+                              ],
+                              "query": [
+                                {
+                                  "description": "DISABLE ALL: No alarm criteria are evaluated, nothing is written in the alarm log. SILENCE ALL: No notifications are sent. RESET: Return to the default state. DISABLE/SILENCE: Set the mode to be used for the alarms matching the criteria of the alarm selectors. LIST: Show active configuration.\n",
+                                  "key": "cmd",
+                                  "value": "DISABLE ALL"
+                                },
+                                {
+                                  "description": "The expression provided will match both `alarm` and `template` names.",
+                                  "key": "alarm",
+                                  "value": "<string>"
+                                },
+                                {
+                                  "description": "Chart ids/names, as shown on the dashboard. These will match the `on` entry of a configured `alarm`.",
+                                  "key": "chart",
+                                  "value": "<string>"
+                                },
+                                {
+                                  "description": "Chart context, as shown on the dashboard. These will match the `on` entry of a configured `template`.",
+                                  "key": "context",
+                                  "value": "<string>"
+                                },
+                                {
+                                  "description": "The hostnames that will need to match.",
+                                  "key": "hosts",
+                                  "value": "<string>"
+                                }
+                              ]
+                            }
+                          },
+                          "status": "Forbidden",
+                          "code": 403,
+                          "_postman_previewlanguage": "text",
+                          "header": [],
+                          "cookie": [],
+                          "responseTime": null,
+                          "body": null,
+                          "createdAt": "2026-07-28T02:17:36.000Z",
+                          "updatedAt": "2026-07-28T02:17:36.000Z",
+                          "uid": "35240-60b99c82-88ee-4316-865e-feb8e64ce41d"
+                        }
+                      ],
+                      "createdAt": "2026-07-28T02:17:36.000Z",
+                      "updatedAt": "2026-07-28T02:17:36.000Z",
+                      "uid": "35240-7318d5b4-a7f4-4509-a48f-c711ab88a545"
+                    }
+                  ],
+                  "id": "3800822a-e220-4010-91ef-d38df4524172",
+                  "createdAt": "2026-07-28T02:17:36.000Z",
+                  "updatedAt": "2026-07-28T02:17:36.000Z",
+                  "uid": "35240-3800822a-e220-4010-91ef-d38df4524172"
+                }
+              ],
+              "id": "39d0a219-3ea5-4471-a493-7ead71123421",
+              "createdAt": "2026-07-28T02:17:36.000Z",
+              "updatedAt": "2026-07-28T02:17:36.000Z",
+              "uid": "35240-39d0a219-3ea5-4471-a493-7ead71123421"
+            },
+            {
+              "name": "aclk",
+              "item": [
+                {
+                  "name": "Get information about current ACLK state",
+                  "id": "48d607a6-ff74-48cb-bdab-e563a5ac6008",
+                  "protocolProfileBehavior": {
+                    "disableBodyPruning": true
+                  },
+                  "request": {
+                    "auth": {
+                      "type": "noauth"
+                    },
+                    "method": "GET",
+                    "header": [
+                      {
+                        "key": "Accept",
+                        "value": "application/json"
+                      }
+                    ],
+                    "url": {
+                      "raw": "{{baseUrl}}/api/v1/aclk",
+                      "host": [
+                        "{{baseUrl}}"
+                      ],
+                      "path": [
+                        "api",
+                        "v1",
+                        "aclk"
+                      ]
+                    },
+                    "description": "ACLK endpoint returns detailed information about current state of ACLK (Agent to Cloud communication).\n\n**Security & Access Control:**\n- \ud83d\udcca **Public Data API** - Bearer token optional, IP-based ACL restrictions apply\n- **Default Access:** Public (no authentication required)\n- **Bearer Protection:** When enabled via `/api/v3/bearer_protection`, requires bearer token\n- **IP Restrictions:** Subject to `allow dashboard from` in netdata.conf\n- **Access Methods:** Direct HTTP/HTTPS, Netdata Cloud, external tools\n"
+                  },
+                  "response": [
+                    {
+                      "id": "615c2f4e-fd0d-42fc-b768-16ec28bd6ff7",
+                      "name": "JSON object with ACLK information.",
+                      "originalRequest": {
+                        "method": "GET",
+                        "header": [
+                          {
+                            "key": "Accept",
+                            "value": "application/json"
+                          }
+                        ],
+                        "url": {
+                          "raw": "{{baseUrl}}/api/v1/aclk",
+                          "host": [
+                            "{{baseUrl}}"
+                          ],
+                          "path": [
+                            "api",
+                            "v1",
+                            "aclk"
+                          ]
+                        }
+                      },
+                      "status": "OK",
+                      "code": 200,
+                      "_postman_previewlanguage": "json",
+                      "header": [
+                        {
+                          "key": "Content-Type",
+                          "value": "application/json"
+                        }
+                      ],
+                      "cookie": [],
+                      "responseTime": null,
+                      "body": "{\n  \"aclk-available\": \"<string>\",\n  \"aclk-version\": \"<integer>\",\n  \"protocols-supported\": [\n    \"<string>\",\n    \"<string>\"\n  ],\n  \"Agent-claimed\": \"<boolean>\",\n  \"claimed_id\": \"<uuid>\",\n  \"online\": \"<boolean>\",\n  \"used-cloud-protocol\": \"New\"\n}",
+                      "createdAt": "2026-07-28T02:17:36.000Z",
+                      "updatedAt": "2026-07-28T02:17:36.000Z",
+                      "uid": "35240-615c2f4e-fd0d-42fc-b768-16ec28bd6ff7"
+                    }
+                  ],
+                  "createdAt": "2026-07-28T02:17:36.000Z",
+                  "updatedAt": "2026-07-28T02:17:36.000Z",
+                  "uid": "35240-48d607a6-ff74-48cb-bdab-e563a5ac6008"
+                }
+              ],
+              "id": "2ea4fee3-a50a-49cf-973d-17a6b7f71ab1",
+              "createdAt": "2026-07-28T02:17:36.000Z",
+              "updatedAt": "2026-07-28T02:17:36.000Z",
+              "uid": "35240-2ea4fee3-a50a-49cf-973d-17a6b7f71ab1"
+            },
+            {
+              "name": "dbengine_stats",
+              "item": [
+                {
+                  "name": "[DEPRECATED] Get DBEngine storage statistics",
+                  "id": "0ae62226-322e-467d-ac9f-b4d5fe89b129",
+                  "protocolProfileBehavior": {
+                    "disableBodyPruning": true
+                  },
+                  "request": {
+                    "auth": {
+                      "type": "noauth"
+                    },
+                    "method": "GET",
+                    "header": [
+                      {
+                        "key": "Accept",
+                        "value": "application/json"
+                      }
+                    ],
+                    "url": {
+                      "raw": "{{baseUrl}}/api/v1/dbengine_stats",
+                      "host": [
+                        "{{baseUrl}}"
+                      ],
+                      "path": [
+                        "api",
+                        "v1",
+                        "dbengine_stats"
+                      ]
+                    },
+                    "description": "**[DEPRECATED - Use Netdata Cloud or internal metrics for storage monitoring]**\n\n**DBEngine Storage Statistics**\n\nReturns detailed statistics about Netdata's DBEngine storage system for all configured storage tiers. DBEngine is Netdata's high-performance time-series database that stores metrics on disk.\n\n**Statistics Provided (per tier):**\n\n**Datafiles:**\n- Active datafiles count\n- Total datafiles (active + archived)\n- Datafile size limits\n\n**Extents:**\n- Number of extents (storage chunks)\n- Extent compression statistics\n- Extent allocation and fragmentation\n\n**Pages:**\n- Page cache statistics\n- Page types (hot, cold, compressed)\n- Page I/O statistics\n\n**Compression:**\n- Compression ratios achieved\n- Compression algorithm efficiency\n- Space saved by compression\n\n**Retention:**\n- Actual retention achieved\n- Retention limits and targets\n- Disk space usage\n\n**Performance:**\n- Read/write rates\n- Cache hit ratios\n- I/O wait times\n\n**Use Cases:**\n- **Capacity Planning:** Monitor disk space usage trends\n- **Performance Tuning:** Analyze cache efficiency and I/O patterns\n- **Storage Optimization:** Review compression ratios and retention\n- **Troubleshooting:** Diagnose DBEngine performance issues\n\n**Storage Tiers:**\nNetdata supports multiple storage tiers with different retention periods:\n- **Tier 0:** High resolution (1-second), short retention\n- **Tier 1:** Medium resolution, medium retention\n- **Tier 2:** Low resolution, long retention\n\n**Availability:**\nThis endpoint only works if DBEngine is enabled. Returns 404 if DBEngine is disabled.\n\n**Migration:**\nModern Netdata installations should use:\n- Netdata Cloud for storage monitoring across agents\n- Internal metrics: `netdata.dbengine_*` charts\n- System info API for aggregate statistics\n\n**Security & Access Control:**\n- \ud83d\udcca **Public Data API** - Bearer token optional, IP-based ACL restrictions apply\n- **Default Access:** Public (no authentication required)\n- **Bearer Protection:** When enabled via `/api/v3/bearer_protection`, requires bearer token\n- **IP Restrictions:** Subject to `allow dashboard from` in netdata.conf\n- **Access Methods:** Direct HTTP/HTTPS, Netdata Cloud, external tools\n"
+                  },
+                  "response": [
+                    {
+                      "id": "47f7a2bb-4d12-4f89-bd5d-a6c984485665",
+                      "name": "DBEngine statistics for all tiers",
+                      "originalRequest": {
+                        "method": "GET",
+                        "header": [
+                          {
+                            "key": "Accept",
+                            "value": "application/json"
+                          }
+                        ],
+                        "url": {
+                          "raw": "{{baseUrl}}/api/v1/dbengine_stats",
+                          "host": [
+                            "{{baseUrl}}"
+                          ],
+                          "path": [
+                            "api",
+                            "v1",
+                            "dbengine_stats"
+                          ]
+                        }
+                      },
+                      "status": "OK",
+                      "code": 200,
+                      "_postman_previewlanguage": "json",
+                      "header": [
+                        {
+                          "key": "Content-Type",
+                          "value": "application/json"
+                        }
+                      ],
+                      "cookie": [],
+                      "responseTime": null,
+                      "body": "{\n  \"do7c\": {},\n  \"exb_c\": {}\n}",
+                      "createdAt": "2026-07-28T02:17:36.000Z",
+                      "updatedAt": "2026-07-28T02:17:36.000Z",
+                      "uid": "35240-47f7a2bb-4d12-4f89-bd5d-a6c984485665"
+                    },
+                    {
+                      "id": "4cbc333b-d908-4576-b623-903e3a40e376",
+                      "name": "DBEngine is not enabled",
+                      "originalRequest": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                          "raw": "{{baseUrl}}/api/v1/dbengine_stats",
+                          "host": [
+                            "{{baseUrl}}"
+                          ],
+                          "path": [
+                            "api",
+                            "v1",
+                            "dbengine_stats"
+                          ]
+                        }
+                      },
+                      "status": "Not Found",
+                      "code": 404,
+                      "_postman_previewlanguage": "text",
+                      "header": [],
+                      "cookie": [],
+                      "responseTime": null,
+                      "body": null,
+                      "createdAt": "2026-07-28T02:17:36.000Z",
+                      "updatedAt": "2026-07-28T02:17:36.000Z",
+                      "uid": "35240-4cbc333b-d908-4576-b623-903e3a40e376"
+                    },
+                    {
+                      "id": "8d45495a-8691-403d-8e95-5fc0a4b48081",
+                      "name": "Service unavailable - Netdata not ready",
+                      "originalRequest": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                          "raw": "{{baseUrl}}/api/v1/dbengine_stats",
+                          "host": [
+                            "{{baseUrl}}"
+                          ],
+                          "path": [
+                            "api",
+                            "v1",
+                            "dbengine_stats"
+                          ]
+                        }
+                      },
+                      "status": "Service Unavailable",
+                      "code": 503,
+                      "_postman_previewlanguage": "text",
+                      "header": [],
+                      "cookie": [],
+                      "responseTime": null,
+                      "body": null,
+                      "createdAt": "2026-07-28T02:17:36.000Z",
+                      "updatedAt": "2026-07-28T02:17:36.000Z",
+                      "uid": "35240-8d45495a-8691-403d-8e95-5fc0a4b48081"
+                    }
+                  ],
+                  "createdAt": "2026-07-28T02:17:36.000Z",
+                  "updatedAt": "2026-07-28T02:17:36.000Z",
+                  "uid": "35240-0ae62226-322e-467d-ac9f-b4d5fe89b129"
+                }
+              ],
+              "id": "049babec-1f91-43df-88f5-4427a404ae97",
+              "createdAt": "2026-07-28T02:17:36.000Z",
+              "updatedAt": "2026-07-28T02:17:36.000Z",
+              "uid": "35240-049babec-1f91-43df-88f5-4427a404ae97"
+            },
+            {
+              "name": "ml_info",
+              "item": [
+                {
+                  "name": "[DEPRECATED] Get machine learning detection information",
+                  "id": "419f1fab-81ea-4cda-8957-f4c1a53682c7",
+                  "protocolProfileBehavior": {
+                    "disableBodyPruning": true
+                  },
+                  "request": {
+                    "auth": {
+                      "type": "noauth"
+                    },
+                    "method": "GET",
+                    "header": [
+                      {
+                        "key": "Accept",
+                        "value": "application/json"
+                      }
+                    ],
+                    "url": {
+                      "raw": "{{baseUrl}}/api/v1/ml_info",
+                      "host": [
+                        "{{baseUrl}}"
+                      ],
+                      "path": [
+                        "api",
+                        "v1",
+                        "ml_info"
+                      ]
+                    },
+                    "description": "**[DEPRECATED - Use internal metrics and Netdata Cloud for ML monitoring]**\n\n**Machine Learning Detection Info**\n\nReturns information about Netdata's built-in machine learning (ML) anomaly detection system for the specified host. Netdata trains ML models on every metric to detect anomalous behavior in real-time.\n\n**Information Provided:**\n\n**Training Status:**\n- Whether ML is enabled and trained\n- Training progress and completion percentage\n- Number of models trained\n- Training time and resource usage\n\n**Detection Configuration:**\n- Detection sensitivity settings\n- Anomaly detection thresholds\n- Update frequency\n- Model parameters\n\n**Model Statistics:**\n- Number of dimensions being modeled\n- Model types in use (k-means, etc.)\n- Model accuracy metrics\n- Training data requirements\n\n**Detection State:**\n- Current anomaly detection status\n- Recent anomaly counts\n- Detection performance metrics\n\n**Use Cases:**\n- **ML Verification:** Confirm ML is trained and detecting anomalies\n- **Troubleshooting:** Diagnose why ML isn't detecting issues\n- **Configuration:** Verify ML settings are applied correctly\n- **Monitoring:** Track ML training progress on new agents\n\n**Availability:**\nThis endpoint only works if:\n- Netdata was compiled with ML support (`ENABLE_ML`)\n- ML is enabled in configuration\n- The agent has finished initial startup\n\nReturns 503 (Service Unavailable) if ML is not compiled in or not ready.\n\n**Machine Learning in Netdata:**\n- Trains individual k-means models for every metric dimension\n- Updates models continuously as new data arrives\n- Detects anomalies in real-time (within seconds)\n- No configuration required - works out of the box\n- Models stored locally, no data sent to cloud\n\n**Migration:**\nModern deployments should:\n- Use internal metrics: `netdata.ml_*` charts\n- Check Netdata Cloud for ML insights\n- Use alert transitions API to see ML-based alerts\n- Monitor anomaly rates via `/api/v2/data` with appropriate options\n\n**Security & Access Control:**\n- \ud83d\udcca **Public Data API** - Bearer token optional, IP-based ACL restrictions apply\n- **Default Access:** Public (no authentication required)\n- **Bearer Protection:** When enabled via `/api/v3/bearer_protection`, requires bearer token\n- **IP Restrictions:** Subject to `allow dashboard from` in netdata.conf\n- **Access Methods:** Direct HTTP/HTTPS, Netdata Cloud, external tools\n"
+                  },
+                  "response": [
+                    {
+                      "id": "26f90202-42f4-4733-991c-eb3d97dcd577",
+                      "name": "ML detection information for the host",
+                      "originalRequest": {
+                        "method": "GET",
+                        "header": [
+                          {
+                            "key": "Accept",
+                            "value": "application/json"
+                          }
+                        ],
+                        "url": {
+                          "raw": "{{baseUrl}}/api/v1/ml_info",
+                          "host": [
+                            "{{baseUrl}}"
+                          ],
+                          "path": [
+                            "api",
+                            "v1",
+                            "ml_info"
+                          ]
+                        }
+                      },
+                      "status": "OK",
+                      "code": 200,
+                      "_postman_previewlanguage": "json",
+                      "header": [
+                        {
+                          "key": "Content-Type",
+                          "value": "application/json"
+                        }
+                      ],
+                      "cookie": [],
+                      "responseTime": null,
+                      "body": "{}",
+                      "createdAt": "2026-07-28T02:17:36.000Z",
+                      "updatedAt": "2026-07-28T02:17:36.000Z",
+                      "uid": "35240-26f90202-42f4-4733-991c-eb3d97dcd577"
+                    },
+                    {
+                      "id": "6ced7a76-57e0-4d19-a191-40c2f9fdfe3a",
+                      "name": "Service unavailable - ML not compiled in, not enabled, or Netdata not ready",
+                      "originalRequest": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                          "raw": "{{baseUrl}}/api/v1/ml_info",
+                          "host": [
+                            "{{baseUrl}}"
+                          ],
+                          "path": [
+                            "api",
+                            "v1",
+                            "ml_info"
+                          ]
+                        }
+                      },
+                      "status": "Service Unavailable",
+                      "code": 503,
+                      "_postman_previewlanguage": "text",
+                      "header": [],
+                      "cookie": [],
+                      "responseTime": null,
+                      "body": null,
+                      "createdAt": "2026-07-28T02:17:36.000Z",
+                      "updatedAt": "2026-07-28T02:17:36.000Z",
+                      "uid": "35240-6ced7a76-57e0-4d19-a191-40c2f9fdfe3a"
+                    }
+                  ],
+                  "createdAt": "2026-07-28T02:17:36.000Z",
+                  "updatedAt": "2026-07-28T02:17:36.000Z",
+                  "uid": "35240-419f1fab-81ea-4cda-8957-f4c1a53682c7"
+                }
+              ],
+              "id": "8b4e4e5c-cab2-4607-9703-17b279e299a1",
+              "createdAt": "2026-07-28T02:17:36.000Z",
+              "updatedAt": "2026-07-28T02:17:36.000Z",
+              "uid": "35240-8b4e4e5c-cab2-4607-9703-17b279e299a1"
+            }
+          ],
+          "id": "a5d0c99a-b8c3-4dbb-9bf9-e83988f37796",
+          "createdAt": "2026-07-28T02:17:36.000Z",
+          "updatedAt": "2026-07-28T02:17:36.000Z",
+          "uid": "35240-a5d0c99a-b8c3-4dbb-9bf9-e83988f37796"
+        }
+      ],
+      "id": "75197056-0fb0-4840-83ee-fc244abd3449",
+      "createdAt": "2026-07-28T02:17:36.000Z",
+      "updatedAt": "2026-07-28T02:17:36.000Z",
+      "uid": "35240-75197056-0fb0-4840-83ee-fc244abd3449"
+    }
+  ],
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "https://registry.my-netdata.io"
+    }
+  ]
+}
