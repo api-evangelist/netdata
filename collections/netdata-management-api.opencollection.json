@@ -1,0 +1,94 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "Netdata agent management API",
+    "version": "v1-rolling"
+  },
+  "items": [
+    {
+      "info": {
+        "name": "management",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "Accesses the health management API to control health checks and notifications at runtime.\n",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://registry.my-netdata.io/api/v1/manage/health",
+            "params": [
+              {
+                "name": "cmd",
+                "value": "",
+                "type": "query",
+                "description": "DISABLE ALL: No alarm criteria are evaluated, nothing is written in the alarm log. SILENCE ALL: No notifications are sent. RESET: Return to the default state. DISABLE/SILENCE: Set the mode to be used for the alarms matching the criteria of the alarm selectors. LIST: Show active configuration.\n"
+              },
+              {
+                "name": "alarm",
+                "value": "",
+                "type": "query",
+                "description": "The expression provided will match both `alarm` and `template` names."
+              },
+              {
+                "name": "chart",
+                "value": "",
+                "type": "query",
+                "description": "Chart ids/names, as shown on the dashboard. These will match the `on` entry of a configured `alarm`."
+              },
+              {
+                "name": "context",
+                "value": "",
+                "type": "query",
+                "description": "Chart context, as shown on the dashboard. These will match the `on` entry of a configured `template`."
+              },
+              {
+                "name": "hosts",
+                "value": "",
+                "type": "query",
+                "description": "The hostnames that will need to match."
+              }
+            ]
+          },
+          "docs": "Available from Netdata v1.12 and above, protected via bearer authorization. Especially useful for maintenance periods, the API allows you to disable health checks completely, silence alarm notifications, or Disable/Silence specific alarms that match selectors on alarm/template name, chart, context, host and family. For the simple disable/silence all scenarios, only the cmd parameter is required. The other parameters are used to define alarm selectors. For more information and examples, refer to "
+        },
+        {
+          "info": {
+            "name": "Get information about current ACLK state",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://registry.my-netdata.io/api/v1/aclk"
+          },
+          "docs": "ACLK endpoint returns detailed information about current state of ACLK (Agent to Cloud communication).\n\n**Security & Access Control:**\n- 📊 **Public Data API** - Bearer token optional, IP-based ACL restrictions apply\n- **Default Access:** Public (no authentication required)\n- **Bearer Protection:** When enabled via `/api/v3/bearer_protection`, requires bearer token\n- **IP Restrictions:** Subject to `allow dashboard from` in netdata.conf\n- **Access Methods:** Direct HTTP/HTTPS, Netdata Cloud, ext"
+        },
+        {
+          "info": {
+            "name": "[DEPRECATED] Get DBEngine storage statistics",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://registry.my-netdata.io/api/v1/dbengine_stats"
+          },
+          "docs": "**[DEPRECATED - Use Netdata Cloud or internal metrics for storage monitoring]**\n\n**DBEngine Storage Statistics**\n\nReturns detailed statistics about Netdata's DBEngine storage system for all configured storage tiers. DBEngine is Netdata's high-performance time-series database that stores metrics on disk.\n\n**Statistics Provided (per tier):**\n\n**Datafiles:**\n- Active datafiles count\n- Total datafiles (active + archived)\n- Datafile size limits\n\n**Extents:**\n- Number of extents (storage chunks)\n- Ext"
+        },
+        {
+          "info": {
+            "name": "[DEPRECATED] Get machine learning detection information",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://registry.my-netdata.io/api/v1/ml_info"
+          },
+          "docs": "**[DEPRECATED - Use internal metrics and Netdata Cloud for ML monitoring]**\n\n**Machine Learning Detection Info**\n\nReturns information about Netdata's built-in machine learning (ML) anomaly detection system for the specified host. Netdata trains ML models on every metric to detect anomalous behavior in real-time.\n\n**Information Provided:**\n\n**Training Status:**\n- Whether ML is enabled and trained\n- Training progress and completion percentage\n- Number of models trained\n- Training time and resource"
+        }
+      ]
+    }
+  ],
+  "bundled": true
+}

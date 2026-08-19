@@ -1,0 +1,108 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "Netdata agent config API",
+    "version": "v1-rolling"
+  },
+  "items": [
+    {
+      "info": {
+        "name": "config",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "Manage Netdata dynamic configuration",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://registry.my-netdata.io/api/v3/config",
+            "params": [
+              {
+                "name": "action",
+                "value": "tree",
+                "type": "query",
+                "description": "Configuration action to perform. Different actions require different additional parameters.\n\n**Available Actions:**\n\n- **`tree`** (default): Browse configuration hierarchy\n  - Additional params: `path` (optional, default \"/\"), `id` (optional)\n  - Returns: Tree structure of configurable components\n\n- **`get`**: Retrieve current configuration\n  - Required params: `id`\n  - Returns: Current active configuration\n\n- **`schema`**: Get configuration schema/template\n  - Required params: `id`\n  - Returns: Schema defining valid configuration structure\n\n- **`update`**: Modify existing configuration\n  - Required params: `id`\n  - Request body: JSON with configuration changes\n  - Returns: Success/error status\n\n- **`add`**: Create new job/instance\n  - Required params: `id`, `name`\n  - Request body: JSON with initial configuration\n  - Returns: Success/error status\n\n- **`remove`**: Delete job/instance\n  - Required params: `id`\n  - Returns: Success/error status\n\n- **`enable`**: Activate disabled component\n  - Required params: `id`\n  - Returns: Success/error status\n\n- **`disable`**: Deactivate component without removing\n  - Required params: `id`\n  - Returns: Success/error status\n\n- **`test`**: Validate configuration without applying\n  - Required params: `id`, `name`\n  - Request body: JSON with configuration to test\n  - Returns: Validation results\n\n- **`restart`**: Restart component with new configuration\n  - Required params: `id`\n  - Returns: Success/error status\n\n- **`userconfig`**: Get user-editable configuration file\n  - Required params: `id`\n  - Returns: Configuration in user-editable format\n"
+              },
+              {
+                "name": "path",
+                "value": "/collectors",
+                "type": "query",
+                "description": "Path in configuration tree when using `action=tree`.\nSpecifies which branch of the configuration hierarchy to explore.\n\n**Path Format:**\n- Root: `/`\n- Collectors: `/collectors`\n- Specific plugin: `/collectors/go.d`\n- Health: `/health`\n\n**Examples:**\n- `/` - Root level (all categories)\n- `/collectors` - All collectors\n- `/collectors/go.d` - Go collectors\n"
+              },
+              {
+                "name": "id",
+                "value": "collectors:go.d:prometheus",
+                "type": "query",
+                "description": "Configuration component ID using colon-separated hierarchical notation.\nRequired for most actions except `tree`.\n\n**ID Format:**\n`category:plugin:collector[:job-name]`\n\n**Examples:**\n- `collectors:go.d:prometheus` - Prometheus collector\n- `collectors:go.d:prometheus:local` - Specific Prometheus job \"local\"\n- `collectors:python.d:nginx` - Nginx Python collector\n- `health:notifications` - Health notification settings\n\n**ID Validation:**\n- Alphanumeric characters, dots, underscores, hyphens\n- Colons separate hierarchy levels\n- Invalid IDs return 400 Bad Request\n"
+              },
+              {
+                "name": "name",
+                "value": "my-app",
+                "type": "query",
+                "description": "Name for new job/instance when using `action=add` or `action=test`.\n\n**Name Requirements:**\n- Alphanumeric characters, dots, underscores, hyphens\n- Must be unique within the collector/plugin\n- Will be appended to `id` to form full configuration path\n\n**Examples:**\n- If `id=collectors:go.d:prometheus` and `name=my-app`\n- Full config ID becomes: `collectors:go.d:prometheus:my-app`\n\n**Invalid Names:**\n- Empty or missing (when required): Returns 400 Bad Request\n- Special characters: Returns 400 Bad Request\n- Duplicate name: May return error or override behavior depends on action\n"
+              },
+              {
+                "name": "timeout",
+                "value": "60",
+                "type": "query",
+                "description": "Maximum time in seconds to wait for configuration operation to complete.\n\n**Timeout Guidelines:**\n- Read operations (get, schema, tree): 10-30 seconds\n- Write operations (update, add, remove): 30-120 seconds\n- Test operations: 60-120 seconds (may involve validation checks)\n- Restart operations: 120-300 seconds (component restart time)\n\n**Minimum:** 10 seconds (enforced by code)\n**Default:** 120 seconds\n"
+              }
+            ]
+          },
+          "docs": "Provides access to Netdata's dynamic configuration system, allowing retrieval, modification,\nand management of configuration across plugins and data collectors.\n\n**Dynamic Configuration System:**\nNetdata's dyncfg system allows runtime configuration management without restarting the agent:\n- **View configuration tree**: Browse all configurable components\n- **Get current config**: Retrieve active configuration for any component\n- **Update configuration**: Modify settings on-the-fly\n- **Add/remove "
+        },
+        {
+          "info": {
+            "name": "Manage Netdata configuration with request body data",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://registry.my-netdata.io/api/v3/config",
+            "params": [
+              {
+                "name": "action",
+                "value": "update",
+                "type": "query",
+                "description": "Configuration action to perform (see GET method for details)"
+              },
+              {
+                "name": "path",
+                "value": "/collectors",
+                "type": "query",
+                "description": "Path in configuration tree (see GET method for details)"
+              },
+              {
+                "name": "id",
+                "value": "collectors:go.d:prometheus",
+                "type": "query",
+                "description": "Configuration component ID (see GET method for details)"
+              },
+              {
+                "name": "name",
+                "value": "my-app",
+                "type": "query",
+                "description": "Name for new job/instance (see GET method for details)"
+              },
+              {
+                "name": "timeout",
+                "value": "60",
+                "type": "query",
+                "description": "Maximum timeout in seconds (see GET method for details)"
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Same as GET /api/v3/config, but allows passing configuration data via request body\nfor actions like `update`, `add`, and `test`.\n\nUse this method when:\n- Updating existing configuration (`action=update`)\n- Adding new jobs/instances (`action=add`)\n- Testing configuration before applying (`action=test`)\n\nSee GET /api/v3/config for complete documentation on actions, parameters, and responses.\n"
+        }
+      ]
+    }
+  ],
+  "bundled": true
+}

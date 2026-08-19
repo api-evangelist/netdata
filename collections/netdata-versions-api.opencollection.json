@@ -1,0 +1,61 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "Netdata agent versions API",
+    "version": "v1-rolling"
+  },
+  "items": [
+    {
+      "info": {
+        "name": "versions",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "Retrieve Netdata agent version information across nodes",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://registry.my-netdata.io/api/v3/versions",
+            "params": [
+              {
+                "name": "scope_nodes",
+                "value": "prod-*",
+                "type": "query",
+                "description": "Simple pattern to match node hostnames for scope filtering. Uses Netdata's simple pattern\nmatching (not regex). Matched nodes define the scope for version information retrieval.\n\n**Pattern Syntax:**\n- `*` matches any number of characters\n- Use `|` to separate multiple patterns (OR logic)\n- Matches are case-insensitive\n- No regex support - only simple wildcards\n\n**Examples:**\n- `prod-*` - All production nodes\n- `*-db-*` - All database nodes\n- `web-*|app-*` - All web or application nodes\n- `*` - All nodes (default)\n"
+              },
+              {
+                "name": "nodes",
+                "value": "*",
+                "type": "query",
+                "description": "Simple pattern to filter which nodes to include in the version information response.\nAfter scope is determined, this filters the results. Uses the same pattern syntax as scope_nodes.\n\n**Difference from scope_nodes:**\n- `scope_nodes` defines what nodes to analyze\n- `nodes` filters which nodes appear in the output\n\n**Examples:**\n- `old-*` - Only show nodes matching \"old-*\" pattern\n- Specific hostnames: `node1|node2|node3`\n"
+              },
+              {
+                "name": "options",
+                "value": "debug",
+                "type": "query",
+                "description": "Comma-separated list of options to control response content and format.\n\n**Available Options:**\n- `minify` - Minimize JSON output (no pretty-printing)\n- `debug` - Include additional debug information\n- `raw` - Include raw version metadata\n\n**Examples:**\n- `minify` - Compact JSON response\n- `debug,raw` - Debug mode with raw metadata\n"
+              },
+              {
+                "name": "timeout",
+                "value": "10",
+                "type": "query",
+                "description": "Maximum time in seconds to wait for the query to complete before timing out.\n\n**Guidelines:**\n- Recommended: 10-30 seconds for most queries\n- Version information is usually quick to retrieve\n- Timeout mainly applies to very large infrastructures\n"
+              },
+              {
+                "name": "cardinality",
+                "value": "500",
+                "type": "query",
+                "description": "Maximum number of nodes to include in the response to prevent overwhelming large responses.\nWhen this limit is exceeded, the response will indicate how many nodes were omitted.\n\n**Purpose:**\n- Prevent memory exhaustion from very large infrastructures\n- Control response size for performance\n- Useful when exploring large node sets incrementally\n\n**Recommendations:**\n- Small infrastructures (< 100 nodes): Use default\n- Medium infrastructures (100-1000 nodes): 500-1000\n- Large infrastructures (> 1000 nodes): Use filtering or increase limit carefully\n"
+              }
+            ]
+          },
+          "docs": "Returns version information for Netdata agents running on monitored nodes.\nThis endpoint provides visibility into the software versions deployed across your infrastructure,\nhelping identify version mismatches, outdated agents, and upgrade planning.\n\n**Version Information Includes:**\n- Netdata agent version string (e.g., \"v1.40.0\")\n- Build information and commit hash\n- Protocol versions supported\n- Feature capabilities based on version\n\n**Use Cases:**\n- **Version audit**: Identify which nodes run"
+        }
+      ]
+    }
+  ],
+  "bundled": true
+}

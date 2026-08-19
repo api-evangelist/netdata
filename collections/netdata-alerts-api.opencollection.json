@@ -1,0 +1,757 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "Netdata agent alerts API",
+    "version": "v1-rolling"
+  },
+  "items": [
+    {
+      "info": {
+        "name": "alerts",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "Current Alert Status - Multi-node Alert Information - Latest API",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://registry.my-netdata.io/api/v3/alerts",
+            "params": [
+              {
+                "name": "scope_nodes",
+                "value": "",
+                "type": "query",
+                "description": "A simple pattern limiting the nodes scope of the query. The scope controls both data and metadata response. The simple pattern is checked against the nodes' machine guid, node id and hostname. The default nodes scope is all nodes for which this Agent has data for. Usually the nodes scope is used to slice the entire dashboard (e.g. the Global Nodes Selector at the Netdata Cloud overview dashboard). Both positive and negative simple pattern expressions are supported.\n"
+              },
+              {
+                "name": "scope_contexts",
+                "value": "",
+                "type": "query",
+                "description": "A simple pattern limiting the contexts scope of the query. The scope controls both data and metadata response. The default contexts scope is all contexts for which this Agent has data for. Usually the contexts scope is used to slice data on the dashboard (e.g. each context based chart has its own contexts scope, limiting the chart to all the instances of the selected context). Both positive and negative simple pattern expressions are supported.\n"
+              },
+              {
+                "name": "nodes",
+                "value": "",
+                "type": "query",
+                "description": "A simple pattern matching the nodes to be queried. This only controls the data response, not the metadata. The simple pattern is checked against the nodes' machine guid, node id, hostname. The default nodes selector is all the nodes matched by the nodes scope. Both positive and negative simple pattern expressions are supported.\n"
+              },
+              {
+                "name": "contexts",
+                "value": "",
+                "type": "query",
+                "description": "A simple pattern matching the contexts to be queried. This only controls the data response, not the metadata. Both positive and negative simple pattern expressions are supported.\n"
+              },
+              {
+                "name": "alert",
+                "value": "",
+                "type": "query",
+                "description": "Filter alerts by alert name pattern. Uses Netdata simple pattern matching.\n\n**Pattern Syntax:**\n- Exact match: `cpu_usage`\n- Wildcard: `cpu_*` (all CPU-related alerts)\n- Multiple patterns: `cpu_* ram_*` (space-separated)\n- Negation: `!cpu_usage` (all except this alert)\n\n**Common Alert Names:**\n- `ram_in_use` - RAM utilization\n- `disk_space_usage` - Disk space\n- `10min_cpu_usage` - CPU usage over 10 minutes\n- `tcp_listen_overflows` - TCP connection queue overflows\n- `disk_backlog` - Disk I/O backlog\n\nWhen not specified, all alerts are included.\n\n**Examples:**\n- `alert=ram_in_use` - Only RAM usage alert\n- `alert=*cpu*` - All CPU-related alerts\n- `alert=* !*_critical` - All alerts except those ending with _critical\n"
+              },
+              {
+                "name": "status",
+                "value": "",
+                "type": "query",
+                "description": "Filter alerts by their current status. Can specify multiple statuses.\n\n**Alert Statuses:**\n- `CRITICAL` - Alert is in critical state (highest severity)\n- `WARNING` - Alert is in warning state\n- `CLEAR` - Alert is in normal state (not triggered)\n- `UNDEFINED` - Alert could not be evaluated (e.g., division by zero, missing data)\n- `UNINITIALIZED` - Alert has not been evaluated yet (no data collected)\n\n**Multiple Statuses:**\nTo show multiple statuses, separate them with commas: `status=CRITICAL,WARNING`\n\n**Use Cases:**\n- `status=CRITICAL` - Show only critical alerts requiring immediate attention\n- `status=CRITICAL,WARNING` - Show all alerts that need attention\n- `status=CLEAR` - Show alerts that are currently in normal state\n- Not specified - Show alerts in all states\n\n**Default:** When not specified, typically returns only alerts in WARNING or CRITICAL state (this depends on options parameter).\n"
+              },
+              {
+                "name": "options",
+                "value": "",
+                "type": "query",
+                "description": "Comma or pipe-separated list of options to control response content.\n\n**Alert-Specific Options:**\n- `summary` - Include summary counters (total alerts, by status, by type)\n\n**General Options:**\n- `contexts` - Include context information\n- `instances` - Include alert instance details\n- `values` - Include current alert values\n- `configurations` - Include alert configuration details\n\n**Examples:**\n- `options=summary` - Include alert count summaries\n- `options=summary,values` - Summaries and current values\n- `options=summary|configurations` - Summaries and configs (pipe separator)\n\nWhen not specified, returns basic alert information without detailed configs or summaries.\n"
+              },
+              {
+                "name": "after",
+                "value": "",
+                "type": "query",
+                "description": "`after` and `before` define the time-frame of a query. `after` can be a negative number of seconds, up to 3 years (-94608000), relative to `before`. If not set, it is usually assumed to be -600. When non-data endpoints support the `after` and `before`, they use the time-frame to limit their response for objects having data retention within the time-frame given.\n"
+              },
+              {
+                "name": "before",
+                "value": "",
+                "type": "query",
+                "description": "`after` and `before` define the time-frame of a query. `before` can be a negative number of seconds, up to 3 years (-94608000), relative to current clock. If not set, it is assumed to be the current clock time. When `before` is positive, it is assumed to be a unix epoch timestamp. When non-data endpoints support the `after` and `before`, they use the time-frame to limit their response for objects having data retention within the time-frame given.\n"
+              },
+              {
+                "name": "timeout",
+                "value": "30000",
+                "type": "query",
+                "description": "Maximum time in milliseconds to wait for the query to complete.\n\nThis is useful for preventing long-running queries from blocking when querying large infrastructures with many nodes and alerts.\n\n**Format:** Integer (milliseconds)\n\n**Default:** Server default timeout (typically 30000ms = 30 seconds)\n\n**Examples:**\n- `timeout=5000` - 5 second timeout\n- `timeout=60000` - 60 second timeout\n\nWhen the timeout is exceeded, the server returns a partial result with whatever data was collected before the timeout.\n"
+              },
+              {
+                "name": "cardinality",
+                "value": "100",
+                "type": "query",
+                "description": "Limit the number of alert instances returned to prevent response explosion.\n\nWhen monitoring large infrastructures, some alert types may have hundreds or thousands of instances (e.g., disk space alerts for every disk on every node).\n\nThis parameter limits the number of unique alert instances in the response.\n\n**Format:** Integer (maximum number of alert instances)\n\n**Default:** No limit\n\n**Use Cases:**\n- Preventing huge responses when there are many alert instances\n- Getting a sample of alerts rather than complete list\n- Dashboard widgets with limited display space\n\n**Example:**\n- `cardinality=100` - Return at most 100 alert instances\n\n**Alias:** Can also be specified as `cardinality_limit`\n\nWhen the limit is exceeded, the response may indicate how many alerts were omitted.\n"
+              }
+            ]
+          },
+          "docs": "Returns the current status of all alerts across all nodes monitored by this Netdata agent.\n\nThis is the latest version (v3) of the alerts API. It provides the same functionality as v2 but may include additional features in the future.\n\n**What This API Provides:**\n- Current state of all active, warning, and critical alerts\n- Alert values and thresholds\n- Alert configuration summaries\n- Multi-node alert aggregation\n- Filtering by alert name, context, node, or status\n\n**Use Cases:**\n- Dashboard ale"
+        },
+        {
+          "info": {
+            "name": "Retrieve alert state transition history across all nodes with advanced filtering",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://registry.my-netdata.io/api/v3/alert_transitions",
+            "params": [
+              {
+                "name": "scope_nodes",
+                "value": "",
+                "type": "query",
+                "description": "Filter transitions to only include specific nodes using simple pattern matching.\n\nThis parameter defines which nodes to include in the search using Netdata's simple pattern syntax (not regex).\n\n**Pattern Syntax:**\n- `*` matches any number of characters (including none)\n- `node1 node2` space-separated list matches any of the nodes\n- `!node3` exclude specific nodes (prefix with !)\n- Can combine inclusion and exclusion: `web* !web-test*`\n\n**Examples:**\n- `scope_nodes=web*` - All nodes starting with \"web\"\n- `scope_nodes=web* db*` - All web and database nodes\n- `scope_nodes=* !test*` - All nodes except test nodes\n- `scope_nodes=prod-web-01` - Specific node only\n\n**Use Cases:**\n- Focus on specific node groups (production vs staging)\n- Exclude test/development nodes from analysis\n- Investigate issues on specific infrastructure tiers\n\nWhen not specified, transitions from all nodes are included.\n"
+              },
+              {
+                "name": "nodes",
+                "value": "web-server-01,db-server-01",
+                "type": "query",
+                "description": "Filter transitions to specific nodes by their exact names.\n\nUnlike `scope_nodes` which supports patterns, this parameter requires exact node names. Multiple nodes are separated by comma or pipe.\n\n**Format:** Comma or pipe-separated list of exact node names\n\n**Examples:**\n- `nodes=web-server-01` - Single specific node\n- `nodes=web-server-01,web-server-02,db-server-01` - Multiple specific nodes\n- `nodes=web-server-01|web-server-02` - Pipe separator also works\n\n**Difference from scope_nodes:**\n- `scope_nodes`: Pattern matching, filters at query time\n- `nodes`: Exact names, more efficient for known node names\n\n**Best Practice:** Use `nodes` when you know exact node names, use `scope_nodes` for pattern-based filtering.\n\nWhen not specified, transitions from all nodes matching scope_nodes (or all nodes if scope_nodes is also not specified) are included.\n"
+              },
+              {
+                "name": "scope_contexts",
+                "value": "",
+                "type": "query",
+                "description": "Filter transitions to only include alerts from specific metric contexts using pattern matching.\n\nContexts group similar metrics across instances (e.g., `system.cpu` groups CPU metrics from all nodes, `disk.io` groups disk I/O from all disks).\n\n**Pattern Syntax:**\n- `*` matches any number of characters\n- `context1 context2` space-separated list matches any of the contexts\n- `!context3` exclude specific contexts\n- Can combine: `system.* !system.io*`\n\n**Common Context Patterns:**\n- `system.*` - All system-level metrics\n- `disk.*` - All disk-related metrics\n- `net.*` - All network-related metrics\n- `mysql.*` - All MySQL metrics\n- `nginx.*` - All Nginx metrics\n\n**Examples:**\n- `scope_contexts=system.cpu` - Only CPU alerts\n- `scope_contexts=disk.* net.*` - All disk and network alerts\n- `scope_contexts=* !system.ip*` - All contexts except IP-related\n\n**Use Cases:**\n- Focus on specific subsystem (e.g., storage, network)\n- Exclude noisy alert types\n- Component-specific incident investigation\n\nWhen not specified, transitions from all contexts are included.\n"
+              },
+              {
+                "name": "contexts",
+                "value": "system.cpu,system.ram,disk.space",
+                "type": "query",
+                "description": "Filter transitions to specific contexts by their exact names.\n\nUnlike `scope_contexts` which supports patterns, this parameter requires exact context names.\n\n**Format:** Comma or pipe-separated list of exact context names\n\n**Examples:**\n- `contexts=system.cpu` - Single specific context\n- `contexts=system.cpu,system.load,system.ram` - Multiple contexts\n- `contexts=disk.space|disk.inodes` - Pipe separator\n\n**Difference from scope_contexts:**\n- `scope_contexts`: Pattern matching for flexible filtering\n- `contexts`: Exact names for precise filtering\n\nWhen not specified, transitions from all contexts matching scope_contexts are included.\n"
+              },
+              {
+                "name": "alert",
+                "value": "disk_space_usage",
+                "type": "query",
+                "description": "Filter transitions to a specific alert by its exact name.\n\nAlert names are unique identifiers for specific alert configurations.\n\n**Format:** Exact alert name (case-sensitive)\n\n**Examples:**\n- `alert=disk_space_usage` - Transitions for disk space alert\n- `alert=cpu_usage` - Transitions for CPU usage alert\n- `alert=ram_in_use` - Transitions for RAM usage alert\n\n**Use Cases:**\n- Analyze history of a specific alert\n- Tune alert thresholds based on historical behavior\n- Investigate alert flapping (rapid state changes)\n- Track alert effectiveness\n\n**Tip:** To find available alert names, query `/api/v3/alerts` first or use the `/api/v3/alert_config` endpoint.\n\nWhen not specified, transitions for all alerts are included.\n"
+              },
+              {
+                "name": "transition",
+                "value": "550e8400-e29b-41d4-a716-446655440000",
+                "type": "query",
+                "description": "Filter to a specific transition by its unique identifier.\n\nEach transition has a unique ID (UUID). This parameter is rarely used but can retrieve exact transition records.\n\n**Format:** UUID string\n\n**Use Case:** Retrieve exact transition details when you have the transition ID from another query or notification.\n\nWhen not specified, all transitions matching other filters are included.\n"
+              },
+              {
+                "name": "last",
+                "value": "100",
+                "type": "query",
+                "description": "Limit the number of transition records returned.\n\nThis controls how many transition records to include in the response, ordered by time (most recent first).\n\n**Format:** Positive integer\n\n**Default:** 1 (returns only the most recent transition)\n\n**Examples:**\n- `last=1` - Most recent transition only (default)\n- `last=100` - Last 100 transitions\n- `last=1000` - Last 1000 transitions\n\n**Use Cases:**\n- Dashboard widgets showing recent N alerts\n- API clients with pagination\n- Limiting response size for performance\n\n**Pagination:**\nFor datasets larger than `last`, use the `anchor_gi` parameter to navigate to the next page:\n1. Make request with `last=100`\n2. Note the `global_id` of the last transition in response\n3. Make next request with `last=100&anchor_gi=<global_id>`\n\n**Performance Note:** Smaller values of `last` result in faster queries and smaller responses.\n\n**IMPORTANT:** This parameter is required. If not specified, defaults to 1.\n"
+              },
+              {
+                "name": "anchor_gi",
+                "value": "12345678",
+                "type": "query",
+                "description": "Global ID anchor for pagination through large result sets.\n\nEach transition has a unique global_id (an incrementing number). Use this parameter to paginate through results by specifying the global_id of the last transition from the previous page.\n\n**How Pagination Works:**\n1. First request: `?last=100` - Returns first 100 transitions\n2. Extract `global_id` of the 100th (last) transition from response\n3. Next request: `?last=100&anchor_gi=<global_id>` - Returns next 100 transitions\n\n**Format:** Positive integer (global_id from previous response)\n\n**Examples:**\n- `anchor_gi=12345` - Start from transition with global_id 12345\n- Combined with last: `last=100&anchor_gi=12345` - Get 100 transitions starting after global_id 12345\n\n**Use Cases:**\n- Processing large alert history datasets\n- Implementing \"load more\" in UIs\n- Batch processing of transition records\n- Exporting complete alert history\n\n**Direction:**\n- Results are ordered by global_id (which correlates with time)\n- Anchor specifies \"start after this ID\"\n- Each page contains `last` number of records\n\nWhen not specified, pagination starts from the most recent transition.\n"
+              },
+              {
+                "name": "f_status",
+                "value": "",
+                "type": "query",
+                "description": "**Facet Filter:** Filter transitions by their NEW status (the status the alert transitioned TO).\n\n**Available Status Values:**\n- `CRITICAL` - Alert in critical state (highest severity)\n- `WARNING` - Alert in warning state\n- `CLEAR` - Alert returned to normal state\n- `UNDEFINED` - Alert evaluation failed (e.g., metric missing, division by zero)\n- `UNINITIALIZED` - Alert not yet evaluated (no data yet)\n- `REMOVED` - Alert was removed (plugin stopped, configuration changed)\n\n**Format:** Comma-separated list of status values\n\n**Examples:**\n- `f_status=CRITICAL` - Only transitions TO critical state\n- `f_status=CRITICAL,WARNING` - Transitions to critical or warning\n- `f_status=CLEAR` - When alerts cleared (returned to normal)\n\n**Use Cases:**\n- Find when alerts became critical: `f_status=CRITICAL`\n- Track alert recovery: `f_status=CLEAR`\n- Find alert failures: `f_status=UNDEFINED`\n- Incident timeline: `f_status=CRITICAL,WARNING`\n\n**Note:** This filters by the NEW status. To see transitions FROM a status to another, you'll need to examine the old_status field in the response.\n\nWhen not specified, transitions to all statuses are included.\n"
+              },
+              {
+                "name": "f_type",
+                "value": "System,Database",
+                "type": "query",
+                "description": "**Facet Filter:** Filter transitions by alert type.\n\nAlert types categorize alerts by what they monitor (e.g., \"System\", \"Database\", \"Web Server\").\n\n**Format:** Comma-separated list of alert type names\n\n**Common Alert Types:**\n- `System` - System-level alerts (CPU, RAM, load)\n- `Database` - Database monitoring alerts\n- `Web Server` - Web server alerts (Nginx, Apache)\n- `Network` - Network-related alerts\n- `Storage` - Storage and disk alerts\n\n**Examples:**\n- `f_type=System` - Only system alerts\n- `f_type=Database,Web Server` - Database and web server alerts\n\n**Use Cases:**\n- Focus on specific infrastructure component types\n- Filter by technology stack (databases, web servers, etc.)\n- Team-specific alert filtering\n\n**Note:** The exact type values depend on your alert configurations. Query `/api/v3/alerts` to see available types in your installation.\n\nWhen not specified, transitions of all types are included.\n"
+              },
+              {
+                "name": "f_role",
+                "value": "sysadmin,dba",
+                "type": "query",
+                "description": "**Facet Filter:** Filter transitions by recipient role.\n\nRoles define who should be notified about alerts (e.g., \"sysadmin\", \"dba\", \"webmaster\").\n\n**Format:** Comma-separated list of role names\n\n**Common Roles:**\n- `sysadmin` - System administrators\n- `dba` - Database administrators\n- `webmaster` - Web server administrators\n- `devops` - DevOps team\n- `security` - Security team\n\n**Examples:**\n- `f_role=sysadmin` - Alerts for sysadmin role\n- `f_role=sysadmin,dba` - Alerts for sysadmins and DBAs\n\n**Use Cases:**\n- Team-specific alert filtering\n- Role-based alert analysis\n- Notification audit trails\n\n**Note:** Roles are defined in your alert configurations. The exact role values depend on your Netdata setup.\n\nWhen not specified, transitions for all roles are included.\n"
+              },
+              {
+                "name": "f_class",
+                "value": "Errors,Latency",
+                "type": "query",
+                "description": "**Facet Filter:** Filter transitions by alert classification.\n\nAlert classifications categorize alerts by their nature (e.g., \"Errors\", \"Latency\", \"Utilization\").\n\n**Format:** Comma-separated list of classification names\n\n**Common Classifications:**\n- `Errors` - Error-related alerts\n- `Latency` - Performance/latency alerts\n- `Utilization` - Resource utilization alerts\n- `Availability` - Availability/uptime alerts\n- `Workload` - Workload-related alerts\n\n**Examples:**\n- `f_class=Errors` - Only error-related transitions\n- `f_class=Latency,Utilization` - Performance and utilization alerts\n\n**Use Cases:**\n- Focus on specific problem categories\n- SLA/SLO tracking by classification\n- Alert categorization analysis\n\nWhen not specified, transitions of all classifications are included.\n"
+              },
+              {
+                "name": "f_component",
+                "value": "Disk,Network",
+                "type": "query",
+                "description": "**Facet Filter:** Filter transitions by system component.\n\nComponents identify which part of the system the alert relates to (e.g., \"Network\", \"Disk\", \"Memory\").\n\n**Format:** Comma-separated list of component names\n\n**Common Components:**\n- `Network` - Network-related alerts\n- `Disk` - Disk/storage alerts\n- `Memory` - Memory alerts\n- `CPU` - CPU alerts\n- `Database` - Database component alerts\n\n**Examples:**\n- `f_component=Disk` - Only disk-related transitions\n- `f_component=Network,Disk` - Network and disk alerts\n\n**Use Cases:**\n- Component-specific incident investigation\n- Infrastructure subsystem analysis\n- Capacity planning by component\n\nWhen not specified, transitions for all components are included.\n"
+              },
+              {
+                "name": "f_node",
+                "value": "web-server-01",
+                "type": "query",
+                "description": "**Facet Filter:** Filter transitions by exact node hostname.\n\nThis is a facet filter alternative to the `nodes` parameter, typically used when you want to combine it with other facets.\n\n**Format:** Comma-separated list of exact node hostnames\n\n**Examples:**\n- `f_node=web-server-01` - Single specific node\n- `f_node=web-server-01,db-server-01` - Multiple nodes\n\n**Difference from `nodes` parameter:**\n- Both accept exact node names\n- `f_node` is a facet filter (can be combined with other f_* filters)\n- `nodes` is a direct filter parameter\n\n**Best Practice:** Use `nodes` for simple node filtering, use `f_node` when combining with other facets in complex queries.\n\nWhen not specified, all nodes are included.\n"
+              },
+              {
+                "name": "f_alert",
+                "value": "disk_space_usage,ram_in_use",
+                "type": "query",
+                "description": "**Facet Filter:** Filter transitions by exact alert name.\n\nThis is a facet filter alternative to the `alert` parameter.\n\n**Format:** Comma-separated list of exact alert names\n\n**Examples:**\n- `f_alert=disk_space_usage` - Single alert\n- `f_alert=cpu_usage,ram_in_use` - Multiple alerts\n\n**Difference from `alert` parameter:**\n- `alert`: Single alert name\n- `f_alert`: Multiple alert names, facet filter\n\nWhen not specified, all alerts are included.\n"
+              },
+              {
+                "name": "f_instance",
+                "value": "sda,sdb",
+                "type": "query",
+                "description": "**Facet Filter:** Filter transitions by chart instance name.\n\nChart instances are specific monitored entities (e.g., \"disk_sda\", \"eth0\", \"mysql_localhost\").\n\n**Format:** Comma-separated list of instance names\n\n**Examples:**\n- `f_instance=sda` - Alerts for disk sda\n- `f_instance=eth0,eth1` - Alerts for network interfaces eth0 and eth1\n\n**Use Cases:**\n- Device-specific alert history (specific disk, NIC, etc.)\n- Instance-level troubleshooting\n- Resource-specific analysis\n\n**Note:** Instance names depend on your system configuration and what's being monitored.\n\nWhen not specified, all instances are included.\n"
+              },
+              {
+                "name": "f_context",
+                "value": "system.cpu,system.ram",
+                "type": "query",
+                "description": "**Facet Filter:** Filter transitions by exact metric context.\n\nThis is a facet filter alternative to the `contexts` parameter.\n\n**Format:** Comma-separated list of exact context names\n\n**Examples:**\n- `f_context=system.cpu` - CPU context only\n- `f_context=disk.space,disk.inodes` - Disk space and inodes\n\n**Difference from `contexts` parameter:**\n- Both accept exact context names\n- `f_context` is a facet filter (can be combined with other f_* filters)\n- `contexts` is a direct filter parameter\n\nWhen not specified, all contexts are included.\n"
+              },
+              {
+                "name": "after",
+                "value": "",
+                "type": "query",
+                "description": "`after` and `before` define the time-frame of a query. `after` can be a negative number of seconds, up to 3 years (-94608000), relative to `before`. If not set, it is usually assumed to be -600. When non-data endpoints support the `after` and `before`, they use the time-frame to limit their response for objects having data retention within the time-frame given.\n"
+              },
+              {
+                "name": "before",
+                "value": "",
+                "type": "query",
+                "description": "`after` and `before` define the time-frame of a query. `before` can be a negative number of seconds, up to 3 years (-94608000), relative to current clock. If not set, it is assumed to be the current clock time. When `before` is positive, it is assumed to be a unix epoch timestamp. When non-data endpoints support the `after` and `before`, they use the time-frame to limit their response for objects having data retention within the time-frame given.\n"
+              },
+              {
+                "name": "timeout",
+                "value": "30000",
+                "type": "query",
+                "description": "Maximum time in milliseconds to wait for the query to complete.\n\nAlert transition queries can be expensive when searching large time ranges or across many nodes.\n\n**Format:** Integer (milliseconds)\n\n**Default:** Server default timeout (typically 30000ms = 30 seconds)\n\n**Examples:**\n- `timeout=5000` - 5 second timeout\n- `timeout=60000` - 60 second timeout (for large queries)\n\n**Use Cases:**\n- Prevent long-running queries from blocking\n- API clients with strict latency requirements\n- Dashboard widgets needing fast responses\n\nWhen timeout is exceeded, the server returns a partial result with whatever transitions were collected before timeout, or an error if no results were ready.\n"
+              },
+              {
+                "name": "cardinality",
+                "value": "1000",
+                "type": "query",
+                "description": "Limit the number of transition records returned to prevent response explosion.\n\n**Format:** Integer (maximum number of transitions)\n\n**Default:** No limit (but respects `last` parameter)\n\n**Relationship with `last`:**\n- `last`: Controls result set size (pagination)\n- `cardinality`: Hard limit on response size\n\n**Use Cases:**\n- Ensure responses stay within size limits\n- Protect against accidentally requesting huge result sets\n- API clients with memory constraints\n\n**Example:**\n- `cardinality=1000` - Never return more than 1000 transitions\n\n**Alias:** Can also be specified as `cardinality_limit`\n\n**Best Practice:** Use `last` for normal pagination, use `cardinality` as a safety limit.\n\nWhen the limit is exceeded, the response may indicate how many transitions were omitted.\n"
+              }
+            ]
+          },
+          "docs": "Returns the historical record of alert state changes (transitions) across the monitored infrastructure. This endpoint provides detailed information about when alerts changed state (e.g., from CLEAR to WARNING to CRITICAL), allowing you to analyze alert patterns, investigate incidents, and understand system behavior over time.\n\n**What is an Alert Transition?**\nAn alert transition is a record of an alert changing from one state to another. Each transition includes:\n- Previous and new alert status "
+        },
+        {
+          "info": {
+            "name": "Retrieve the configuration of a specific alert by its config hash ID",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://registry.my-netdata.io/api/v3/alert_config",
+            "params": [
+              {
+                "name": "config",
+                "value": "550e8400-e29b-41d4-a716-446655440000",
+                "type": "query",
+                "description": "The unique configuration hash ID (UUID) of the alert whose configuration to retrieve.\n\n**Format:** UUID string (with or without hyphens)\n\n**Where to Find Config Hash IDs:**\n1. **From /api/v3/alerts Response:**\n   Each alert in the response includes a `config_hash_id` field containing the UUID\n\n2. **From /api/v3/alert_transitions Response:**\n   Transition records include `config_hash_id` showing which config was active\n\n3. **From Alert Notifications:**\n   Alert notifications (email, Slack, etc.) often include the config hash\n\n4. **From Logs:**\n   Netdata logs may reference config hashes when loading alert configurations\n\n**UUID Format Examples:**\n- With hyphens: `550e8400-e29b-41d4-a716-446655440000`\n- Without hyphens: `550e8400e29b41d4a716446655440000`\n- Both formats are accepted\n\n**Important Notes:**\n- This parameter is **REQUIRED**\n- Must be a valid UUID format\n- Must reference an existing alert configuration\n- Case-insensitive\n\n**Common Errors:**\n- Missing config parameter → 400 Bad Request with message \"A config hash ID is required\"\n- Invalid UUID format → 400 Bad Request\n- Non-existent UUID → 404 or empty result\n\n**Example Usage:**\n```\nGET /api/v3/alert_config?config=550e8400-e29b-41d4-a716-446655440000\n```\n\n**Tip:** To find all config hash IDs for a specific alert name, query the alerts endpoint first:\n```\nGET /api/v3/alerts?alert=disk_space_usage\n```\nThen extract the `config_hash_id` from the response.\n"
+              }
+            ]
+          },
+          "docs": "Returns the complete configuration of an alert identified by its unique configuration hash ID (UUID). This endpoint provides detailed information about how an alert is configured, including its thresholds, evaluation logic, notification settings, and metadata.\n\n**What is an Alert Configuration?**\nEach alert in Netdata has a unique configuration that defines:\n- Threshold values (warning and critical)\n- The metric expression being evaluated\n- Evaluation frequency and hysteresis\n- Who to notify (re"
+        },
+        {
+          "info": {
+            "name": "OBSOLETE: Get current alert status across all nodes (use /api/v3/alerts instead)",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://registry.my-netdata.io/api/v2/alerts",
+            "params": [
+              {
+                "name": "scope_nodes",
+                "value": "",
+                "type": "query",
+                "description": "A simple pattern limiting the nodes scope of the query. The scope controls both data and metadata response. The simple pattern is checked against the nodes' machine guid, node id and hostname. The default nodes scope is all nodes for which this Agent has data for. Usually the nodes scope is used to slice the entire dashboard (e.g. the Global Nodes Selector at the Netdata Cloud overview dashboard). Both positive and negative simple pattern expressions are supported.\n"
+              },
+              {
+                "name": "nodes",
+                "value": "",
+                "type": "query",
+                "description": "A simple pattern matching the nodes to be queried. This only controls the data response, not the metadata. The simple pattern is checked against the nodes' machine guid, node id, hostname. The default nodes selector is all the nodes matched by the nodes scope. Both positive and negative simple pattern expressions are supported.\n"
+              },
+              {
+                "name": "scope_contexts",
+                "value": "",
+                "type": "query",
+                "description": "A simple pattern limiting the contexts scope of the query. The scope controls both data and metadata response. The default contexts scope is all contexts for which this Agent has data for. Usually the contexts scope is used to slice data on the dashboard (e.g. each context based chart has its own contexts scope, limiting the chart to all the instances of the selected context). Both positive and negative simple pattern expressions are supported.\n"
+              },
+              {
+                "name": "contexts",
+                "value": "",
+                "type": "query",
+                "description": "A simple pattern matching the contexts to be queried. This only controls the data response, not the metadata. Both positive and negative simple pattern expressions are supported.\n"
+              },
+              {
+                "name": "status",
+                "value": "",
+                "type": "query",
+                "description": "Filter alerts by status (e.g., CRITICAL, WARNING, CLEAR)"
+              },
+              {
+                "name": "alert",
+                "value": "",
+                "type": "query",
+                "description": "Filter by alert name pattern"
+              },
+              {
+                "name": "options",
+                "value": "",
+                "type": "query",
+                "description": "Options that affect data generation.\n* `jsonwrap` - Wrap the output in a JSON object with metadata about the query.\n* `raw` - change the output so that it is aggregatable across multiple such queries. Supported by `/api/v2` data queries and `json2` format.\n* `minify` - Remove unnecessary spaces and newlines from the output.\n* `debug` - Provide additional information in `jsonwrap` output to help tracing issues.\n* `nonzero` - Do not return dimensions that all their values are zero, to improve the visual appearance of charts. They will still be returned if all the dimensions are entirely zero.\n* `null2zero` - Replace `null` values with `0`.\n* `absolute` or `abs` - Traditionally Netdata returns select dimensions negative to improve visual appearance. This option turns this feature off.\n* `display-absolute` - Only used by badges, to do color calculation using the signed value, but render the value without a sign.\n* `flip` or `reversed` - Order the timestamps array in reverse order (newest to oldest).\n* `min2max` - When flattening multi-dimensional data into a single metric format, use `max - min` instead of `sum`. This is EOL - use `/api/v2` to control aggregation across dimensions.\n* `percentage` - Convert all values into a percentage vs the row total. When enabled, Netdata will query all dimensions, even the ones that have not been selected or are hidden, to find the row total, in order to calculate the percentage of each dimension selected.\n* `seconds` - Output timestamps in seconds instead of dates.\n* `milliseconds` or `ms` - Output timestamps in milliseconds instead of dates.\n* `unaligned` - by default queries are aligned to the the view, so that as time passes past data returned do not change. When a data query will not be used for visualization, `unaligned` can be given to avoid aligning the query time-frame for visual precision.\n* `match-ids`, `match-names`. By default filters match both IDs and names when they are available. Setting either of the two options will disable the other.\n* `anomaly-bit` - query the anomaly information instead of metric values. This is EOL, use `/api/v2` and `json2` format which always returns this information and many more.\n* `jw-anomaly-rates` - return anomaly rates as a separate result set in the same `json` format response. This is EOL, use `/api/v2` and `json2` format which always returns information and many more. \n* `details` - `/api/v2/data` returns in `jsonwrap` the full tree of dimensions that have been matched by the query.\n* `group-by-labels` - `/api/v2/data` returns in `jsonwrap` flattened labels per output dimension. These are used to identify the instances that have been aggregated into each dimension, making it possible to provide a map, like Netdata does for Kubernetes.\n* `natural-points` - return timestamps as found in the database. The result is again fixed-step, but the query engine attempts to align them with the timestamps found in the database.\n* `virtual-points` - return timestamps independent of the database alignment. This is needed aggregating data across multiple Netdata Agents, to ensure that their outputs do not need to be interpolated to be merged.\n* `selected-tier` - use data exclusively from the selected tier given with the `tier` parameter. This option is set automatically when the `tier` parameter is set.\n* `all-dimensions` - In `/api/v1` `jsonwrap` include metadata for all candidate metrics examined. In `/api/v2` this is standard behavior and no option is needed.\n* `label-quotes` - In `csv` output format, enclose each header label in quotes.\n* `objectrows` - Each row of value should be an object, not an array (only for `json` format).\n* `google_json` - Comply with google JSON/JSONP specs (only for `json` format).\n* `minimal-stats` or `minimal` - Reduce the amount of statistics returned in `jsonwrap` format to save bandwidth.\n* `long-json-keys` or `long-keys` - Use descriptive key names in JSON output instead of abbreviated ones.\n* `mcp-info` - Include additional metadata useful for the Model Context Protocol (MCP) integration.\n* `rfc3339` - Return timestamps in RFC3339 format (e.g., \"2023-01-01T00:00:00Z\") instead of Unix timestamps.\n"
+              },
+              {
+                "name": "after",
+                "value": "",
+                "type": "query",
+                "description": "`after` and `before` define the time-frame of a query. `after` can be a negative number of seconds, up to 3 years (-94608000), relative to `before`. If not set, it is usually assumed to be -600. When non-data endpoints support the `after` and `before`, they use the time-frame to limit their response for objects having data retention within the time-frame given.\n"
+              },
+              {
+                "name": "before",
+                "value": "",
+                "type": "query",
+                "description": "`after` and `before` define the time-frame of a query. `before` can be a negative number of seconds, up to 3 years (-94608000), relative to current clock. If not set, it is assumed to be the current clock time. When `before` is positive, it is assumed to be a unix epoch timestamp. When non-data endpoints support the `after` and `before`, they use the time-frame to limit their response for objects having data retention within the time-frame given.\n"
+              },
+              {
+                "name": "timeout",
+                "value": "",
+                "type": "query",
+                "description": "Specify a timeout value in milliseconds after which the Agent will abort the query and return a 503 error. A value of 0 indicates no timeout.\n"
+              },
+              {
+                "name": "cardinality_limit",
+                "value": "",
+                "type": "query",
+                "description": "Limits the number of unique items (contexts, instances, dimensions) returned in the query result. This is useful for preventing excessive memory usage and response sizes when queries match a large number of metrics. The query engine will return the most relevant items up to this limit.\n"
+              }
+            ]
+          },
+          "docs": "**⚠️ OBSOLETE API - Will be removed in future versions**\n\nThis endpoint is deprecated. Use `/api/v3/alerts` instead, which provides the same functionality.\n\n**Migration:** Replace `/api/v2/alerts` with `/api/v3/alerts` in all API calls.\n\nReturns the current status of health monitoring alerts across all nodes in the infrastructure.\nSupports filtering by status, alert name, and node selection.\n\n**Security & Access Control:**\n- 📊 **Public Data API** - Bearer token optional, IP-based ACL restrictio"
+        },
+        {
+          "info": {
+            "name": "OBSOLETE: Get alert state transition history (use /api/v3/alert_transitions instead)",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://registry.my-netdata.io/api/v2/alert_transitions",
+            "params": [
+              {
+                "name": "scope_nodes",
+                "value": "",
+                "type": "query",
+                "description": "A simple pattern limiting the nodes scope of the query. The scope controls both data and metadata response. The simple pattern is checked against the nodes' machine guid, node id and hostname. The default nodes scope is all nodes for which this Agent has data for. Usually the nodes scope is used to slice the entire dashboard (e.g. the Global Nodes Selector at the Netdata Cloud overview dashboard). Both positive and negative simple pattern expressions are supported.\n"
+              },
+              {
+                "name": "nodes",
+                "value": "",
+                "type": "query",
+                "description": "A simple pattern matching the nodes to be queried. This only controls the data response, not the metadata. The simple pattern is checked against the nodes' machine guid, node id, hostname. The default nodes selector is all the nodes matched by the nodes scope. Both positive and negative simple pattern expressions are supported.\n"
+              },
+              {
+                "name": "scope_contexts",
+                "value": "",
+                "type": "query",
+                "description": "A simple pattern limiting the contexts scope of the query. The scope controls both data and metadata response. The default contexts scope is all contexts for which this Agent has data for. Usually the contexts scope is used to slice data on the dashboard (e.g. each context based chart has its own contexts scope, limiting the chart to all the instances of the selected context). Both positive and negative simple pattern expressions are supported.\n"
+              },
+              {
+                "name": "contexts",
+                "value": "",
+                "type": "query",
+                "description": "A simple pattern matching the contexts to be queried. This only controls the data response, not the metadata. Both positive and negative simple pattern expressions are supported.\n"
+              },
+              {
+                "name": "alert",
+                "value": "",
+                "type": "query",
+                "description": "Filter by alert name"
+              },
+              {
+                "name": "transition",
+                "value": "",
+                "type": "query",
+                "description": "Filter by transition type"
+              },
+              {
+                "name": "last",
+                "value": "",
+                "type": "query",
+                "description": "Return only the last N transitions"
+              },
+              {
+                "name": "anchor_gi",
+                "value": "",
+                "type": "query",
+                "description": "Global ID anchor for pagination"
+              },
+              {
+                "name": "f_status",
+                "value": "",
+                "type": "query",
+                "description": "Facet filter for alert status"
+              },
+              {
+                "name": "f_type",
+                "value": "",
+                "type": "query",
+                "description": "Facet filter for alert type"
+              },
+              {
+                "name": "f_role",
+                "value": "",
+                "type": "query",
+                "description": "Facet filter for recipient role"
+              },
+              {
+                "name": "f_class",
+                "value": "",
+                "type": "query",
+                "description": "Facet filter for alert class"
+              },
+              {
+                "name": "f_component",
+                "value": "",
+                "type": "query",
+                "description": "Facet filter for alert component"
+              },
+              {
+                "name": "f_node",
+                "value": "",
+                "type": "query",
+                "description": "Facet filter for node"
+              },
+              {
+                "name": "f_alert",
+                "value": "",
+                "type": "query",
+                "description": "Facet filter for alert name"
+              },
+              {
+                "name": "f_instance",
+                "value": "",
+                "type": "query",
+                "description": "Facet filter for chart/instance name"
+              },
+              {
+                "name": "f_context",
+                "value": "",
+                "type": "query",
+                "description": "Facet filter for context"
+              },
+              {
+                "name": "options",
+                "value": "",
+                "type": "query",
+                "description": "Options that affect data generation.\n* `jsonwrap` - Wrap the output in a JSON object with metadata about the query.\n* `raw` - change the output so that it is aggregatable across multiple such queries. Supported by `/api/v2` data queries and `json2` format.\n* `minify` - Remove unnecessary spaces and newlines from the output.\n* `debug` - Provide additional information in `jsonwrap` output to help tracing issues.\n* `nonzero` - Do not return dimensions that all their values are zero, to improve the visual appearance of charts. They will still be returned if all the dimensions are entirely zero.\n* `null2zero` - Replace `null` values with `0`.\n* `absolute` or `abs` - Traditionally Netdata returns select dimensions negative to improve visual appearance. This option turns this feature off.\n* `display-absolute` - Only used by badges, to do color calculation using the signed value, but render the value without a sign.\n* `flip` or `reversed` - Order the timestamps array in reverse order (newest to oldest).\n* `min2max` - When flattening multi-dimensional data into a single metric format, use `max - min` instead of `sum`. This is EOL - use `/api/v2` to control aggregation across dimensions.\n* `percentage` - Convert all values into a percentage vs the row total. When enabled, Netdata will query all dimensions, even the ones that have not been selected or are hidden, to find the row total, in order to calculate the percentage of each dimension selected.\n* `seconds` - Output timestamps in seconds instead of dates.\n* `milliseconds` or `ms` - Output timestamps in milliseconds instead of dates.\n* `unaligned` - by default queries are aligned to the the view, so that as time passes past data returned do not change. When a data query will not be used for visualization, `unaligned` can be given to avoid aligning the query time-frame for visual precision.\n* `match-ids`, `match-names`. By default filters match both IDs and names when they are available. Setting either of the two options will disable the other.\n* `anomaly-bit` - query the anomaly information instead of metric values. This is EOL, use `/api/v2` and `json2` format which always returns this information and many more.\n* `jw-anomaly-rates` - return anomaly rates as a separate result set in the same `json` format response. This is EOL, use `/api/v2` and `json2` format which always returns information and many more. \n* `details` - `/api/v2/data` returns in `jsonwrap` the full tree of dimensions that have been matched by the query.\n* `group-by-labels` - `/api/v2/data` returns in `jsonwrap` flattened labels per output dimension. These are used to identify the instances that have been aggregated into each dimension, making it possible to provide a map, like Netdata does for Kubernetes.\n* `natural-points` - return timestamps as found in the database. The result is again fixed-step, but the query engine attempts to align them with the timestamps found in the database.\n* `virtual-points` - return timestamps independent of the database alignment. This is needed aggregating data across multiple Netdata Agents, to ensure that their outputs do not need to be interpolated to be merged.\n* `selected-tier` - use data exclusively from the selected tier given with the `tier` parameter. This option is set automatically when the `tier` parameter is set.\n* `all-dimensions` - In `/api/v1` `jsonwrap` include metadata for all candidate metrics examined. In `/api/v2` this is standard behavior and no option is needed.\n* `label-quotes` - In `csv` output format, enclose each header label in quotes.\n* `objectrows` - Each row of value should be an object, not an array (only for `json` format).\n* `google_json` - Comply with google JSON/JSONP specs (only for `json` format).\n* `minimal-stats` or `minimal` - Reduce the amount of statistics returned in `jsonwrap` format to save bandwidth.\n* `long-json-keys` or `long-keys` - Use descriptive key names in JSON output instead of abbreviated ones.\n* `mcp-info` - Include additional metadata useful for the Model Context Protocol (MCP) integration.\n* `rfc3339` - Return timestamps in RFC3339 format (e.g., \"2023-01-01T00:00:00Z\") instead of Unix timestamps.\n"
+              },
+              {
+                "name": "after",
+                "value": "",
+                "type": "query",
+                "description": "`after` and `before` define the time-frame of a query. `after` can be a negative number of seconds, up to 3 years (-94608000), relative to `before`. If not set, it is usually assumed to be -600. When non-data endpoints support the `after` and `before`, they use the time-frame to limit their response for objects having data retention within the time-frame given.\n"
+              },
+              {
+                "name": "before",
+                "value": "",
+                "type": "query",
+                "description": "`after` and `before` define the time-frame of a query. `before` can be a negative number of seconds, up to 3 years (-94608000), relative to current clock. If not set, it is assumed to be the current clock time. When `before` is positive, it is assumed to be a unix epoch timestamp. When non-data endpoints support the `after` and `before`, they use the time-frame to limit their response for objects having data retention within the time-frame given.\n"
+              },
+              {
+                "name": "timeout",
+                "value": "",
+                "type": "query",
+                "description": "Specify a timeout value in milliseconds after which the Agent will abort the query and return a 503 error. A value of 0 indicates no timeout.\n"
+              },
+              {
+                "name": "cardinality_limit",
+                "value": "",
+                "type": "query",
+                "description": "Limits the number of unique items (contexts, instances, dimensions) returned in the query result. This is useful for preventing excessive memory usage and response sizes when queries match a large number of metrics. The query engine will return the most relevant items up to this limit.\n"
+              }
+            ]
+          },
+          "docs": "**⚠️ OBSOLETE API - Will be removed in future versions**\n\nThis endpoint is deprecated. Use `/api/v3/alert_transitions` instead, which provides the same functionality.\n\n**Migration:** Replace `/api/v2/alert_transitions` with `/api/v3/alert_transitions` in all API calls.\n\nReturns historical alert state transitions showing how alerts changed over time.\nSupports faceted filtering by status, type, role, class, component, node, alert name, chart name, and context.\n\n**Security & Access Control:**\n- 📊 "
+        },
+        {
+          "info": {
+            "name": "OBSOLETE: Get alert configuration by hash ID (use /api/v3/alert_config instead)",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://registry.my-netdata.io/api/v2/alert_config",
+            "params": [
+              {
+                "name": "config",
+                "value": "",
+                "type": "query",
+                "description": "Alert configuration hash ID (UUID)"
+              }
+            ]
+          },
+          "docs": "**⚠️ OBSOLETE API - Will be removed in future versions**\n\nThis endpoint is deprecated. Use `/api/v3/alert_config` instead, which provides the same functionality.\n\n**Migration:** Replace `/api/v2/alert_config` with `/api/v3/alert_config` in all API calls.\n\nRetrieves the complete configuration for a specific alert using its configuration hash (UUID).\nReturns alert definition including conditions, thresholds, and notification settings.\n\n**Security & Access Control:**\n- 📊 **Public Data API** - Bear"
+        },
+        {
+          "info": {
+            "name": "Get a list of active or raised alarms on the server",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://registry.my-netdata.io/api/v1/alarms",
+            "params": [
+              {
+                "name": "all",
+                "value": "",
+                "type": "query",
+                "description": "If passed, all enabled alarms are returned."
+              },
+              {
+                "name": "active",
+                "value": "",
+                "type": "query",
+                "description": "If passed, the raised alarms in state WARNING or CRITICAL are returned."
+              }
+            ]
+          },
+          "docs": "The alarms endpoint returns the list of all raised or enabled alarms on the netdata server. Called without any parameters, the raised alarms in state WARNING or CRITICAL are returned. By passing \"?all\", all the enabled alarms are returned.\n\n**Security & Access Control:**\n- 📊 **Public Data API** - Bearer token optional, IP-based ACL restrictions apply\n- **Default Access:** Public (no authentication required)\n- **Bearer Protection:** When enabled via `/api/v3/bearer_protection`, requires bearer t"
+        },
+        {
+          "info": {
+            "name": "Get a list of active or raised alarms on the server",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://registry.my-netdata.io/api/v1/alarms_values",
+            "params": [
+              {
+                "name": "all",
+                "value": "",
+                "type": "query",
+                "description": "If passed, all enabled alarms are returned."
+              },
+              {
+                "name": "active",
+                "value": "",
+                "type": "query",
+                "description": "If passed, the raised alarms in state WARNING or CRITICAL are returned."
+              }
+            ]
+          },
+          "docs": "The alarms_values endpoint returns the list of all raised or enabled alarms on the netdata server. Called without any parameters, the raised alarms in state WARNING or CRITICAL are returned. By passing '?all', all the enabled alarms are returned. This option output differs from `/alarms` in the number of variables delivered. This endpoint gives to user `id`, `value`, `last_updated` time, and alarm `status`.\n\n**Security & Access Control:**\n- 📊 **Public Data API** - Bearer token optional, IP-base"
+        },
+        {
+          "info": {
+            "name": "Retrieves the entries of the alarm log",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://registry.my-netdata.io/api/v1/alarm_log",
+            "params": [
+              {
+                "name": "after",
+                "value": "",
+                "type": "query",
+                "description": "Passing the parameter after=UNIQUEID returns all the events in the alarm log that occurred after UNIQUEID. An automated series of calls would call the interface once without after=, store the last UNIQUEID of the returned set, and give it back to get incrementally the next events.\n"
+              }
+            ]
+          },
+          "docs": "Returns an array of alarm_log entries, with historical information on raised and cleared alarms.\n\n**Security & Access Control:**\n- 📊 **Public Data API** - Bearer token optional, IP-based ACL restrictions apply\n- **Default Access:** Public (no authentication required)\n- **Bearer Protection:** When enabled via `/api/v3/bearer_protection`, requires bearer token\n- **IP Restrictions:** Subject to `allow dashboard from` in netdata.conf\n- **Access Methods:** Direct HTTP/HTTPS, Netdata Cloud, external "
+        },
+        {
+          "info": {
+            "name": "Get an overall status of the chart",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://registry.my-netdata.io/api/v1/alarm_count",
+            "params": [
+              {
+                "name": "context",
+                "value": "",
+                "type": "query",
+                "description": "The context of the chart as returned by the /charts call."
+              },
+              {
+                "name": "status",
+                "value": "",
+                "type": "query",
+                "description": "Specify alarm status to count."
+              }
+            ]
+          },
+          "docs": "Checks multiple charts with the same context and counts number of alarms with given status.\n\n**Security & Access Control:**\n- 📊 **Public Data API** - Bearer token optional, IP-based ACL restrictions apply\n- **Default Access:** Public (no authentication required)\n- **Bearer Protection:** When enabled via `/api/v3/bearer_protection`, requires bearer token\n- **IP Restrictions:** Subject to `allow dashboard from` in netdata.conf\n- **Access Methods:** Direct HTTP/HTTPS, Netdata Cloud, external tools"
+        },
+        {
+          "info": {
+            "name": "List variables available to configure alarms for a chart",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://registry.my-netdata.io/api/v1/alarm_variables",
+            "params": [
+              {
+                "name": "chart",
+                "value": "",
+                "type": "query",
+                "description": "The id of the chart as returned by the /charts call."
+              }
+            ]
+          },
+          "docs": "Returns the basic information of a chart and all the variables that can be used in alarm and template health configurations for the particular chart or family.\n\n**Security & Access Control:**\n- 📊 **Public Data API** - Bearer token optional, IP-based ACL restrictions apply\n- **Default Access:** Public (no authentication required)\n- **Bearer Protection:** When enabled via `/api/v3/bearer_protection`, requires bearer token\n- **IP Restrictions:** Subject to `allow dashboard from` in netdata.conf\n- "
+        },
+        {
+          "info": {
+            "name": "Evaluate an RRule and return occurrences",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://registry.my-netdata.io/api/v2/spaces/:spaceID/notifications/silencing/rrule/evaluate",
+            "params": [
+              {
+                "name": "spaceID",
+                "value": "",
+                "type": "path",
+                "description": "The unique identifier of the requested space."
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Evaluates an RRule string and returns the next occurrences within the specified time window.\nThis endpoint allows users to verify their rrule configuration for silencing rules."
+        },
+        {
+          "info": {
+            "name": "Create a new Alert Notification Silencing Rule",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://registry.my-netdata.io/api/v2/spaces/:spaceID/notifications/silencing/rule",
+            "params": [
+              {
+                "name": "spaceID",
+                "value": "",
+                "type": "path",
+                "description": "The unique identifier of the requested space."
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Creates an Alert Notification Silencing Rule according to the specifications provided"
+        },
+        {
+          "info": {
+            "name": "Update an existing Alert Notification Silencing Rule",
+            "type": "http"
+          },
+          "http": {
+            "method": "PUT",
+            "url": "https://registry.my-netdata.io/api/v2/spaces/:spaceID/notifications/silencing/rule/ruleID",
+            "params": [
+              {
+                "name": "spaceID",
+                "value": "",
+                "type": "path",
+                "description": "The unique identifier of the requested space."
+              },
+              {
+                "name": "ruleID",
+                "value": "",
+                "type": "path",
+                "description": "The unique identifier of the Silencing Rule to be updated."
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Updates an existing Alert Notification Silencing Rule according to the specifications provided"
+        },
+        {
+          "info": {
+            "name": "Get all the Alert Notification Silencing Rules",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://registry.my-netdata.io/api/v2/spaces/:spaceID/notifications/silencing/rules",
+            "params": [
+              {
+                "name": "spaceID",
+                "value": "",
+                "type": "path",
+                "description": "The unique identifier of the requested space."
+              }
+            ]
+          },
+          "docs": "Retrieve the Alert Notification Silencing Rules of a given space"
+        },
+        {
+          "info": {
+            "name": "Delete Alert Notification Silencing Rules",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://registry.my-netdata.io/api/v2/spaces/:spaceID/notifications/silencing/rules/delete",
+            "params": [
+              {
+                "name": "spaceID",
+                "value": "",
+                "type": "path",
+                "description": "The unique identifier of the requested space."
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Deletes the targeted Alert Notification Silencing Rules of a given space"
+        },
+        {
+          "info": {
+            "name": "Get misconfigured alerts for a room",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://registry.my-netdata.io/api/v2/spaces/:spaceID/rooms/:roomID/alerts:misconfigured",
+            "params": [
+              {
+                "name": "spaceID",
+                "value": "",
+                "type": "path",
+                "description": "The unique identifier of the space."
+              },
+              {
+                "name": "roomID",
+                "value": "",
+                "type": "path",
+                "description": "The unique identifier of the room."
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Retrieve alerts that are firing too often, stuck in a raised state, silenced for too long, or never dispatched for a given room"
+        }
+      ]
+    }
+  ],
+  "bundled": true
+}

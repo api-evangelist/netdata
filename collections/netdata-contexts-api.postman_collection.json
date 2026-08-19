@@ -1,0 +1,1286 @@
+{
+  "item": [
+    {
+      "id": "5b287cc5-b93a-4767-b55c-20969e56981b",
+      "name": "contexts",
+      "description": {
+        "content": "Everything related contexts - in new code, use this instead of charts",
+        "type": "text/plain"
+      },
+      "item": [
+        {
+          "id": "d8dce22a-0d8b-4415-a821-f3f77476a0b2",
+          "name": "Contexts Info v2",
+          "request": {
+            "name": "Contexts Info v2",
+            "description": {
+              "content": "Get a list of all contexts, across all nodes, hosted by this Netdata Agent.\n\n**Security & Access Control:**\n- 📊 **Public Data API** - Bearer token optional, IP-based ACL restrictions apply\n- **Default Access:** Public (no authentication required)\n- **Bearer Protection:** When enabled via `/api/v3/bearer_protection`, requires bearer token\n- **IP Restrictions:** Subject to `allow dashboard from` in netdata.conf\n- **Access Methods:** Direct HTTP/HTTPS, Netdata Cloud, external tools\n",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "api",
+                "v2",
+                "contexts"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [
+                {
+                  "disabled": false,
+                  "key": "scope_nodes",
+                  "value": "*",
+                  "description": "A simple pattern limiting the nodes scope of the query. The scope controls both data and metadata response. The simple pattern is checked against the nodes' machine guid, node id and hostname. The default nodes scope is all nodes for which this Agent has data for. Usually the nodes scope is used to slice the entire dashboard (e.g. the Global Nodes Selector at the Netdata Cloud overview dashboard). Both positive and negative simple pattern expressions are supported.\n"
+                },
+                {
+                  "disabled": false,
+                  "key": "scope_contexts",
+                  "value": "*",
+                  "description": "A simple pattern limiting the contexts scope of the query. The scope controls both data and metadata response. The default contexts scope is all contexts for which this Agent has data for. Usually the contexts scope is used to slice data on the dashboard (e.g. each context based chart has its own contexts scope, limiting the chart to all the instances of the selected context). Both positive and negative simple pattern expressions are supported.\n"
+                },
+                {
+                  "disabled": false,
+                  "key": "nodes",
+                  "value": "*",
+                  "description": "A simple pattern matching the nodes to be queried. This only controls the data response, not the metadata. The simple pattern is checked against the nodes' machine guid, node id, hostname. The default nodes selector is all the nodes matched by the nodes scope. Both positive and negative simple pattern expressions are supported.\n"
+                },
+                {
+                  "disabled": false,
+                  "key": "contexts",
+                  "value": "*",
+                  "description": "A simple pattern matching the contexts to be queried. This only controls the data response, not the metadata. Both positive and negative simple pattern expressions are supported.\n"
+                }
+              ],
+              "variable": []
+            },
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "GET",
+            "auth": {
+              "type": "noauth"
+            }
+          },
+          "response": [
+            {
+              "id": "92eae203-75d0-40c9-a37c-81edad106a3c",
+              "name": "OK",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "api",
+                    "v2",
+                    "contexts"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "scope_nodes",
+                      "value": "*"
+                    },
+                    {
+                      "key": "scope_contexts",
+                      "value": "*"
+                    },
+                    {
+                      "key": "nodes",
+                      "value": "*"
+                    },
+                    {
+                      "key": "contexts",
+                      "value": "*"
+                    }
+                  ],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"api\": 1897,\n  \"agents\": [\n    {\n      \"mg\": \"435b5cb5-3ac0-b6e7-4ffd-3b7823515b31\",\n      \"nd\": \"88f48e2b-9396-54f2-c7ab-7ee17e403ff9\",\n      \"nm\": \"string\",\n      \"ai\": 856,\n      \"now\": 8754\n    },\n    {\n      \"mg\": \"ca7d3213-f55b-6ac5-ba9c-031fc96bd565\",\n      \"nd\": \"5c9663d3-dc7c-90f3-2cc3-767fe253220f\",\n      \"nm\": \"string\",\n      \"ai\": 7178,\n      \"now\": 1404\n    }\n  ],\n  \"versions\": {\n    \"nodes_hard_hash\": 7848,\n    \"contexts_hard_hash\": 5753,\n    \"contexts_soft_hash\": 797,\n    \"alerts_hard_hash\": 7572,\n    \"alerts_soft_hash\": 9746\n  },\n  \"contexts\": {\n    \"key_0\": {\n      \"family\": \"string\",\n      \"priority\": 5923,\n      \"first_entry\": 663,\n      \"last_entry\": 2437,\n      \"live\": true\n    },\n    \"key_1\": {\n      \"family\": \"string\",\n      \"priority\": 6659,\n      \"first_entry\": 1675,\n      \"last_entry\": 6596,\n      \"live\": false\n    },\n    \"key_2\": {\n      \"family\": \"string\",\n      \"priority\": 5462,\n      \"first_entry\": 2245,\n      \"last_entry\": 9550,\n      \"live\": true\n    }\n  }\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "d0e0ea94-1545-471b-b7ca-aa63a3376f21",
+          "name": "Contexts Info v3",
+          "request": {
+            "name": "Contexts Info v3",
+            "description": {
+              "content": "Get a list of all contexts, across all nodes, hosted by this Netdata Agent.\n\n**Security & Access Control:**\n- 📊 **Public Data API** - Bearer token optional, IP-based ACL restrictions apply\n- **Default Access:** Public (no authentication required)\n- **Bearer Protection:** When enabled via `/api/v3/bearer_protection`, requires bearer token\n- **IP Restrictions:** Subject to `allow dashboard from` in netdata.conf\n- **Access Methods:** Direct HTTP/HTTPS, Netdata Cloud, external tools\n",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "api",
+                "v3",
+                "contexts"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [
+                {
+                  "disabled": false,
+                  "key": "scope_nodes",
+                  "value": "*",
+                  "description": "A simple pattern limiting the nodes scope of the query. The scope controls both data and metadata response. The simple pattern is checked against the nodes' machine guid, node id and hostname. The default nodes scope is all nodes for which this Agent has data for. Usually the nodes scope is used to slice the entire dashboard (e.g. the Global Nodes Selector at the Netdata Cloud overview dashboard). Both positive and negative simple pattern expressions are supported.\n"
+                },
+                {
+                  "disabled": false,
+                  "key": "scope_contexts",
+                  "value": "*",
+                  "description": "A simple pattern limiting the contexts scope of the query. The scope controls both data and metadata response. The default contexts scope is all contexts for which this Agent has data for. Usually the contexts scope is used to slice data on the dashboard (e.g. each context based chart has its own contexts scope, limiting the chart to all the instances of the selected context). Both positive and negative simple pattern expressions are supported.\n"
+                },
+                {
+                  "disabled": false,
+                  "key": "nodes",
+                  "value": "*",
+                  "description": "A simple pattern matching the nodes to be queried. This only controls the data response, not the metadata. The simple pattern is checked against the nodes' machine guid, node id, hostname. The default nodes selector is all the nodes matched by the nodes scope. Both positive and negative simple pattern expressions are supported.\n"
+                },
+                {
+                  "disabled": false,
+                  "key": "contexts",
+                  "value": "*",
+                  "description": "A simple pattern matching the contexts to be queried. This only controls the data response, not the metadata. Both positive and negative simple pattern expressions are supported.\n"
+                }
+              ],
+              "variable": []
+            },
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "GET",
+            "auth": {
+              "type": "noauth"
+            }
+          },
+          "response": [
+            {
+              "id": "0b5280e8-2bbd-4193-9216-96d588a2995d",
+              "name": "OK",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "api",
+                    "v3",
+                    "contexts"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "scope_nodes",
+                      "value": "*"
+                    },
+                    {
+                      "key": "scope_contexts",
+                      "value": "*"
+                    },
+                    {
+                      "key": "nodes",
+                      "value": "*"
+                    },
+                    {
+                      "key": "contexts",
+                      "value": "*"
+                    }
+                  ],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"api\": 4361,\n  \"agents\": [\n    {\n      \"mg\": \"64f2cef0-20b6-8409-de75-67b313e75b4d\",\n      \"nd\": \"5ee69eb8-b9a3-0e37-3ae6-b2f08092ee11\",\n      \"nm\": \"string\",\n      \"ai\": 3149,\n      \"now\": 6521\n    },\n    {\n      \"mg\": \"c76aa5ae-b53e-1d81-6542-c7c5c98689dd\",\n      \"nd\": \"7d12627e-74b7-7c34-f3b8-b6ad5311df36\",\n      \"nm\": \"string\",\n      \"ai\": 9922,\n      \"now\": 6792\n    }\n  ],\n  \"versions\": {\n    \"nodes_hard_hash\": 8816,\n    \"contexts_hard_hash\": 9675,\n    \"contexts_soft_hash\": 6637,\n    \"alerts_hard_hash\": 631,\n    \"alerts_soft_hash\": 4565\n  },\n  \"contexts\": {\n    \"key_0\": {\n      \"family\": \"string\",\n      \"priority\": 5377,\n      \"first_entry\": 3041,\n      \"last_entry\": 7563,\n      \"live\": false\n    },\n    \"key_1\": {\n      \"family\": \"string\",\n      \"priority\": 3910,\n      \"first_entry\": 5743,\n      \"last_entry\": 6004,\n      \"live\": true\n    },\n    \"key_2\": {\n      \"family\": \"string\",\n      \"priority\": 3447,\n      \"first_entry\": 6291,\n      \"last_entry\": 3635,\n      \"live\": false\n    },\n    \"key_3\": {\n      \"family\": \"string\",\n      \"priority\": 8062,\n      \"first_entry\": 7115,\n      \"last_entry\": 5801,\n      \"live\": false\n    }\n  }\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "ceed356d-3c0c-4e8c-99d4-cf5f3616d8e3",
+          "name": "Full Text Search v2",
+          "request": {
+            "name": "Full Text Search v2",
+            "description": {
+              "content": "Get a list of contexts, across all nodes, hosted by this Netdata Agent, matching a string expression\n\n**Security & Access Control:**\n- 📊 **Public Data API** - Bearer token optional, IP-based ACL restrictions apply\n- **Default Access:** Public (no authentication required)\n- **Bearer Protection:** When enabled via `/api/v3/bearer_protection`, requires bearer token\n- **IP Restrictions:** Subject to `allow dashboard from` in netdata.conf\n- **Access Methods:** Direct HTTP/HTTPS, Netdata Cloud, external tools\n",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "api",
+                "v2",
+                "q"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [
+                {
+                  "disabled": false,
+                  "key": "q",
+                  "value": "<simple pattern>",
+                  "description": "(Required) The strings to search for, formatted as a simple pattern"
+                },
+                {
+                  "disabled": false,
+                  "key": "scope_nodes",
+                  "value": "*",
+                  "description": "A simple pattern limiting the nodes scope of the query. The scope controls both data and metadata response. The simple pattern is checked against the nodes' machine guid, node id and hostname. The default nodes scope is all nodes for which this Agent has data for. Usually the nodes scope is used to slice the entire dashboard (e.g. the Global Nodes Selector at the Netdata Cloud overview dashboard). Both positive and negative simple pattern expressions are supported.\n"
+                },
+                {
+                  "disabled": false,
+                  "key": "scope_contexts",
+                  "value": "*",
+                  "description": "A simple pattern limiting the contexts scope of the query. The scope controls both data and metadata response. The default contexts scope is all contexts for which this Agent has data for. Usually the contexts scope is used to slice data on the dashboard (e.g. each context based chart has its own contexts scope, limiting the chart to all the instances of the selected context). Both positive and negative simple pattern expressions are supported.\n"
+                },
+                {
+                  "disabled": false,
+                  "key": "nodes",
+                  "value": "*",
+                  "description": "A simple pattern matching the nodes to be queried. This only controls the data response, not the metadata. The simple pattern is checked against the nodes' machine guid, node id, hostname. The default nodes selector is all the nodes matched by the nodes scope. Both positive and negative simple pattern expressions are supported.\n"
+                },
+                {
+                  "disabled": false,
+                  "key": "contexts",
+                  "value": "*",
+                  "description": "A simple pattern matching the contexts to be queried. This only controls the data response, not the metadata. Both positive and negative simple pattern expressions are supported.\n"
+                }
+              ],
+              "variable": []
+            },
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "GET",
+            "auth": {
+              "type": "noauth"
+            }
+          },
+          "response": [
+            {
+              "id": "597afce0-9efe-48b8-a02a-9bd490bafef9",
+              "name": "OK",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "api",
+                    "v2",
+                    "q"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "q",
+                      "value": "<simple pattern>"
+                    },
+                    {
+                      "key": "scope_nodes",
+                      "value": "*"
+                    },
+                    {
+                      "key": "scope_contexts",
+                      "value": "*"
+                    },
+                    {
+                      "key": "nodes",
+                      "value": "*"
+                    },
+                    {
+                      "key": "contexts",
+                      "value": "*"
+                    }
+                  ],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"api\": 4361,\n  \"agents\": [\n    {\n      \"mg\": \"64f2cef0-20b6-8409-de75-67b313e75b4d\",\n      \"nd\": \"5ee69eb8-b9a3-0e37-3ae6-b2f08092ee11\",\n      \"nm\": \"string\",\n      \"ai\": 3149,\n      \"now\": 6521\n    },\n    {\n      \"mg\": \"c76aa5ae-b53e-1d81-6542-c7c5c98689dd\",\n      \"nd\": \"7d12627e-74b7-7c34-f3b8-b6ad5311df36\",\n      \"nm\": \"string\",\n      \"ai\": 9922,\n      \"now\": 6792\n    }\n  ],\n  \"versions\": {\n    \"nodes_hard_hash\": 8816,\n    \"contexts_hard_hash\": 9675,\n    \"contexts_soft_hash\": 6637,\n    \"alerts_hard_hash\": 631,\n    \"alerts_soft_hash\": 4565\n  },\n  \"contexts\": {\n    \"key_0\": {\n      \"family\": \"string\",\n      \"priority\": 5377,\n      \"first_entry\": 3041,\n      \"last_entry\": 7563,\n      \"live\": false\n    },\n    \"key_1\": {\n      \"family\": \"string\",\n      \"priority\": 3910,\n      \"first_entry\": 5743,\n      \"last_entry\": 6004,\n      \"live\": true\n    },\n    \"key_2\": {\n      \"family\": \"string\",\n      \"priority\": 3447,\n      \"first_entry\": 6291,\n      \"last_entry\": 3635,\n      \"live\": false\n    },\n    \"key_3\": {\n      \"family\": \"string\",\n      \"priority\": 8062,\n      \"first_entry\": 7115,\n      \"last_entry\": 5801,\n      \"live\": false\n    }\n  }\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "943dd45e-f034-4d28-83b4-b1da2d2d1394",
+          "name": "Full Text Search v3",
+          "request": {
+            "name": "Full Text Search v3",
+            "description": {
+              "content": "Get a list of contexts, across all nodes, hosted by this Netdata Agent, matching a string expression.\n\n**Security & Access Control:**\n- 📊 **Public Data API** - Bearer token optional, IP-based ACL restrictions apply\n- **Default Access:** Public (no authentication required)\n- **Bearer Protection:** When enabled via `/api/v3/bearer_protection`, requires bearer token\n- **IP Restrictions:** Subject to `allow dashboard from` in netdata.conf\n- **Access Methods:** Direct HTTP/HTTPS, Netdata Cloud, external tools\n",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "api",
+                "v3",
+                "q"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [
+                {
+                  "disabled": false,
+                  "key": "q",
+                  "value": "<simple pattern>",
+                  "description": "(Required) The strings to search for, formatted as a simple pattern"
+                },
+                {
+                  "disabled": false,
+                  "key": "scope_nodes",
+                  "value": "*",
+                  "description": "A simple pattern limiting the nodes scope of the query. The scope controls both data and metadata response. The simple pattern is checked against the nodes' machine guid, node id and hostname. The default nodes scope is all nodes for which this Agent has data for. Usually the nodes scope is used to slice the entire dashboard (e.g. the Global Nodes Selector at the Netdata Cloud overview dashboard). Both positive and negative simple pattern expressions are supported.\n"
+                },
+                {
+                  "disabled": false,
+                  "key": "scope_contexts",
+                  "value": "*",
+                  "description": "A simple pattern limiting the contexts scope of the query. The scope controls both data and metadata response. The default contexts scope is all contexts for which this Agent has data for. Usually the contexts scope is used to slice data on the dashboard (e.g. each context based chart has its own contexts scope, limiting the chart to all the instances of the selected context). Both positive and negative simple pattern expressions are supported.\n"
+                },
+                {
+                  "disabled": false,
+                  "key": "nodes",
+                  "value": "*",
+                  "description": "A simple pattern matching the nodes to be queried. This only controls the data response, not the metadata. The simple pattern is checked against the nodes' machine guid, node id, hostname. The default nodes selector is all the nodes matched by the nodes scope. Both positive and negative simple pattern expressions are supported.\n"
+                },
+                {
+                  "disabled": false,
+                  "key": "contexts",
+                  "value": "*",
+                  "description": "A simple pattern matching the contexts to be queried. This only controls the data response, not the metadata. Both positive and negative simple pattern expressions are supported.\n"
+                }
+              ],
+              "variable": []
+            },
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "GET",
+            "auth": {
+              "type": "noauth"
+            }
+          },
+          "response": [
+            {
+              "id": "05256128-0e94-4e09-8d46-9dad35b6d887",
+              "name": "OK",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "api",
+                    "v3",
+                    "q"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "q",
+                      "value": "<simple pattern>"
+                    },
+                    {
+                      "key": "scope_nodes",
+                      "value": "*"
+                    },
+                    {
+                      "key": "scope_contexts",
+                      "value": "*"
+                    },
+                    {
+                      "key": "nodes",
+                      "value": "*"
+                    },
+                    {
+                      "key": "contexts",
+                      "value": "*"
+                    }
+                  ],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"api\": 4361,\n  \"agents\": [\n    {\n      \"mg\": \"64f2cef0-20b6-8409-de75-67b313e75b4d\",\n      \"nd\": \"5ee69eb8-b9a3-0e37-3ae6-b2f08092ee11\",\n      \"nm\": \"string\",\n      \"ai\": 3149,\n      \"now\": 6521\n    },\n    {\n      \"mg\": \"c76aa5ae-b53e-1d81-6542-c7c5c98689dd\",\n      \"nd\": \"7d12627e-74b7-7c34-f3b8-b6ad5311df36\",\n      \"nm\": \"string\",\n      \"ai\": 9922,\n      \"now\": 6792\n    }\n  ],\n  \"versions\": {\n    \"nodes_hard_hash\": 8816,\n    \"contexts_hard_hash\": 9675,\n    \"contexts_soft_hash\": 6637,\n    \"alerts_hard_hash\": 631,\n    \"alerts_soft_hash\": 4565\n  },\n  \"contexts\": {\n    \"key_0\": {\n      \"family\": \"string\",\n      \"priority\": 5377,\n      \"first_entry\": 3041,\n      \"last_entry\": 7563,\n      \"live\": false\n    },\n    \"key_1\": {\n      \"family\": \"string\",\n      \"priority\": 3910,\n      \"first_entry\": 5743,\n      \"last_entry\": 6004,\n      \"live\": true\n    },\n    \"key_2\": {\n      \"family\": \"string\",\n      \"priority\": 3447,\n      \"first_entry\": 6291,\n      \"last_entry\": 3635,\n      \"live\": false\n    },\n    \"key_3\": {\n      \"family\": \"string\",\n      \"priority\": 8062,\n      \"first_entry\": 7115,\n      \"last_entry\": 5801,\n      \"live\": false\n    }\n  }\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "9cef4c35-60c3-41d7-a629-3844ed4d19d7",
+          "name": "Get a list of all node contexts available v1",
+          "request": {
+            "name": "Get a list of all node contexts available v1",
+            "description": {
+              "content": "The contexts endpoint returns a summary about all contexts stored in the netdata server.\n**Security & Access Control:** - 📊 **Public Data API** - Bearer token optional, IP-based ACL restrictions apply - **Default Access:** Public (no authentication required) - **Bearer Protection:** When enabled via `/api/v3/bearer_protection`, requires bearer token - **IP Restrictions:** Subject to `allow dashboard from` in netdata.conf - **Access Methods:** Direct HTTP/HTTPS, Netdata Cloud, external tools",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "api",
+                "v1",
+                "contexts"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [
+                {
+                  "disabled": false,
+                  "key": "dimensions",
+                  "value": "<string>",
+                  "description": "a simple pattern matching dimensions (use comma or pipe as separator)"
+                },
+                {
+                  "disabled": false,
+                  "key": "chart_label_key",
+                  "value": "<key1,key2,key3>",
+                  "description": "Specify the chart label keys that need to match for context queries as comma separated values. At least one matching key is needed to match the corresponding chart.\n"
+                },
+                {
+                  "disabled": false,
+                  "key": "chart_labels_filter",
+                  "value": "<key1:value1,key2:value2,key3:value3>",
+                  "description": "Specify the chart label keys and values to match for context queries. All keys/values need to match for the chart to be included in the query. The labels are specified as key1:value1,key2:value2\n"
+                },
+                {
+                  "disabled": false,
+                  "key": "options",
+                  "value": "<string>",
+                  "description": "Options that affect data generation.\n* `full` or `all` - Include all available information.\n* `charts` - Include chart information.\n* `dimensions` - Include dimension information.\n* `labels` - Include label information.\n* `uuids` - Include UUIDs in the response.\n* `queue` - Include queue information.\n* `flags` - Include internal flags.\n* `deleted` - Include deleted items.\n* `deepscan` - Perform a deep scan for contexts.\n* `rfc3339` - Return timestamps in RFC3339 format instead of Unix timestamps.\n"
+                },
+                {
+                  "disabled": false,
+                  "key": "options",
+                  "value": "<string>",
+                  "description": "Options that affect data generation.\n* `full` or `all` - Include all available information.\n* `charts` - Include chart information.\n* `dimensions` - Include dimension information.\n* `labels` - Include label information.\n* `uuids` - Include UUIDs in the response.\n* `queue` - Include queue information.\n* `flags` - Include internal flags.\n* `deleted` - Include deleted items.\n* `deepscan` - Perform a deep scan for contexts.\n* `rfc3339` - Return timestamps in RFC3339 format instead of Unix timestamps.\n"
+                },
+                {
+                  "disabled": false,
+                  "key": "after",
+                  "value": "-600",
+                  "description": "`after` and `before` define the time-frame of a query. `after` can be a negative number of seconds, up to 3 years (-94608000), relative to `before`. If not set, it is usually assumed to be -600. When non-data endpoints support the `after` and `before`, they use the time-frame to limit their response for objects having data retention within the time-frame given.\n"
+                },
+                {
+                  "disabled": false,
+                  "key": "before",
+                  "value": "0",
+                  "description": "`after` and `before` define the time-frame of a query. `before` can be a negative number of seconds, up to 3 years (-94608000), relative to current clock. If not set, it is assumed to be the current clock time. When `before` is positive, it is assumed to be a unix epoch timestamp. When non-data endpoints support the `after` and `before`, they use the time-frame to limit their response for objects having data retention within the time-frame given.\n"
+                }
+              ],
+              "variable": []
+            },
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "GET",
+            "auth": {
+              "type": "noauth"
+            }
+          },
+          "response": [
+            {
+              "id": "088a7929-2ad9-4f51-8180-396c1b4c83bb",
+              "name": "An array of contexts.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "api",
+                    "v1",
+                    "contexts"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "dimensions",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "chart_label_key",
+                      "value": "<key1,key2,key3>"
+                    },
+                    {
+                      "key": "chart_labels_filter",
+                      "value": "<key1:value1,key2:value2,key3:value3>"
+                    },
+                    {
+                      "key": "options",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "options",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "after",
+                      "value": "-600"
+                    },
+                    {
+                      "key": "before",
+                      "value": "0"
+                    }
+                  ],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"hostname\": \"string\",\n  \"machine_guid\": \"string\",\n  \"node_id\": \"nightly\",\n  \"claim_id\": \"string\",\n  \"host_labels\": {},\n  \"context\": {\n    \"key_0\": {\n      \"version\": \"string\",\n      \"hub_version\": \"string\",\n      \"family\": \"string\",\n      \"title\": \"string\",\n      \"priority\": 6239.832520650703,\n      \"units\": \"string\",\n      \"chart_type\": \"area\",\n      \"first_time_t\": 2466.3919390661804,\n      \"last_time_t\": 660.3697893603311,\n      \"charts\": {}\n    }\n  }\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "5bc2c8ec-9e84-4813-b6f6-a34662026ddc",
+          "name": "Get info about a specific context",
+          "request": {
+            "name": "Get info about a specific context",
+            "description": {
+              "content": "The context endpoint returns detailed information about a given context.\nThe `context` parameter is required for this call.\n\n**Security & Access Control:**\n- 📊 **Public Data API** - Bearer token optional, IP-based ACL restrictions apply\n- **Default Access:** Public (no authentication required)\n- **Bearer Protection:** When enabled via `/api/v3/bearer_protection`, requires bearer token\n- **IP Restrictions:** Subject to `allow dashboard from` in netdata.conf\n- **Access Methods:** Direct HTTP/HTTPS, Netdata Cloud, external tools\n",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "api",
+                "v1",
+                "context"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [
+                {
+                  "disabled": false,
+                  "key": "context",
+                  "value": "<as returned by /charts>",
+                  "description": "The context of the chart as returned by the /charts call."
+                },
+                {
+                  "disabled": false,
+                  "key": "dimensions",
+                  "value": "<string>",
+                  "description": "a simple pattern matching dimensions (use comma or pipe as separator)"
+                },
+                {
+                  "disabled": false,
+                  "key": "chart_label_key",
+                  "value": "<key1,key2,key3>",
+                  "description": "Specify the chart label keys that need to match for context queries as comma separated values. At least one matching key is needed to match the corresponding chart.\n"
+                },
+                {
+                  "disabled": false,
+                  "key": "chart_labels_filter",
+                  "value": "<key1:value1,key2:value2,key3:value3>",
+                  "description": "Specify the chart label keys and values to match for context queries. All keys/values need to match for the chart to be included in the query. The labels are specified as key1:value1,key2:value2\n"
+                },
+                {
+                  "disabled": false,
+                  "key": "options",
+                  "value": "<string>",
+                  "description": "Options that affect data generation.\n* `full` or `all` - Include all available information.\n* `charts` - Include chart information.\n* `dimensions` - Include dimension information.\n* `labels` - Include label information.\n* `uuids` - Include UUIDs in the response.\n* `queue` - Include queue information.\n* `flags` - Include internal flags.\n* `deleted` - Include deleted items.\n* `deepscan` - Perform a deep scan for contexts.\n* `rfc3339` - Return timestamps in RFC3339 format instead of Unix timestamps.\n"
+                },
+                {
+                  "disabled": false,
+                  "key": "options",
+                  "value": "<string>",
+                  "description": "Options that affect data generation.\n* `full` or `all` - Include all available information.\n* `charts` - Include chart information.\n* `dimensions` - Include dimension information.\n* `labels` - Include label information.\n* `uuids` - Include UUIDs in the response.\n* `queue` - Include queue information.\n* `flags` - Include internal flags.\n* `deleted` - Include deleted items.\n* `deepscan` - Perform a deep scan for contexts.\n* `rfc3339` - Return timestamps in RFC3339 format instead of Unix timestamps.\n"
+                },
+                {
+                  "disabled": false,
+                  "key": "after",
+                  "value": "-600",
+                  "description": "`after` and `before` define the time-frame of a query. `after` can be a negative number of seconds, up to 3 years (-94608000), relative to `before`. If not set, it is usually assumed to be -600. When non-data endpoints support the `after` and `before`, they use the time-frame to limit their response for objects having data retention within the time-frame given.\n"
+                },
+                {
+                  "disabled": false,
+                  "key": "before",
+                  "value": "0",
+                  "description": "`after` and `before` define the time-frame of a query. `before` can be a negative number of seconds, up to 3 years (-94608000), relative to current clock. If not set, it is assumed to be the current clock time. When `before` is positive, it is assumed to be a unix epoch timestamp. When non-data endpoints support the `after` and `before`, they use the time-frame to limit their response for objects having data retention within the time-frame given.\n"
+                }
+              ],
+              "variable": []
+            },
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "GET",
+            "auth": {
+              "type": "noauth"
+            }
+          },
+          "response": [
+            {
+              "id": "8ac69d46-e2c9-44c2-a31f-79ba22a8fbc6",
+              "name": "A javascript object with detailed information about the context.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "api",
+                    "v1",
+                    "context"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "context",
+                      "value": "<as returned by /charts>"
+                    },
+                    {
+                      "key": "dimensions",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "chart_label_key",
+                      "value": "<key1,key2,key3>"
+                    },
+                    {
+                      "key": "chart_labels_filter",
+                      "value": "<key1:value1,key2:value2,key3:value3>"
+                    },
+                    {
+                      "key": "options",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "options",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "after",
+                      "value": "-600"
+                    },
+                    {
+                      "key": "before",
+                      "value": "0"
+                    }
+                  ],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"version\": \"string\",\n  \"hub_version\": \"string\",\n  \"family\": \"string\",\n  \"title\": \"string\",\n  \"priority\": 6902.7277196667355,\n  \"units\": \"string\",\n  \"chart_type\": \"area\",\n  \"first_time_t\": 162.27532333805362,\n  \"last_time_t\": 5493.749438917638,\n  \"charts\": {}\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "13ace712-3b1e-4d71-9c1e-67c4f594e545",
+              "name": "No context id was supplied in the request.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "api",
+                    "v1",
+                    "context"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "context",
+                      "value": "<as returned by /charts>"
+                    },
+                    {
+                      "key": "dimensions",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "chart_label_key",
+                      "value": "<key1,key2,key3>"
+                    },
+                    {
+                      "key": "chart_labels_filter",
+                      "value": "<key1:value1,key2:value2,key3:value3>"
+                    },
+                    {
+                      "key": "options",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "options",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "after",
+                      "value": "-600"
+                    },
+                    {
+                      "key": "before",
+                      "value": "0"
+                    }
+                  ],
+                  "variable": []
+                },
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Bad Request",
+              "code": 400,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "text/plain"
+                }
+              ],
+              "body": "",
+              "cookie": [],
+              "_postman_previewlanguage": "text"
+            },
+            {
+              "id": "a65c2a0c-a275-49d0-a707-5c05224dd148",
+              "name": "No context with the given id is found.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "api",
+                    "v1",
+                    "context"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "context",
+                      "value": "<as returned by /charts>"
+                    },
+                    {
+                      "key": "dimensions",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "chart_label_key",
+                      "value": "<key1,key2,key3>"
+                    },
+                    {
+                      "key": "chart_labels_filter",
+                      "value": "<key1:value1,key2:value2,key3:value3>"
+                    },
+                    {
+                      "key": "options",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "options",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "after",
+                      "value": "-600"
+                    },
+                    {
+                      "key": "before",
+                      "value": "0"
+                    }
+                  ],
+                  "variable": []
+                },
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Not Found",
+              "code": 404,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "text/plain"
+                }
+              ],
+              "body": "",
+              "cookie": [],
+              "_postman_previewlanguage": "text"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "ffe9c9f5-4c25-41d2-8bb5-333373de35f8",
+          "name": "Get info about a specific context - Latest API",
+          "request": {
+            "name": "Get info about a specific context - Latest API",
+            "description": {
+              "content": "The context endpoint returns detailed information about a specific monitoring context across all nodes.\n\nThis is the latest version (v3) of the context API. It provides the same functionality as v1 but may include additional features in the future.\n\n**What is a Context?**\nA context is a grouping of charts that monitor the same type of metric across different instances. For example:\n- `system.cpu` - CPU usage (one chart per node)\n- `disk.io` - Disk I/O operations (one chart per disk)\n- `net.packets` - Network packets (one chart per network interface)\n\n**Use Cases:**\n- Get metadata about a specific metric type across all instances and nodes\n- Discover which charts belong to a context\n- Filter charts by labels or dimensions\n- Understand metric families, units, and chart types\n- Build dynamic dashboards that adapt to available instances\n\nThe response includes all charts that belong to the specified context, with their metadata, dimensions, labels, and current availability status.\n\n**Security & Access Control:**\n- 📊 **Public Data API** - Bearer token optional, IP-based ACL restrictions apply\n- **Default Access:** Public (no authentication required)\n- **Bearer Protection:** When enabled via `/api/v3/bearer_protection`, requires bearer token\n- **IP Restrictions:** Subject to `allow dashboard from` in netdata.conf\n- **Access Methods:** Direct HTTP/HTTPS, Netdata Cloud, external tools\n",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "api",
+                "v3",
+                "context"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [
+                {
+                  "disabled": false,
+                  "key": "context",
+                  "value": "<string>",
+                  "description": "(Required) The context identifier to query. This is a required parameter.\n\nA context represents a type of metric collected across multiple instances. Each context groups charts that measure the same thing but for different entities.\n\n**Common Context Examples:**\n- `system.cpu` - CPU utilization metrics\n- `system.ram` - RAM usage metrics\n- `disk.io` - Disk I/O operations\n- `disk.ops` - Disk operation counts\n- `net.packets` - Network packet statistics\n- `net.drops` - Network packet drops\n- `cgroup.cpu` - Container CPU usage\n- `nginx.requests` - Nginx request rates\n\n**Finding Available Contexts:**\nUse the `/api/v3/contexts` endpoint to get a list of all available contexts.\n\n**Alias:** Can also be specified as `ctx` for brevity.\n"
+                },
+                {
+                  "disabled": false,
+                  "key": "dimensions",
+                  "value": "<string>",
+                  "description": "a simple pattern matching dimensions (use comma or pipe as separator)"
+                },
+                {
+                  "disabled": false,
+                  "key": "chart_label_key",
+                  "value": "<key1,key2,key3>",
+                  "description": "Specify the chart label keys that need to match for context queries as comma separated values. At least one matching key is needed to match the corresponding chart.\n"
+                },
+                {
+                  "disabled": false,
+                  "key": "chart_labels_filter",
+                  "value": "<key1:value1,key2:value2,key3:value3>",
+                  "description": "Specify the chart label keys and values to match for context queries. All keys/values need to match for the chart to be included in the query. The labels are specified as key1:value1,key2:value2\n"
+                },
+                {
+                  "disabled": false,
+                  "key": "options",
+                  "value": "<string>",
+                  "description": "Comma or pipe-separated list of options to control the response content and format.\n\n**Available Options:**\n- `full` or `all` - Include all possible information (equivalent to enabling all options below)\n- `charts` - Include the list of charts belonging to this context\n- `dimensions` - Include dimension information for each chart\n- `queue` - Include data collection queue statistics\n- `flags` - Include internal flags and states\n- `labels` - Include chart labels\n- `alerts` - Include alert configurations and states for this context\n\n**Option Combinations:**\nOptions can be combined. For example: `options=charts,dimensions,labels` will include charts with their dimensions and labels.\n\n**Default Behavior:**\nWhen not specified, returns basic context information without detailed chart data.\n\n**Examples:**\n- `options=full` - Complete information\n- `options=charts,dimensions` - Charts with dimension details\n- `options=charts|labels` - Charts with labels (pipe separator)\n"
+                },
+                {
+                  "disabled": false,
+                  "key": "after",
+                  "value": "<long>",
+                  "description": "Return only charts that have collected data after this timestamp.\n\nThis filters charts based on their data collection activity, excluding charts that haven't collected data since the specified time.\n\n**Format:** Unix timestamp in seconds\n\n**Use Cases:**\n- Find recently active charts\n- Exclude stale or obsolete charts\n- Filter charts by collection timeframe\n\n**Example:** `after=1609459200` (charts active after January 1, 2021)\n\nWhen not specified, all charts are included regardless of their last update time.\n"
+                },
+                {
+                  "disabled": false,
+                  "key": "before",
+                  "value": "<long>",
+                  "description": "Return only charts that have collected data before this timestamp.\n\nThis filters charts based on their data collection activity, excluding charts that only have data after the specified time.\n\n**Format:** Unix timestamp in seconds\n\n**Use Cases:**\n- Historical analysis of chart availability\n- Find charts that were active during a specific time period\n- Exclude newer charts from results\n\n**Example:** `before=1640995200` (charts active before January 1, 2022)\n\nWhen combined with `after`, you can specify an exact time window:\n`after=1609459200&before=1640995200` (charts active during 2021)\n\nWhen not specified, all charts are included regardless of their collection timeline.\n"
+                }
+              ],
+              "variable": []
+            },
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "GET",
+            "auth": {
+              "type": "noauth"
+            }
+          },
+          "response": [
+            {
+              "id": "dc35ee30-45d5-4922-8752-19984a5a6b87",
+              "name": "Success. Returns detailed information about the requested context.\n\nThe response is a JSON object containing:\n- Context metadata (name, title, family, units, chart type)\n- List of charts belonging to this context (when options=charts)\n- Dimension information (when options=dimensions)\n- Chart labels (when options=labels)\n- Alert configurations (when options=alerts)\n- Collection statistics (when options=queue)\n\n**Response Structure:**\nThe exact structure depends on the options parameter. With `options=full`, you get complete information including all charts, their dimensions, labels, and current states.\n",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "api",
+                    "v3",
+                    "context"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "context",
+                      "value": "system.cpu"
+                    },
+                    {
+                      "key": "dimensions",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "chart_label_key",
+                      "value": "<key1,key2,key3>"
+                    },
+                    {
+                      "key": "chart_labels_filter",
+                      "value": "<key1:value1,key2:value2,key3:value3>"
+                    },
+                    {
+                      "key": "options",
+                      "value": ""
+                    },
+                    {
+                      "key": "after",
+                      "value": "1609459200"
+                    },
+                    {
+                      "key": "before",
+                      "value": "1640995200"
+                    }
+                  ],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"version\": \"string\",\n  \"hub_version\": \"string\",\n  \"family\": \"string\",\n  \"title\": \"string\",\n  \"priority\": 6902.7277196667355,\n  \"units\": \"string\",\n  \"chart_type\": \"area\",\n  \"first_time_t\": 162.27532333805362,\n  \"last_time_t\": 5493.749438917638,\n  \"charts\": {}\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "baab23ec-202f-4999-9f04-f03cea27280d",
+              "name": "Bad request. Common causes:\n- Missing required 'context' parameter\n- Invalid parameter values\n- Malformed filter patterns\n",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "api",
+                    "v3",
+                    "context"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "context",
+                      "value": "system.cpu"
+                    },
+                    {
+                      "key": "dimensions",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "chart_label_key",
+                      "value": "<key1,key2,key3>"
+                    },
+                    {
+                      "key": "chart_labels_filter",
+                      "value": "<key1:value1,key2:value2,key3:value3>"
+                    },
+                    {
+                      "key": "options",
+                      "value": ""
+                    },
+                    {
+                      "key": "after",
+                      "value": "1609459200"
+                    },
+                    {
+                      "key": "before",
+                      "value": "1640995200"
+                    }
+                  ],
+                  "variable": []
+                },
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Bad Request",
+              "code": 400,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "text/plain"
+                }
+              ],
+              "body": "",
+              "cookie": [],
+              "_postman_previewlanguage": "text"
+            },
+            {
+              "id": "65b5c80e-1b1d-4c99-9cec-120258d9e265",
+              "name": "Not found. The specified context does not exist on this Netdata agent.\n\nThis can occur when:\n- The context name is misspelled\n- The context is not being collected on this agent\n- The context was available but is now obsolete\n",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "api",
+                    "v3",
+                    "context"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "context",
+                      "value": "system.cpu"
+                    },
+                    {
+                      "key": "dimensions",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "chart_label_key",
+                      "value": "<key1,key2,key3>"
+                    },
+                    {
+                      "key": "chart_labels_filter",
+                      "value": "<key1:value1,key2:value2,key3:value3>"
+                    },
+                    {
+                      "key": "options",
+                      "value": ""
+                    },
+                    {
+                      "key": "after",
+                      "value": "1609459200"
+                    },
+                    {
+                      "key": "before",
+                      "value": "1640995200"
+                    }
+                  ],
+                  "variable": []
+                },
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Not Found",
+              "code": 404,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "text/plain"
+                }
+              ],
+              "body": "",
+              "cookie": [],
+              "_postman_previewlanguage": "text"
+            },
+            {
+              "id": "937f56d2-8003-4a12-ac3c-c6a8fb7a07cd",
+              "name": "Internal server error. Usually indicates the server is out of memory.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "api",
+                    "v3",
+                    "context"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "context",
+                      "value": "system.cpu"
+                    },
+                    {
+                      "key": "dimensions",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "chart_label_key",
+                      "value": "<key1,key2,key3>"
+                    },
+                    {
+                      "key": "chart_labels_filter",
+                      "value": "<key1:value1,key2:value2,key3:value3>"
+                    },
+                    {
+                      "key": "options",
+                      "value": ""
+                    },
+                    {
+                      "key": "after",
+                      "value": "1609459200"
+                    },
+                    {
+                      "key": "before",
+                      "value": "1640995200"
+                    }
+                  ],
+                  "variable": []
+                },
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Internal Server Error",
+              "code": 500,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "text/plain"
+                }
+              ],
+              "body": "",
+              "cookie": [],
+              "_postman_previewlanguage": "text"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        }
+      ],
+      "event": []
+    }
+  ],
+  "event": [],
+  "variable": [
+    {
+      "type": "string",
+      "value": "https://registry.my-netdata.io",
+      "key": "baseUrl"
+    }
+  ],
+  "info": {
+    "_postman_id": "c4231748-e605-4e36-91c0-d0a6b4a3ed07",
+    "name": "Netdata agent contexts API",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "description": {
+      "content": "Real-time performance and health monitoring.\n\n## API Versions\n\nNetdata provides three API versions:\n- **v1**: The original API, focused on single-node operations\n- **v2**: Multi-node API with advanced grouping and aggregation capabilities\n- **v3**: The latest API version that combines v1 and v2 endpoints and may include additional features\n\n### v3 API Endpoints\n\nThe v3 API provides the current, actively maintained endpoints:\n- `/api/v3/data` - Multi-dimensional data queries\n- `/api/v3/weights` - Metric scoring/correlation\n- `/api/v3/contexts` - Context metadata\n- `/api/v3/nodes` - Node information\n- `/api/v3/q` - Full-text search\n- `/api/v3/alerts` - Alert information\n- `/api/v3/alert_transitions` - Alert state transitions\n- `/api/v3/alert_config` - Alert configuration\n- `/api/v3/functions` - Available functions\n- `/api/v3/function` - Execute functions\n- `/api/v3/info` - Agent information\n- `/api/v3/node_instances` - Node instance information\n- `/api/v3/stream_path` - Streaming topology\n- `/api/v3/versions` - Version information\n- `/api/v3/badge.svg` - Dynamic badges\n- `/api/v3/allmetrics` - Export metrics\n- `/api/v3/context` - Single context info\n- `/api/v3/variable` - Variable information\n- `/api/v3/config` - Dynamic configuration\n- `/api/v3/settings` - Agent settings\n- `/api/v3/me` - Current user information\n- `/api/v3/claim` - Agent claiming\n- Additional management and streaming endpoints\n\n**Note:** V1 and V2 APIs are deprecated and maintained for backwards compatibility only. New integrations should use V3 exclusively.\n\n\nContact Support:\n Name: Netdata Agent API\n Email: info@netdata.cloud",
+      "type": "text/plain"
+    }
+  }
+}

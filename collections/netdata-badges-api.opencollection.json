@@ -1,0 +1,308 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "Netdata agent badges API",
+    "version": "v1-rolling"
+  },
+  "items": [
+    {
+      "info": {
+        "name": "badges",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "Generate a badge in form of SVG image for a chart (or dimension)",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://registry.my-netdata.io/api/v1/badge.svg",
+            "params": [
+              {
+                "name": "chart",
+                "value": "",
+                "type": "query",
+                "description": "The id of the chart as returned by the `/api/v1/charts` call."
+              },
+              {
+                "name": "dimension",
+                "value": "",
+                "type": "query",
+                "description": "Zero, one or more dimension ids or names, as returned by the /chart call, separated with comma or pipe. Netdata simple patterns are supported."
+              },
+              {
+                "name": "after",
+                "value": "",
+                "type": "query",
+                "description": "`after` and `before` define the time-frame of a query. `after` can be a negative number of seconds, up to 3 years (-94608000), relative to `before`. If not set, it is usually assumed to be -600. When non-data endpoints support the `after` and `before`, they use the time-frame to limit their response for objects having data retention within the time-frame given.\n"
+              },
+              {
+                "name": "before",
+                "value": "",
+                "type": "query",
+                "description": "`after` and `before` define the time-frame of a query. `before` can be a negative number of seconds, up to 3 years (-94608000), relative to current clock. If not set, it is assumed to be the current clock time. When `before` is positive, it is assumed to be a unix epoch timestamp. When non-data endpoints support the `after` and `before`, they use the time-frame to limit their response for objects having data retention within the time-frame given.\n"
+              },
+              {
+                "name": "group",
+                "value": "",
+                "type": "query",
+                "description": "Time aggregation function. If multiple collected values are to be grouped in order to return fewer points, this parameters defines the method of grouping. If the `absolute` option is set, the values are turned positive before applying this calculation.\n"
+              },
+              {
+                "name": "options",
+                "value": "",
+                "type": "query",
+                "description": "Options that affect data generation.\n* `jsonwrap` - Wrap the output in a JSON object with metadata about the query.\n* `raw` - change the output so that it is aggregatable across multiple such queries. Supported by `/api/v2` data queries and `json2` format.\n* `minify` - Remove unnecessary spaces and newlines from the output.\n* `debug` - Provide additional information in `jsonwrap` output to help tracing issues.\n* `nonzero` - Do not return dimensions that all their values are zero, to improve the visual appearance of charts. They will still be returned if all the dimensions are entirely zero.\n* `null2zero` - Replace `null` values with `0`.\n* `absolute` or `abs` - Traditionally Netdata returns select dimensions negative to improve visual appearance. This option turns this feature off.\n* `display-absolute` - Only used by badges, to do color calculation using the signed value, but render the value without a sign.\n* `flip` or `reversed` - Order the timestamps array in reverse order (newest to oldest).\n* `min2max` - When flattening multi-dimensional data into a single metric format, use `max - min` instead of `sum`. This is EOL - use `/api/v2` to control aggregation across dimensions.\n* `percentage` - Convert all values into a percentage vs the row total. When enabled, Netdata will query all dimensions, even the ones that have not been selected or are hidden, to find the row total, in order to calculate the percentage of each dimension selected.\n* `seconds` - Output timestamps in seconds instead of dates.\n* `milliseconds` or `ms` - Output timestamps in milliseconds instead of dates.\n* `unaligned` - by default queries are aligned to the the view, so that as time passes past data returned do not change. When a data query will not be used for visualization, `unaligned` can be given to avoid aligning the query time-frame for visual precision.\n* `match-ids`, `match-names`. By default filters match both IDs and names when they are available. Setting either of the two options will disable the other.\n* `anomaly-bit` - query the anomaly information instead of metric values. This is EOL, use `/api/v2` and `json2` format which always returns this information and many more.\n* `jw-anomaly-rates` - return anomaly rates as a separate result set in the same `json` format response. This is EOL, use `/api/v2` and `json2` format which always returns information and many more. \n* `details` - `/api/v2/data` returns in `jsonwrap` the full tree of dimensions that have been matched by the query.\n* `group-by-labels` - `/api/v2/data` returns in `jsonwrap` flattened labels per output dimension. These are used to identify the instances that have been aggregated into each dimension, making it possible to provide a map, like Netdata does for Kubernetes.\n* `natural-points` - return timestamps as found in the database. The result is again fixed-step, but the query engine attempts to align them with the timestamps found in the database.\n* `virtual-points` - return timestamps independent of the database alignment. This is needed aggregating data across multiple Netdata Agents, to ensure that their outputs do not need to be interpolated to be merged.\n* `selected-tier` - use data exclusively from the selected tier given with the `tier` parameter. This option is set automatically when the `tier` parameter is set.\n* `all-dimensions` - In `/api/v1` `jsonwrap` include metadata for all candidate metrics examined. In `/api/v2` this is standard behavior and no option is needed.\n* `label-quotes` - In `csv` output format, enclose each header label in quotes.\n* `objectrows` - Each row of value should be an object, not an array (only for `json` format).\n* `google_json` - Comply with google JSON/JSONP specs (only for `json` format).\n* `minimal-stats` or `minimal` - Reduce the amount of statistics returned in `jsonwrap` format to save bandwidth.\n* `long-json-keys` or `long-keys` - Use descriptive key names in JSON output instead of abbreviated ones.\n* `mcp-info` - Include additional metadata useful for the Model Context Protocol (MCP) integration.\n* `rfc3339` - Return timestamps in RFC3339 format (e.g., \"2023-01-01T00:00:00Z\") instead of Unix timestamps.\n"
+              },
+              {
+                "name": "alarm",
+                "value": "",
+                "type": "query",
+                "description": "The name of an alarm linked to the chart."
+              },
+              {
+                "name": "label",
+                "value": "",
+                "type": "query",
+                "description": "A text to be used as the label."
+              },
+              {
+                "name": "units",
+                "value": "",
+                "type": "query",
+                "description": "A text to be used as the units."
+              },
+              {
+                "name": "label_color",
+                "value": "",
+                "type": "query",
+                "description": "A color to be used for the background of the label side(left side) of the badge. One of predefined colors or specific color in hex `RGB` or `RRGGBB` format (without preceding `#` character). If value wrong or not given default color will be used.\n"
+              },
+              {
+                "name": "value_color",
+                "value": "",
+                "type": "query",
+                "description": "A color to be used for the background of the value *(right)* part of badge. You can set multiple using a pipe with a condition each, like this: `color<value|color:null` The following operators are supported: >, <, >=, <=, =, :null (to check if no value exists). Each color can be specified in same manner as for `label_color` parameter. Currently only integers are supported as values.\n"
+              },
+              {
+                "name": "text_color_lbl",
+                "value": "",
+                "type": "query",
+                "description": "Font color for label *(left)* part of the badge. One of predefined colors or as HTML hexadecimal color without preceding `#` character. Formats allowed `RGB` or `RRGGBB`. If no or wrong value given default color will be used.\n"
+              },
+              {
+                "name": "text_color_val",
+                "value": "",
+                "type": "query",
+                "description": "Font color for value *(right)* part of the badge. One of predefined colors or as HTML hexadecimal color without preceding `#` character. Formats allowed `RGB` or `RRGGBB`. If no or wrong value given default color will be used.\n"
+              },
+              {
+                "name": "multiply",
+                "value": "",
+                "type": "query",
+                "description": "Multiply the value with this number for rendering it at the image (integer value required)."
+              },
+              {
+                "name": "divide",
+                "value": "",
+                "type": "query",
+                "description": "Divide the value with this number for rendering it at the image (integer value required)."
+              },
+              {
+                "name": "scale",
+                "value": "",
+                "type": "query",
+                "description": "Set the scale of the badge (greater or equal to 100)."
+              },
+              {
+                "name": "fixed_width_lbl",
+                "value": "",
+                "type": "query",
+                "description": "This parameter overrides auto-sizing of badge and creates it with fixed width. This parameter determines the size of the label's left side *(label/name)*. You must set this parameter together with `fixed_width_val` otherwise it will be ignored. You should set the label/value widths wide enough to provide space for all the possible values/contents of the badge you're requesting. In case the text cannot fit the space given it will be clipped. The `scale` parameter still applies on the values you give to `fixed_width_lbl` and `fixed_width_val`.\n"
+              },
+              {
+                "name": "fixed_width_val",
+                "value": "",
+                "type": "query",
+                "description": "This parameter overrides auto-sizing of badge and creates it with fixed width. This parameter determines the size of the label's right side *(value)*. You must set this parameter together with `fixed_width_lbl` otherwise it will be ignored. You should set the label/value widths wide enough to provide space for all the possible values/contents of the badge you're requesting. In case the text cannot fit the space given it will be clipped. The `scale` parameter still applies on the values you give to `fixed_width_lbl` and `fixed_width_val`.\n"
+              },
+              {
+                "name": "points",
+                "value": "",
+                "type": "query",
+                "description": "The number of points to use for the calculation. Default is 1."
+              },
+              {
+                "name": "group_options",
+                "value": "",
+                "type": "query",
+                "description": "Additional options for the grouping function."
+              },
+              {
+                "name": "precision",
+                "value": "",
+                "type": "query",
+                "description": "Number of decimal places to show in the value. Default is -1 (automatic)."
+              },
+              {
+                "name": "refresh",
+                "value": "",
+                "type": "query",
+                "description": "Auto-refresh interval in seconds. Use \"auto\" to automatically determine refresh interval based on the time range or alarm update frequency. For alarms, defaults to the alarm's update_every. For charts with RRDR_OPTION_NOT_ALIGNED, defaults to the chart's update_every. Otherwise calculated from the time range (before - after).\n"
+              }
+            ]
+          },
+          "docs": "Successful responses are SVG images.\n**Security & Access Control:** - 📊 **Public Data API** - Bearer token optional, IP-based ACL restrictions apply - **Default Access:** Public (no authentication required) - **Bearer Protection:** When enabled via `/api/v3/bearer_protection`, requires bearer token - **IP Restrictions:** Subject to `allow badges from` in netdata.conf - **Access Methods:** Direct HTTP/HTTPS, Netdata Cloud, external tools"
+        },
+        {
+          "info": {
+            "name": "Generate a badge in form of SVG image for a chart (or dimension) - Latest API",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://registry.my-netdata.io/api/v3/badge.svg",
+            "params": [
+              {
+                "name": "chart",
+                "value": "",
+                "type": "query",
+                "description": "The id of the chart as returned by the `/api/v1/charts` call."
+              },
+              {
+                "name": "dimension",
+                "value": "",
+                "type": "query",
+                "description": "Zero, one or more dimension ids or names, as returned by the /chart call, separated with comma or pipe. Netdata simple patterns are supported."
+              },
+              {
+                "name": "after",
+                "value": "",
+                "type": "query",
+                "description": "`after` and `before` define the time-frame of a query. `after` can be a negative number of seconds, up to 3 years (-94608000), relative to `before`. If not set, it is usually assumed to be -600. When non-data endpoints support the `after` and `before`, they use the time-frame to limit their response for objects having data retention within the time-frame given.\n"
+              },
+              {
+                "name": "before",
+                "value": "",
+                "type": "query",
+                "description": "`after` and `before` define the time-frame of a query. `before` can be a negative number of seconds, up to 3 years (-94608000), relative to current clock. If not set, it is assumed to be the current clock time. When `before` is positive, it is assumed to be a unix epoch timestamp. When non-data endpoints support the `after` and `before`, they use the time-frame to limit their response for objects having data retention within the time-frame given.\n"
+              },
+              {
+                "name": "group",
+                "value": "",
+                "type": "query",
+                "description": "Time aggregation function. If multiple collected values are to be grouped in order to return fewer points, this parameters defines the method of grouping. If the `absolute` option is set, the values are turned positive before applying this calculation.\n"
+              },
+              {
+                "name": "options",
+                "value": "",
+                "type": "query",
+                "description": "Options that affect data generation.\n* `jsonwrap` - Wrap the output in a JSON object with metadata about the query.\n* `raw` - change the output so that it is aggregatable across multiple such queries. Supported by `/api/v2` data queries and `json2` format.\n* `minify` - Remove unnecessary spaces and newlines from the output.\n* `debug` - Provide additional information in `jsonwrap` output to help tracing issues.\n* `nonzero` - Do not return dimensions that all their values are zero, to improve the visual appearance of charts. They will still be returned if all the dimensions are entirely zero.\n* `null2zero` - Replace `null` values with `0`.\n* `absolute` or `abs` - Traditionally Netdata returns select dimensions negative to improve visual appearance. This option turns this feature off.\n* `display-absolute` - Only used by badges, to do color calculation using the signed value, but render the value without a sign.\n* `flip` or `reversed` - Order the timestamps array in reverse order (newest to oldest).\n* `min2max` - When flattening multi-dimensional data into a single metric format, use `max - min` instead of `sum`. This is EOL - use `/api/v2` to control aggregation across dimensions.\n* `percentage` - Convert all values into a percentage vs the row total. When enabled, Netdata will query all dimensions, even the ones that have not been selected or are hidden, to find the row total, in order to calculate the percentage of each dimension selected.\n* `seconds` - Output timestamps in seconds instead of dates.\n* `milliseconds` or `ms` - Output timestamps in milliseconds instead of dates.\n* `unaligned` - by default queries are aligned to the the view, so that as time passes past data returned do not change. When a data query will not be used for visualization, `unaligned` can be given to avoid aligning the query time-frame for visual precision.\n* `match-ids`, `match-names`. By default filters match both IDs and names when they are available. Setting either of the two options will disable the other.\n* `anomaly-bit` - query the anomaly information instead of metric values. This is EOL, use `/api/v2` and `json2` format which always returns this information and many more.\n* `jw-anomaly-rates` - return anomaly rates as a separate result set in the same `json` format response. This is EOL, use `/api/v2` and `json2` format which always returns information and many more. \n* `details` - `/api/v2/data` returns in `jsonwrap` the full tree of dimensions that have been matched by the query.\n* `group-by-labels` - `/api/v2/data` returns in `jsonwrap` flattened labels per output dimension. These are used to identify the instances that have been aggregated into each dimension, making it possible to provide a map, like Netdata does for Kubernetes.\n* `natural-points` - return timestamps as found in the database. The result is again fixed-step, but the query engine attempts to align them with the timestamps found in the database.\n* `virtual-points` - return timestamps independent of the database alignment. This is needed aggregating data across multiple Netdata Agents, to ensure that their outputs do not need to be interpolated to be merged.\n* `selected-tier` - use data exclusively from the selected tier given with the `tier` parameter. This option is set automatically when the `tier` parameter is set.\n* `all-dimensions` - In `/api/v1` `jsonwrap` include metadata for all candidate metrics examined. In `/api/v2` this is standard behavior and no option is needed.\n* `label-quotes` - In `csv` output format, enclose each header label in quotes.\n* `objectrows` - Each row of value should be an object, not an array (only for `json` format).\n* `google_json` - Comply with google JSON/JSONP specs (only for `json` format).\n* `minimal-stats` or `minimal` - Reduce the amount of statistics returned in `jsonwrap` format to save bandwidth.\n* `long-json-keys` or `long-keys` - Use descriptive key names in JSON output instead of abbreviated ones.\n* `mcp-info` - Include additional metadata useful for the Model Context Protocol (MCP) integration.\n* `rfc3339` - Return timestamps in RFC3339 format (e.g., \"2023-01-01T00:00:00Z\") instead of Unix timestamps.\n"
+              },
+              {
+                "name": "alarm",
+                "value": "",
+                "type": "query",
+                "description": "The name of an alarm linked to the chart. When specified, the badge will display the alarm's current value and use alarm status for color selection."
+              },
+              {
+                "name": "label",
+                "value": "",
+                "type": "query",
+                "description": "Custom text to use as the badge label (left side). If not specified:\n- For alarms: uses the alarm name (with underscores replaced by spaces)\n- For dimensions: uses the dimension name\n- Otherwise: uses the chart name\n"
+              },
+              {
+                "name": "units",
+                "value": "",
+                "type": "query",
+                "description": "Custom text to use as the units suffix. If not specified:\n- For alarms: uses the alarm's configured units or empty string\n- For percentage queries: uses \"%\"\n- Otherwise: uses the chart's units\n"
+              },
+              {
+                "name": "label_color",
+                "value": "",
+                "type": "query",
+                "description": "Background color for the label (left) side of the badge. Can be:\n- One of the predefined color names\n- Hex RGB format (3 digits): e.g., \"f00\" for red\n- Hex RRGGBB format (6 digits): e.g., \"ff0000\" for red\nNote: Do not include the '#' character. If value is invalid, default color will be used.\n"
+              },
+              {
+                "name": "value_color",
+                "value": "",
+                "type": "query",
+                "description": "Background color for the value (right) side of the badge. Supports conditional coloring based on the value.\n\nCan be specified as:\n- Simple color: Same format as label_color\n- Conditional: Multiple color rules separated by pipe (|), each with format: `color<operator>value`\n\nSupported operators:\n- `>`: greater than\n- `<`: less than\n- `>=`: greater than or equal\n- `<=`: less than or equal\n- `=`: equal to\n- `:null`: true when no value exists\n\nExample: `green<80|yellow<95|red` (green if value < 80, yellow if < 95, otherwise red)\n\nNote: Currently only integers are supported as values. Colors follow same format as label_color.\n"
+              },
+              {
+                "name": "text_color_lbl",
+                "value": "",
+                "type": "query",
+                "description": "Font color for the label (left) side text. Can be:\n- One of the predefined color names\n- Hex RGB or RRGGBB format without '#' character\nIf not specified or invalid, default color will be used.\n"
+              },
+              {
+                "name": "text_color_val",
+                "value": "",
+                "type": "query",
+                "description": "Font color for the value (right) side text. Can be:\n- One of the predefined color names\n- Hex RGB or RRGGBB format without '#' character\nIf not specified or invalid, default color will be used.\n"
+              },
+              {
+                "name": "multiply",
+                "value": "",
+                "type": "query",
+                "description": "Multiply the displayed value by this number before rendering. Integer value required.\nUseful for unit conversions or scaling. Default is 1.\n"
+              },
+              {
+                "name": "divide",
+                "value": "",
+                "type": "query",
+                "description": "Divide the displayed value by this number before rendering. Integer value required.\nUseful for unit conversions or scaling. Default is 1.\n"
+              },
+              {
+                "name": "scale",
+                "value": "",
+                "type": "query",
+                "description": "Scale factor for the badge size as a percentage. Must be >= 100.\n- 100 = normal size (default)\n- 150 = 1.5x larger\n- 200 = 2x larger\n"
+              },
+              {
+                "name": "fixed_width_lbl",
+                "value": "",
+                "type": "query",
+                "description": "Fixed width for the label (left) side in pixels. Must be used together with `fixed_width_val`.\n\nThis overrides automatic sizing and creates a badge with fixed dimensions. Ensure the width is sufficient for your content - text that doesn't fit will be clipped.\n\nThe `scale` parameter still applies to these fixed width values.\n"
+              },
+              {
+                "name": "fixed_width_val",
+                "value": "",
+                "type": "query",
+                "description": "Fixed width for the value (right) side in pixels. Must be used together with `fixed_width_lbl`.\n\nThis overrides automatic sizing and creates a badge with fixed dimensions. Ensure the width is sufficient for your content - text that doesn't fit will be clipped.\n\nThe `scale` parameter still applies to these fixed width values.\n"
+              },
+              {
+                "name": "points",
+                "value": "",
+                "type": "query",
+                "description": "Number of data points to use for the calculation. Default is 1.\nHigher values provide averaging over more samples.\n"
+              },
+              {
+                "name": "group_options",
+                "value": "",
+                "type": "query",
+                "description": "Additional options for the time-series grouping function. Format depends on the selected group method."
+              },
+              {
+                "name": "precision",
+                "value": "",
+                "type": "query",
+                "description": "Number of decimal places to display in the value.\n- Positive number: exact decimal places (e.g., 2 = \"12.34\")\n- -1 (default): automatic precision based on value magnitude\n"
+              },
+              {
+                "name": "refresh",
+                "value": "",
+                "type": "query",
+                "description": "Auto-refresh interval for the badge. Can be:\n- \"auto\": Automatically determine refresh based on context\n  - For alarms: uses the alarm's update_every interval\n  - For non-aligned charts: uses the chart's update_every\n  - For time-range queries: uses the query time span\n- Integer: Specific refresh interval in seconds\n\nWhen refresh is set, the response includes a Refresh HTTP header.\n"
+              }
+            ]
+          },
+          "docs": "Generates an SVG badge displaying real-time metric values from Netdata charts or alarms.\nThis is the latest version (v3) of the badge API. It provides the same functionality as v1 but may include additional features in the future.\n\nThe badge can display:\n- Current value of a chart dimension\n- Current status and value of an alarm\n- Custom labels and units\n- Dynamic colors based on value thresholds or alarm status\n\nSuccessful responses are SVG images that can be embedded in web pages or documentat"
+        }
+      ]
+    }
+  ],
+  "bundled": true
+}

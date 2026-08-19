@@ -1,0 +1,589 @@
+{
+  "item": [
+    {
+      "id": "eee97c63-bea6-4e85-be1a-2bfc50c5bfda",
+      "name": "dyncfg",
+      "description": {
+        "content": "",
+        "type": "text/plain"
+      },
+      "item": [
+        {
+          "id": "cb690526-4480-40ec-9b74-7a98de548942",
+          "name": "get Config",
+          "request": {
+            "name": "get Config",
+            "description": {
+              "content": "Get dynamic configuration information.\n\n**Security & Access Control:**\n- 📊 **Public Data API** - Bearer token optional, IP-based ACL restrictions apply\n- **Default Access:** Public (no authentication required)\n- **Bearer Protection:** When enabled via `/api/v3/bearer_protection`, requires bearer token\n- **IP Restrictions:** Subject to `allow dashboard from` in netdata.conf\n- **Access Methods:** Direct HTTP/HTTPS, Netdata Cloud, external tools\n",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "api",
+                "v1",
+                "config"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [
+                {
+                  "disabled": false,
+                  "key": "action",
+                  "value": "tree",
+                  "description": "The type of information required"
+                },
+                {
+                  "disabled": false,
+                  "key": "id",
+                  "value": "<string>",
+                  "description": "The ID of the dynamic configuration entity"
+                },
+                {
+                  "disabled": false,
+                  "key": "path",
+                  "value": "/",
+                  "description": "Top level path of the configuration entities, used with action 'tree'"
+                },
+                {
+                  "disabled": false,
+                  "key": "timeout",
+                  "value": "120",
+                  "description": "The timeout in seconds"
+                }
+              ],
+              "variable": []
+            },
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "GET",
+            "auth": {
+              "type": "noauth"
+            }
+          },
+          "response": [
+            {
+              "id": "5661ef6c-d4be-4b2d-ba9d-417099372551",
+              "name": "The call was successful.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "api",
+                    "v1",
+                    "config"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "action",
+                      "value": "tree"
+                    },
+                    {
+                      "key": "id",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "path",
+                      "value": "/"
+                    },
+                    {
+                      "key": "timeout",
+                      "value": "120"
+                    }
+                  ],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"status\": 1539,\n  \"message\": \"string\",\n  \"data\": {\n    \"key_0\": 774.5097422646585,\n    \"key_1\": \"string\"\n  }\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "c7e0047b-bdac-4a02-9521-8e9ec99a2d0c",
+              "name": "Something is wrong with the request.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "api",
+                    "v1",
+                    "config"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "action",
+                      "value": "tree"
+                    },
+                    {
+                      "key": "id",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "path",
+                      "value": "/"
+                    },
+                    {
+                      "key": "timeout",
+                      "value": "120"
+                    }
+                  ],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Bad Request",
+              "code": 400,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"status\": 1539,\n  \"message\": \"string\",\n  \"data\": {\n    \"key_0\": 774.5097422646585,\n    \"key_1\": \"string\"\n  }\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "b900a2d4-bc1e-43a3-8c08-6e676d127c72",
+              "name": "The configurable entity requests is not found.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "api",
+                    "v1",
+                    "config"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "action",
+                      "value": "tree"
+                    },
+                    {
+                      "key": "id",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "path",
+                      "value": "/"
+                    },
+                    {
+                      "key": "timeout",
+                      "value": "120"
+                    }
+                  ],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Not Found",
+              "code": 404,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"status\": 1539,\n  \"message\": \"string\",\n  \"data\": {\n    \"key_0\": 774.5097422646585,\n    \"key_1\": \"string\"\n  }\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "e840b370-be55-481b-a2a8-a3f23bc93640",
+          "name": "post Config",
+          "request": {
+            "name": "post Config",
+            "description": {
+              "content": "Post dynamic configuration to Netdata.\n",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "api",
+                "v1",
+                "config"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [
+                {
+                  "disabled": false,
+                  "key": "action",
+                  "value": "<string>",
+                  "description": "The type of action required."
+                },
+                {
+                  "disabled": false,
+                  "key": "id",
+                  "value": "<string>",
+                  "description": "The ID of the dynamic configuration entity to configure."
+                },
+                {
+                  "disabled": false,
+                  "key": "name",
+                  "value": "<string>",
+                  "description": "Name of the dynamic configuration entity, used with action 'add'"
+                },
+                {
+                  "disabled": false,
+                  "key": "timeout",
+                  "value": "120",
+                  "description": "The timeout in seconds"
+                }
+              ],
+              "variable": []
+            },
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "POST",
+            "auth": null
+          },
+          "response": [
+            {
+              "id": "5f8f06e0-70f3-420b-9e4e-3d07069d1309",
+              "name": "The call was successful. This also means the configuration is currently running.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "api",
+                    "v1",
+                    "config"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "action",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "id",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "name",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "timeout",
+                      "value": "120"
+                    }
+                  ],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"status\": 1539,\n  \"message\": \"string\",\n  \"data\": {\n    \"key_0\": 774.5097422646585,\n    \"key_1\": \"string\"\n  }\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "9c2ad216-5f02-4e39-b84f-3f1d9c4c0b45",
+              "name": "The call was successful. The configuration has been accepted, but its status is not yet known.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "api",
+                    "v1",
+                    "config"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "action",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "id",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "name",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "timeout",
+                      "value": "120"
+                    }
+                  ],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {}
+              },
+              "status": "Accepted",
+              "code": 202,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"status\": 1539,\n  \"message\": \"string\",\n  \"data\": {\n    \"key_0\": 774.5097422646585,\n    \"key_1\": \"string\"\n  }\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "2a74d3fe-453a-49ac-bbf2-114e65069870",
+              "name": "The call was successful. The configuration has been accepted, but a restart is required to apply it.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "api",
+                    "v1",
+                    "config"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "action",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "id",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "name",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "timeout",
+                      "value": "120"
+                    }
+                  ],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {}
+              },
+              "code": 299,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"status\": 1539,\n  \"message\": \"string\",\n  \"data\": {\n    \"key_0\": 774.5097422646585,\n    \"key_1\": \"string\"\n  }\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "dece2471-0bf9-402f-b02e-3a6d1d9ef0c2",
+              "name": "Something is wrong with the request.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "api",
+                    "v1",
+                    "config"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "action",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "id",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "name",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "timeout",
+                      "value": "120"
+                    }
+                  ],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {}
+              },
+              "status": "Bad Request",
+              "code": 400,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"status\": 1539,\n  \"message\": \"string\",\n  \"data\": {\n    \"key_0\": 774.5097422646585,\n    \"key_1\": \"string\"\n  }\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "2268708e-88ad-4aa0-9b75-093acc57c2e2",
+              "name": "The configurable entity requests is not found.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "api",
+                    "v1",
+                    "config"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "action",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "id",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "name",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "timeout",
+                      "value": "120"
+                    }
+                  ],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {}
+              },
+              "status": "Not Found",
+              "code": 404,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"status\": 1539,\n  \"message\": \"string\",\n  \"data\": {\n    \"key_0\": 774.5097422646585,\n    \"key_1\": \"string\"\n  }\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        }
+      ],
+      "event": []
+    }
+  ],
+  "event": [],
+  "variable": [
+    {
+      "type": "string",
+      "value": "https://registry.my-netdata.io",
+      "key": "baseUrl"
+    }
+  ],
+  "info": {
+    "_postman_id": "bc3e9b51-720b-473b-ace5-a5a5fe242c11",
+    "name": "Netdata agent dyncfg API",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "description": {
+      "content": "Real-time performance and health monitoring.\n\n## API Versions\n\nNetdata provides three API versions:\n- **v1**: The original API, focused on single-node operations\n- **v2**: Multi-node API with advanced grouping and aggregation capabilities\n- **v3**: The latest API version that combines v1 and v2 endpoints and may include additional features\n\n### v3 API Endpoints\n\nThe v3 API provides the current, actively maintained endpoints:\n- `/api/v3/data` - Multi-dimensional data queries\n- `/api/v3/weights` - Metric scoring/correlation\n- `/api/v3/contexts` - Context metadata\n- `/api/v3/nodes` - Node information\n- `/api/v3/q` - Full-text search\n- `/api/v3/alerts` - Alert information\n- `/api/v3/alert_transitions` - Alert state transitions\n- `/api/v3/alert_config` - Alert configuration\n- `/api/v3/functions` - Available functions\n- `/api/v3/function` - Execute functions\n- `/api/v3/info` - Agent information\n- `/api/v3/node_instances` - Node instance information\n- `/api/v3/stream_path` - Streaming topology\n- `/api/v3/versions` - Version information\n- `/api/v3/badge.svg` - Dynamic badges\n- `/api/v3/allmetrics` - Export metrics\n- `/api/v3/context` - Single context info\n- `/api/v3/variable` - Variable information\n- `/api/v3/config` - Dynamic configuration\n- `/api/v3/settings` - Agent settings\n- `/api/v3/me` - Current user information\n- `/api/v3/claim` - Agent claiming\n- Additional management and streaming endpoints\n\n**Note:** V1 and V2 APIs are deprecated and maintained for backwards compatibility only. New integrations should use V3 exclusively.\n\n\nContact Support:\n Name: Netdata Agent API\n Email: info@netdata.cloud",
+      "type": "text/plain"
+    }
+  }
+}

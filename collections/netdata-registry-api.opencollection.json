@@ -1,0 +1,73 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "Netdata agent registry API",
+    "version": "v1-rolling"
+  },
+  "items": [
+    {
+      "info": {
+        "name": "registry",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "[DEPRECATED] Registry operations for tracking dashboard access",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://registry.my-netdata.io/api/v1/registry",
+            "params": [
+              {
+                "name": "action",
+                "value": "access",
+                "type": "query",
+                "description": "Registry action to perform.\n\n**Available Actions:**\n- `hello` - Initial contact with registry\n- `access` - Record dashboard access to agent\n- `delete` - Remove agent URL from dashboard history\n- `search` - Find all agents accessed by dashboard\n- `switch` - Migrate dashboard identity to new person_guid\n"
+              },
+              {
+                "name": "machine",
+                "value": "12345678-1234-1234-1234-123456789012",
+                "type": "query",
+                "description": "Machine GUID of the dashboard making the request. This is typically stored in browser cookies and identifies the specific browser/client.\n"
+              },
+              {
+                "name": "name",
+                "value": "my-laptop",
+                "type": "query",
+                "description": "Human-readable name for the dashboard/machine (typically hostname). Used for display purposes in registry listings.\n"
+              },
+              {
+                "name": "url",
+                "value": "http://netdata.example.com:19999",
+                "type": "query",
+                "description": "URL of the Netdata agent being accessed. This is the full URL including protocol and port.\n"
+              },
+              {
+                "name": "delete_url",
+                "value": "http://old-server.example.com:19999",
+                "type": "query",
+                "description": "URL to delete from the registry (used with action=delete). Must match a previously registered URL.\n"
+              },
+              {
+                "name": "for",
+                "value": "12345678-1234-1234-1234-123456789012",
+                "type": "query",
+                "description": "Machine GUID to search for (used with action=search). Returns all agents accessed by this machine.\n"
+              },
+              {
+                "name": "to",
+                "value": "87654321-4321-4321-4321-210987654321",
+                "type": "query",
+                "description": "New person_guid to switch to (used with action=switch). Migrates the dashboard identity to a new person_guid.\n"
+              }
+            ]
+          },
+          "docs": "**[DEPRECATED - Registry functionality being phased out]**\n\n**Dashboard Access Registry**\n\nThe registry API tracks which dashboards (browsers) have accessed which Netdata agents, enabling features like:\n- Dashboard synchronization across multiple agents\n- Tracking which users/machines accessed which agents\n- Migrating dashboard preferences between agents\n\n**Actions:**\n\n**1. hello** - Initial registry contact\n- Identifies the dashboard to the registry\n- Returns person_guid for tracking this dashb"
+        }
+      ]
+    }
+  ],
+  "bundled": true
+}

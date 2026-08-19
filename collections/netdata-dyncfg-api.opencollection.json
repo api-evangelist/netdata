@@ -1,0 +1,92 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "Netdata agent dyncfg API",
+    "version": "v1-rolling"
+  },
+  "items": [
+    {
+      "info": {
+        "name": "dyncfg",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "getConfig",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://registry.my-netdata.io/api/v1/config",
+            "params": [
+              {
+                "name": "action",
+                "value": "",
+                "type": "query",
+                "description": "The type of information required"
+              },
+              {
+                "name": "id",
+                "value": "",
+                "type": "query",
+                "description": "The ID of the dynamic configuration entity"
+              },
+              {
+                "name": "path",
+                "value": "",
+                "type": "query",
+                "description": "Top level path of the configuration entities, used with action 'tree'"
+              },
+              {
+                "name": "timeout",
+                "value": "",
+                "type": "query",
+                "description": "The timeout in seconds"
+              }
+            ]
+          },
+          "docs": "Get dynamic configuration information.\n\n**Security & Access Control:**\n- 📊 **Public Data API** - Bearer token optional, IP-based ACL restrictions apply\n- **Default Access:** Public (no authentication required)\n- **Bearer Protection:** When enabled via `/api/v3/bearer_protection`, requires bearer token\n- **IP Restrictions:** Subject to `allow dashboard from` in netdata.conf\n- **Access Methods:** Direct HTTP/HTTPS, Netdata Cloud, external tools\n"
+        },
+        {
+          "info": {
+            "name": "postConfig",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://registry.my-netdata.io/api/v1/config",
+            "params": [
+              {
+                "name": "action",
+                "value": "",
+                "type": "query",
+                "description": "The type of action required."
+              },
+              {
+                "name": "id",
+                "value": "",
+                "type": "query",
+                "description": "The ID of the dynamic configuration entity to configure."
+              },
+              {
+                "name": "name",
+                "value": "",
+                "type": "query",
+                "description": "Name of the dynamic configuration entity, used with action 'add'"
+              },
+              {
+                "name": "timeout",
+                "value": "",
+                "type": "query",
+                "description": "The timeout in seconds"
+              }
+            ]
+          },
+          "docs": "Post dynamic configuration to Netdata.\n"
+        }
+      ]
+    }
+  ],
+  "bundled": true
+}

@@ -1,0 +1,348 @@
+{
+  "item": [
+    {
+      "id": "c17ed19d-5ef6-4146-9a2a-a9efeed7dcd9",
+      "name": "claiming",
+      "description": {
+        "content": "",
+        "type": "text/plain"
+      },
+      "item": [
+        {
+          "id": "11ae0496-3046-45f1-94e0-bded08e7a8b8",
+          "name": "Claim agent to Netdata Cloud",
+          "request": {
+            "name": "Claim agent to Netdata Cloud",
+            "description": {
+              "content": "**Agent Claiming to Netdata Cloud**\n\nThis endpoint initiates the process of claiming (connecting) a Netdata agent to Netdata Cloud. Claiming establishes a secure, authenticated connection between the agent and Netdata Cloud, enabling centralized monitoring, team collaboration, and cloud-based features.\n\n**Claiming Process Flow:**\n1. **Get Claim Info:** Call endpoint without parameters to get claiming status and verification command\n2. **Generate Verification Key:** Server generates random session ID and saves it to `/var/lib/netdata/netdata_random_session_id`\n3. **Verify Server Ownership:** Administrator runs provided OS-specific command to retrieve the verification key\n4. **Submit Claim Request:** Call endpoint with key, token, URL, and optionally rooms to complete claiming\n5. **Establish Connection:** Server connects to Netdata Cloud and registers the agent\n6. **Reload Connection:** Agent reloads cloud connection and waits for online status\n\n**Use Cases:**\n- **Initial Setup:** Claim a new agent to connect it to Netdata Cloud for the first time\n- **Team Onboarding:** Add agents to specific cloud rooms for team organization\n- **Infrastructure Management:** Connect agents across distributed infrastructure to centralized monitoring\n- **Security Verification:** Ensure only authorized users can claim agents through server access verification\n- **Status Checking:** Query current claiming status and cloud connection state\n\n**Claiming States:**\n- **AVAILABLE:** Agent can be claimed (not yet connected to cloud)\n- **OFFLINE:** Agent was claimed but is currently offline from cloud\n- **INDIRECT:** Agent is connected through a parent agent\n- **ONLINE:** Agent is claimed and online (cannot be re-claimed without unclaiming first)\n- **BANNED:** Agent is banned from cloud (cannot be claimed)\n\n**Security Features:**\n- Random session key verification prevents unauthorized claiming\n- Key is regenerated after each claim attempt (successful or failed)\n- Key stored in file system requires server access to retrieve\n- Parameter validation ensures only safe characters (alphanumeric, dots, commas, dashes, colons, slashes, underscores)\n- Different OS-specific commands for key retrieval (Linux/Docker/Windows)\n\n**Platform-Specific Key Retrieval:**\n- **Linux:** `sudo cat /var/lib/netdata/netdata_random_session_id`\n- **Docker:** `docker exec netdata cat /var/lib/netdata/netdata_random_session_id`\n- **Windows:** `more C:\\path\\to\\netdata_random_session_id`\n\n**Response Formats:**\n- **Info Response:** Returns cloud status, can_be_claimed flag, verification command, and agents info\n- **Success Response:** Includes success=true, message=\"ok\", updated cloud status\n- **Error Response:** Includes success=false, error message, can_be_claimed flag, new verification key\n\n**Important Notes:**\n- Agent must be in AVAILABLE, OFFLINE, or INDIRECT state to be claimed\n- Claiming token is obtained from Netdata Cloud UI (Space settings → Nodes tab → Add Nodes)\n- Base URL typically points to Netdata Cloud API (e.g., https://api.netdata.cloud)\n- Rooms parameter is optional - agent will be added to specified war rooms if provided\n- After successful claiming, agent automatically reloads connection and waits for online status\n- Failed claim attempts regenerate the verification key for security\n\n**Example Workflow:**\n```bash\n# 1. Get claiming info and verification command\ncurl http://localhost:19999/api/v3/claim\n\n# 2. Run the command shown in response to get the key\nsudo cat /var/lib/netdata/netdata_random_session_id\n# Output: 12345678-1234-1234-1234-123456789abc\n\n# 3. Submit claim request with key from step 2 and token from Netdata Cloud\ncurl \"http://localhost:19999/api/v3/claim?key=12345678-1234-1234-1234-123456789abc&token=YOUR_CLAIM_TOKEN&url=https://api.netdata.cloud&rooms=room1,room2\"\n```\n\n**Security & Access Control:**\n- 🔓 **Always Public API** - This endpoint is always accessible without authentication\n- **Security Model:** Protected by random session key verification (not ACL/bearer token)\n- **Verification Required:** Must provide verification key from agent's file system to claim\n- **Server Access:** Only users with server file system access can obtain the verification key\n- **No ACL Restrictions:** Not subject to IP-based ACL or bearer protection\n",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "api",
+                "v3",
+                "claim"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [
+                {
+                  "disabled": false,
+                  "key": "key",
+                  "value": "<uuid>",
+                  "description": "**Verification key (UUID) obtained from the server's file system.**\n\nThis is a randomly generated session ID that proves the requester has access to the server.\nTo obtain this key:\n1. Call the endpoint without parameters to get the OS-specific command\n2. Run the command on the server (requires sudo/admin access)\n3. Copy the UUID from the file content\n4. Use it in the claim request\n\n**Security Notes:**\n- Key is randomly generated on each info request\n- Key is regenerated after each claim attempt (prevents reuse)\n- Mismatched key triggers new key generation (prevents brute force)\n- Validates server ownership through file system access\n\n**When to Include:**\n- Omit when requesting claiming info/status\n- Include when submitting actual claim request\n\nExample: `12345678-1234-1234-1234-123456789abc`\n"
+                },
+                {
+                  "disabled": false,
+                  "key": "token",
+                  "value": "<string>",
+                  "description": "**Claiming token from Netdata Cloud.**\n\nThis token authorizes the agent to connect to a specific Netdata Cloud space.\nObtained from Netdata Cloud UI: Space settings → Nodes tab → Add Nodes → Copy claim token\n\n**Validation:**\n- Must contain only alphanumeric characters, dots, commas, dashes, colons, slashes, underscores\n- Required when key parameter is provided\n- Invalid token triggers error and key regeneration\n\n**Token Characteristics:**\n- Space-specific (each cloud space has different tokens)\n- Can be regenerated in cloud UI if compromised\n- Does not expire (remains valid until regenerated)\n\nExample: `a1b2c3d4-e5f6-7890-abcd-ef1234567890`\n"
+                },
+                {
+                  "disabled": false,
+                  "key": "url",
+                  "value": "<uri>",
+                  "description": "**Netdata Cloud API base URL.**\n\nThe endpoint URL for Netdata Cloud API where the agent will connect.\n\n**Standard Values:**\n- Production: `https://api.netdata.cloud`\n- Staging/Testing: `https://api-staging.netdata.cloud` (if applicable)\n\n**Validation:**\n- Must contain only alphanumeric characters, dots, commas, dashes, colons, slashes, underscores\n- Required when key parameter is provided\n- Should be valid HTTPS URL pointing to Netdata Cloud API\n\n**Important Notes:**\n- Use the URL provided in Netdata Cloud UI claim instructions\n- Different cloud regions may have different URLs\n- Invalid URL prevents successful claiming\n\nExample: `https://api.netdata.cloud`\n"
+                },
+                {
+                  "disabled": false,
+                  "key": "rooms",
+                  "value": "<string>",
+                  "description": "**Comma-separated list of war room IDs to add the agent to.**\n\nWar rooms are organizational units within a Netdata Cloud space for grouping related nodes.\n\n**Format:**\n- Comma-separated room IDs (no spaces)\n- Each room ID validated for safe characters\n- Optional parameter (agent claimed to space without specific rooms if omitted)\n\n**Validation:**\n- Must contain only alphanumeric characters, dots, commas, dashes, colons, slashes, underscores\n- Invalid format triggers error and key regeneration\n\n**Room IDs:**\n- Obtained from Netdata Cloud UI (room settings)\n- Room must exist in the target space\n- Agent added to all specified rooms after claiming\n- Can be modified later in cloud UI\n\n**Use Cases:**\n- Add agent to production monitoring room\n- Organize by environment (dev, staging, prod)\n- Group by application or service type\n\nExample: `room-1234-5678-90ab,room-cdef-0123-4567`\n"
+                }
+              ],
+              "variable": []
+            },
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "GET",
+            "auth": null
+          },
+          "response": [
+            {
+              "id": "3063c8e9-ab26-4bbd-ad66-fc217bedba81",
+              "name": "Claiming request processed successfully. Check the `success` field to determine if claiming succeeded.\n- **Info response** (no key provided): Returns cloud status, verification command, and can_be_claimed flag\n- **Success response** (key provided, claim succeeded): Returns success=true with updated cloud status\n- **Action failed response** (key provided, claim failed): Returns success=false with failure reason\n",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "api",
+                    "v3",
+                    "claim"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "key",
+                      "value": "<uuid>"
+                    },
+                    {
+                      "key": "token",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "url",
+                      "value": "<uri>"
+                    },
+                    {
+                      "key": "rooms",
+                      "value": "<string>"
+                    }
+                  ],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"cloud_status\": \"available\",\n  \"can_be_claimed\": true,\n  \"key_filename\": \"/var/lib/netdata/netdata_random_session_id\",\n  \"cmd\": \"sudo cat /var/lib/netdata/netdata_random_session_id\",\n  \"help\": \"We need to verify this server is yours. SSH to this server and run this command. It will give you a UUID. Copy and paste this UUID to this box:\",\n  \"agents\": [\n    {\n      \"hostname\": \"my-server\",\n      \"machine_guid\": \"12345678-1234-1234-1234-123456789abc\"\n    }\n  ]\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "9c8cf3c4-467c-4219-9085-d1fe5f80cc3e",
+              "name": "Bad request (only in v2 API or earlier). V3 returns errors as JSON with HTTP 200.\nReasons include:\n- Invalid key (doesn't match generated session ID)\n- Invalid parameters (missing token/url, or invalid characters)\n- Cloud connection failure\n",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "api",
+                    "v3",
+                    "claim"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "key",
+                      "value": "<uuid>"
+                    },
+                    {
+                      "key": "token",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "url",
+                      "value": "<uri>"
+                    },
+                    {
+                      "key": "rooms",
+                      "value": "<string>"
+                    }
+                  ],
+                  "variable": []
+                },
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Bad Request",
+              "code": 400,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "text/plain"
+                }
+              ],
+              "body": "",
+              "cookie": [],
+              "_postman_previewlanguage": "text"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "9a117fe3-8e7e-4914-9d96-7bcc00a35f1a",
+          "name": "OBSOLETE: Claim agent to Netdata Cloud (use /api/v3/claim instead)",
+          "request": {
+            "name": "OBSOLETE: Claim agent to Netdata Cloud (use /api/v3/claim instead)",
+            "description": {
+              "content": "**⚠️ OBSOLETE API - Will be removed in future versions**\n\nThis endpoint is deprecated. Use `/api/v3/claim` instead, which provides improved error handling.\n\n**Migration:** Replace `/api/v2/claim` with `/api/v3/claim` in all API calls.\nParameters are identical, but v3 returns errors as JSON instead of plain text for better integration.\n\nClaims (connects) agent to Netdata Cloud using server ownership verification.\nEnables centralized monitoring and team collaboration features.\n\n**Security & Access Control:**\n- 🔓 **Always Public API** - This endpoint is always accessible without authentication\n- **Security Model:** Protected by random session key verification (not ACL/bearer token)\n- **Verification Required:** Must provide verification key from agent's file system to claim\n- **Server Access:** Only users with server file system access can obtain the verification key\n- **No ACL Restrictions:** Not subject to IP-based ACL or bearer protection\n",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "api",
+                "v2",
+                "claim"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [
+                {
+                  "disabled": false,
+                  "key": "key",
+                  "value": "<uuid>",
+                  "description": "Verification key obtained from server file system"
+                },
+                {
+                  "disabled": false,
+                  "key": "token",
+                  "value": "<string>",
+                  "description": "Claiming token from Netdata Cloud"
+                },
+                {
+                  "disabled": false,
+                  "key": "url",
+                  "value": "<uri>",
+                  "description": "Netdata Cloud API base URL"
+                },
+                {
+                  "disabled": false,
+                  "key": "rooms",
+                  "value": "<string>",
+                  "description": "Comma-separated war room IDs"
+                }
+              ],
+              "variable": []
+            },
+            "method": "GET",
+            "auth": null
+          },
+          "response": [
+            {
+              "id": "e2fb9c96-4339-45c0-adeb-8782b70fa7db",
+              "name": "Claim operation processed (check response for success/failure)",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "api",
+                    "v2",
+                    "claim"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "key",
+                      "value": "<uuid>"
+                    },
+                    {
+                      "key": "token",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "url",
+                      "value": "<uri>"
+                    },
+                    {
+                      "key": "rooms",
+                      "value": "<string>"
+                    }
+                  ],
+                  "variable": []
+                },
+                "method": "GET",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "text/plain"
+                }
+              ],
+              "body": "",
+              "cookie": [],
+              "_postman_previewlanguage": "text"
+            },
+            {
+              "id": "053f93f1-a574-478d-8d4b-49e0606f7982",
+              "name": "Invalid parameters (v2 returns plain text errors)",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "api",
+                    "v2",
+                    "claim"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "key",
+                      "value": "<uuid>"
+                    },
+                    {
+                      "key": "token",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "url",
+                      "value": "<uri>"
+                    },
+                    {
+                      "key": "rooms",
+                      "value": "<string>"
+                    }
+                  ],
+                  "variable": []
+                },
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Bad Request",
+              "code": 400,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "text/plain"
+                }
+              ],
+              "body": "",
+              "cookie": [],
+              "_postman_previewlanguage": "text"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        }
+      ],
+      "event": []
+    }
+  ],
+  "event": [],
+  "variable": [
+    {
+      "type": "string",
+      "value": "https://registry.my-netdata.io",
+      "key": "baseUrl"
+    }
+  ],
+  "info": {
+    "_postman_id": "7c2c361b-26dd-4032-95c8-fdd9576bc4f8",
+    "name": "Netdata agent claiming API",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "description": {
+      "content": "Real-time performance and health monitoring.\n\n## API Versions\n\nNetdata provides three API versions:\n- **v1**: The original API, focused on single-node operations\n- **v2**: Multi-node API with advanced grouping and aggregation capabilities\n- **v3**: The latest API version that combines v1 and v2 endpoints and may include additional features\n\n### v3 API Endpoints\n\nThe v3 API provides the current, actively maintained endpoints:\n- `/api/v3/data` - Multi-dimensional data queries\n- `/api/v3/weights` - Metric scoring/correlation\n- `/api/v3/contexts` - Context metadata\n- `/api/v3/nodes` - Node information\n- `/api/v3/q` - Full-text search\n- `/api/v3/alerts` - Alert information\n- `/api/v3/alert_transitions` - Alert state transitions\n- `/api/v3/alert_config` - Alert configuration\n- `/api/v3/functions` - Available functions\n- `/api/v3/function` - Execute functions\n- `/api/v3/info` - Agent information\n- `/api/v3/node_instances` - Node instance information\n- `/api/v3/stream_path` - Streaming topology\n- `/api/v3/versions` - Version information\n- `/api/v3/badge.svg` - Dynamic badges\n- `/api/v3/allmetrics` - Export metrics\n- `/api/v3/context` - Single context info\n- `/api/v3/variable` - Variable information\n- `/api/v3/config` - Dynamic configuration\n- `/api/v3/settings` - Agent settings\n- `/api/v3/me` - Current user information\n- `/api/v3/claim` - Agent claiming\n- Additional management and streaming endpoints\n\n**Note:** V1 and V2 APIs are deprecated and maintained for backwards compatibility only. New integrations should use V3 exclusively.\n\n\nContact Support:\n Name: Netdata Agent API\n Email: info@netdata.cloud",
+      "type": "text/plain"
+    }
+  }
+}

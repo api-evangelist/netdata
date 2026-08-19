@@ -1,0 +1,593 @@
+{
+  "item": [
+    {
+      "id": "3734535e-eed9-496d-9761-61048e3df577",
+      "name": "charts",
+      "description": {
+        "content": "Everything related to chart instances - DO NOT USE IN NEW CODE - use contexts instead",
+        "type": "text/plain"
+      },
+      "item": [
+        {
+          "id": "6f1adc3f-5b70-4834-afef-b5c6a1ac6e15",
+          "name": "List all charts v1 - EOL",
+          "request": {
+            "name": "List all charts v1 - EOL",
+            "description": {
+              "content": "The charts endpoint returns a summary about all charts stored in the netdata server.\n**Security & Access Control:** - 📊 **Public Data API** - Bearer token optional, IP-based ACL restrictions apply - **Default Access:** Public (no authentication required) - **Bearer Protection:** When enabled via `/api/v3/bearer_protection`, requires bearer token - **IP Restrictions:** Subject to `allow dashboard from` in netdata.conf - **Access Methods:** Direct HTTP/HTTPS, Netdata Cloud, external tools",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "api",
+                "v1",
+                "charts"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": []
+            },
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "GET",
+            "auth": {
+              "type": "noauth"
+            }
+          },
+          "response": [
+            {
+              "id": "734c0e47-0862-40e3-937c-b8cefc7676db",
+              "name": "An array of charts.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "api",
+                    "v1",
+                    "charts"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"hostname\": \"string\",\n  \"version\": \"string\",\n  \"release_channel\": \"nightly\",\n  \"timezone\": \"string\",\n  \"os\": \"linux\",\n  \"history\": 6310.726277665098,\n  \"memory_mode\": \"string\",\n  \"update_every\": 7508.788219976824,\n  \"charts\": {\n    \"key_0\": {\n      \"id\": \"string\",\n      \"name\": \"string\",\n      \"type\": \"string\",\n      \"family\": \"string\",\n      \"title\": \"string\",\n      \"priority\": 2846.8820039156917,\n      \"enabled\": false,\n      \"units\": \"string\",\n      \"data_url\": \"string\",\n      \"chart_type\": \"line\",\n      \"duration\": 1356.774840220445,\n      \"first_entry\": 9905.083525926293,\n      \"last_entry\": 6068.272874487894,\n      \"update_every\": 9026.380589327708,\n      \"dimensions\": {\n        \"key_0\": {\n          \"name\": \"string\"\n        }\n      },\n      \"chart_variables\": {\n        \"key_0\": {\n          \"varname1\": 9253.168505438254,\n          \"varname2\": 9535.386865879866\n        }\n      },\n      \"green\": 1676.1354983442468,\n      \"red\": 7333.154495791616\n    },\n    \"key_1\": {\n      \"id\": \"string\",\n      \"name\": \"string\",\n      \"type\": \"string\",\n      \"family\": \"string\",\n      \"title\": \"string\",\n      \"priority\": 9414.355765188808,\n      \"enabled\": true,\n      \"units\": \"string\",\n      \"data_url\": \"string\",\n      \"chart_type\": \"line\",\n      \"duration\": 8747.821853670714,\n      \"first_entry\": 4926.20483951745,\n      \"last_entry\": 5033.930130936863,\n      \"update_every\": 2704.889682759257,\n      \"dimensions\": {\n        \"key_0\": {\n          \"name\": \"string\"\n        }\n      },\n      \"chart_variables\": {\n        \"key_0\": {\n          \"varname1\": 5044.992077535216,\n          \"varname2\": 296.3216607798536\n        },\n        \"key_1\": {\n          \"varname1\": 7385.362022967853,\n          \"varname2\": 9478.36815362601\n        },\n        \"key_2\": {\n          \"varname1\": 6982.333062105763,\n          \"varname2\": 1820.5033324254716\n        },\n        \"key_3\": {\n          \"varname1\": 88.90518153614302,\n          \"varname2\": 3552.730794988833\n        }\n      },\n      \"green\": 2475.943192461949,\n      \"red\": 7198.14886002717\n    },\n    \"key_2\": {\n      \"id\": \"string\",\n      \"name\": \"string\",\n      \"type\": \"string\",\n      \"family\": \"string\",\n      \"title\": \"string\",\n      \"priority\": 1463.3240745860776,\n      \"enabled\": false,\n      \"units\": \"string\",\n      \"data_url\": \"string\",\n      \"chart_type\": \"line\",\n      \"duration\": 4867.118534439417,\n      \"first_entry\": 6810.34000579651,\n      \"last_entry\": 2079.0800190709515,\n      \"update_every\": 6884.736038455571,\n      \"dimensions\": {\n        \"key_0\": {\n          \"name\": \"string\"\n        }\n      },\n      \"chart_variables\": {\n        \"key_0\": {\n          \"varname1\": 9575.952189025586,\n          \"varname2\": 891.4515177485139\n        },\n        \"key_1\": {\n          \"varname1\": 9657.636292935591,\n          \"varname2\": 2813.5826061124626\n        },\n        \"key_2\": {\n          \"varname1\": 6093.023242153058,\n          \"varname2\": 7366.483372028121\n        }\n      },\n      \"green\": 4572.769934211677,\n      \"red\": 4245.145006514479\n    },\n    \"key_3\": {\n      \"id\": \"string\",\n      \"name\": \"string\",\n      \"type\": \"string\",\n      \"family\": \"string\",\n      \"title\": \"string\",\n      \"priority\": 6612.177780726818,\n      \"enabled\": true,\n      \"units\": \"string\",\n      \"data_url\": \"string\",\n      \"chart_type\": \"stacked\",\n      \"duration\": 767.2948118868871,\n      \"first_entry\": 9603.662655673093,\n      \"last_entry\": 8139.423870932433,\n      \"update_every\": 1570.6812541227666,\n      \"dimensions\": {\n        \"key_0\": {\n          \"name\": \"string\"\n        }\n      },\n      \"chart_variables\": {\n        \"key_0\": {\n          \"varname1\": 4254.1424653169815,\n          \"varname2\": 1428.9039721833674\n        },\n        \"key_1\": {\n          \"varname1\": 9744.412065710625,\n          \"varname2\": 5446.733812227796\n        }\n      },\n      \"green\": 6559.792974965377,\n      \"red\": 7174.12599856469\n    }\n  },\n  \"charts_count\": 2582.650665671917,\n  \"dimensions_count\": 314.1222857903092,\n  \"alarms_count\": 7523.886146888551,\n  \"rrd_memory_bytes\": 6382.192030186678\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "775f5ee9-fbd3-4f35-85e4-9bd0ba66312f",
+          "name": "Get one chart v1 - EOL",
+          "request": {
+            "name": "Get one chart v1 - EOL",
+            "description": {
+              "content": "The chart endpoint returns detailed information about a chart.\n**Security & Access Control:** - 📊 **Public Data API** - Bearer token optional, IP-based ACL restrictions apply - **Default Access:** Public (no authentication required) - **Bearer Protection:** When enabled via `/api/v3/bearer_protection`, requires bearer token - **IP Restrictions:** Subject to `allow dashboard from` in netdata.conf - **Access Methods:** Direct HTTP/HTTPS, Netdata Cloud, external tools",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "api",
+                "v1",
+                "chart"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [
+                {
+                  "disabled": false,
+                  "key": "chart",
+                  "value": "<as returned by `/api/v1/charts`>",
+                  "description": "The id of the chart as returned by the `/api/v1/charts` call."
+                }
+              ],
+              "variable": []
+            },
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "GET",
+            "auth": {
+              "type": "noauth"
+            }
+          },
+          "response": [
+            {
+              "id": "8e636cf8-7c43-4536-bc1e-d5d1e24354da",
+              "name": "A javascript object with detailed information about the chart.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "api",
+                    "v1",
+                    "chart"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "chart",
+                      "value": "<as returned by `/api/v1/charts`>"
+                    }
+                  ],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"id\": \"string\",\n  \"name\": \"string\",\n  \"type\": \"string\",\n  \"family\": \"string\",\n  \"title\": \"string\",\n  \"priority\": 8304.828055523109,\n  \"enabled\": true,\n  \"units\": \"string\",\n  \"data_url\": \"string\",\n  \"chart_type\": \"stacked\",\n  \"duration\": 7063.438055431009,\n  \"first_entry\": 6201.739984423409,\n  \"last_entry\": 7647.3157457068555,\n  \"update_every\": 9154.751884675597,\n  \"dimensions\": {\n    \"key_0\": {\n      \"name\": \"string\"\n    },\n    \"key_1\": {\n      \"name\": \"string\"\n    },\n    \"key_2\": {\n      \"name\": \"string\"\n    },\n    \"key_3\": {\n      \"name\": \"string\"\n    }\n  },\n  \"chart_variables\": {\n    \"key_0\": {\n      \"varname1\": 9378.510324379644,\n      \"varname2\": 2324.7550145031446\n    }\n  },\n  \"green\": 1138.7505709003221,\n  \"red\": 449.3445506876537\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "d5b589d4-75bd-49d2-bcdb-e2ef5268d311",
+              "name": "No chart id was supplied in the request.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "api",
+                    "v1",
+                    "chart"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "chart",
+                      "value": "<as returned by `/api/v1/charts`>"
+                    }
+                  ],
+                  "variable": []
+                },
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Bad Request",
+              "code": 400,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "text/plain"
+                }
+              ],
+              "body": "",
+              "cookie": [],
+              "_postman_previewlanguage": "text"
+            },
+            {
+              "id": "69dcca04-8a1d-4cd7-9549-6db5fbff2377",
+              "name": "No chart with the given id is found.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "api",
+                    "v1",
+                    "chart"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "chart",
+                      "value": "<as returned by `/api/v1/charts`>"
+                    }
+                  ],
+                  "variable": []
+                },
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Not Found",
+              "code": 404,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "text/plain"
+                }
+              ],
+              "body": "",
+              "cookie": [],
+              "_postman_previewlanguage": "text"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "ce8e27dd-5aca-421d-a091-52380887878b",
+          "name": "Time series data queries",
+          "request": {
+            "name": "Time series data queries",
+            "description": {
+              "content": "Multi-node, multi-context, multi-instance, multi-dimension data queries, with time and metric aggregation.",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "api",
+                "v3",
+                "spaces",
+                ":spaceID",
+                "rooms",
+                ":roomID",
+                "data"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": [
+                {
+                  "disabled": false,
+                  "type": "any",
+                  "value": "<uuid>",
+                  "key": "spaceID",
+                  "description": "(Required) The unique identifier of the requested space."
+                },
+                {
+                  "disabled": false,
+                  "type": "any",
+                  "value": "<uuid>",
+                  "key": "roomID",
+                  "description": "(Required) The unique identifier of the requested room."
+                }
+              ]
+            },
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "POST",
+            "auth": null,
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"aggregations\": {\n    \"metrics\": [\n      {\n        \"aggregation\": \"average\",\n        \"group_by\": [\n          \"<string>\",\n          \"<string>\"\n        ],\n        \"group_by_label\": [\n          \"<string>\",\n          \"<string>\"\n        ]\n      },\n      {\n        \"aggregation\": \"average\",\n        \"group_by\": [\n          \"<string>\",\n          \"<string>\"\n        ],\n        \"group_by_label\": [\n          \"<string>\",\n          \"<string>\"\n        ]\n      }\n    ],\n    \"time\": {\n      \"time_group\": \"average\",\n      \"time_group_options\": \"<string>\",\n      \"time_resampling\": \"<integer>\"\n    }\n  },\n  \"format\": \"json2\",\n  \"options\": [\n    \"<string>\",\n    \"<string>\"\n  ],\n  \"scope\": {\n    \"contexts\": [\n      \"<string>\",\n      \"<string>\"\n    ],\n    \"dimensions\": [\n      \"<string>\",\n      \"<string>\"\n    ],\n    \"instances\": [\n      \"<string>\",\n      \"<string>\"\n    ],\n    \"labels\": [\n      \"<string>\",\n      \"<string>\"\n    ],\n    \"nodes\": [\n      \"<string>\",\n      \"<string>\"\n    ]\n  },\n  \"selectors\": {\n    \"alerts\": [\n      \"<string>\",\n      \"<string>\"\n    ],\n    \"contexts\": [\n      \"<string>\",\n      \"<string>\"\n    ],\n    \"dimensions\": [\n      \"<string>\",\n      \"<string>\"\n    ],\n    \"instances\": [\n      \"<string>\",\n      \"<string>\"\n    ],\n    \"labels\": [\n      \"<string>\",\n      \"<string>\"\n    ],\n    \"nodes\": [\n      \"<string>\",\n      \"<string>\"\n    ]\n  },\n  \"timeout\": 10000,\n  \"window\": {\n    \"after\": \"<integer>\",\n    \"baseline\": {\n      \"after\": \"<integer>\",\n      \"before\": \"<integer>\",\n      \"duration\": \"<integer>\",\n      \"points\": \"<integer>\"\n    },\n    \"before\": \"<integer>\",\n    \"duration\": \"<integer>\",\n    \"points\": \"<integer>\",\n    \"tier\": \"<integer>\"\n  }\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [
+            {
+              "id": "d57c35b0-18bc-4302-88b1-d73655c96352",
+              "name": "OK",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "api",
+                    "v3",
+                    "spaces",
+                    ":spaceID",
+                    "rooms",
+                    ":roomID",
+                    "data"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<uuid>",
+                      "key": "spaceID",
+                      "description": "(Required) The unique identifier of the requested space."
+                    },
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<uuid>",
+                      "key": "roomID",
+                      "description": "(Required) The unique identifier of the requested room."
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"aggregations\": {\n    \"metrics\": [\n      {\n        \"aggregation\": \"sum\",\n        \"group_by\": [\n          \"selected\"\n        ],\n        \"group_by_label\": [\n          \"a_label_key\"\n        ]\n      },\n      {\n        \"aggregation\": \"sum\",\n        \"group_by\": [\n          \"selected\"\n        ],\n        \"group_by_label\": [\n          \"a_label_key\"\n        ]\n      }\n    ],\n    \"time\": {\n      \"time_group\": \"min\",\n      \"time_group_options\": \"countif\",\n      \"time_resampling\": 60\n    }\n  },\n  \"format\": \"json2\",\n  \"options\": [\n    \"jsonwrap\",\n    \"minify\"\n  ],\n  \"scope\": {\n    \"contexts\": [\n      \"disk.space\"\n    ],\n    \"dimensions\": [\n      \"avail\",\n      \"used\"\n    ],\n    \"instances\": [\n      \"disk_space./@bd498fed-8aa1-440c-a9d6-7c33db570608\"\n    ],\n    \"labels\": [\n      \"filesystem:btrfs\",\n      \"mount_point:/host/var/log\"\n    ],\n    \"nodes\": [\n      \"node_id_1\",\n      \"node_id_2\"\n    ]\n  },\n  \"selectors\": {\n    \"alerts\": [\n      \"*\"\n    ],\n    \"contexts\": [\n      \"*\"\n    ],\n    \"dimensions\": [\n      \"sent\",\n      \"received\"\n    ],\n    \"instances\": [\n      \"instance1@machine_guid1\",\n      \"instance2@machine_guid1\",\n      \"instanceX@machine_guidX\"\n    ],\n    \"labels\": [\n      \"*\"\n    ],\n    \"nodes\": [\n      \"*\"\n    ]\n  },\n  \"timeout\": 12000,\n  \"window\": {\n    \"after\": 1745928492,\n    \"baseline\": {\n      \"after\": 1745928492,\n      \"before\": 1745929392,\n      \"duration\": \"<integer>\",\n      \"points\": 100\n    },\n    \"before\": 1745929392,\n    \"duration\": \"<integer>\",\n    \"points\": 100,\n    \"tier\": \"<integer>\"\n  }\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"agents\": [\n    {\n      \"ai\": 7747,\n      \"claim_id\": \"550e8400-e29b-41d4-a716-446655440000\",\n      \"mg\": \"550e8400-e29b-41d4-a716-446655440000\",\n      \"nd\": \"550e8400-e29b-41d4-a716-446655440000\",\n      \"nm\": \"my_node\",\n      \"timings\": {\n        \"cloud_ms\": 1483.3661174967883,\n        \"node_max_ms\": 1266.2615560596391,\n        \"output_ms\": 5036.114356277045,\n        \"prep_ms\": 2898.046251012839,\n        \"query_ms\": 1801.9834612962904,\n        \"routing_ms\": 2606.1347423514426,\n        \"total_ms\": 9346.387089796095\n      }\n    },\n    {\n      \"ai\": 2184,\n      \"claim_id\": \"550e8400-e29b-41d4-a716-446655440000\",\n      \"mg\": \"550e8400-e29b-41d4-a716-446655440000\",\n      \"nd\": \"550e8400-e29b-41d4-a716-446655440000\",\n      \"nm\": \"my_node\",\n      \"timings\": {\n        \"cloud_ms\": 880.59596223803,\n        \"node_max_ms\": 3246.2061042014147,\n        \"output_ms\": 3506.1480349100048,\n        \"prep_ms\": 2098.954269328189,\n        \"query_ms\": 5087.661049558669,\n        \"routing_ms\": 2581.220407091277,\n        \"total_ms\": 5452.834553900103\n      }\n    }\n  ],\n  \"api\": 2,\n  \"db\": {\n    \"dimensions\": {\n      \"ids\": [\n        \"string\",\n        \"string\"\n      ],\n      \"sts\": {\n        \"arc\": {\n          \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n        },\n        \"arp\": {\n          \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n        },\n        \"avg\": {\n          \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n        },\n        \"cnt\": {\n          \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n        },\n        \"con\": {\n          \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n        },\n        \"max\": {\n          \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n        },\n        \"min\": {\n          \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n        },\n        \"sum\": {\n          \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n        },\n        \"vol\": {\n          \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n        }\n      },\n      \"units\": [\n        \"string\",\n        \"string\"\n      ]\n    },\n    \"first_entry\": 3321,\n    \"last_entry\": 7398,\n    \"per_tier\": [\n      {\n        \"first_entry\": 6154,\n        \"last_entry\": 9686,\n        \"points\": 279,\n        \"queries\": 8439,\n        \"tier\": 8830,\n        \"update_every\": 6396\n      },\n      {\n        \"first_entry\": 4261,\n        \"last_entry\": 3993,\n        \"points\": 1382,\n        \"queries\": 6209,\n        \"tier\": 2975,\n        \"update_every\": 1942\n      }\n    ],\n    \"tiers\": 3347,\n    \"units\": [\n      3798,\n      7013\n    ],\n    \"update_every\": 3408\n  },\n  \"functions\": [\n    \"string\",\n    \"string\"\n  ],\n  \"result\": {\n    \"data\": [\n      [],\n      []\n    ],\n    \"labels\": [\n      \"string\",\n      \"string\"\n    ],\n    \"point\": {\n      \"key_0\": 142\n    }\n  },\n  \"summary\": {\n    \"alerts\": [\n      {\n        \"cl\": 7230,\n        \"cr\": 9446,\n        \"nm\": \"string\",\n        \"ot\": 8329,\n        \"wr\": 612\n      },\n      {\n        \"cl\": 468,\n        \"cr\": 9573,\n        \"nm\": \"string\",\n        \"ot\": 5958,\n        \"wr\": 8625\n      }\n    ],\n    \"contexts\": [\n      {\n        \"al\": {\n          \"cl\": {\n            \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n          },\n          \"cr\": {\n            \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n          },\n          \"nm\": {\n            \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n          },\n          \"ot\": {\n            \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n          },\n          \"wr\": {\n            \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n          }\n        },\n        \"ds\": {\n          \"ex\": {\n            \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n          },\n          \"fl\": {\n            \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n          },\n          \"qr\": {\n            \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n          },\n          \"sl\": {\n            \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n          }\n        },\n        \"id\": \"string\",\n        \"is\": {\n          \"ex\": {\n            \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n          },\n          \"fl\": {\n            \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n          },\n          \"qr\": {\n            \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n          },\n          \"sl\": {\n            \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n          }\n        },\n        \"sts\": [\n          489,\n          1526\n        ]\n      },\n      {\n        \"al\": {\n          \"cl\": {\n            \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n          },\n          \"cr\": {\n            \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n          },\n          \"nm\": {\n            \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n          },\n          \"ot\": {\n            \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n          },\n          \"wr\": {\n            \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n          }\n        },\n        \"ds\": {\n          \"ex\": {\n            \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n          },\n          \"fl\": {\n            \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n          },\n          \"qr\": {\n            \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n          },\n          \"sl\": {\n            \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n          }\n        },\n        \"id\": \"string\",\n        \"is\": {\n          \"ex\": {\n            \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n          },\n          \"fl\": {\n            \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n          },\n          \"qr\": {\n            \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n          },\n          \"sl\": {\n            \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n          }\n        },\n        \"sts\": [\n          4070,\n          3624\n        ]\n      }\n    ],\n    \"dimensions\": [\n      {\n        \"ds\": {\n          \"ex\": 3385,\n          \"fl\": 4035,\n          \"qr\": 5151,\n          \"sl\": 4781\n        },\n        \"id\": \"string\",\n        \"nm\": \"string\",\n        \"pri\": 8238,\n        \"sts\": [\n          7161,\n          9207\n        ]\n      },\n      {\n        \"ds\": {\n          \"ex\": 7143,\n          \"fl\": 9373,\n          \"qr\": 4900,\n          \"sl\": 2376\n        },\n        \"id\": \"string\",\n        \"nm\": \"string\",\n        \"pri\": 2435,\n        \"sts\": [\n          5273,\n          8916\n        ]\n      }\n    ],\n    \"globals\": {\n      \"sts\": [\n        6951,\n        3432\n      ]\n    },\n    \"instances\": [\n      {\n        \"al\": {\n          \"cl\": 2332,\n          \"cr\": 5506,\n          \"nm\": \"string\",\n          \"ot\": 7417,\n          \"wr\": 4631\n        },\n        \"ds\": {\n          \"ex\": 725,\n          \"fl\": 1850,\n          \"qr\": 6207,\n          \"sl\": 7701\n        },\n        \"id\": \"string\",\n        \"ni\": 7697,\n        \"nm\": \"string\",\n        \"sts\": [\n          4244,\n          7107\n        ]\n      },\n      {\n        \"al\": {\n          \"cl\": 1936,\n          \"cr\": 8687,\n          \"nm\": \"string\",\n          \"ot\": 4278,\n          \"wr\": 8471\n        },\n        \"ds\": {\n          \"ex\": 3964,\n          \"fl\": 534,\n          \"qr\": 458,\n          \"sl\": 9216\n        },\n        \"id\": \"string\",\n        \"ni\": 5392,\n        \"nm\": \"string\",\n        \"sts\": [\n          5445,\n          981\n        ]\n      }\n    ],\n    \"labels\": [\n      {\n        \"ds\": {\n          \"ex\": {\n            \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n          },\n          \"fl\": {\n            \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n          },\n          \"qr\": {\n            \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n          },\n          \"sl\": {\n            \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n          }\n        },\n        \"id\": \"string\",\n        \"sts\": [\n          3339,\n          8086\n        ],\n        \"vl\": [\n          {\n            \"ds\": {\n              \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n            },\n            \"id\": {\n              \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n            },\n            \"sts\": {\n              \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n            }\n          },\n          {\n            \"ds\": {\n              \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n            },\n            \"id\": {\n              \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n            },\n            \"sts\": {\n              \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n            }\n          }\n        ]\n      },\n      {\n        \"ds\": {\n          \"ex\": {\n            \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n          },\n          \"fl\": {\n            \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n          },\n          \"qr\": {\n            \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n          },\n          \"sl\": {\n            \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n          }\n        },\n        \"id\": \"string\",\n        \"sts\": [\n          6897,\n          6186\n        ],\n        \"vl\": [\n          {\n            \"ds\": {\n              \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n            },\n            \"id\": {\n              \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n            },\n            \"sts\": {\n              \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n            }\n          },\n          {\n            \"ds\": {\n              \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n            },\n            \"id\": {\n              \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n            },\n            \"sts\": {\n              \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n            }\n          }\n        ]\n      }\n    ],\n    \"nodes\": [\n      {\n        \"al\": {\n          \"cl\": {\n            \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n          },\n          \"cr\": {\n            \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n          },\n          \"nm\": {\n            \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n          },\n          \"ot\": {\n            \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n          },\n          \"wr\": {\n            \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n          }\n        },\n        \"ds\": {\n          \"ex\": {\n            \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n          },\n          \"fl\": {\n            \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n          },\n          \"qr\": {\n            \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n          },\n          \"sl\": {\n            \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n          }\n        },\n        \"is\": {\n          \"ex\": {\n            \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n          },\n          \"fl\": {\n            \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n          },\n          \"qr\": {\n            \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n          },\n          \"sl\": {\n            \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n          }\n        },\n        \"mg\": \"550e8400-e29b-41d4-a716-446655440000\",\n        \"nd\": \"550e8400-e29b-41d4-a716-446655440000\",\n        \"ni\": 8166,\n        \"nm\": \"my_node\",\n        \"st\": {\n          \"ai\": {\n            \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n          },\n          \"code\": {\n            \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n          },\n          \"ms\": {\n            \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n          },\n          \"msg\": {\n            \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n          }\n        },\n        \"sts\": [\n          3840,\n          1512\n        ]\n      },\n      {\n        \"al\": {\n          \"cl\": {\n            \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n          },\n          \"cr\": {\n            \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n          },\n          \"nm\": {\n            \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n          },\n          \"ot\": {\n            \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n          },\n          \"wr\": {\n            \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n          }\n        },\n        \"ds\": {\n          \"ex\": {\n            \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n          },\n          \"fl\": {\n            \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n          },\n          \"qr\": {\n            \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n          },\n          \"sl\": {\n            \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n          }\n        },\n        \"is\": {\n          \"ex\": {\n            \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n          },\n          \"fl\": {\n            \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n          },\n          \"qr\": {\n            \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n          },\n          \"sl\": {\n            \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n          }\n        },\n        \"mg\": \"550e8400-e29b-41d4-a716-446655440000\",\n        \"nd\": \"550e8400-e29b-41d4-a716-446655440000\",\n        \"ni\": 1985,\n        \"nm\": \"my_node\",\n        \"st\": {\n          \"ai\": {\n            \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n          },\n          \"code\": {\n            \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n          },\n          \"ms\": {\n            \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n          },\n          \"msg\": {\n            \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n          }\n        },\n        \"sts\": [\n          5140,\n          4993\n        ]\n      }\n    ]\n  },\n  \"timings\": {\n    \"cloud_ms\": 7443.043184099632,\n    \"node_max_ms\": 8717.737765798181,\n    \"output_ms\": 851.259252753811,\n    \"prep_ms\": 1364.9935585259109,\n    \"query_ms\": 2335.9975801217224,\n    \"routing_ms\": 779.7170322789692,\n    \"total_ms\": 3814.2035175187307\n  },\n  \"totals\": {\n    \"contexts\": {\n      \"ex\": 1005,\n      \"fl\": 1281,\n      \"qr\": 974,\n      \"sl\": 1928\n    },\n    \"dimensions\": {\n      \"ex\": 1812,\n      \"fl\": 2164,\n      \"qr\": 2066,\n      \"sl\": 9699\n    },\n    \"instances\": {\n      \"ex\": 3825,\n      \"fl\": 7101,\n      \"qr\": 5999,\n      \"sl\": 7968\n    },\n    \"label_key_values\": {\n      \"ex\": 2538,\n      \"fl\": 123,\n      \"qr\": 617,\n      \"sl\": 2577\n    },\n    \"label_keys\": {\n      \"ex\": 1273,\n      \"fl\": 9900,\n      \"qr\": 1740,\n      \"sl\": 8970\n    },\n    \"nodes\": {\n      \"ex\": 7349,\n      \"fl\": 14,\n      \"qr\": 8980,\n      \"sl\": 3939\n    }\n  },\n  \"versions\": {\n    \"alerts_hard_hash\": 261,\n    \"alerts_soft_hash\": 540,\n    \"contexts_hard_hash\": 633,\n    \"contexts_soft_hash\": 63,\n    \"nodes_hard_hash\": 3822\n  },\n  \"view\": {\n    \"after\": 6965,\n    \"before\": 8650,\n    \"chart_type\": \"string\",\n    \"dimensions\": {\n      \"aggregated\": [\n        6315,\n        4970\n      ],\n      \"grouped_by\": [\n        \"string\",\n        \"string\"\n      ],\n      \"ids\": [\n        \"string\",\n        \"string\"\n      ],\n      \"labels\": {\n        \"key_0\": [\n          [\n            {\n              \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n            },\n            {\n              \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n            }\n          ],\n          [\n            {\n              \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n            },\n            {\n              \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n            }\n          ]\n        ],\n        \"key_1\": [\n          [\n            {\n              \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n            },\n            {\n              \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n            }\n          ],\n          [\n            {\n              \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n            },\n            {\n              \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n            }\n          ]\n        ]\n      },\n      \"names\": [\n        \"string\",\n        \"string\"\n      ],\n      \"priorities\": [\n        9208,\n        9382\n      ],\n      \"sts\": {\n        \"arc\": {\n          \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n        },\n        \"arp\": {\n          \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n        },\n        \"avg\": {\n          \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n        },\n        \"cnt\": {\n          \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n        },\n        \"con\": {\n          \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n        },\n        \"max\": {\n          \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n        },\n        \"min\": {\n          \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n        },\n        \"sum\": {\n          \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n        },\n        \"vol\": {\n          \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n        }\n      },\n      \"units\": [\n        \"string\",\n        \"string\"\n      ]\n    },\n    \"max\": 6020.124412546958,\n    \"min\": 3301.4338688360112,\n    \"partial_data_trimming\": {\n      \"expected_after\": 3332,\n      \"max_update_every\": 4771,\n      \"trimmed_after\": 4022\n    },\n    \"points\": 3598,\n    \"title\": \"string\",\n    \"units\": [\n      3219,\n      369\n    ],\n    \"update_every\": 4880\n  }\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "6a73ef8d-c423-4e7d-9419-9ebbb9600d12",
+              "name": " `\"errorCode\": \"ErrBadRequest\"`: when invalid query parameters/req. payload are provided <br /> `\"errorCode\": \"ErrBigAgentResponses\"`: when Agents return big responses and the caller needs to filter further, reduce the amount of requested `points` or use parents <br /> `\"errorCode\": \"ErrNoEligibleNodeRequested\"`: when no eligible nodes were targeted due to space plan restrictions <br /> `\"errorCode\": \"ErrAllNodesFailed\"`: when all Agent requests failed, details on every failure are included ",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "api",
+                    "v3",
+                    "spaces",
+                    ":spaceID",
+                    "rooms",
+                    ":roomID",
+                    "data"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<uuid>",
+                      "key": "spaceID",
+                      "description": "(Required) The unique identifier of the requested space."
+                    },
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<uuid>",
+                      "key": "roomID",
+                      "description": "(Required) The unique identifier of the requested room."
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"aggregations\": {\n    \"metrics\": [\n      {\n        \"aggregation\": \"sum\",\n        \"group_by\": [\n          \"selected\"\n        ],\n        \"group_by_label\": [\n          \"a_label_key\"\n        ]\n      },\n      {\n        \"aggregation\": \"sum\",\n        \"group_by\": [\n          \"selected\"\n        ],\n        \"group_by_label\": [\n          \"a_label_key\"\n        ]\n      }\n    ],\n    \"time\": {\n      \"time_group\": \"min\",\n      \"time_group_options\": \"countif\",\n      \"time_resampling\": 60\n    }\n  },\n  \"format\": \"json2\",\n  \"options\": [\n    \"jsonwrap\",\n    \"minify\"\n  ],\n  \"scope\": {\n    \"contexts\": [\n      \"disk.space\"\n    ],\n    \"dimensions\": [\n      \"avail\",\n      \"used\"\n    ],\n    \"instances\": [\n      \"disk_space./@bd498fed-8aa1-440c-a9d6-7c33db570608\"\n    ],\n    \"labels\": [\n      \"filesystem:btrfs\",\n      \"mount_point:/host/var/log\"\n    ],\n    \"nodes\": [\n      \"node_id_1\",\n      \"node_id_2\"\n    ]\n  },\n  \"selectors\": {\n    \"alerts\": [\n      \"*\"\n    ],\n    \"contexts\": [\n      \"*\"\n    ],\n    \"dimensions\": [\n      \"sent\",\n      \"received\"\n    ],\n    \"instances\": [\n      \"instance1@machine_guid1\",\n      \"instance2@machine_guid1\",\n      \"instanceX@machine_guidX\"\n    ],\n    \"labels\": [\n      \"*\"\n    ],\n    \"nodes\": [\n      \"*\"\n    ]\n  },\n  \"timeout\": 12000,\n  \"window\": {\n    \"after\": 1745928492,\n    \"baseline\": {\n      \"after\": 1745928492,\n      \"before\": 1745929392,\n      \"duration\": \"<integer>\",\n      \"points\": 100\n    },\n    \"before\": 1745929392,\n    \"duration\": \"<integer>\",\n    \"points\": 100,\n    \"tier\": \"<integer>\"\n  }\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Bad Request",
+              "code": 400,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"details\": {\n    \"key_0\": {}\n  },\n  \"errorCode\": \"string\",\n  \"errorMessage\": \"string\",\n  \"errorMsgKey\": \"string\",\n  \"validationErrors\": {\n    \"key_0\": {\n      \"code\": \"string\",\n      \"message\": \"string\"\n    }\n  }\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "fdd4dd44-24e3-456e-85ee-8e71535a0b67",
+              "name": " `\"errorCode\": \"ErrUnauthorized\"`: when the caller is not authenticated or not authorized to access this resource ",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "api",
+                    "v3",
+                    "spaces",
+                    ":spaceID",
+                    "rooms",
+                    ":roomID",
+                    "data"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<uuid>",
+                      "key": "spaceID",
+                      "description": "(Required) The unique identifier of the requested space."
+                    },
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<uuid>",
+                      "key": "roomID",
+                      "description": "(Required) The unique identifier of the requested room."
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"aggregations\": {\n    \"metrics\": [\n      {\n        \"aggregation\": \"sum\",\n        \"group_by\": [\n          \"selected\"\n        ],\n        \"group_by_label\": [\n          \"a_label_key\"\n        ]\n      },\n      {\n        \"aggregation\": \"sum\",\n        \"group_by\": [\n          \"selected\"\n        ],\n        \"group_by_label\": [\n          \"a_label_key\"\n        ]\n      }\n    ],\n    \"time\": {\n      \"time_group\": \"min\",\n      \"time_group_options\": \"countif\",\n      \"time_resampling\": 60\n    }\n  },\n  \"format\": \"json2\",\n  \"options\": [\n    \"jsonwrap\",\n    \"minify\"\n  ],\n  \"scope\": {\n    \"contexts\": [\n      \"disk.space\"\n    ],\n    \"dimensions\": [\n      \"avail\",\n      \"used\"\n    ],\n    \"instances\": [\n      \"disk_space./@bd498fed-8aa1-440c-a9d6-7c33db570608\"\n    ],\n    \"labels\": [\n      \"filesystem:btrfs\",\n      \"mount_point:/host/var/log\"\n    ],\n    \"nodes\": [\n      \"node_id_1\",\n      \"node_id_2\"\n    ]\n  },\n  \"selectors\": {\n    \"alerts\": [\n      \"*\"\n    ],\n    \"contexts\": [\n      \"*\"\n    ],\n    \"dimensions\": [\n      \"sent\",\n      \"received\"\n    ],\n    \"instances\": [\n      \"instance1@machine_guid1\",\n      \"instance2@machine_guid1\",\n      \"instanceX@machine_guidX\"\n    ],\n    \"labels\": [\n      \"*\"\n    ],\n    \"nodes\": [\n      \"*\"\n    ]\n  },\n  \"timeout\": 12000,\n  \"window\": {\n    \"after\": 1745928492,\n    \"baseline\": {\n      \"after\": 1745928492,\n      \"before\": 1745929392,\n      \"duration\": \"<integer>\",\n      \"points\": 100\n    },\n    \"before\": 1745929392,\n    \"duration\": \"<integer>\",\n    \"points\": 100,\n    \"tier\": \"<integer>\"\n  }\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Unauthorized",
+              "code": 401,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"details\": {\n    \"key_0\": {}\n  },\n  \"errorCode\": \"string\",\n  \"errorMessage\": \"string\",\n  \"errorMsgKey\": \"string\",\n  \"validationErrors\": {\n    \"key_0\": {\n      \"code\": \"string\",\n      \"message\": \"string\"\n    }\n  }\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "7a93267b-5776-4928-8ad2-2ef86c792cad",
+              "name": " `\"errorCode\": \"ErrInternal\"`: when some Internal Server Error has occurred ",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "api",
+                    "v3",
+                    "spaces",
+                    ":spaceID",
+                    "rooms",
+                    ":roomID",
+                    "data"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<uuid>",
+                      "key": "spaceID",
+                      "description": "(Required) The unique identifier of the requested space."
+                    },
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<uuid>",
+                      "key": "roomID",
+                      "description": "(Required) The unique identifier of the requested room."
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"aggregations\": {\n    \"metrics\": [\n      {\n        \"aggregation\": \"sum\",\n        \"group_by\": [\n          \"selected\"\n        ],\n        \"group_by_label\": [\n          \"a_label_key\"\n        ]\n      },\n      {\n        \"aggregation\": \"sum\",\n        \"group_by\": [\n          \"selected\"\n        ],\n        \"group_by_label\": [\n          \"a_label_key\"\n        ]\n      }\n    ],\n    \"time\": {\n      \"time_group\": \"min\",\n      \"time_group_options\": \"countif\",\n      \"time_resampling\": 60\n    }\n  },\n  \"format\": \"json2\",\n  \"options\": [\n    \"jsonwrap\",\n    \"minify\"\n  ],\n  \"scope\": {\n    \"contexts\": [\n      \"disk.space\"\n    ],\n    \"dimensions\": [\n      \"avail\",\n      \"used\"\n    ],\n    \"instances\": [\n      \"disk_space./@bd498fed-8aa1-440c-a9d6-7c33db570608\"\n    ],\n    \"labels\": [\n      \"filesystem:btrfs\",\n      \"mount_point:/host/var/log\"\n    ],\n    \"nodes\": [\n      \"node_id_1\",\n      \"node_id_2\"\n    ]\n  },\n  \"selectors\": {\n    \"alerts\": [\n      \"*\"\n    ],\n    \"contexts\": [\n      \"*\"\n    ],\n    \"dimensions\": [\n      \"sent\",\n      \"received\"\n    ],\n    \"instances\": [\n      \"instance1@machine_guid1\",\n      \"instance2@machine_guid1\",\n      \"instanceX@machine_guidX\"\n    ],\n    \"labels\": [\n      \"*\"\n    ],\n    \"nodes\": [\n      \"*\"\n    ]\n  },\n  \"timeout\": 12000,\n  \"window\": {\n    \"after\": 1745928492,\n    \"baseline\": {\n      \"after\": 1745928492,\n      \"before\": 1745929392,\n      \"duration\": \"<integer>\",\n      \"points\": 100\n    },\n    \"before\": 1745929392,\n    \"duration\": \"<integer>\",\n    \"points\": 100,\n    \"tier\": \"<integer>\"\n  }\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Internal Server Error",
+              "code": 500,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"details\": {\n    \"key_0\": {}\n  },\n  \"errorCode\": \"string\",\n  \"errorMessage\": \"string\",\n  \"errorMsgKey\": \"string\",\n  \"validationErrors\": {\n    \"key_0\": {\n      \"code\": \"string\",\n      \"message\": \"string\"\n    }\n  }\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        }
+      ],
+      "event": []
+    }
+  ],
+  "event": [],
+  "variable": [
+    {
+      "type": "string",
+      "value": "https://registry.my-netdata.io",
+      "key": "baseUrl"
+    }
+  ],
+  "info": {
+    "_postman_id": "3af517a0-b01b-4a68-af27-e1512bac464e",
+    "name": "Netdata agent charts API",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "description": {
+      "content": "Real-time performance and health monitoring.\n\n## API Versions\n\nNetdata provides three API versions:\n- **v1**: The original API, focused on single-node operations\n- **v2**: Multi-node API with advanced grouping and aggregation capabilities\n- **v3**: The latest API version that combines v1 and v2 endpoints and may include additional features\n\n### v3 API Endpoints\n\nThe v3 API provides the current, actively maintained endpoints:\n- `/api/v3/data` - Multi-dimensional data queries\n- `/api/v3/weights` - Metric scoring/correlation\n- `/api/v3/contexts` - Context metadata\n- `/api/v3/nodes` - Node information\n- `/api/v3/q` - Full-text search\n- `/api/v3/alerts` - Alert information\n- `/api/v3/alert_transitions` - Alert state transitions\n- `/api/v3/alert_config` - Alert configuration\n- `/api/v3/functions` - Available functions\n- `/api/v3/function` - Execute functions\n- `/api/v3/info` - Agent information\n- `/api/v3/node_instances` - Node instance information\n- `/api/v3/stream_path` - Streaming topology\n- `/api/v3/versions` - Version information\n- `/api/v3/badge.svg` - Dynamic badges\n- `/api/v3/allmetrics` - Export metrics\n- `/api/v3/context` - Single context info\n- `/api/v3/variable` - Variable information\n- `/api/v3/config` - Dynamic configuration\n- `/api/v3/settings` - Agent settings\n- `/api/v3/me` - Current user information\n- `/api/v3/claim` - Agent claiming\n- Additional management and streaming endpoints\n\n**Note:** V1 and V2 APIs are deprecated and maintained for backwards compatibility only. New integrations should use V3 exclusively.\n\n\nContact Support:\n Name: Netdata Agent API\n Email: info@netdata.cloud",
+      "type": "text/plain"
+    }
+  }
+}

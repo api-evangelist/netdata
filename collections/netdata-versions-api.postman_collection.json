@@ -1,0 +1,314 @@
+{
+  "item": [
+    {
+      "id": "8771273f-37f8-467d-8bf3-39d34929e54e",
+      "name": "versions",
+      "description": {
+        "content": "",
+        "type": "text/plain"
+      },
+      "item": [
+        {
+          "id": "30bbebdf-bb55-429e-a03b-48f8e3258133",
+          "name": "Retrieve Netdata agent version information across nodes",
+          "request": {
+            "name": "Retrieve Netdata agent version information across nodes",
+            "description": {
+              "content": "Returns version information for Netdata agents running on monitored nodes.\nThis endpoint provides visibility into the software versions deployed across your infrastructure,\nhelping identify version mismatches, outdated agents, and upgrade planning.\n\n**Version Information Includes:**\n- Netdata agent version string (e.g., \"v1.40.0\")\n- Build information and commit hash\n- Protocol versions supported\n- Feature capabilities based on version\n\n**Use Cases:**\n- **Version audit**: Identify which nodes run which versions\n- **Upgrade planning**: Find nodes that need updates\n- **Compatibility checking**: Ensure version compatibility across infrastructure\n- **Feature availability**: Determine which features are available on which nodes\n- **Security compliance**: Identify nodes running vulnerable versions\n\n**Common Usage Patterns:**\n\n1. **Get versions of all nodes:**\n   ```\n   /api/v3/versions\n   ```\n\n2. **Check versions of specific nodes:**\n   ```\n   /api/v3/versions?nodes=prod-*\n   ```\n\n3. **Scope to production infrastructure:**\n   ```\n   /api/v3/versions?scope_nodes=prod-*\n   ```\n\n**Response Structure:**\nReturns version information grouped by node, showing:\n- Agent version string\n- Build timestamp\n- Git commit hash\n- Protocol versions\n- Feature flags and capabilities\n\n**Security & Access Control:**\n- 🔓 **Always Public API** - This endpoint is always accessible without authentication\n- **No Restrictions:** Not subject to bearer protection or IP-based ACL restrictions\n- **No Authentication:** Cannot be restricted by any configuration\n- **Access:** Available to anyone who can reach the agent's HTTP endpoint\n",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "api",
+                "v3",
+                "versions"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [
+                {
+                  "disabled": false,
+                  "key": "scope_nodes",
+                  "value": "*",
+                  "description": "Simple pattern to match node hostnames for scope filtering. Uses Netdata's simple pattern\nmatching (not regex). Matched nodes define the scope for version information retrieval.\n\n**Pattern Syntax:**\n- `*` matches any number of characters\n- Use `|` to separate multiple patterns (OR logic)\n- Matches are case-insensitive\n- No regex support - only simple wildcards\n\n**Examples:**\n- `prod-*` - All production nodes\n- `*-db-*` - All database nodes\n- `web-*|app-*` - All web or application nodes\n- `*` - All nodes (default)\n"
+                },
+                {
+                  "disabled": false,
+                  "key": "nodes",
+                  "value": "*",
+                  "description": "Simple pattern to filter which nodes to include in the version information response.\nAfter scope is determined, this filters the results. Uses the same pattern syntax as scope_nodes.\n\n**Difference from scope_nodes:**\n- `scope_nodes` defines what nodes to analyze\n- `nodes` filters which nodes appear in the output\n\n**Examples:**\n- `old-*` - Only show nodes matching \"old-*\" pattern\n- Specific hostnames: `node1|node2|node3`\n"
+                },
+                {
+                  "disabled": false,
+                  "key": "options",
+                  "value": "<string>",
+                  "description": "Comma-separated list of options to control response content and format.\n\n**Available Options:**\n- `minify` - Minimize JSON output (no pretty-printing)\n- `debug` - Include additional debug information\n- `raw` - Include raw version metadata\n\n**Examples:**\n- `minify` - Compact JSON response\n- `debug,raw` - Debug mode with raw metadata\n"
+                },
+                {
+                  "disabled": false,
+                  "key": "timeout",
+                  "value": "60",
+                  "description": "Maximum time in seconds to wait for the query to complete before timing out.\n\n**Guidelines:**\n- Recommended: 10-30 seconds for most queries\n- Version information is usually quick to retrieve\n- Timeout mainly applies to very large infrastructures\n"
+                },
+                {
+                  "disabled": false,
+                  "key": "cardinality",
+                  "value": "1000",
+                  "description": "Maximum number of nodes to include in the response to prevent overwhelming large responses.\nWhen this limit is exceeded, the response will indicate how many nodes were omitted.\n\n**Purpose:**\n- Prevent memory exhaustion from very large infrastructures\n- Control response size for performance\n- Useful when exploring large node sets incrementally\n\n**Recommendations:**\n- Small infrastructures (< 100 nodes): Use default\n- Medium infrastructures (100-1000 nodes): 500-1000\n- Large infrastructures (> 1000 nodes): Use filtering or increase limit carefully\n"
+                }
+              ],
+              "variable": []
+            },
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "GET",
+            "auth": null
+          },
+          "response": [
+            {
+              "id": "ca87a5a9-8f7c-4347-94cb-832cf9263a5f",
+              "name": "Successfully retrieved version information.\n\nReturns version data for each node including agent version, build info,\nprotocol versions, and feature capabilities.\n",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "api",
+                    "v3",
+                    "versions"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "scope_nodes",
+                      "value": "prod-*"
+                    },
+                    {
+                      "key": "nodes",
+                      "value": "*"
+                    },
+                    {
+                      "key": "options",
+                      "value": "debug"
+                    },
+                    {
+                      "key": "timeout",
+                      "value": "10"
+                    },
+                    {
+                      "key": "cardinality",
+                      "value": "500"
+                    }
+                  ],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"versions\": [\n    {\n      \"hostname\": \"string\",\n      \"machine_guid\": \"string\",\n      \"version\": \"v1.40.0\",\n      \"build_info\": \"string\",\n      \"commit_hash\": \"string\",\n      \"protocol_version\": 1129,\n      \"features\": [\n        \"string\",\n        \"string\"\n      ]\n    },\n    {\n      \"hostname\": \"string\",\n      \"machine_guid\": \"string\",\n      \"version\": \"v1.40.0\",\n      \"build_info\": \"string\",\n      \"commit_hash\": \"string\",\n      \"protocol_version\": 3379,\n      \"features\": [\n        \"string\",\n        \"string\"\n      ]\n    }\n  ],\n  \"omitted\": 4340\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "8e8f655c-11eb-4f05-9ebc-113c76b09681",
+              "name": "Invalid parameters provided (e.g., invalid pattern syntax).",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "api",
+                    "v3",
+                    "versions"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "scope_nodes",
+                      "value": "prod-*"
+                    },
+                    {
+                      "key": "nodes",
+                      "value": "*"
+                    },
+                    {
+                      "key": "options",
+                      "value": "debug"
+                    },
+                    {
+                      "key": "timeout",
+                      "value": "10"
+                    },
+                    {
+                      "key": "cardinality",
+                      "value": "500"
+                    }
+                  ],
+                  "variable": []
+                },
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Bad Request",
+              "code": 400,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "text/plain"
+                }
+              ],
+              "body": "",
+              "cookie": [],
+              "_postman_previewlanguage": "text"
+            },
+            {
+              "id": "dcff4329-5903-42c5-8793-3d37e944672d",
+              "name": "Internal server error during version information retrieval.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "api",
+                    "v3",
+                    "versions"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "scope_nodes",
+                      "value": "prod-*"
+                    },
+                    {
+                      "key": "nodes",
+                      "value": "*"
+                    },
+                    {
+                      "key": "options",
+                      "value": "debug"
+                    },
+                    {
+                      "key": "timeout",
+                      "value": "10"
+                    },
+                    {
+                      "key": "cardinality",
+                      "value": "500"
+                    }
+                  ],
+                  "variable": []
+                },
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Internal Server Error",
+              "code": 500,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "text/plain"
+                }
+              ],
+              "body": "",
+              "cookie": [],
+              "_postman_previewlanguage": "text"
+            },
+            {
+              "id": "f1d75028-23f1-4e60-9e2a-54066f9bae7e",
+              "name": "Query timeout - version collection took too long.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "api",
+                    "v3",
+                    "versions"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "scope_nodes",
+                      "value": "prod-*"
+                    },
+                    {
+                      "key": "nodes",
+                      "value": "*"
+                    },
+                    {
+                      "key": "options",
+                      "value": "debug"
+                    },
+                    {
+                      "key": "timeout",
+                      "value": "10"
+                    },
+                    {
+                      "key": "cardinality",
+                      "value": "500"
+                    }
+                  ],
+                  "variable": []
+                },
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Gateway Timeout",
+              "code": 504,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "text/plain"
+                }
+              ],
+              "body": "",
+              "cookie": [],
+              "_postman_previewlanguage": "text"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        }
+      ],
+      "event": []
+    }
+  ],
+  "event": [],
+  "variable": [
+    {
+      "type": "string",
+      "value": "https://registry.my-netdata.io",
+      "key": "baseUrl"
+    }
+  ],
+  "info": {
+    "_postman_id": "8d80a0f9-68c5-42d3-8be4-b74a2dcd37da",
+    "name": "Netdata agent versions API",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "description": {
+      "content": "Real-time performance and health monitoring.\n\n## API Versions\n\nNetdata provides three API versions:\n- **v1**: The original API, focused on single-node operations\n- **v2**: Multi-node API with advanced grouping and aggregation capabilities\n- **v3**: The latest API version that combines v1 and v2 endpoints and may include additional features\n\n### v3 API Endpoints\n\nThe v3 API provides the current, actively maintained endpoints:\n- `/api/v3/data` - Multi-dimensional data queries\n- `/api/v3/weights` - Metric scoring/correlation\n- `/api/v3/contexts` - Context metadata\n- `/api/v3/nodes` - Node information\n- `/api/v3/q` - Full-text search\n- `/api/v3/alerts` - Alert information\n- `/api/v3/alert_transitions` - Alert state transitions\n- `/api/v3/alert_config` - Alert configuration\n- `/api/v3/functions` - Available functions\n- `/api/v3/function` - Execute functions\n- `/api/v3/info` - Agent information\n- `/api/v3/node_instances` - Node instance information\n- `/api/v3/stream_path` - Streaming topology\n- `/api/v3/versions` - Version information\n- `/api/v3/badge.svg` - Dynamic badges\n- `/api/v3/allmetrics` - Export metrics\n- `/api/v3/context` - Single context info\n- `/api/v3/variable` - Variable information\n- `/api/v3/config` - Dynamic configuration\n- `/api/v3/settings` - Agent settings\n- `/api/v3/me` - Current user information\n- `/api/v3/claim` - Agent claiming\n- Additional management and streaming endpoints\n\n**Note:** V1 and V2 APIs are deprecated and maintained for backwards compatibility only. New integrations should use V3 exclusively.\n\n\nContact Support:\n Name: Netdata Agent API\n Email: info@netdata.cloud",
+      "type": "text/plain"
+    }
+  }
+}

@@ -1,0 +1,48 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "Netdata agent webrtc API",
+    "version": "v1-rolling"
+  },
+  "items": [
+    {
+      "info": {
+        "name": "webrtc",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "Establish WebRTC peer connection by exchanging SDP offer/answer",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://registry.my-netdata.io/api/v3/rtc_offer",
+            "auth": {
+              "type": "bearer",
+              "token": "{{bearerToken}}"
+            }
+          },
+          "docs": "**WebRTC Connection Establishment**\n\nThis endpoint implements the WebRTC signaling process for establishing peer-to-peer data connections with the Netdata agent. It follows the standard WebRTC negotiation flow using SDP (Session Description Protocol) offer/answer exchange.\n\n**How It Works:**\n1. Client creates a WebRTC peer connection and generates an SDP offer\n2. Client sends the SDP offer to this endpoint via POST request body\n3. Server processes the offer, configures ICE servers and connection"
+        },
+        {
+          "info": {
+            "name": "OBSOLETE: Establish WebRTC connection (use /api/v3/rtc_offer instead)",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://registry.my-netdata.io/api/v2/rtc_offer",
+            "auth": {
+              "type": "bearer",
+              "token": "{{bearerToken}}"
+            }
+          },
+          "docs": "**⚠️ OBSOLETE API - Will be removed in future versions**\n\nThis endpoint is deprecated. Use `/api/v3/rtc_offer` instead, which provides the same functionality.\n\n**Migration:** Replace `/api/v2/rtc_offer` with `/api/v3/rtc_offer` in all API calls.\n\nEstablishes WebRTC peer-to-peer connection by exchanging SDP offer/answer for real-time data channels.\n\n**Security & Access Control:**\n- ⚠️ **ACLK-Only API** - Accessible only via Netdata Cloud (ACLK connection)\n- Same access requirements as v3 version\n"
+        }
+      ]
+    }
+  ],
+  "bundled": true
+}

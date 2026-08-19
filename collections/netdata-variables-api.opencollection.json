@@ -1,0 +1,43 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "Netdata agent variables API",
+    "version": "v1-rolling"
+  },
+  "items": [
+    {
+      "info": {
+        "name": "variables",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "Retrieve the value of a specific chart variable used in alert expressions",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://registry.my-netdata.io/api/v3/variable",
+            "params": [
+              {
+                "name": "chart",
+                "value": "",
+                "type": "query",
+                "description": "The chart identifier (ID or name) where the variable is defined.\n\n**Chart Identifier Format:**\nCharts can be specified by either their unique ID or their name.\n\n**Chart ID Format:**\n- Format: `type.name` (e.g., `system.cpu`, `disk.sda_io`, `mysql.queries`)\n- This is the canonical identifier shown in chart metadata\n- Case-sensitive\n- More reliable as it doesn't change\n\n**Chart Name Format:**\n- Human-readable name (e.g., \"System CPU\")\n- May contain spaces\n- Less reliable as it can change\n- The API will try to find by name if ID lookup fails\n\n**How to Find Chart IDs:**\n1. **From /api/v1/charts:**\n   ```\n   GET /api/v1/charts\n   ```\n   Response includes all chart IDs in the system\n\n2. **From /api/v3/contexts:**\n   ```\n   GET /api/v3/contexts\n   ```\n   Lists contexts and their chart instances\n\n3. **From Alert Configuration:**\n   Alert configs reference charts in their `on` clause\n\n4. **From Netdata Dashboard:**\n   Chart IDs are shown in chart metadata\n\n**Examples:**\n- `chart=system.cpu` - System CPU chart\n- `chart=system.ram` - System RAM chart\n- `chart=disk.sda_io` - Disk sda I/O chart\n- `chart=mysql.queries` - MySQL queries chart\n\n**Common Chart IDs by Category:**\n- **System:** `system.cpu`, `system.load`, `system.ram`, `system.io`\n- **Disk:** `disk.space`, `disk.io`, `disk.inodes`\n- **Network:** `net.eth0`, `net.packets`\n- **Databases:** `mysql.queries`, `postgres.connections`, `redis.memory`\n\n**Important Notes:**\n- This parameter is **REQUIRED**\n- Must reference an existing chart on the specified host\n- Chart must be actively collecting data\n- Case-sensitive\n\n**Error Handling:**\n- Missing parameter → 400 Bad Request: \"A chart= and a variable= are required.\"\n- Invalid/non-existent chart → 404 Not Found: \"Chart is not found: <chart>\"\n"
+              },
+              {
+                "name": "variable",
+                "value": "",
+                "type": "query",
+                "description": "The variable name to look up within the specified chart.\n\n**Variable Name Format:**\nVariable names typically follow these conventions:\n- Start with `$` in alert expressions, but the `$` is optional in this parameter\n- Names are case-sensitive\n- Can reference dimensions, calculated values, or lookups\n\n**Variable Name Categories:**\n\n**1. Dimension Variables (most common):**\nDirect references to chart dimensions:\n- `used` - Value of \"used\" dimension\n- `free` - Value of \"free\" dimension\n- `cached` - Value of \"cached\" dimension\n- `buffers` - Value of \"buffers\" dimension\n- `read` - Read operations/bytes\n- `write` - Write operations/bytes\n\n**2. Special Variables:**\n- `this` - The calculated/evaluated value from alert expression\n- `status` - Current alert status\n- `value` - Current metric value\n\n**3. Lookup Variables:**\nVariables created via lookup operations:\n- Format: `<duration>_<dimension>_<method>`\n- Example: `1hour_cpu_avg` - Average CPU over last hour\n- Example: `5min_disk_used_max` - Max disk used in last 5 minutes\n\n**4. Calculated Variables:**\nCustom variables defined in alert configurations:\n- `ram_percentage` - (used / total) * 100\n- `disk_usage_ratio` - used / total\n- `error_rate` - errors / total_requests\n\n**5. Chart Metadata Variables:**\n- `family` - Chart family/category\n- `units` - Chart units\n- `chart_type` - Chart type\n\n**How to Discover Available Variables:**\n1. **From Alert Configuration:**\n   Alert expressions reveal which variables are available\n   ```\n   GET /api/v3/alert_config?config=<uuid>\n   ```\n\n2. **From /api/v1/alarm_variables:**\n   Lists all variables for a chart\n   ```\n   GET /api/v1/alarm_variables?chart=system.ram\n   ```\n\n3. **From Chart Dimensions:**\n   Dimension names are typically available as variables\n   ```\n   GET /api/v1/chart?chart=system.ram\n   ```\n\n**Common Variable Examples by Chart:**\n\n**For system.ram:**\n- `used`, `free`, `cached`, `buffers`\n\n**For system.cpu:**\n- `user`, `system`, `nice`, `idle`, `iowait`\n\n**For disk.space:**\n- `used`, `avail` (available), `reserved`\n\n**For disk.io:**\n- `read`, `write`\n\n**For mysql.queries:**\n- `select`, `insert`, `update`, `delete`\n\n**Important Notes:**\n- This parameter is **REQUIRED**\n- Variable name must exist in the chart's variable set\n- Case-sensitive\n- The `$` prefix is optional (both `$used` and `used` work)\n\n**Error Handling:**\n- Missing parameter → 400 Bad Request: \"A chart= and a variable= are required.\"\n- Non-existent variable → Returns trace showing variable not found\n"
+              }
+            ]
+          },
+          "docs": "Returns the current value of a variable associated with a specific chart. Variables are used in alert expressions for dynamic threshold calculations, data transformations, and alert logic evaluation.\n\n**What are Chart Variables?**\nVariables in Netdata are named values that can be:\n- **Chart-specific metrics:** Current values from dimensions (e.g., `$used`, `$total`)\n- **Calculated values:** Derived from chart data (e.g., percentages, ratios)\n- **Statistical values:** Min, max, average values ove"
+        }
+      ]
+    }
+  ],
+  "bundled": true
+}

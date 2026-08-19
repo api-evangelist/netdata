@@ -1,0 +1,818 @@
+{
+  "item": [
+    {
+      "id": "ef73b625-c76c-4764-8a64-6138101ad6e0",
+      "name": "authentication",
+      "description": {
+        "content": "",
+        "type": "text/plain"
+      },
+      "item": [
+        {
+          "id": "f80c0fb2-b3ca-4f50-b074-4cc7db74421e",
+          "name": "Enable or disable bearer token authentication requirement",
+          "request": {
+            "name": "Enable or disable bearer token authentication requirement",
+            "description": {
+              "content": "**Bearer Token Authentication Control**\n\nThis endpoint controls whether the Netdata agent requires bearer token authentication for API access. Bearer protection adds an additional security layer by requiring a valid bearer token in the Authorization header for all API requests when enabled.\n\n**Use Cases:**\n- **Cloud Integration:** Enable bearer protection when agent is claimed to Netdata Cloud\n- **Security Hardening:** Add token-based authentication to prevent unauthorized API access\n- **Multi-Tenant Environments:** Enforce authentication in shared infrastructure\n- **Dynamic Security:** Toggle authentication requirements based on operational needs\n- **Remote Management:** Netdata Cloud can enable protection when claiming agents\n\n**How It Works:**\n1. When bearer protection is enabled, all API requests must include: `Authorization: Bearer <token>`\n2. Tokens are obtained via `/api/v3/bearer_get_token` endpoint\n3. Tokens have expiration times and must be renewed periodically\n4. Invalid or missing tokens result in HTTP 401 Unauthorized\n5. Some endpoints (like claiming) may bypass bearer protection\n\n**Security Verification:**\n- **claim_id:** Must match the agent's current claim ID (prevents requests to wrong agent)\n- **machine_guid:** Must match the agent's machine GUID (hardware fingerprint)\n- **node_id:** Must match the agent's node UUID (persistent identity)\n- All three identifiers must be present and match for the operation to succeed\n\n**Protection States:**\n- **Enabled (true):** All API requests require valid bearer token in Authorization header\n- **Disabled (false):** API requests do not require bearer tokens (default for unclaimed agents)\n\n**Important Notes:**\n- This endpoint itself requires authentication (typically called by Netdata Cloud during claiming)\n- Changing protection state affects all subsequent API requests immediately\n- Netdata Cloud automatically enables bearer protection when an agent is claimed\n- Local access may still work without bearer token depending on configuration\n- The endpoint validates that the request is for the correct agent using claim_id, machine_guid, and node_id\n- Mismatched identifiers return HTTP 400 Bad Request\n\n**Typical Workflow:**\n1. Agent is claimed to Netdata Cloud\n2. Cloud calls this endpoint to enable bearer protection\n3. All future API calls to the agent require bearer tokens\n4. Cloud obtains tokens via `/api/v3/bearer_get_token` as needed\n5. Tokens are included in Authorization headers for authenticated requests\n\n**Security & Access Control:**\n- ⚠️ **ACLK-Only API** - This endpoint is ONLY accessible via Netdata Cloud (ACLK connection)\n- **NOT accessible via:** Direct HTTP/HTTPS to agent, even with bearer token\n- **Authentication:** Requires Netdata Cloud authentication with elevated permissions\n- **Required Permissions:** `SIGNED_ID` + `SAME_SPACE` + `VIEW_AGENT_CONFIG` + `EDIT_AGENT_CONFIG`\n- **User Roles:** Typically Admin or Manager role required\n- **Development Mode:** Can be enabled for testing with `ACL_DEV_OPEN_ACCESS` flag\n",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "api",
+                "v3",
+                "bearer_protection"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [
+                {
+                  "disabled": false,
+                  "key": "bearer_protection",
+                  "value": "<string>",
+                  "description": "**Whether to enable or disable bearer token authentication requirement.**\n\n**Valid Values:**\n- Enable: `on`, `true`, `yes`\n- Disable: `off`, `false`, `no`\n\n**Default Behavior:**\n- If omitted, maintains current bearer protection state\n- When agent is unclaimed, defaults to disabled\n- When agent is claimed, typically enabled by Netdata Cloud\n\n**Effect:**\n- When enabled: All API requests must include valid bearer token in Authorization header\n- When disabled: API requests work without bearer tokens (less secure)\n\nExample: `bearer_protection=on`\n"
+                },
+                {
+                  "disabled": false,
+                  "key": "claim_id",
+                  "value": "<string>",
+                  "description": "(Required) **Claim ID of the agent from Netdata Cloud.**\n\nThis identifies which Netdata Cloud space the agent is claimed to.\nUsed to verify the request is for the correct agent.\n\n**Validation:**\n- Must match the agent's current claim ID\n- Request fails with HTTP 400 if claim ID doesn't match\n- Prevents accidentally enabling protection on wrong agent\n\n**Where to Find:**\n- Obtained from cloud when agent is claimed\n- Available in agent's claiming configuration\n- Included in cloud API responses\n\nExample: `claim_id=1234567890abcdef`\n"
+                },
+                {
+                  "disabled": false,
+                  "key": "machine_guid",
+                  "value": "<string>",
+                  "description": "(Required) **Machine GUID of the agent.**\n\nHardware-based unique identifier for the agent instance.\nGenerated based on machine characteristics.\n\n**Purpose:**\n- Verifies request is for the specific agent instance\n- Prevents applying protection to wrong node\n- Part of multi-factor agent identification\n\n**Characteristics:**\n- Persists across agent restarts\n- May change if hardware changes significantly\n- Matches the `machine_guid` in agent info\n\n**Where to Find:**\n- Available in `/api/v3/info` response\n- Stored in agent's state files\n- Shown in Netdata Cloud node details\n\nExample: `machine_guid=12345678-1234-1234-1234-123456789abc`\n"
+                },
+                {
+                  "disabled": false,
+                  "key": "node_id",
+                  "value": "<uuid>",
+                  "description": "(Required) **Node UUID of the agent.**\n\nPersistent unique identifier for the agent.\nMore stable than machine_guid.\n\n**Purpose:**\n- Provides additional verification layer\n- Ensures request targets correct node\n- Used alongside claim_id and machine_guid for security\n\n**Characteristics:**\n- Generated once and persists\n- Does not change with hardware changes\n- Unique across all Netdata installations\n\n**Where to Find:**\n- Available in `/api/v3/info` response\n- Stored in agent's persistent state\n- Used by Netdata Cloud for node identification\n\nExample: `node_id=23456789-2345-2345-2345-234567890abc`\n"
+                }
+              ],
+              "variable": []
+            },
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "GET",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{bearerToken}}"
+                }
+              ]
+            }
+          },
+          "response": [
+            {
+              "id": "2046bb7d-1e94-464a-9547-ec8cb68765aa",
+              "name": "Bearer protection state successfully changed.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "api",
+                    "v3",
+                    "bearer_protection"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "bearer_protection",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "claim_id",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "machine_guid",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "node_id",
+                      "value": "<uuid>"
+                    }
+                  ],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"bearer_protection\": true\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "8dfdbffc-32ae-4edf-8171-9002b060c261",
+              "name": "Bad request due to one of the following:\n- claim_id doesn't match the agent's claim ID\n- machine_guid doesn't match the agent's machine GUID\n- node_id doesn't match or is missing\n- Invalid parameter values\n",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "api",
+                    "v3",
+                    "bearer_protection"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "bearer_protection",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "claim_id",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "machine_guid",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "node_id",
+                      "value": "<uuid>"
+                    }
+                  ],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Bad Request",
+              "code": 400,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "text/plain"
+                }
+              ],
+              "body": "",
+              "cookie": [],
+              "_postman_previewlanguage": "text"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "0c2b2796-ee22-455f-94d1-d85d89be932d",
+          "name": "Obtain bearer authentication token",
+          "request": {
+            "name": "Obtain bearer authentication token",
+            "description": {
+              "content": "**Bearer Token Generation**\n\nThis endpoint generates a bearer authentication token that can be used to authenticate API requests when bearer protection is enabled. Tokens are time-limited and include role-based access control information.\n\n**Use Cases:**\n- **Netdata Cloud Access:** Cloud obtains tokens to query agent metrics and execute functions\n- **API Integration:** Applications get tokens to access protected agent APIs\n- **User Authentication:** Generate tokens for users based on their roles and permissions\n- **Automated Monitoring:** Scripts obtain tokens for scheduled metric collection\n- **Temporary Access:** Create limited-lifetime tokens for specific operations\n\n**Token Characteristics:**\n- **Time-Limited:** Tokens expire after a set duration (configurable)\n- **Role-Based:** Tokens include user role information (admin, manager, viewer, etc.)\n- **Access-Scoped:** Tokens specify allowed access levels (data, functions, etc.)\n- **Cloud-Linked:** Can be associated with cloud account ID for tracking\n- **Client-Identified:** Can include client name for audit logging\n\n**Token Usage:**\n```\n# Obtain token\nTOKEN=$(curl \"http://localhost:19999/api/v3/bearer_get_token?claim_id=...&machine_guid=...&node_id=...\" | jq -r .token)\n\n# Use token in subsequent requests\ncurl -H \"Authorization: Bearer $TOKEN\" http://localhost:19999/api/v3/data?chart=system.cpu\n```\n\n**Security Verification:**\n- **claim_id:** Must match the agent's claim ID (ensures request is for correct agent)\n- **machine_guid:** Must match the agent's machine GUID (hardware verification)\n- **node_id:** Must match the agent's node UUID (persistent identity)\n- All three identifiers must be present and exact matches\n\n**Remote Agent Support:**\n- If requested for a child/remote agent (not localhost), request is forwarded via function call\n- Token is generated on the remote agent with appropriate permissions\n- Response includes remote agent's machine_guid\n\n**Token Expiration:**\n- Tokens have finite lifetime (typically hours)\n- Expired tokens return HTTP 401 Unauthorized\n- Applications should refresh tokens before expiration\n- Expiration time included in response for planning renewal\n\n**Important Notes:**\n- This endpoint typically requires existing authentication (cloud or admin access)\n- Generated token inherits user role and access permissions from requester\n- Tokens are cryptographically secure random UUIDs\n- Response includes current bearer protection state\n- Failed verification attempts do not generate tokens\n- Mismatched identifiers return HTTP 400 Bad Request\n\n**Typical Workflow:**\n1. Netdata Cloud or authorized client calls this endpoint with agent identifiers\n2. Agent verifies claim_id, machine_guid, and node_id all match\n3. Agent generates bearer token with specified role/access/account info\n4. Token and expiration time returned in JSON response\n5. Client includes token in Authorization header for subsequent API calls\n6. Token is validated on each API request until expiration\n7. Client requests new token before expiration to maintain access\n\n**Security & Access Control:**\n- ⚠️ **ACLK-Only API** - This endpoint is ONLY accessible via Netdata Cloud (ACLK connection)\n- **NOT accessible via:** Direct HTTP/HTTPS to agent, local dashboard, or external tools\n- **Authentication:** Requires Netdata Cloud authentication (`SIGNED_ID` + `SAME_SPACE`)\n- **User Requirements:** User must be authenticated and in the same cloud space as the agent\n- **Token Scope:** Generated tokens inherit the requester's role and access permissions\n- **Development Mode:** Can be enabled for testing with `ACL_DEV_OPEN_ACCESS` flag\n",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "api",
+                "v3",
+                "bearer_get_token"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [
+                {
+                  "disabled": false,
+                  "key": "claim_id",
+                  "value": "<string>",
+                  "description": "(Required) **Claim ID of the agent from Netdata Cloud.**\n\nIdentifies which Netdata Cloud space the agent belongs to.\nUsed to verify the token request is for the correct agent.\n\n**Validation:**\n- Must match the agent's current claim ID\n- Request fails with HTTP 400 if claim ID doesn't match\n- Can use `claim_id_matches_any()` for multi-agent parents\n\n**Security:**\n- Prevents token generation for wrong agent\n- Ensures cloud can only get tokens for agents it manages\n- Part of multi-factor agent verification\n\nExample: `claim_id=1234567890abcdef`\n"
+                },
+                {
+                  "disabled": false,
+                  "key": "machine_guid",
+                  "value": "<string>",
+                  "description": "(Required) **Machine GUID of the target agent.**\n\nHardware-based unique identifier for the agent instance.\n\n**Purpose:**\n- Verifies request is for the specific agent instance\n- Prevents token generation for wrong node\n- Must match exactly or request fails\n\n**Where to Find:**\n- Available in `/api/v3/info` response\n- Included in cloud agent registration\n- Stored in agent state files\n\n**Validation:**\n- Compared against host->machine_guid\n- Both claim_id and machine_guid must match\n- node_id also verified for triple authentication\n\nExample: `machine_guid=12345678-1234-1234-1234-123456789abc`\n"
+                },
+                {
+                  "disabled": false,
+                  "key": "node_id",
+                  "value": "<uuid>",
+                  "description": "(Required) **Node UUID of the target agent.**\n\nPersistent unique identifier for the agent node.\n\n**Purpose:**\n- Additional verification layer beyond machine_guid\n- Ensures correct node identification\n- Used in combination with other identifiers\n\n**Characteristics:**\n- More stable than machine_guid\n- Persists across hardware changes\n- Unique across all Netdata installations\n\n**Validation:**\n- Must be non-zero UUID\n- Must match host->node_id exactly\n- Compared in lowercase format\n\nExample: `node_id=23456789-2345-2345-2345-234567890abc`\n"
+                }
+              ],
+              "variable": []
+            },
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "GET",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{bearerToken}}"
+                }
+              ]
+            }
+          },
+          "response": [
+            {
+              "id": "47dc282a-0a41-49eb-a95d-43858be1837f",
+              "name": "Bearer token successfully generated.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "api",
+                    "v3",
+                    "bearer_get_token"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "claim_id",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "machine_guid",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "node_id",
+                      "value": "<uuid>"
+                    }
+                  ],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"status\": 200,\n  \"mg\": \"12345678-1234-1234-1234-123456789abc\",\n  \"bearer_protection\": true,\n  \"token\": \"34567890-3456-3456-3456-345678901234\",\n  \"expiration\": 1704110400\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "67a09f4c-0947-4317-8596-d64ba1f27a6f",
+              "name": "Bad request due to one of the following:\n- claim_id doesn't match any claimed agent\n- machine_guid doesn't match the agent's machine GUID\n- node_id is missing, invalid, or doesn't match\n- Request is for a different agent than the one being called\n",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "api",
+                    "v3",
+                    "bearer_get_token"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "claim_id",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "machine_guid",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "node_id",
+                      "value": "<uuid>"
+                    }
+                  ],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Bad Request",
+              "code": 400,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "text/plain"
+                }
+              ],
+              "body": "",
+              "cookie": [],
+              "_postman_previewlanguage": "text"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "5630f93e-1a86-42d1-81e4-b32c9ff6dc15",
+          "name": "Get current authenticated user information",
+          "request": {
+            "name": "Get current authenticated user information",
+            "description": {
+              "content": "**Current User Authentication Info**\n\nThis endpoint returns information about the currently authenticated user or session. It provides details about the authentication method, user role, access permissions, and associated cloud account if applicable.\n\n**Use Cases:**\n- **Authentication Verification:** Verify that authentication is working and check what method was used\n- **Permission Checking:** Determine what access levels the current session has\n- **Role Discovery:** Find out the user role (admin, manager, viewer, etc.) for authorization decisions\n- **Cloud Integration:** Get cloud account ID for linking with Netdata Cloud features\n- **Client Identification:** Retrieve client name for audit logging or display purposes\n- **Security Auditing:** Log authentication methods and access levels for security reviews\n\n**Authentication Methods:**\n- **cloud:** Authenticated via Netdata Cloud (most common for claimed agents)\n- **bearer:** Authenticated using bearer token (obtained via `/api/v3/bearer_get_token`)\n- **god:** God mode authentication (debug/development builds only)\n- **none:** No authentication (default for unclaimed agents without bearer protection)\n\n**User Roles:**\nRoles determine what operations a user can perform:\n- **admin:** Full administrative access (all operations allowed)\n- **manager:** Management access (most operations allowed, some restrictions)\n- **troubleshooter:** Diagnostic access (read metrics, execute diagnostic functions)\n- **observer:** Read-only access to metrics (no configuration changes)\n- **member:** Basic member access\n- **billing:** Billing-related access\n- **none:** No specific role assigned\n\n**Access Permissions:**\nAccess is a bitmask of allowed operations:\n- **registry:** Can access agent registry features\n- **dashboard:** Can view dashboards\n- **data:** Can query metrics data\n- **functions:** Can execute agent functions\n- **badges:** Can generate badges\n- **mgmt:** Can perform management operations\n- **stream:** Can receive streaming data\n- **SSL_FORCE:** SSL/TLS is required\n- **signed_id:** Has signed/verified identity\n- **sensitive_data:** Can access sensitive configuration data\n\n**Cloud Integration:**\n- **cloud_account_id:** UUID linking session to Netdata Cloud account\n- Present when authenticated via Netdata Cloud\n- Used for tracking and authorization in cloud features\n- Zero UUID (00000000-0000-0000-0000-000000000000) when not cloud-authenticated\n\n**Client Identification:**\n- **client_name:** Human-readable name identifying the client application\n- Examples: \"Netdata Cloud\", \"API Script\", \"Custom Dashboard\"\n- Useful for audit logs and debugging\n- May be empty for anonymous/local access\n\n**Important Notes:**\n- This endpoint always succeeds (returns HTTP 200) even without authentication\n- For unauthenticated requests, auth=\"none\" and minimal permissions returned\n- The response reflects the current session's authentication state\n- Access permissions are cumulative (multiple permissions can be granted)\n- God mode is only available in debug builds with NETDATA_GOD_MODE defined\n- Bearer tokens inherit role and access from the user/cloud account that requested them\n\n**Security Considerations:**\n- Use this endpoint to verify authentication before performing sensitive operations\n- Check both user_role and access permissions for proper authorization\n- Cloud account ID can be used for cross-referencing with cloud audit logs\n- Authentication method indicates security level (cloud/bearer > none)\n\n**Example Responses:**\n\n**Netdata Cloud User:**\n```json\n{\n  \"auth\": \"cloud\",\n  \"cloud_account_id\": \"12345678-1234-1234-1234-123456789abc\",\n  \"client_name\": \"Netdata Cloud\",\n  \"access\": [\"registry\", \"dashboard\", \"data\", \"functions\", \"badges\", \"mgmt\", \"stream\", \"signed_id\"],\n  \"user_role\": \"admin\"\n}\n```\n\n**Bearer Token User:**\n```json\n{\n  \"auth\": \"bearer\",\n  \"cloud_account_id\": \"12345678-1234-1234-1234-123456789abc\",\n  \"client_name\": \"API Client\",\n  \"access\": [\"data\", \"functions\", \"signed_id\"],\n  \"user_role\": \"observer\"\n}\n```\n\n**Unauthenticated Local Access:**\n```json\n{\n  \"auth\": \"none\",\n  \"cloud_account_id\": \"00000000-0000-0000-0000-000000000000\",\n  \"client_name\": \"\",\n  \"access\": [\"registry\", \"dashboard\", \"data\", \"badges\"],\n  \"user_role\": \"none\"\n}\n```\n\n**Security & Access Control:**\n- 🔓 **Always Public API** - This endpoint is always accessible without authentication\n- **No Restrictions:** Not subject to bearer protection or IP-based ACL restrictions\n- **No Authentication:** Cannot be restricted by any configuration\n- **Access:** Available to anyone who can reach the agent's HTTP endpoint\n",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "api",
+                "v3",
+                "me"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": []
+            },
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "GET",
+            "auth": null
+          },
+          "response": [
+            {
+              "id": "b2cf30bd-6168-4d64-98d6-096fc3b54467",
+              "name": "Current user information successfully retrieved.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "api",
+                    "v3",
+                    "me"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"auth\": \"cloud\",\n  \"cloud_account_id\": \"12345678-1234-1234-1234-123456789abc\",\n  \"client_name\": \"Netdata Cloud\",\n  \"access\": [\n    \"registry\",\n    \"dashboard\",\n    \"data\",\n    \"functions\",\n    \"badges\",\n    \"mgmt\",\n    \"stream\",\n    \"signed_id\"\n  ],\n  \"user_role\": \"admin\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "86463372-5916-4e12-9892-ce0b3b2370d7",
+          "name": "OBSOLETE: Enable/disable bearer authentication (use /api/v3/bearer_protection instead)",
+          "request": {
+            "name": "OBSOLETE: Enable/disable bearer authentication (use /api/v3/bearer_protection instead)",
+            "description": {
+              "content": "**⚠️ OBSOLETE API - Will be removed in future versions**\n\nThis endpoint is deprecated. Use `/api/v3/bearer_protection` instead, which provides the same functionality.\n\n**Migration:** Replace `/api/v2/bearer_protection` with `/api/v3/bearer_protection` in all API calls.\n\nControls whether agent requires bearer token authentication for API access.\nUsed by Netdata Cloud to secure agents after claiming.\n\n**Security & Access Control:**\n- ⚠️ **ACLK-Only API** - Accessible only via Netdata Cloud (ACLK connection)\n- Requires elevated permissions (Admin/Manager role)\n- Same access requirements as v3 version\n",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "api",
+                "v2",
+                "bearer_protection"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [
+                {
+                  "disabled": false,
+                  "key": "bearer_protection",
+                  "value": "<string>",
+                  "description": "Enable or disable bearer protection"
+                },
+                {
+                  "disabled": false,
+                  "key": "claim_id",
+                  "value": "<string>",
+                  "description": "(Required) Agent's claim ID"
+                },
+                {
+                  "disabled": false,
+                  "key": "machine_guid",
+                  "value": "<string>",
+                  "description": "(Required) Agent's machine GUID"
+                },
+                {
+                  "disabled": false,
+                  "key": "node_id",
+                  "value": "<uuid>",
+                  "description": "(Required) Agent's node UUID"
+                }
+              ],
+              "variable": []
+            },
+            "method": "GET",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{bearerToken}}"
+                }
+              ]
+            }
+          },
+          "response": [
+            {
+              "id": "4cda54c1-3c4e-4115-bf43-5f08d1ae0873",
+              "name": "Bearer protection state successfully changed",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "api",
+                    "v2",
+                    "bearer_protection"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "bearer_protection",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "claim_id",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "machine_guid",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "node_id",
+                      "value": "<uuid>"
+                    }
+                  ],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "text/plain"
+                }
+              ],
+              "body": "",
+              "cookie": [],
+              "_postman_previewlanguage": "text"
+            },
+            {
+              "id": "de4836cf-ea13-44f5-9b7e-49017a62b876",
+              "name": "Invalid parameters or verification failed",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "api",
+                    "v2",
+                    "bearer_protection"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "bearer_protection",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "claim_id",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "machine_guid",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "node_id",
+                      "value": "<uuid>"
+                    }
+                  ],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Bad Request",
+              "code": 400,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "text/plain"
+                }
+              ],
+              "body": "",
+              "cookie": [],
+              "_postman_previewlanguage": "text"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "df85c36e-26e5-46f3-9d33-44945f52ffdc",
+          "name": "OBSOLETE: Get bearer authentication token (use /api/v3/bearer_get_token instead)",
+          "request": {
+            "name": "OBSOLETE: Get bearer authentication token (use /api/v3/bearer_get_token instead)",
+            "description": {
+              "content": "**⚠️ OBSOLETE API - Will be removed in future versions**\n\nThis endpoint is deprecated. Use `/api/v3/bearer_get_token` instead, which provides the same functionality.\n\n**Migration:** Replace `/api/v2/bearer_get_token` with `/api/v3/bearer_get_token` in all API calls.\n\nGenerates time-limited bearer token for authenticating API requests when bearer protection is enabled.\n\n**Security & Access Control:**\n- ⚠️ **ACLK-Only API** - Accessible only via Netdata Cloud (ACLK connection)\n- Same access requirements as v3 version\n",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "api",
+                "v2",
+                "bearer_get_token"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [
+                {
+                  "disabled": false,
+                  "key": "claim_id",
+                  "value": "<string>",
+                  "description": "(Required) Agent's claim ID"
+                },
+                {
+                  "disabled": false,
+                  "key": "machine_guid",
+                  "value": "<string>",
+                  "description": "(Required) Agent's machine GUID"
+                },
+                {
+                  "disabled": false,
+                  "key": "node_id",
+                  "value": "<uuid>",
+                  "description": "(Required) Agent's node UUID"
+                }
+              ],
+              "variable": []
+            },
+            "method": "GET",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{bearerToken}}"
+                }
+              ]
+            }
+          },
+          "response": [
+            {
+              "id": "6c22d1d9-dcdb-4459-b831-448c89817b1e",
+              "name": "Bearer token successfully generated",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "api",
+                    "v2",
+                    "bearer_get_token"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "claim_id",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "machine_guid",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "node_id",
+                      "value": "<uuid>"
+                    }
+                  ],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "text/plain"
+                }
+              ],
+              "body": "",
+              "cookie": [],
+              "_postman_previewlanguage": "text"
+            },
+            {
+              "id": "d6cac8d0-66ab-4be9-84de-1b696721b159",
+              "name": "Invalid parameters or verification failed",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "api",
+                    "v2",
+                    "bearer_get_token"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "claim_id",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "machine_guid",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "node_id",
+                      "value": "<uuid>"
+                    }
+                  ],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Bad Request",
+              "code": 400,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "text/plain"
+                }
+              ],
+              "body": "",
+              "cookie": [],
+              "_postman_previewlanguage": "text"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        }
+      ],
+      "event": []
+    }
+  ],
+  "event": [],
+  "variable": [
+    {
+      "type": "string",
+      "value": "https://registry.my-netdata.io",
+      "key": "baseUrl"
+    }
+  ],
+  "info": {
+    "_postman_id": "40b0de19-d1d3-4a21-8237-ec4acde884fd",
+    "name": "Netdata agent authentication API",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "description": {
+      "content": "Real-time performance and health monitoring.\n\n## API Versions\n\nNetdata provides three API versions:\n- **v1**: The original API, focused on single-node operations\n- **v2**: Multi-node API with advanced grouping and aggregation capabilities\n- **v3**: The latest API version that combines v1 and v2 endpoints and may include additional features\n\n### v3 API Endpoints\n\nThe v3 API provides the current, actively maintained endpoints:\n- `/api/v3/data` - Multi-dimensional data queries\n- `/api/v3/weights` - Metric scoring/correlation\n- `/api/v3/contexts` - Context metadata\n- `/api/v3/nodes` - Node information\n- `/api/v3/q` - Full-text search\n- `/api/v3/alerts` - Alert information\n- `/api/v3/alert_transitions` - Alert state transitions\n- `/api/v3/alert_config` - Alert configuration\n- `/api/v3/functions` - Available functions\n- `/api/v3/function` - Execute functions\n- `/api/v3/info` - Agent information\n- `/api/v3/node_instances` - Node instance information\n- `/api/v3/stream_path` - Streaming topology\n- `/api/v3/versions` - Version information\n- `/api/v3/badge.svg` - Dynamic badges\n- `/api/v3/allmetrics` - Export metrics\n- `/api/v3/context` - Single context info\n- `/api/v3/variable` - Variable information\n- `/api/v3/config` - Dynamic configuration\n- `/api/v3/settings` - Agent settings\n- `/api/v3/me` - Current user information\n- `/api/v3/claim` - Agent claiming\n- Additional management and streaming endpoints\n\n**Note:** V1 and V2 APIs are deprecated and maintained for backwards compatibility only. New integrations should use V3 exclusively.\n\n\nContact Support:\n Name: Netdata Agent API\n Email: info@netdata.cloud",
+      "type": "text/plain"
+    }
+  }
+}

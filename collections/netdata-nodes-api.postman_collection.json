@@ -1,0 +1,1403 @@
+{
+  "item": [
+    {
+      "id": "663a01e8-6fea-449e-8a71-c1f61901bd62",
+      "name": "nodes",
+      "description": {
+        "content": "Everything related to monitored nodes",
+        "type": "text/plain"
+      },
+      "item": [
+        {
+          "id": "d86fd2aa-13ab-4a64-973f-220d594d60a7",
+          "name": "Nodes Info v2",
+          "request": {
+            "name": "Nodes Info v2",
+            "description": {
+              "content": "Get a list of all nodes hosted by this Netdata Agent.\n\n**Security & Access Control:**\n- 📊 **Public Data API** - Bearer token optional, IP-based ACL restrictions apply\n- **Default Access:** Public (no authentication required)\n- **Bearer Protection:** When enabled via `/api/v3/bearer_protection`, requires bearer token\n- **IP Restrictions:** Subject to `allow dashboard from` in netdata.conf\n- **Access Methods:** Direct HTTP/HTTPS, Netdata Cloud, external tools\n",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "api",
+                "v2",
+                "nodes"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [
+                {
+                  "disabled": false,
+                  "key": "scope_nodes",
+                  "value": "*",
+                  "description": "A simple pattern limiting the nodes scope of the query. The scope controls both data and metadata response. The simple pattern is checked against the nodes' machine guid, node id and hostname. The default nodes scope is all nodes for which this Agent has data for. Usually the nodes scope is used to slice the entire dashboard (e.g. the Global Nodes Selector at the Netdata Cloud overview dashboard). Both positive and negative simple pattern expressions are supported.\n"
+                },
+                {
+                  "disabled": false,
+                  "key": "scope_contexts",
+                  "value": "*",
+                  "description": "A simple pattern limiting the contexts scope of the query. The scope controls both data and metadata response. The default contexts scope is all contexts for which this Agent has data for. Usually the contexts scope is used to slice data on the dashboard (e.g. each context based chart has its own contexts scope, limiting the chart to all the instances of the selected context). Both positive and negative simple pattern expressions are supported.\n"
+                },
+                {
+                  "disabled": false,
+                  "key": "nodes",
+                  "value": "*",
+                  "description": "A simple pattern matching the nodes to be queried. This only controls the data response, not the metadata. The simple pattern is checked against the nodes' machine guid, node id, hostname. The default nodes selector is all the nodes matched by the nodes scope. Both positive and negative simple pattern expressions are supported.\n"
+                },
+                {
+                  "disabled": false,
+                  "key": "contexts",
+                  "value": "*",
+                  "description": "A simple pattern matching the contexts to be queried. This only controls the data response, not the metadata. Both positive and negative simple pattern expressions are supported.\n"
+                }
+              ],
+              "variable": []
+            },
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "GET",
+            "auth": {
+              "type": "noauth"
+            }
+          },
+          "response": [
+            {
+              "id": "e947cbe3-eda8-4deb-9fc5-0f3eb324462a",
+              "name": "OK",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "api",
+                    "v2",
+                    "nodes"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "scope_nodes",
+                      "value": "*"
+                    },
+                    {
+                      "key": "scope_contexts",
+                      "value": "*"
+                    },
+                    {
+                      "key": "nodes",
+                      "value": "*"
+                    },
+                    {
+                      "key": "contexts",
+                      "value": "*"
+                    }
+                  ],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"api\": 343,\n  \"agents\": [\n    {\n      \"mg\": \"9b4de076-f393-82c2-0c2f-2e33cc96b03b\",\n      \"nd\": \"86b54626-94d9-6ada-4f61-cd4222db8523\",\n      \"nm\": \"string\",\n      \"ai\": 6135,\n      \"now\": 1738\n    },\n    {\n      \"mg\": \"2ccfb239-ad3b-4cc0-330c-390d0f121870\",\n      \"nd\": \"ddee60d8-a809-dcc0-9002-7ae3718d76c4\",\n      \"nm\": \"string\",\n      \"ai\": 3770,\n      \"now\": 9181\n    }\n  ],\n  \"versions\": {\n    \"nodes_hard_hash\": 9224,\n    \"contexts_hard_hash\": 5690,\n    \"contexts_soft_hash\": 1801,\n    \"alerts_hard_hash\": 5995,\n    \"alerts_soft_hash\": 3043\n  },\n  \"nodes\": [\n    {\n      \"ni\": 5138,\n      \"st\": {\n        \"ai\": 7684,\n        \"code\": 2396,\n        \"msg\": \"string\",\n        \"ms\": 8115.935533920608\n      },\n      \"mg\": \"string\",\n      \"nd\": \"string\",\n      \"nm\": \"string\",\n      \"version\": \"string\",\n      \"hops\": 8781,\n      \"state\": \"reachable\"\n    },\n    {\n      \"ni\": 6664,\n      \"st\": {\n        \"ai\": 5488,\n        \"code\": 1716,\n        \"msg\": \"string\",\n        \"ms\": 9118.944193620213\n      },\n      \"mg\": \"string\",\n      \"nd\": \"string\",\n      \"nm\": \"string\",\n      \"version\": \"string\",\n      \"hops\": 5946,\n      \"state\": \"stale\"\n    }\n  ]\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "3dfd0739-5799-4480-8a21-b575ff1983d1",
+          "name": "Nodes Info v3",
+          "request": {
+            "name": "Nodes Info v3",
+            "description": {
+              "content": "Get a list of all nodes hosted by this Netdata Agent.\n\n**Security & Access Control:**\n- 📊 **Public Data API** - Bearer token optional, IP-based ACL restrictions apply\n- **Default Access:** Public (no authentication required)\n- **Bearer Protection:** When enabled via `/api/v3/bearer_protection`, requires bearer token\n- **IP Restrictions:** Subject to `allow dashboard from` in netdata.conf\n- **Access Methods:** Direct HTTP/HTTPS, Netdata Cloud, external tools\n",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "api",
+                "v3",
+                "nodes"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [
+                {
+                  "disabled": false,
+                  "key": "scope_nodes",
+                  "value": "*",
+                  "description": "A simple pattern limiting the nodes scope of the query. The scope controls both data and metadata response. The simple pattern is checked against the nodes' machine guid, node id and hostname. The default nodes scope is all nodes for which this Agent has data for. Usually the nodes scope is used to slice the entire dashboard (e.g. the Global Nodes Selector at the Netdata Cloud overview dashboard). Both positive and negative simple pattern expressions are supported.\n"
+                },
+                {
+                  "disabled": false,
+                  "key": "scope_contexts",
+                  "value": "*",
+                  "description": "A simple pattern limiting the contexts scope of the query. The scope controls both data and metadata response. The default contexts scope is all contexts for which this Agent has data for. Usually the contexts scope is used to slice data on the dashboard (e.g. each context based chart has its own contexts scope, limiting the chart to all the instances of the selected context). Both positive and negative simple pattern expressions are supported.\n"
+                },
+                {
+                  "disabled": false,
+                  "key": "nodes",
+                  "value": "*",
+                  "description": "A simple pattern matching the nodes to be queried. This only controls the data response, not the metadata. The simple pattern is checked against the nodes' machine guid, node id, hostname. The default nodes selector is all the nodes matched by the nodes scope. Both positive and negative simple pattern expressions are supported.\n"
+                },
+                {
+                  "disabled": false,
+                  "key": "contexts",
+                  "value": "*",
+                  "description": "A simple pattern matching the contexts to be queried. This only controls the data response, not the metadata. Both positive and negative simple pattern expressions are supported.\n"
+                }
+              ],
+              "variable": []
+            },
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "GET",
+            "auth": {
+              "type": "noauth"
+            }
+          },
+          "response": [
+            {
+              "id": "7ca1926a-be57-4850-9164-617560ea4384",
+              "name": "OK",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "api",
+                    "v3",
+                    "nodes"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "scope_nodes",
+                      "value": "*"
+                    },
+                    {
+                      "key": "scope_contexts",
+                      "value": "*"
+                    },
+                    {
+                      "key": "nodes",
+                      "value": "*"
+                    },
+                    {
+                      "key": "contexts",
+                      "value": "*"
+                    }
+                  ],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"api\": 5905,\n  \"agents\": [\n    {\n      \"mg\": \"385dcb3c-1869-31d1-5f8f-9d2cf8cd9abb\",\n      \"nd\": \"53f9f93c-79a9-fd4f-0a71-c26f415ab49f\",\n      \"nm\": \"string\",\n      \"ai\": 7983,\n      \"now\": 3425\n    },\n    {\n      \"mg\": \"67afdbeb-d065-b468-3c79-dfb10ba671fe\",\n      \"nd\": \"6d6d3a39-4396-bb31-955f-7ab47f640b3b\",\n      \"nm\": \"string\",\n      \"ai\": 7787,\n      \"now\": 137\n    }\n  ],\n  \"versions\": {\n    \"nodes_hard_hash\": 8891,\n    \"contexts_hard_hash\": 4018,\n    \"contexts_soft_hash\": 8207,\n    \"alerts_hard_hash\": 3478,\n    \"alerts_soft_hash\": 2434\n  },\n  \"nodes\": [\n    {\n      \"ni\": 3714,\n      \"st\": {\n        \"ai\": 4524,\n        \"code\": 4944,\n        \"msg\": \"string\",\n        \"ms\": 6495.764397645097\n      },\n      \"mg\": \"string\",\n      \"nd\": \"string\",\n      \"nm\": \"string\",\n      \"version\": \"string\",\n      \"hops\": 5542,\n      \"state\": \"offline\"\n    },\n    {\n      \"ni\": 987,\n      \"st\": {\n        \"ai\": 3316,\n        \"code\": 4049,\n        \"msg\": \"string\",\n        \"ms\": 1067.3693022230568\n      },\n      \"mg\": \"string\",\n      \"nd\": \"string\",\n      \"nm\": \"string\",\n      \"version\": \"string\",\n      \"hops\": 2103,\n      \"state\": \"stale\"\n    }\n  ]\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "c4668dc0-014c-42c4-ab50-867336d80967",
+          "name": "Node Info v1",
+          "request": {
+            "name": "Node Info v1",
+            "description": {
+              "content": "The info endpoint returns basic information about netdata. It provides:\n* netdata version\n* netdata unique id\n* list of hosts mirrored (includes itself)\n* Operating System, Virtualization, K8s nodes and Container technology information\n* List of active collector plugins and modules\n* Streaming information\n* number of alarms in the host\n  * number of alarms in normal state\n  * number of alarms in warning state\n  * number of alarms in critical state\n\n**Security & Access Control:**\n- 📊 **Public Data API** - Bearer token optional, IP-based ACL restrictions apply\n- **Default Access:** Public (no authentication required)\n- **Bearer Protection:** When enabled via `/api/v3/bearer_protection`, requires bearer token\n- **IP Restrictions:** Subject to `allow dashboard from` in netdata.conf\n- **Access Methods:** Direct HTTP/HTTPS, Netdata Cloud, external tools\n",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "api",
+                "v1",
+                "info"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": []
+            },
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "GET",
+            "auth": {
+              "type": "noauth"
+            }
+          },
+          "response": [
+            {
+              "id": "b37b82fb-4b28-4c23-b0f2-3aa12998a17d",
+              "name": "netdata basic information.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "api",
+                    "v1",
+                    "info"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"version\": \"1.11.1_rolling\",\n  \"uid\": \"24e9fe3c-f2ac-11e8-bafc-0242ac110002\",\n  \"mirrored_hosts\": [\n    \"host1.example.com\",\n    \"host2.example.com\"\n  ],\n  \"mirrored_hosts_status\": [\n    {\n      \"guid\": \"245e4bff-3b34-47c1-a6e5-5c535a9abfb2\",\n      \"reachable\": false,\n      \"claim_id\": \"c3b2a66a-3052-498c-ac52-7fe9e8cccb0c\"\n    },\n    {\n      \"guid\": \"245e4bff-3b34-47c1-a6e5-5c535a9abfb2\",\n      \"reachable\": true,\n      \"claim_id\": \"c3b2a66a-3052-498c-ac52-7fe9e8cccb0c\"\n    }\n  ],\n  \"os_name\": \"Manjaro Linux\",\n  \"os_id\": \"manjaro\",\n  \"os_id_like\": \"arch\",\n  \"os_version\": \"18.0.4\",\n  \"os_version_id\": \"unknown\",\n  \"os_detection\": \"Mixed\",\n  \"kernel_name\": \"Linux\",\n  \"kernel_version\": \"4.19.32-1-MANJARO\",\n  \"is_k8s_node\": false,\n  \"architecture\": \"x86_64\",\n  \"virtualization\": \"kvm\",\n  \"virt_detection\": \"systemd-detect-virt\",\n  \"container\": \"docker\",\n  \"container_detection\": \"dockerenv\",\n  \"stream_compression\": true,\n  \"labels\": {\n    \"app\": \"netdata\"\n  },\n  \"collectors\": [\n    {\n      \"plugin\": \"python.d.plugin\",\n      \"module\": \"dockerd\"\n    },\n    {\n      \"plugin\": \"python.d.plugin\",\n      \"module\": \"dockerd\"\n    }\n  ],\n  \"alarms\": {\n    \"normal\": 9080,\n    \"warning\": 6527,\n    \"critical\": 7542\n  }\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "e73fbfc6-02c9-4647-9674-a7755e24a16b",
+              "name": "netdata daemon not ready (used for health checks).",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "api",
+                    "v1",
+                    "info"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Service Unavailable",
+              "code": 503,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "text/plain"
+                }
+              ],
+              "body": "",
+              "cookie": [],
+              "_postman_previewlanguage": "text"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "a48e0357-c1b8-4bb0-b160-f49a5940de63",
+          "name": "Retrieve detailed Netdata agent information across all nodes",
+          "request": {
+            "name": "Retrieve detailed Netdata agent information across all nodes",
+            "description": {
+              "content": "Returns comprehensive information about Netdata agents running across the monitored infrastructure. This endpoint provides detailed metadata about each agent including version information, capabilities, collection status, and system configuration.\n\n**What is Netdata Agent Information?**\nThe `info` endpoint provides detailed metadata about the Netdata monitoring agent itself, including:\n- Agent version and build information\n- System capabilities and features enabled\n- Collection status and health\n- Host configuration and labels\n- Database information (storage, retention)\n- Plugin and collector status\n- Operating system details\n- Hardware information\n\n**Difference from /api/v3/nodes:**\n- **`/api/v3/nodes`:** Returns lightweight node list with basic identification\n- **`/api/v3/info`:** Returns comprehensive agent details with full capabilities and configuration\n\n**Multi-Node Support:**\nWhen queried on a Netdata Parent, this endpoint can return information for:\n- The parent agent itself\n- All child agents (streaming to the parent)\n- Filtered subsets using scope_nodes/nodes parameters\n\n**Use Cases:**\n- **Infrastructure Inventory:** Complete catalog of all Netdata installations\n- **Version Audits:** Find agents that need updates\n- **Capability Discovery:** What features are available on each node\n- **Health Monitoring:** Verify agent collection status\n- **Configuration Management:** Understand how agents are configured\n- **Troubleshooting:** Diagnose agent-specific issues\n- **License/Compliance:** Track Netdata deployments\n\n**Information Categories:**\n\n**1. Agent Identity:**\n- Unique agent ID (machine_guid)\n- Hostname\n- Agent version and commit\n- Build information\n\n**2. System Information:**\n- Operating system and kernel\n- CPU architecture\n- Virtualization platform\n- Container runtime (if applicable)\n\n**3. Database & Storage:**\n- Database mode (dbengine, ram, alloc)\n- Retention period\n- Storage capacity\n- Disk space usage\n\n**4. Features & Capabilities:**\n- ML/anomaly detection status\n- ACLK (cloud connection) status\n- Streaming capabilities\n- Available collectors\n\n**5. Collection Status:**\n- Number of charts collecting\n- Number of dimensions\n- Collection frequency\n- Last collection timestamp\n\n**6. Host Labels:**\n- Custom labels assigned to the host\n- Automatic labels (OS, architecture, etc.)\n- Cloud provider information (if detected)\n\n**Performance Characteristics:**\n- Fast query (primarily metadata lookups)\n- No time-series data processing\n- Results can be cached for reasonable duration\n- Supports filtering by node patterns\n\n**Example Usage:**\n```\n# Get info for all nodes\nGET /api/v3/info\n\n# Get info for specific nodes\nGET /api/v3/info?nodes=web-server-01,db-server-01\n\n# Get info for nodes matching pattern\nGET /api/v3/info?scope_nodes=prod-*\n\n# Include specific options\nGET /api/v3/info?options=full\n```\n\n**Response Format:**\nReturns JSON with agent information grouped by node, including complete details about each agent's capabilities, configuration, and current status.\n\n**Security & Access Control:**\n- 🔓 **Always Public API** - This endpoint is always accessible without authentication\n- **No Restrictions:** Not subject to bearer protection or IP-based ACL restrictions\n- **No Authentication:** Cannot be restricted by any configuration\n- **Access:** Available to anyone who can reach the agent's HTTP endpoint\n",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "api",
+                "v3",
+                "info"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [
+                {
+                  "disabled": false,
+                  "key": "scope_nodes",
+                  "value": "<string>",
+                  "description": "Filter to specific nodes using simple pattern matching.\n\n**Pattern Syntax:**\n- `*` matches any characters\n- Space-separated list for multiple patterns\n- `!` prefix to exclude\n- Combine with: `web* !web-test*`\n\n**Examples:**\n- `scope_nodes=web*` - All web servers\n- `scope_nodes=prod-*` - All production nodes\n- `scope_nodes=* !test*` - All except test nodes\n\n**Use Cases:**\n- Focus on specific infrastructure tiers\n- Exclude development/test environments\n- Group by naming conventions\n\nWhen not specified, returns info for all nodes.\n"
+                },
+                {
+                  "disabled": false,
+                  "key": "nodes",
+                  "value": "<string>",
+                  "description": "Filter to specific nodes by exact names.\n\nUnlike `scope_nodes`, this requires exact node names (no patterns).\n\n**Format:** Comma or pipe-separated list\n\n**Examples:**\n- `nodes=web-server-01` - Single node\n- `nodes=web-server-01,db-server-01` - Multiple nodes\n- `nodes=web-01|web-02` - Pipe separator\n\n**Best Practice:**\n- Use `nodes` when you know exact names\n- Use `scope_nodes` for pattern-based filtering\n\nWhen not specified, returns info for all nodes matching scope_nodes.\n"
+                },
+                {
+                  "disabled": false,
+                  "key": "options",
+                  "value": "<string>",
+                  "description": "Control the level of detail and what information to include in the response.\n\n**Available Options:**\n- `full` or `all` - Include all available information\n- `labels` - Include host labels\n- `uuids` - Include UUIDs and identifiers\n- `deleted` - Include information about deleted/offline nodes\n- `hidden` - Include hidden agents\n\n**Examples:**\n- `options=full` - Complete information\n- `options=labels,uuids` - Labels and identifiers\n- `options=labels|uuids` - Pipe separator also works\n\n**Default Behavior:**\nWhen not specified, returns standard information without deleted/hidden nodes and without excessive detail.\n\n**Use Cases:**\n- Inventory systems need `full` detail\n- Label-based filtering needs `labels`\n- Historical analysis may need `deleted`\n"
+                },
+                {
+                  "disabled": false,
+                  "key": "after",
+                  "value": "-600",
+                  "description": "`after` and `before` define the time-frame of a query. `after` can be a negative number of seconds, up to 3 years (-94608000), relative to `before`. If not set, it is usually assumed to be -600. When non-data endpoints support the `after` and `before`, they use the time-frame to limit their response for objects having data retention within the time-frame given.\n"
+                },
+                {
+                  "disabled": false,
+                  "key": "before",
+                  "value": "0",
+                  "description": "`after` and `before` define the time-frame of a query. `before` can be a negative number of seconds, up to 3 years (-94608000), relative to current clock. If not set, it is assumed to be the current clock time. When `before` is positive, it is assumed to be a unix epoch timestamp. When non-data endpoints support the `after` and `before`, they use the time-frame to limit their response for objects having data retention within the time-frame given.\n"
+                },
+                {
+                  "disabled": false,
+                  "key": "timeout",
+                  "value": "<long>",
+                  "description": "Maximum time in milliseconds to wait for the query to complete.\n\n**Format:** Integer (milliseconds)\n\n**Default:** Server default timeout\n\n**Example:**\n- `timeout=30000` - 30 second timeout\n\nFor agent info queries, timeouts are rarely needed as this is a fast metadata-only operation. However, on very large multi-node setups, you may want to limit query time.\n"
+                },
+                {
+                  "disabled": false,
+                  "key": "cardinality",
+                  "value": "<integer>",
+                  "description": "Limit the number of nodes returned.\n\n**Format:** Integer (maximum nodes)\n\n**Default:** No limit\n\n**Example:**\n- `cardinality=100` - Return at most 100 nodes\n\n**Use Cases:**\n- Prevent huge responses in very large infrastructures\n- Get a sample of nodes for testing\n- Dashboard widgets with limited display space\n\nWhen exceeded, response indicates how many nodes were omitted.\n"
+                }
+              ],
+              "variable": []
+            },
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "GET",
+            "auth": null
+          },
+          "response": [
+            {
+              "id": "8e430d6f-55ee-430d-b9e4-07327939a040",
+              "name": "Success. Returns detailed Netdata agent information.\n\n**Response Structure:**\nThe response is a JSON object containing comprehensive agent information grouped by node.\n\n**Top-Level Structure:**\n- `agents`: Array of agent information objects, one per node\n\n**Per-Agent Information Includes:**\n\n**1. Identity:**\n- `machine_guid`: Unique agent identifier (UUID)\n- `hostname`: Node hostname\n- `agent_version`: Netdata version string\n- `agent_commit`: Git commit hash of build\n\n**2. System Information:**\n- `os_name`: Operating system name\n- `os_version`: OS version\n- `kernel_name`: Kernel name\n- `kernel_version`: Kernel version\n- `architecture`: CPU architecture (x86_64, aarch64, etc.)\n- `virtualization`: Virtualization platform (if any)\n- `container`: Container runtime (Docker, LXC, etc.)\n- `container_detection`: How container was detected\n\n**3. Database & Storage:**\n- `database_mode`: Storage mode (dbengine, ram, alloc, none)\n- `database_retention`: Data retention period in seconds\n- `database_size`: Current database size in bytes\n- `page_cache_size`: Page cache size\n- `metrics_stored`: Number of unique metrics\n\n**4. Features & Capabilities:**\n- `ml_enabled`: Machine learning / anomaly detection enabled\n- `ml_models_running`: Number of ML models active\n- `aclk_available`: Cloud connectivity available\n- `aclk_status`: Cloud connection status\n- `stream_compression`: Streaming compression supported\n- `web_enabled`: Web server enabled\n\n**5. Collection Status:**\n- `charts_count`: Number of charts being collected\n- `dimensions_count`: Number of dimensions (time-series)\n- `collectors_count`: Number of active collectors\n- `update_every`: Collection frequency in seconds\n- `history`: Retention in seconds\n- `memory_mode`: Memory storage mode\n\n**6. Host Labels:**\n- `host_labels`: Object containing all host labels\n  - Includes automatic labels (_os_name, _architecture, etc.)\n  - Includes custom labels assigned by user\n  - May include cloud provider labels\n\n**7. Timestamps:**\n- `first_time_t`: Timestamp of oldest data point\n- `last_time_t`: Timestamp of newest data point\n- `now`: Current server time\n\n**8. Streaming Information (if applicable):**\n- `stream_status`: Streaming status (parent/child)\n- `stream_parents`: Parent nodes (if child)\n- `stream_children`: Child nodes (if parent)\n\n**Example Response Structure:**\n```json\n{\n  \"agents\": [\n    {\n      \"machine_guid\": \"550e8400-e29b-41d4-a716-446655440000\",\n      \"hostname\": \"web-server-01\",\n      \"agent_version\": \"v1.40.0\",\n      \"os_name\": \"ubuntu\",\n      \"os_version\": \"22.04\",\n      \"kernel_version\": \"5.15.0\",\n      \"architecture\": \"x86_64\",\n      \"database_mode\": \"dbengine\",\n      \"database_retention\": 86400,\n      \"ml_enabled\": true,\n      \"charts_count\": 425,\n      \"dimensions_count\": 2850,\n      \"update_every\": 1,\n      \"host_labels\": {\n        \"_os_name\": \"ubuntu\",\n        \"_architecture\": \"x86_64\",\n        \"environment\": \"production\",\n        \"tier\": \"web\"\n      }\n    }\n  ]\n}\n```\n\n**Response Characteristics:**\n- Content-Type: application/json\n- Can be cached (agent info changes infrequently)\n- Complete metadata without time-series data\n- Lightweight and fast to generate\n\n**Filtering:**\nResponse respects scope_nodes/nodes filters and cardinality limits.\n",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "api",
+                    "v3",
+                    "info"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "scope_nodes",
+                      "value": "prod-*"
+                    },
+                    {
+                      "key": "nodes",
+                      "value": "web-server-01,db-server-01"
+                    },
+                    {
+                      "key": "options",
+                      "value": "full,labels"
+                    },
+                    {
+                      "key": "after",
+                      "value": "-600"
+                    },
+                    {
+                      "key": "before",
+                      "value": "0"
+                    },
+                    {
+                      "key": "timeout",
+                      "value": "30000"
+                    },
+                    {
+                      "key": "cardinality",
+                      "value": "100"
+                    }
+                  ],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "bcd225d5-751b-43d9-876a-bfbcde65f7f2",
+              "name": "Bad request. Common causes:\n- Invalid parameter values\n- Malformed filter patterns\n",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "api",
+                    "v3",
+                    "info"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "scope_nodes",
+                      "value": "prod-*"
+                    },
+                    {
+                      "key": "nodes",
+                      "value": "web-server-01,db-server-01"
+                    },
+                    {
+                      "key": "options",
+                      "value": "full,labels"
+                    },
+                    {
+                      "key": "after",
+                      "value": "-600"
+                    },
+                    {
+                      "key": "before",
+                      "value": "0"
+                    },
+                    {
+                      "key": "timeout",
+                      "value": "30000"
+                    },
+                    {
+                      "key": "cardinality",
+                      "value": "100"
+                    }
+                  ],
+                  "variable": []
+                },
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Bad Request",
+              "code": 400,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "text/plain"
+                }
+              ],
+              "body": "",
+              "cookie": [],
+              "_postman_previewlanguage": "text"
+            },
+            {
+              "id": "d76c4656-ad43-480d-807a-3d55883755da",
+              "name": "Internal server error during info retrieval.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "api",
+                    "v3",
+                    "info"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "scope_nodes",
+                      "value": "prod-*"
+                    },
+                    {
+                      "key": "nodes",
+                      "value": "web-server-01,db-server-01"
+                    },
+                    {
+                      "key": "options",
+                      "value": "full,labels"
+                    },
+                    {
+                      "key": "after",
+                      "value": "-600"
+                    },
+                    {
+                      "key": "before",
+                      "value": "0"
+                    },
+                    {
+                      "key": "timeout",
+                      "value": "30000"
+                    },
+                    {
+                      "key": "cardinality",
+                      "value": "100"
+                    }
+                  ],
+                  "variable": []
+                },
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Internal Server Error",
+              "code": 500,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "text/plain"
+                }
+              ],
+              "body": "",
+              "cookie": [],
+              "_postman_previewlanguage": "text"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "9a4a1b38-82bd-4789-988b-8ae8f0bbb76d",
+          "name": "Retrieve chart instances organized by node across the infrastructure",
+          "request": {
+            "name": "Retrieve chart instances organized by node across the infrastructure",
+            "description": {
+              "content": "Returns information about all chart instances grouped by node. This endpoint provides a comprehensive view of what metrics are being collected on each node, organized by chart instances.\n\n**What are Node Instances?**\nNode instances represent the specific chart instances (individual monitoring targets) on each node:\n- Each node may have multiple instances of the same chart type\n- Examples: Multiple disks (sda, sdb, sdc), multiple network interfaces (eth0, eth1)\n- Instances represent the specific entities being monitored\n\n**Example:**\nFor disk monitoring:\n- Node: `web-server-01`\n  - Instances: `disk.sda`, `disk.sdb`, `disk.nvme0n1`\n- Node: `db-server-01`\n  - Instances: `disk.sda`, `disk.sdb`\n\n**Difference from Other Endpoints:**\n- **`/api/v3/nodes`:** Returns lightweight node list\n- **`/api/v3/info`:** Returns detailed agent information\n- **`/api/v3/node_instances`:** Returns what chart instances each node has (what's being monitored)\n- **`/api/v3/contexts`:** Returns contexts aggregated across all nodes\n\n**Use Cases:**\n- **Infrastructure Discovery:** What devices/services are monitored on each node\n- **Capacity Planning:** Understand monitoring coverage per node\n- **Configuration Verification:** Verify expected charts are collecting\n- **Collector Status:** See which collectors are active per node\n- **Instance Inventory:** Complete catalog of monitored entities\n- **Troubleshooting:** Find which nodes monitor specific instances\n\n**Response Organization:**\nResults are organized hierarchically:\n1. **By Node:** Top-level grouping by node hostname\n2. **By Context:** Charts grouped by their context (e.g., disk.space)\n3. **By Instance:** Individual chart instances within each context\n\n**Performance Characteristics:**\n- Medium query cost (metadata aggregation across nodes)\n- Response size grows with number of nodes and instances\n- Can be filtered to reduce response size\n- Results can be cached (instances change infrequently)\n\n**Example Query Patterns:**\n```\n# Get all instances across all nodes\nGET /api/v3/node_instances\n\n# Get instances for specific nodes\nGET /api/v3/node_instances?nodes=web-server-01,db-server-01\n\n# Get instances for nodes matching pattern\nGET /api/v3/node_instances?scope_nodes=prod-*\n\n# Limit response size\nGET /api/v3/node_instances?cardinality=100\n```\n\n**Response Includes:**\n- Node identification (hostname, machine_guid)\n- Agent information (version, capabilities)\n- All chart instances organized by context\n- Instance-specific metadata (labels, units, dimensions)\n- Instance collection status\n\n**Security & Access Control:**\n- 📊 **Public Data API** - Bearer token optional, IP-based ACL restrictions apply\n- **Default Access:** Public (no authentication required)\n- **Bearer Protection:** When enabled via `/api/v3/bearer_protection`, requires bearer token\n- **IP Restrictions:** Subject to `allow dashboard from` in netdata.conf\n- **Access Methods:** Direct HTTP/HTTPS, Netdata Cloud, external tools\n",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "api",
+                "v3",
+                "node_instances"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [
+                {
+                  "disabled": false,
+                  "key": "scope_nodes",
+                  "value": "<string>",
+                  "description": "Filter to specific nodes using pattern matching.\n\n**Pattern Syntax:**\n- `*` matches any characters\n- Space-separated for multiple patterns\n- `!` prefix excludes\n- Example: `prod-* !prod-test*`\n\n**Examples:**\n- `scope_nodes=web*` - All web servers\n- `scope_nodes=db-* cache-*` - Database and cache nodes\n- `scope_nodes=* !test*` - All except test nodes\n\nWhen not specified, returns instances from all nodes.\n"
+                },
+                {
+                  "disabled": false,
+                  "key": "nodes",
+                  "value": "<string>",
+                  "description": "Filter to specific nodes by exact names.\n\n**Format:** Comma or pipe-separated exact names\n\n**Examples:**\n- `nodes=web-server-01` - Single node\n- `nodes=web-01,db-01` - Multiple nodes\n\n**Best Practice:** Use `nodes` for exact names, `scope_nodes` for patterns.\n\nWhen not specified, returns instances from all nodes.\n"
+                },
+                {
+                  "disabled": false,
+                  "key": "options",
+                  "value": "<string>",
+                  "description": "Control response detail level and included information.\n\n**Available Options:**\n- `full` or `all` - Complete instance information\n- `labels` - Include instance labels\n- `uuids` - Include UUIDs and identifiers\n- `deleted` - Include deleted/offline instances\n- `hidden` - Include hidden instances\n- `instances` or `charts` - Include chart instances (default)\n- `metrics` or `dimensions` - Include dimension details\n\n**Examples:**\n- `options=full` - All information\n- `options=labels,dimensions` - Labels and dimension details\n- `options=labels|uuids` - Pipe separator\n\n**Default:** Returns basic instance information without excessive detail.\n"
+                },
+                {
+                  "disabled": false,
+                  "key": "after",
+                  "value": "-600",
+                  "description": "`after` and `before` define the time-frame of a query. `after` can be a negative number of seconds, up to 3 years (-94608000), relative to `before`. If not set, it is usually assumed to be -600. When non-data endpoints support the `after` and `before`, they use the time-frame to limit their response for objects having data retention within the time-frame given.\n"
+                },
+                {
+                  "disabled": false,
+                  "key": "before",
+                  "value": "0",
+                  "description": "`after` and `before` define the time-frame of a query. `before` can be a negative number of seconds, up to 3 years (-94608000), relative to current clock. If not set, it is assumed to be the current clock time. When `before` is positive, it is assumed to be a unix epoch timestamp. When non-data endpoints support the `after` and `before`, they use the time-frame to limit their response for objects having data retention within the time-frame given.\n"
+                },
+                {
+                  "disabled": false,
+                  "key": "timeout",
+                  "value": "<long>",
+                  "description": "Maximum time in milliseconds to wait for query completion.\n\n**Format:** Integer (milliseconds)\n\n**Default:** Server default timeout\n\n**Example:** `timeout=30000` (30 seconds)\n\nFor large multi-node infrastructures, you may need to increase timeout to allow complete instance enumeration.\n"
+                },
+                {
+                  "disabled": false,
+                  "key": "cardinality",
+                  "value": "<integer>",
+                  "description": "Limit the number of instances returned per node.\n\n**Format:** Integer (max instances per node)\n\n**Default:** No limit\n\n**Example:** `cardinality=500` - At most 500 instances per node\n\n**Use Cases:**\n- Prevent huge responses from nodes with many instances\n- Sample instances for testing\n- Dashboard widgets with limited space\n\nWhen exceeded, response indicates how many instances were omitted per node.\n"
+                }
+              ],
+              "variable": []
+            },
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "GET",
+            "auth": {
+              "type": "noauth"
+            }
+          },
+          "response": [
+            {
+              "id": "122d272c-6193-4c30-b783-4be68aa79cfd",
+              "name": "Success. Returns chart instances organized by node.\n\n**Response Structure:**\n```json\n{\n  \"nodes\": [\n    {\n      \"machine_guid\": \"uuid\",\n      \"hostname\": \"web-server-01\",\n      \"agent_version\": \"v1.40.0\",\n      \"contexts\": [\n        {\n          \"context\": \"disk.space\",\n          \"instances\": [\n            {\n              \"id\": \"disk.sda\",\n              \"name\": \"disk sda\",\n              \"family\": \"sda\",\n              \"labels\": {...},\n              \"dimensions\": [...],\n              \"status\": \"active\"\n            },\n            {\n              \"id\": \"disk.sdb\",\n              \"name\": \"disk sdb\",\n              \"family\": \"sdb\",\n              \"labels\": {...},\n              \"dimensions\": [...],\n              \"status\": \"active\"\n            }\n          ]\n        },\n        {\n          \"context\": \"net.net\",\n          \"instances\": [\n            {\n              \"id\": \"net.eth0\",\n              \"name\": \"eth0\",\n              \"family\": \"eth0\",\n              \"labels\": {...},\n              \"dimensions\": [...],\n              \"status\": \"active\"\n            }\n          ]\n        }\n      ]\n    }\n  ]\n}\n```\n\n**Response Fields:**\n\n**Node Level:**\n- `machine_guid`: Unique node identifier\n- `hostname`: Node hostname\n- `agent_version`: Netdata version on this node\n- `contexts`: Array of contexts with their instances\n\n**Context Level:**\n- `context`: Context name (e.g., \"disk.space\", \"system.cpu\")\n- `instances`: Array of chart instances for this context\n\n**Instance Level:**\n- `id`: Chart instance ID (e.g., \"disk.sda\")\n- `name`: Human-readable instance name\n- `family`: Chart family/grouping\n- `labels`: Instance-specific labels\n- `dimensions`: Array of dimensions (metrics) collected\n- `status`: Collection status (active, stale, offline)\n- `units`: Unit of measurement\n- `chart_type`: Chart visualization type\n- `priority`: Display priority\n\n**Dimension Information (when options=dimensions):**\n- `id`: Dimension identifier\n- `name`: Dimension display name\n- `algorithm`: Aggregation algorithm\n- `multiplier`, `divisor`: Value transformation\n\n**Label Information (when options=labels):**\n- Instance labels provide additional metadata\n- Examples: disk_type=ssd, interface_speed=1000, mount_point=/\n\n**Response Characteristics:**\n- Content-Type: application/json\n- Cacheable (instances change infrequently)\n- Size grows with number of nodes and instances\n- Organized hierarchically for easy navigation\n\n**Filtering:**\nResponse respects scope_nodes/nodes filters and cardinality limits.\n",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "api",
+                    "v3",
+                    "node_instances"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "scope_nodes",
+                      "value": "prod-*"
+                    },
+                    {
+                      "key": "nodes",
+                      "value": "web-server-01,db-server-01"
+                    },
+                    {
+                      "key": "options",
+                      "value": "full,labels,dimensions"
+                    },
+                    {
+                      "key": "after",
+                      "value": "-600"
+                    },
+                    {
+                      "key": "before",
+                      "value": "0"
+                    },
+                    {
+                      "key": "timeout",
+                      "value": "30000"
+                    },
+                    {
+                      "key": "cardinality",
+                      "value": "500"
+                    }
+                  ],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "51230fb9-a310-46af-b378-3b9693c498e7",
+              "name": "Bad request. Common causes:\n- Invalid parameter values\n- Malformed filter patterns\n",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "api",
+                    "v3",
+                    "node_instances"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "scope_nodes",
+                      "value": "prod-*"
+                    },
+                    {
+                      "key": "nodes",
+                      "value": "web-server-01,db-server-01"
+                    },
+                    {
+                      "key": "options",
+                      "value": "full,labels,dimensions"
+                    },
+                    {
+                      "key": "after",
+                      "value": "-600"
+                    },
+                    {
+                      "key": "before",
+                      "value": "0"
+                    },
+                    {
+                      "key": "timeout",
+                      "value": "30000"
+                    },
+                    {
+                      "key": "cardinality",
+                      "value": "500"
+                    }
+                  ],
+                  "variable": []
+                },
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Bad Request",
+              "code": 400,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "text/plain"
+                }
+              ],
+              "body": "",
+              "cookie": [],
+              "_postman_previewlanguage": "text"
+            },
+            {
+              "id": "828157b8-95d1-4576-ba05-e2b2f32b8bfc",
+              "name": "Internal server error during instance enumeration.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "api",
+                    "v3",
+                    "node_instances"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "scope_nodes",
+                      "value": "prod-*"
+                    },
+                    {
+                      "key": "nodes",
+                      "value": "web-server-01,db-server-01"
+                    },
+                    {
+                      "key": "options",
+                      "value": "full,labels,dimensions"
+                    },
+                    {
+                      "key": "after",
+                      "value": "-600"
+                    },
+                    {
+                      "key": "before",
+                      "value": "0"
+                    },
+                    {
+                      "key": "timeout",
+                      "value": "30000"
+                    },
+                    {
+                      "key": "cardinality",
+                      "value": "500"
+                    }
+                  ],
+                  "variable": []
+                },
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Internal Server Error",
+              "code": 500,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "text/plain"
+                }
+              ],
+              "body": "",
+              "cookie": [],
+              "_postman_previewlanguage": "text"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "1e1a26e9-cb44-4552-8758-3c462b98a656",
+          "name": "Retrieve streaming topology path for nodes",
+          "request": {
+            "name": "Retrieve streaming topology path for nodes",
+            "description": {
+              "content": "**V3 SPECIFIC ENDPOINT**\n\nReturns the streaming path and topology showing how nodes are connected in the Netdata infrastructure.\nThis endpoint reveals the parent-child relationships between nodes, showing which nodes stream data\nto which parents, creating a hierarchical view of the monitoring infrastructure.\n\n**Streaming Topology:**\n- **Parent nodes**: Nodes that receive streaming data from child nodes\n- **Child nodes**: Nodes that send their metrics to parent nodes for centralization\n- **Streaming path**: The complete chain from child → parent → grandparent (if any)\n\n**Use Cases:**\n- Understand infrastructure hierarchy and data flow\n- Identify parent nodes that aggregate data from multiple children\n- Debug streaming connectivity issues\n- Plan infrastructure changes and reorganization\n- Visualize the complete monitoring topology\n\n**Common Usage Patterns:**\n\n1. **Get complete streaming topology:**\n   ```\n   /api/v3/stream_path\n   ```\n\n2. **Filter by specific nodes:**\n   ```\n   /api/v3/stream_path?nodes=child-node-1|child-node-2\n   ```\n\n3. **Scope to nodes matching pattern:**\n   ```\n   /api/v3/stream_path?scope_nodes=prod-*\n   ```\n\n**Response Structure:**\nThe response includes nodes organized by their streaming relationships, showing:\n- Node hostnames and machine GUIDs\n- Parent-child relationships\n- Streaming connection status (live/stale/offline)\n- Complete path from each child to root parent\n\n**Security & Access Control:**\n- 📊 **Public Data API** - Bearer token optional, IP-based ACL restrictions apply\n- **Default Access:** Public (no authentication required)\n- **Bearer Protection:** When enabled via `/api/v3/bearer_protection`, requires bearer token\n- **IP Restrictions:** Subject to `allow dashboard from` in netdata.conf\n- **Access Methods:** Direct HTTP/HTTPS, Netdata Cloud, external tools\n",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "api",
+                "v3",
+                "stream_path"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [
+                {
+                  "disabled": false,
+                  "key": "scope_nodes",
+                  "value": "*",
+                  "description": "Simple pattern to match node hostnames for scope filtering. Uses Netdata's simple pattern\nmatching (not regex). Matched nodes define the scope for topology analysis.\n\n**Pattern Syntax:**\n- `*` matches any number of characters\n- Use `|` to separate multiple patterns (OR logic)\n- Matches are case-insensitive\n- No regex support - only simple wildcards\n\n**Examples:**\n- `prod-*` - All production nodes\n- `*-web-*` - All web server nodes\n- `db-*|cache-*` - All database or cache nodes\n- `*` - All nodes (default)\n"
+                },
+                {
+                  "disabled": false,
+                  "key": "nodes",
+                  "value": "*",
+                  "description": "Simple pattern to filter which nodes to include in the streaming path response.\nAfter scope is determined, this filters the results. Uses the same pattern syntax as scope_nodes.\n\n**Difference from scope_nodes:**\n- `scope_nodes` defines what nodes to analyze for relationships\n- `nodes` filters which nodes to include in the output\n\n**Examples:**\n- `web-*` - Only show web server nodes in output\n- `parent-*` - Only show parent nodes\n- Specific hostnames: `node1|node2|node3`\n"
+                },
+                {
+                  "disabled": false,
+                  "key": "options",
+                  "value": "<string>",
+                  "description": "Comma-separated list of options to control response content and format.\n\n**Available Options:**\n- `minify` - Minimize JSON output (no pretty-printing)\n- `debug` - Include debug information about streaming connections\n- `raw` - Include raw streaming metadata\n\n**Examples:**\n- `minify` - Compact JSON response\n- `debug,raw` - Debug mode with raw metadata\n"
+                },
+                {
+                  "disabled": false,
+                  "key": "timeout",
+                  "value": "60",
+                  "description": "Maximum time in seconds to wait for the query to complete before timing out.\n\n**Guidelines:**\n- Recommended: 30-60 seconds for most queries\n- Large infrastructures may need longer timeouts\n- Queries timeout if streaming metadata collection takes too long\n"
+                },
+                {
+                  "disabled": false,
+                  "key": "cardinality",
+                  "value": "1000",
+                  "description": "Maximum number of nodes to include in the response to prevent overwhelming large responses.\nWhen this limit is exceeded, the response will indicate how many nodes were omitted.\n\n**Purpose:**\n- Prevent memory exhaustion from very large infrastructures\n- Control response size for performance\n- Useful when exploring large node hierarchies incrementally\n\n**Recommendations:**\n- Small infrastructures (< 50 nodes): Use default or increase\n- Medium infrastructures (50-500 nodes): 200-500\n- Large infrastructures (> 500 nodes): Use filtering or increase limit carefully\n"
+                }
+              ],
+              "variable": []
+            },
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "GET",
+            "auth": {
+              "type": "noauth"
+            }
+          },
+          "response": [
+            {
+              "id": "8e399666-93f5-486f-aa6f-11f648baf76e",
+              "name": "Successfully retrieved streaming topology path information.\n\nReturns nodes with their streaming relationships, showing parent-child hierarchy,\nconnection status, and complete paths from children to root parents.\n",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "api",
+                    "v3",
+                    "stream_path"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "scope_nodes",
+                      "value": "prod-*"
+                    },
+                    {
+                      "key": "nodes",
+                      "value": "web-*"
+                    },
+                    {
+                      "key": "options",
+                      "value": "debug"
+                    },
+                    {
+                      "key": "timeout",
+                      "value": "30"
+                    },
+                    {
+                      "key": "cardinality",
+                      "value": "500"
+                    }
+                  ],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"nodes\": [\n    {\n      \"hostname\": \"string\",\n      \"machine_guid\": \"string\",\n      \"parent\": \"string\",\n      \"parent_guid\": \"string\",\n      \"streaming_status\": \"offline\",\n      \"path\": [\n        \"string\",\n        \"string\"\n      ]\n    },\n    {\n      \"hostname\": \"string\",\n      \"machine_guid\": \"string\",\n      \"parent\": \"string\",\n      \"parent_guid\": \"string\",\n      \"streaming_status\": \"live\",\n      \"path\": [\n        \"string\",\n        \"string\"\n      ]\n    }\n  ],\n  \"omitted\": 8537\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "4729902d-6c9b-4956-86bb-cda00c54289e",
+              "name": "Invalid parameters provided (e.g., invalid pattern syntax).",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "api",
+                    "v3",
+                    "stream_path"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "scope_nodes",
+                      "value": "prod-*"
+                    },
+                    {
+                      "key": "nodes",
+                      "value": "web-*"
+                    },
+                    {
+                      "key": "options",
+                      "value": "debug"
+                    },
+                    {
+                      "key": "timeout",
+                      "value": "30"
+                    },
+                    {
+                      "key": "cardinality",
+                      "value": "500"
+                    }
+                  ],
+                  "variable": []
+                },
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Bad Request",
+              "code": 400,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "text/plain"
+                }
+              ],
+              "body": "",
+              "cookie": [],
+              "_postman_previewlanguage": "text"
+            },
+            {
+              "id": "17a55f0a-18af-41e7-8436-35bba5dbcd05",
+              "name": "Internal server error during streaming topology retrieval.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "api",
+                    "v3",
+                    "stream_path"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "scope_nodes",
+                      "value": "prod-*"
+                    },
+                    {
+                      "key": "nodes",
+                      "value": "web-*"
+                    },
+                    {
+                      "key": "options",
+                      "value": "debug"
+                    },
+                    {
+                      "key": "timeout",
+                      "value": "30"
+                    },
+                    {
+                      "key": "cardinality",
+                      "value": "500"
+                    }
+                  ],
+                  "variable": []
+                },
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Internal Server Error",
+              "code": 500,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "text/plain"
+                }
+              ],
+              "body": "",
+              "cookie": [],
+              "_postman_previewlanguage": "text"
+            },
+            {
+              "id": "0d2066a9-1350-4c63-8c49-c9c7283771c9",
+              "name": "Query timeout - streaming topology collection took too long.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "api",
+                    "v3",
+                    "stream_path"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "scope_nodes",
+                      "value": "prod-*"
+                    },
+                    {
+                      "key": "nodes",
+                      "value": "web-*"
+                    },
+                    {
+                      "key": "options",
+                      "value": "debug"
+                    },
+                    {
+                      "key": "timeout",
+                      "value": "30"
+                    },
+                    {
+                      "key": "cardinality",
+                      "value": "500"
+                    }
+                  ],
+                  "variable": []
+                },
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Gateway Timeout",
+              "code": 504,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "text/plain"
+                }
+              ],
+              "body": "",
+              "cookie": [],
+              "_postman_previewlanguage": "text"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "7ccc9431-0e62-4ef4-b2cb-10cd2152e39c",
+          "name": "OBSOLETE: Get node instances hierarchy (use /api/v3/node_instances instead)",
+          "request": {
+            "name": "OBSOLETE: Get node instances hierarchy (use /api/v3/node_instances instead)",
+            "description": {
+              "content": "**⚠️ OBSOLETE API - Will be removed in future versions**\n\nThis endpoint is deprecated. Use `/api/v3/node_instances` instead, which provides the same functionality.\n\n**Migration:** Replace `/api/v2/node_instances` with `/api/v3/node_instances` in all API calls.\n\nReturns hierarchical organization of chart instances across nodes, showing relationships between\nparent and child agents and their monitored components.\n\n**Security & Access Control:**\n- 📊 **Public Data API** - Bearer token optional, IP-based ACL restrictions apply\n- **Default Access:** Public (no authentication required)\n- **Bearer Protection:** When enabled via `/api/v3/bearer_protection`, requires bearer token\n- **IP Restrictions:** Subject to `allow dashboard from` in netdata.conf\n- **Access Methods:** Direct HTTP/HTTPS, Netdata Cloud, external tools\n",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "api",
+                "v2",
+                "node_instances"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [
+                {
+                  "disabled": false,
+                  "key": "scope_nodes",
+                  "value": "*",
+                  "description": "A simple pattern limiting the nodes scope of the query. The scope controls both data and metadata response. The simple pattern is checked against the nodes' machine guid, node id and hostname. The default nodes scope is all nodes for which this Agent has data for. Usually the nodes scope is used to slice the entire dashboard (e.g. the Global Nodes Selector at the Netdata Cloud overview dashboard). Both positive and negative simple pattern expressions are supported.\n"
+                },
+                {
+                  "disabled": false,
+                  "key": "nodes",
+                  "value": "*",
+                  "description": "A simple pattern matching the nodes to be queried. This only controls the data response, not the metadata. The simple pattern is checked against the nodes' machine guid, node id, hostname. The default nodes selector is all the nodes matched by the nodes scope. Both positive and negative simple pattern expressions are supported.\n"
+                },
+                {
+                  "disabled": false,
+                  "key": "options",
+                  "value": "seconds",
+                  "description": "Options that affect data generation.\n* `jsonwrap` - Wrap the output in a JSON object with metadata about the query.\n* `raw` - change the output so that it is aggregatable across multiple such queries. Supported by `/api/v2` data queries and `json2` format.\n* `minify` - Remove unnecessary spaces and newlines from the output.\n* `debug` - Provide additional information in `jsonwrap` output to help tracing issues.\n* `nonzero` - Do not return dimensions that all their values are zero, to improve the visual appearance of charts. They will still be returned if all the dimensions are entirely zero.\n* `null2zero` - Replace `null` values with `0`.\n* `absolute` or `abs` - Traditionally Netdata returns select dimensions negative to improve visual appearance. This option turns this feature off.\n* `display-absolute` - Only used by badges, to do color calculation using the signed value, but render the value without a sign.\n* `flip` or `reversed` - Order the timestamps array in reverse order (newest to oldest).\n* `min2max` - When flattening multi-dimensional data into a single metric format, use `max - min` instead of `sum`. This is EOL - use `/api/v2` to control aggregation across dimensions.\n* `percentage` - Convert all values into a percentage vs the row total. When enabled, Netdata will query all dimensions, even the ones that have not been selected or are hidden, to find the row total, in order to calculate the percentage of each dimension selected.\n* `seconds` - Output timestamps in seconds instead of dates.\n* `milliseconds` or `ms` - Output timestamps in milliseconds instead of dates.\n* `unaligned` - by default queries are aligned to the the view, so that as time passes past data returned do not change. When a data query will not be used for visualization, `unaligned` can be given to avoid aligning the query time-frame for visual precision.\n* `match-ids`, `match-names`. By default filters match both IDs and names when they are available. Setting either of the two options will disable the other.\n* `anomaly-bit` - query the anomaly information instead of metric values. This is EOL, use `/api/v2` and `json2` format which always returns this information and many more.\n* `jw-anomaly-rates` - return anomaly rates as a separate result set in the same `json` format response. This is EOL, use `/api/v2` and `json2` format which always returns information and many more. \n* `details` - `/api/v2/data` returns in `jsonwrap` the full tree of dimensions that have been matched by the query.\n* `group-by-labels` - `/api/v2/data` returns in `jsonwrap` flattened labels per output dimension. These are used to identify the instances that have been aggregated into each dimension, making it possible to provide a map, like Netdata does for Kubernetes.\n* `natural-points` - return timestamps as found in the database. The result is again fixed-step, but the query engine attempts to align them with the timestamps found in the database.\n* `virtual-points` - return timestamps independent of the database alignment. This is needed aggregating data across multiple Netdata Agents, to ensure that their outputs do not need to be interpolated to be merged.\n* `selected-tier` - use data exclusively from the selected tier given with the `tier` parameter. This option is set automatically when the `tier` parameter is set.\n* `all-dimensions` - In `/api/v1` `jsonwrap` include metadata for all candidate metrics examined. In `/api/v2` this is standard behavior and no option is needed.\n* `label-quotes` - In `csv` output format, enclose each header label in quotes.\n* `objectrows` - Each row of value should be an object, not an array (only for `json` format).\n* `google_json` - Comply with google JSON/JSONP specs (only for `json` format).\n* `minimal-stats` or `minimal` - Reduce the amount of statistics returned in `jsonwrap` format to save bandwidth.\n* `long-json-keys` or `long-keys` - Use descriptive key names in JSON output instead of abbreviated ones.\n* `mcp-info` - Include additional metadata useful for the Model Context Protocol (MCP) integration.\n* `rfc3339` - Return timestamps in RFC3339 format (e.g., \"2023-01-01T00:00:00Z\") instead of Unix timestamps.\n"
+                },
+                {
+                  "disabled": false,
+                  "key": "options",
+                  "value": "jsonwrap",
+                  "description": "Options that affect data generation.\n* `jsonwrap` - Wrap the output in a JSON object with metadata about the query.\n* `raw` - change the output so that it is aggregatable across multiple such queries. Supported by `/api/v2` data queries and `json2` format.\n* `minify` - Remove unnecessary spaces and newlines from the output.\n* `debug` - Provide additional information in `jsonwrap` output to help tracing issues.\n* `nonzero` - Do not return dimensions that all their values are zero, to improve the visual appearance of charts. They will still be returned if all the dimensions are entirely zero.\n* `null2zero` - Replace `null` values with `0`.\n* `absolute` or `abs` - Traditionally Netdata returns select dimensions negative to improve visual appearance. This option turns this feature off.\n* `display-absolute` - Only used by badges, to do color calculation using the signed value, but render the value without a sign.\n* `flip` or `reversed` - Order the timestamps array in reverse order (newest to oldest).\n* `min2max` - When flattening multi-dimensional data into a single metric format, use `max - min` instead of `sum`. This is EOL - use `/api/v2` to control aggregation across dimensions.\n* `percentage` - Convert all values into a percentage vs the row total. When enabled, Netdata will query all dimensions, even the ones that have not been selected or are hidden, to find the row total, in order to calculate the percentage of each dimension selected.\n* `seconds` - Output timestamps in seconds instead of dates.\n* `milliseconds` or `ms` - Output timestamps in milliseconds instead of dates.\n* `unaligned` - by default queries are aligned to the the view, so that as time passes past data returned do not change. When a data query will not be used for visualization, `unaligned` can be given to avoid aligning the query time-frame for visual precision.\n* `match-ids`, `match-names`. By default filters match both IDs and names when they are available. Setting either of the two options will disable the other.\n* `anomaly-bit` - query the anomaly information instead of metric values. This is EOL, use `/api/v2` and `json2` format which always returns this information and many more.\n* `jw-anomaly-rates` - return anomaly rates as a separate result set in the same `json` format response. This is EOL, use `/api/v2` and `json2` format which always returns information and many more. \n* `details` - `/api/v2/data` returns in `jsonwrap` the full tree of dimensions that have been matched by the query.\n* `group-by-labels` - `/api/v2/data` returns in `jsonwrap` flattened labels per output dimension. These are used to identify the instances that have been aggregated into each dimension, making it possible to provide a map, like Netdata does for Kubernetes.\n* `natural-points` - return timestamps as found in the database. The result is again fixed-step, but the query engine attempts to align them with the timestamps found in the database.\n* `virtual-points` - return timestamps independent of the database alignment. This is needed aggregating data across multiple Netdata Agents, to ensure that their outputs do not need to be interpolated to be merged.\n* `selected-tier` - use data exclusively from the selected tier given with the `tier` parameter. This option is set automatically when the `tier` parameter is set.\n* `all-dimensions` - In `/api/v1` `jsonwrap` include metadata for all candidate metrics examined. In `/api/v2` this is standard behavior and no option is needed.\n* `label-quotes` - In `csv` output format, enclose each header label in quotes.\n* `objectrows` - Each row of value should be an object, not an array (only for `json` format).\n* `google_json` - Comply with google JSON/JSONP specs (only for `json` format).\n* `minimal-stats` or `minimal` - Reduce the amount of statistics returned in `jsonwrap` format to save bandwidth.\n* `long-json-keys` or `long-keys` - Use descriptive key names in JSON output instead of abbreviated ones.\n* `mcp-info` - Include additional metadata useful for the Model Context Protocol (MCP) integration.\n* `rfc3339` - Return timestamps in RFC3339 format (e.g., \"2023-01-01T00:00:00Z\") instead of Unix timestamps.\n"
+                },
+                {
+                  "disabled": false,
+                  "key": "after",
+                  "value": "-600",
+                  "description": "`after` and `before` define the time-frame of a query. `after` can be a negative number of seconds, up to 3 years (-94608000), relative to `before`. If not set, it is usually assumed to be -600. When non-data endpoints support the `after` and `before`, they use the time-frame to limit their response for objects having data retention within the time-frame given.\n"
+                },
+                {
+                  "disabled": false,
+                  "key": "before",
+                  "value": "0",
+                  "description": "`after` and `before` define the time-frame of a query. `before` can be a negative number of seconds, up to 3 years (-94608000), relative to current clock. If not set, it is assumed to be the current clock time. When `before` is positive, it is assumed to be a unix epoch timestamp. When non-data endpoints support the `after` and `before`, they use the time-frame to limit their response for objects having data retention within the time-frame given.\n"
+                },
+                {
+                  "disabled": false,
+                  "key": "timeout",
+                  "value": "0",
+                  "description": "Specify a timeout value in milliseconds after which the Agent will abort the query and return a 503 error. A value of 0 indicates no timeout.\n"
+                },
+                {
+                  "disabled": false,
+                  "key": "cardinality_limit",
+                  "value": "10000",
+                  "description": "Limits the number of unique items (contexts, instances, dimensions) returned in the query result. This is useful for preventing excessive memory usage and response sizes when queries match a large number of metrics. The query engine will return the most relevant items up to this limit.\n"
+                }
+              ],
+              "variable": []
+            },
+            "method": "GET",
+            "auth": {
+              "type": "noauth"
+            }
+          },
+          "response": [
+            {
+              "id": "2c8210e2-4714-4ada-b09a-caf02866a048",
+              "name": "Node instances successfully retrieved",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "api",
+                    "v2",
+                    "node_instances"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "scope_nodes",
+                      "value": "*"
+                    },
+                    {
+                      "key": "nodes",
+                      "value": "*"
+                    },
+                    {
+                      "key": "options",
+                      "value": "seconds"
+                    },
+                    {
+                      "key": "options",
+                      "value": "jsonwrap"
+                    },
+                    {
+                      "key": "after",
+                      "value": "-600"
+                    },
+                    {
+                      "key": "before",
+                      "value": "0"
+                    },
+                    {
+                      "key": "timeout",
+                      "value": "0"
+                    },
+                    {
+                      "key": "cardinality_limit",
+                      "value": "10000"
+                    }
+                  ],
+                  "variable": []
+                },
+                "method": "GET",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "text/plain"
+                }
+              ],
+              "body": "",
+              "cookie": [],
+              "_postman_previewlanguage": "text"
+            },
+            {
+              "id": "fec881a1-c50a-4adb-8e66-09c78946ae48",
+              "name": "Invalid parameters",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "api",
+                    "v2",
+                    "node_instances"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "scope_nodes",
+                      "value": "*"
+                    },
+                    {
+                      "key": "nodes",
+                      "value": "*"
+                    },
+                    {
+                      "key": "options",
+                      "value": "seconds"
+                    },
+                    {
+                      "key": "options",
+                      "value": "jsonwrap"
+                    },
+                    {
+                      "key": "after",
+                      "value": "-600"
+                    },
+                    {
+                      "key": "before",
+                      "value": "0"
+                    },
+                    {
+                      "key": "timeout",
+                      "value": "0"
+                    },
+                    {
+                      "key": "cardinality_limit",
+                      "value": "10000"
+                    }
+                  ],
+                  "variable": []
+                },
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Bad Request",
+              "code": 400,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "text/plain"
+                }
+              ],
+              "body": "",
+              "cookie": [],
+              "_postman_previewlanguage": "text"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        }
+      ],
+      "event": []
+    }
+  ],
+  "event": [],
+  "variable": [
+    {
+      "type": "string",
+      "value": "https://registry.my-netdata.io",
+      "key": "baseUrl"
+    }
+  ],
+  "info": {
+    "_postman_id": "27026c6f-904a-457c-af6f-6b6a41e2ee67",
+    "name": "Netdata agent nodes API",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "description": {
+      "content": "Real-time performance and health monitoring.\n\n## API Versions\n\nNetdata provides three API versions:\n- **v1**: The original API, focused on single-node operations\n- **v2**: Multi-node API with advanced grouping and aggregation capabilities\n- **v3**: The latest API version that combines v1 and v2 endpoints and may include additional features\n\n### v3 API Endpoints\n\nThe v3 API provides the current, actively maintained endpoints:\n- `/api/v3/data` - Multi-dimensional data queries\n- `/api/v3/weights` - Metric scoring/correlation\n- `/api/v3/contexts` - Context metadata\n- `/api/v3/nodes` - Node information\n- `/api/v3/q` - Full-text search\n- `/api/v3/alerts` - Alert information\n- `/api/v3/alert_transitions` - Alert state transitions\n- `/api/v3/alert_config` - Alert configuration\n- `/api/v3/functions` - Available functions\n- `/api/v3/function` - Execute functions\n- `/api/v3/info` - Agent information\n- `/api/v3/node_instances` - Node instance information\n- `/api/v3/stream_path` - Streaming topology\n- `/api/v3/versions` - Version information\n- `/api/v3/badge.svg` - Dynamic badges\n- `/api/v3/allmetrics` - Export metrics\n- `/api/v3/context` - Single context info\n- `/api/v3/variable` - Variable information\n- `/api/v3/config` - Dynamic configuration\n- `/api/v3/settings` - Agent settings\n- `/api/v3/me` - Current user information\n- `/api/v3/claim` - Agent claiming\n- Additional management and streaming endpoints\n\n**Note:** V1 and V2 APIs are deprecated and maintained for backwards compatibility only. New integrations should use V3 exclusively.\n\n\nContact Support:\n Name: Netdata Agent API\n Email: info@netdata.cloud",
+      "type": "text/plain"
+    }
+  }
+}

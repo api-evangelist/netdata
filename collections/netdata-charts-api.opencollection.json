@@ -1,0 +1,77 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "Netdata agent charts API",
+    "version": "v1-rolling"
+  },
+  "items": [
+    {
+      "info": {
+        "name": "charts",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "List all charts v1 - EOL",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://registry.my-netdata.io/api/v1/charts"
+          },
+          "docs": "The charts endpoint returns a summary about all charts stored in the netdata server.\n**Security & Access Control:** - 📊 **Public Data API** - Bearer token optional, IP-based ACL restrictions apply - **Default Access:** Public (no authentication required) - **Bearer Protection:** When enabled via `/api/v3/bearer_protection`, requires bearer token - **IP Restrictions:** Subject to `allow dashboard from` in netdata.conf - **Access Methods:** Direct HTTP/HTTPS, Netdata Cloud, external tools"
+        },
+        {
+          "info": {
+            "name": "Get one chart v1 - EOL",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://registry.my-netdata.io/api/v1/chart",
+            "params": [
+              {
+                "name": "chart",
+                "value": "",
+                "type": "query",
+                "description": "The id of the chart as returned by the `/api/v1/charts` call."
+              }
+            ]
+          },
+          "docs": "The chart endpoint returns detailed information about a chart.\n**Security & Access Control:** - 📊 **Public Data API** - Bearer token optional, IP-based ACL restrictions apply - **Default Access:** Public (no authentication required) - **Bearer Protection:** When enabled via `/api/v3/bearer_protection`, requires bearer token - **IP Restrictions:** Subject to `allow dashboard from` in netdata.conf - **Access Methods:** Direct HTTP/HTTPS, Netdata Cloud, external tools"
+        },
+        {
+          "info": {
+            "name": "Time series data queries",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://registry.my-netdata.io/api/v3/spaces/:spaceID/rooms/:roomID/data",
+            "params": [
+              {
+                "name": "spaceID",
+                "value": "",
+                "type": "path",
+                "description": "The unique identifier of the requested space."
+              },
+              {
+                "name": "roomID",
+                "value": "",
+                "type": "path",
+                "description": "The unique identifier of the requested room."
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Multi-node, multi-context, multi-instance, multi-dimension data queries, with time and metric aggregation."
+        }
+      ]
+    }
+  ],
+  "bundled": true
+}

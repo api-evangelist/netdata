@@ -1,0 +1,323 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "Netdata agent nodes API",
+    "version": "v1-rolling"
+  },
+  "items": [
+    {
+      "info": {
+        "name": "nodes",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "Nodes Info v2",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://registry.my-netdata.io/api/v2/nodes",
+            "params": [
+              {
+                "name": "scope_nodes",
+                "value": "",
+                "type": "query",
+                "description": "A simple pattern limiting the nodes scope of the query. The scope controls both data and metadata response. The simple pattern is checked against the nodes' machine guid, node id and hostname. The default nodes scope is all nodes for which this Agent has data for. Usually the nodes scope is used to slice the entire dashboard (e.g. the Global Nodes Selector at the Netdata Cloud overview dashboard). Both positive and negative simple pattern expressions are supported.\n"
+              },
+              {
+                "name": "scope_contexts",
+                "value": "",
+                "type": "query",
+                "description": "A simple pattern limiting the contexts scope of the query. The scope controls both data and metadata response. The default contexts scope is all contexts for which this Agent has data for. Usually the contexts scope is used to slice data on the dashboard (e.g. each context based chart has its own contexts scope, limiting the chart to all the instances of the selected context). Both positive and negative simple pattern expressions are supported.\n"
+              },
+              {
+                "name": "nodes",
+                "value": "",
+                "type": "query",
+                "description": "A simple pattern matching the nodes to be queried. This only controls the data response, not the metadata. The simple pattern is checked against the nodes' machine guid, node id, hostname. The default nodes selector is all the nodes matched by the nodes scope. Both positive and negative simple pattern expressions are supported.\n"
+              },
+              {
+                "name": "contexts",
+                "value": "",
+                "type": "query",
+                "description": "A simple pattern matching the contexts to be queried. This only controls the data response, not the metadata. Both positive and negative simple pattern expressions are supported.\n"
+              },
+              {
+                "name": "options",
+                "value": "",
+                "type": "query",
+                "description": "Options that affect the output of contexts metadata queries.\n* `minify` - Remove unnecessary spaces and newlines from the output to reduce bandwidth.\n* `debug` - Provide additional debugging information in the response.\n* `config` - Include alert configuration information (used by /api/v2/alert_transitions).\n* `instances` - Include alert/context instance information (used by /api/v2/alerts).\n* `values` - Include latest metric values (used by /api/v2/alerts).\n* `summary` - Include summary counters (used by /api/v2/alerts).\n* `mcp` - Format output for Model Context Protocol (MCP) integration.\n* `dimensions` - Include dimension information for each context.\n* `labels` - Include label information for each context.\n* `priorities` - Include priority information for each context.\n* `titles` - Include title information for each context.\n* `rfc3339` - Return timestamps in RFC3339 format (e.g., \"2023-01-01T00:00:00Z\") instead of Unix timestamps.\n\nNote: Some options like `retention`, `liveness`, `family`, and `units` are automatically included by specific endpoints and cannot be controlled via this parameter.\n"
+              }
+            ]
+          },
+          "docs": "Get a list of all nodes hosted by this Netdata Agent.\n\n**Security & Access Control:**\n- 📊 **Public Data API** - Bearer token optional, IP-based ACL restrictions apply\n- **Default Access:** Public (no authentication required)\n- **Bearer Protection:** When enabled via `/api/v3/bearer_protection`, requires bearer token\n- **IP Restrictions:** Subject to `allow dashboard from` in netdata.conf\n- **Access Methods:** Direct HTTP/HTTPS, Netdata Cloud, external tools\n"
+        },
+        {
+          "info": {
+            "name": "Nodes Info v3",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://registry.my-netdata.io/api/v3/nodes",
+            "params": [
+              {
+                "name": "scope_nodes",
+                "value": "",
+                "type": "query",
+                "description": "A simple pattern limiting the nodes scope of the query. The scope controls both data and metadata response. The simple pattern is checked against the nodes' machine guid, node id and hostname. The default nodes scope is all nodes for which this Agent has data for. Usually the nodes scope is used to slice the entire dashboard (e.g. the Global Nodes Selector at the Netdata Cloud overview dashboard). Both positive and negative simple pattern expressions are supported.\n"
+              },
+              {
+                "name": "scope_contexts",
+                "value": "",
+                "type": "query",
+                "description": "A simple pattern limiting the contexts scope of the query. The scope controls both data and metadata response. The default contexts scope is all contexts for which this Agent has data for. Usually the contexts scope is used to slice data on the dashboard (e.g. each context based chart has its own contexts scope, limiting the chart to all the instances of the selected context). Both positive and negative simple pattern expressions are supported.\n"
+              },
+              {
+                "name": "nodes",
+                "value": "",
+                "type": "query",
+                "description": "A simple pattern matching the nodes to be queried. This only controls the data response, not the metadata. The simple pattern is checked against the nodes' machine guid, node id, hostname. The default nodes selector is all the nodes matched by the nodes scope. Both positive and negative simple pattern expressions are supported.\n"
+              },
+              {
+                "name": "contexts",
+                "value": "",
+                "type": "query",
+                "description": "A simple pattern matching the contexts to be queried. This only controls the data response, not the metadata. Both positive and negative simple pattern expressions are supported.\n"
+              },
+              {
+                "name": "options",
+                "value": "",
+                "type": "query",
+                "description": "Options that affect the output of contexts metadata queries.\n* `minify` - Remove unnecessary spaces and newlines from the output to reduce bandwidth.\n* `debug` - Provide additional debugging information in the response.\n* `config` - Include alert configuration information (used by /api/v2/alert_transitions).\n* `instances` - Include alert/context instance information (used by /api/v2/alerts).\n* `values` - Include latest metric values (used by /api/v2/alerts).\n* `summary` - Include summary counters (used by /api/v2/alerts).\n* `mcp` - Format output for Model Context Protocol (MCP) integration.\n* `dimensions` - Include dimension information for each context.\n* `labels` - Include label information for each context.\n* `priorities` - Include priority information for each context.\n* `titles` - Include title information for each context.\n* `rfc3339` - Return timestamps in RFC3339 format (e.g., \"2023-01-01T00:00:00Z\") instead of Unix timestamps.\n\nNote: Some options like `retention`, `liveness`, `family`, and `units` are automatically included by specific endpoints and cannot be controlled via this parameter.\n"
+              }
+            ]
+          },
+          "docs": "Get a list of all nodes hosted by this Netdata Agent.\n\n**Security & Access Control:**\n- 📊 **Public Data API** - Bearer token optional, IP-based ACL restrictions apply\n- **Default Access:** Public (no authentication required)\n- **Bearer Protection:** When enabled via `/api/v3/bearer_protection`, requires bearer token\n- **IP Restrictions:** Subject to `allow dashboard from` in netdata.conf\n- **Access Methods:** Direct HTTP/HTTPS, Netdata Cloud, external tools\n"
+        },
+        {
+          "info": {
+            "name": "Node Info v1",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://registry.my-netdata.io/api/v1/info"
+          },
+          "docs": "The info endpoint returns basic information about netdata. It provides:\n* netdata version\n* netdata unique id\n* list of hosts mirrored (includes itself)\n* Operating System, Virtualization, K8s nodes and Container technology information\n* List of active collector plugins and modules\n* Streaming information\n* number of alarms in the host\n  * number of alarms in normal state\n  * number of alarms in warning state\n  * number of alarms in critical state\n\n**Security & Access Control:**\n- 📊 **Public Da"
+        },
+        {
+          "info": {
+            "name": "Retrieve detailed Netdata agent information across all nodes",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://registry.my-netdata.io/api/v3/info",
+            "params": [
+              {
+                "name": "scope_nodes",
+                "value": "prod-*",
+                "type": "query",
+                "description": "Filter to specific nodes using simple pattern matching.\n\n**Pattern Syntax:**\n- `*` matches any characters\n- Space-separated list for multiple patterns\n- `!` prefix to exclude\n- Combine with: `web* !web-test*`\n\n**Examples:**\n- `scope_nodes=web*` - All web servers\n- `scope_nodes=prod-*` - All production nodes\n- `scope_nodes=* !test*` - All except test nodes\n\n**Use Cases:**\n- Focus on specific infrastructure tiers\n- Exclude development/test environments\n- Group by naming conventions\n\nWhen not specified, returns info for all nodes.\n"
+              },
+              {
+                "name": "nodes",
+                "value": "web-server-01,db-server-01",
+                "type": "query",
+                "description": "Filter to specific nodes by exact names.\n\nUnlike `scope_nodes`, this requires exact node names (no patterns).\n\n**Format:** Comma or pipe-separated list\n\n**Examples:**\n- `nodes=web-server-01` - Single node\n- `nodes=web-server-01,db-server-01` - Multiple nodes\n- `nodes=web-01|web-02` - Pipe separator\n\n**Best Practice:**\n- Use `nodes` when you know exact names\n- Use `scope_nodes` for pattern-based filtering\n\nWhen not specified, returns info for all nodes matching scope_nodes.\n"
+              },
+              {
+                "name": "options",
+                "value": "full,labels",
+                "type": "query",
+                "description": "Control the level of detail and what information to include in the response.\n\n**Available Options:**\n- `full` or `all` - Include all available information\n- `labels` - Include host labels\n- `uuids` - Include UUIDs and identifiers\n- `deleted` - Include information about deleted/offline nodes\n- `hidden` - Include hidden agents\n\n**Examples:**\n- `options=full` - Complete information\n- `options=labels,uuids` - Labels and identifiers\n- `options=labels|uuids` - Pipe separator also works\n\n**Default Behavior:**\nWhen not specified, returns standard information without deleted/hidden nodes and without excessive detail.\n\n**Use Cases:**\n- Inventory systems need `full` detail\n- Label-based filtering needs `labels`\n- Historical analysis may need `deleted`\n"
+              },
+              {
+                "name": "after",
+                "value": "",
+                "type": "query",
+                "description": "`after` and `before` define the time-frame of a query. `after` can be a negative number of seconds, up to 3 years (-94608000), relative to `before`. If not set, it is usually assumed to be -600. When non-data endpoints support the `after` and `before`, they use the time-frame to limit their response for objects having data retention within the time-frame given.\n"
+              },
+              {
+                "name": "before",
+                "value": "",
+                "type": "query",
+                "description": "`after` and `before` define the time-frame of a query. `before` can be a negative number of seconds, up to 3 years (-94608000), relative to current clock. If not set, it is assumed to be the current clock time. When `before` is positive, it is assumed to be a unix epoch timestamp. When non-data endpoints support the `after` and `before`, they use the time-frame to limit their response for objects having data retention within the time-frame given.\n"
+              },
+              {
+                "name": "timeout",
+                "value": "30000",
+                "type": "query",
+                "description": "Maximum time in milliseconds to wait for the query to complete.\n\n**Format:** Integer (milliseconds)\n\n**Default:** Server default timeout\n\n**Example:**\n- `timeout=30000` - 30 second timeout\n\nFor agent info queries, timeouts are rarely needed as this is a fast metadata-only operation. However, on very large multi-node setups, you may want to limit query time.\n"
+              },
+              {
+                "name": "cardinality",
+                "value": "100",
+                "type": "query",
+                "description": "Limit the number of nodes returned.\n\n**Format:** Integer (maximum nodes)\n\n**Default:** No limit\n\n**Example:**\n- `cardinality=100` - Return at most 100 nodes\n\n**Use Cases:**\n- Prevent huge responses in very large infrastructures\n- Get a sample of nodes for testing\n- Dashboard widgets with limited display space\n\nWhen exceeded, response indicates how many nodes were omitted.\n"
+              }
+            ]
+          },
+          "docs": "Returns comprehensive information about Netdata agents running across the monitored infrastructure. This endpoint provides detailed metadata about each agent including version information, capabilities, collection status, and system configuration.\n\n**What is Netdata Agent Information?**\nThe `info` endpoint provides detailed metadata about the Netdata monitoring agent itself, including:\n- Agent version and build information\n- System capabilities and features enabled\n- Collection status and health"
+        },
+        {
+          "info": {
+            "name": "Retrieve chart instances organized by node across the infrastructure",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://registry.my-netdata.io/api/v3/node_instances",
+            "params": [
+              {
+                "name": "scope_nodes",
+                "value": "prod-*",
+                "type": "query",
+                "description": "Filter to specific nodes using pattern matching.\n\n**Pattern Syntax:**\n- `*` matches any characters\n- Space-separated for multiple patterns\n- `!` prefix excludes\n- Example: `prod-* !prod-test*`\n\n**Examples:**\n- `scope_nodes=web*` - All web servers\n- `scope_nodes=db-* cache-*` - Database and cache nodes\n- `scope_nodes=* !test*` - All except test nodes\n\nWhen not specified, returns instances from all nodes.\n"
+              },
+              {
+                "name": "nodes",
+                "value": "web-server-01,db-server-01",
+                "type": "query",
+                "description": "Filter to specific nodes by exact names.\n\n**Format:** Comma or pipe-separated exact names\n\n**Examples:**\n- `nodes=web-server-01` - Single node\n- `nodes=web-01,db-01` - Multiple nodes\n\n**Best Practice:** Use `nodes` for exact names, `scope_nodes` for patterns.\n\nWhen not specified, returns instances from all nodes.\n"
+              },
+              {
+                "name": "options",
+                "value": "full,labels,dimensions",
+                "type": "query",
+                "description": "Control response detail level and included information.\n\n**Available Options:**\n- `full` or `all` - Complete instance information\n- `labels` - Include instance labels\n- `uuids` - Include UUIDs and identifiers\n- `deleted` - Include deleted/offline instances\n- `hidden` - Include hidden instances\n- `instances` or `charts` - Include chart instances (default)\n- `metrics` or `dimensions` - Include dimension details\n\n**Examples:**\n- `options=full` - All information\n- `options=labels,dimensions` - Labels and dimension details\n- `options=labels|uuids` - Pipe separator\n\n**Default:** Returns basic instance information without excessive detail.\n"
+              },
+              {
+                "name": "after",
+                "value": "",
+                "type": "query",
+                "description": "`after` and `before` define the time-frame of a query. `after` can be a negative number of seconds, up to 3 years (-94608000), relative to `before`. If not set, it is usually assumed to be -600. When non-data endpoints support the `after` and `before`, they use the time-frame to limit their response for objects having data retention within the time-frame given.\n"
+              },
+              {
+                "name": "before",
+                "value": "",
+                "type": "query",
+                "description": "`after` and `before` define the time-frame of a query. `before` can be a negative number of seconds, up to 3 years (-94608000), relative to current clock. If not set, it is assumed to be the current clock time. When `before` is positive, it is assumed to be a unix epoch timestamp. When non-data endpoints support the `after` and `before`, they use the time-frame to limit their response for objects having data retention within the time-frame given.\n"
+              },
+              {
+                "name": "timeout",
+                "value": "30000",
+                "type": "query",
+                "description": "Maximum time in milliseconds to wait for query completion.\n\n**Format:** Integer (milliseconds)\n\n**Default:** Server default timeout\n\n**Example:** `timeout=30000` (30 seconds)\n\nFor large multi-node infrastructures, you may need to increase timeout to allow complete instance enumeration.\n"
+              },
+              {
+                "name": "cardinality",
+                "value": "500",
+                "type": "query",
+                "description": "Limit the number of instances returned per node.\n\n**Format:** Integer (max instances per node)\n\n**Default:** No limit\n\n**Example:** `cardinality=500` - At most 500 instances per node\n\n**Use Cases:**\n- Prevent huge responses from nodes with many instances\n- Sample instances for testing\n- Dashboard widgets with limited space\n\nWhen exceeded, response indicates how many instances were omitted per node.\n"
+              }
+            ]
+          },
+          "docs": "Returns information about all chart instances grouped by node. This endpoint provides a comprehensive view of what metrics are being collected on each node, organized by chart instances.\n\n**What are Node Instances?**\nNode instances represent the specific chart instances (individual monitoring targets) on each node:\n- Each node may have multiple instances of the same chart type\n- Examples: Multiple disks (sda, sdb, sdc), multiple network interfaces (eth0, eth1)\n- Instances represent the specific "
+        },
+        {
+          "info": {
+            "name": "Retrieve streaming topology path for nodes",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://registry.my-netdata.io/api/v3/stream_path",
+            "params": [
+              {
+                "name": "scope_nodes",
+                "value": "prod-*",
+                "type": "query",
+                "description": "Simple pattern to match node hostnames for scope filtering. Uses Netdata's simple pattern\nmatching (not regex). Matched nodes define the scope for topology analysis.\n\n**Pattern Syntax:**\n- `*` matches any number of characters\n- Use `|` to separate multiple patterns (OR logic)\n- Matches are case-insensitive\n- No regex support - only simple wildcards\n\n**Examples:**\n- `prod-*` - All production nodes\n- `*-web-*` - All web server nodes\n- `db-*|cache-*` - All database or cache nodes\n- `*` - All nodes (default)\n"
+              },
+              {
+                "name": "nodes",
+                "value": "web-*",
+                "type": "query",
+                "description": "Simple pattern to filter which nodes to include in the streaming path response.\nAfter scope is determined, this filters the results. Uses the same pattern syntax as scope_nodes.\n\n**Difference from scope_nodes:**\n- `scope_nodes` defines what nodes to analyze for relationships\n- `nodes` filters which nodes to include in the output\n\n**Examples:**\n- `web-*` - Only show web server nodes in output\n- `parent-*` - Only show parent nodes\n- Specific hostnames: `node1|node2|node3`\n"
+              },
+              {
+                "name": "options",
+                "value": "debug",
+                "type": "query",
+                "description": "Comma-separated list of options to control response content and format.\n\n**Available Options:**\n- `minify` - Minimize JSON output (no pretty-printing)\n- `debug` - Include debug information about streaming connections\n- `raw` - Include raw streaming metadata\n\n**Examples:**\n- `minify` - Compact JSON response\n- `debug,raw` - Debug mode with raw metadata\n"
+              },
+              {
+                "name": "timeout",
+                "value": "30",
+                "type": "query",
+                "description": "Maximum time in seconds to wait for the query to complete before timing out.\n\n**Guidelines:**\n- Recommended: 30-60 seconds for most queries\n- Large infrastructures may need longer timeouts\n- Queries timeout if streaming metadata collection takes too long\n"
+              },
+              {
+                "name": "cardinality",
+                "value": "500",
+                "type": "query",
+                "description": "Maximum number of nodes to include in the response to prevent overwhelming large responses.\nWhen this limit is exceeded, the response will indicate how many nodes were omitted.\n\n**Purpose:**\n- Prevent memory exhaustion from very large infrastructures\n- Control response size for performance\n- Useful when exploring large node hierarchies incrementally\n\n**Recommendations:**\n- Small infrastructures (< 50 nodes): Use default or increase\n- Medium infrastructures (50-500 nodes): 200-500\n- Large infrastructures (> 500 nodes): Use filtering or increase limit carefully\n"
+              }
+            ]
+          },
+          "docs": "**V3 SPECIFIC ENDPOINT**\n\nReturns the streaming path and topology showing how nodes are connected in the Netdata infrastructure.\nThis endpoint reveals the parent-child relationships between nodes, showing which nodes stream data\nto which parents, creating a hierarchical view of the monitoring infrastructure.\n\n**Streaming Topology:**\n- **Parent nodes**: Nodes that receive streaming data from child nodes\n- **Child nodes**: Nodes that send their metrics to parent nodes for centralization\n- **Stream"
+        },
+        {
+          "info": {
+            "name": "OBSOLETE: Get node instances hierarchy (use /api/v3/node_instances instead)",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://registry.my-netdata.io/api/v2/node_instances",
+            "params": [
+              {
+                "name": "scope_nodes",
+                "value": "",
+                "type": "query",
+                "description": "A simple pattern limiting the nodes scope of the query. The scope controls both data and metadata response. The simple pattern is checked against the nodes' machine guid, node id and hostname. The default nodes scope is all nodes for which this Agent has data for. Usually the nodes scope is used to slice the entire dashboard (e.g. the Global Nodes Selector at the Netdata Cloud overview dashboard). Both positive and negative simple pattern expressions are supported.\n"
+              },
+              {
+                "name": "nodes",
+                "value": "",
+                "type": "query",
+                "description": "A simple pattern matching the nodes to be queried. This only controls the data response, not the metadata. The simple pattern is checked against the nodes' machine guid, node id, hostname. The default nodes selector is all the nodes matched by the nodes scope. Both positive and negative simple pattern expressions are supported.\n"
+              },
+              {
+                "name": "options",
+                "value": "",
+                "type": "query",
+                "description": "Options that affect data generation.\n* `jsonwrap` - Wrap the output in a JSON object with metadata about the query.\n* `raw` - change the output so that it is aggregatable across multiple such queries. Supported by `/api/v2` data queries and `json2` format.\n* `minify` - Remove unnecessary spaces and newlines from the output.\n* `debug` - Provide additional information in `jsonwrap` output to help tracing issues.\n* `nonzero` - Do not return dimensions that all their values are zero, to improve the visual appearance of charts. They will still be returned if all the dimensions are entirely zero.\n* `null2zero` - Replace `null` values with `0`.\n* `absolute` or `abs` - Traditionally Netdata returns select dimensions negative to improve visual appearance. This option turns this feature off.\n* `display-absolute` - Only used by badges, to do color calculation using the signed value, but render the value without a sign.\n* `flip` or `reversed` - Order the timestamps array in reverse order (newest to oldest).\n* `min2max` - When flattening multi-dimensional data into a single metric format, use `max - min` instead of `sum`. This is EOL - use `/api/v2` to control aggregation across dimensions.\n* `percentage` - Convert all values into a percentage vs the row total. When enabled, Netdata will query all dimensions, even the ones that have not been selected or are hidden, to find the row total, in order to calculate the percentage of each dimension selected.\n* `seconds` - Output timestamps in seconds instead of dates.\n* `milliseconds` or `ms` - Output timestamps in milliseconds instead of dates.\n* `unaligned` - by default queries are aligned to the the view, so that as time passes past data returned do not change. When a data query will not be used for visualization, `unaligned` can be given to avoid aligning the query time-frame for visual precision.\n* `match-ids`, `match-names`. By default filters match both IDs and names when they are available. Setting either of the two options will disable the other.\n* `anomaly-bit` - query the anomaly information instead of metric values. This is EOL, use `/api/v2` and `json2` format which always returns this information and many more.\n* `jw-anomaly-rates` - return anomaly rates as a separate result set in the same `json` format response. This is EOL, use `/api/v2` and `json2` format which always returns information and many more. \n* `details` - `/api/v2/data` returns in `jsonwrap` the full tree of dimensions that have been matched by the query.\n* `group-by-labels` - `/api/v2/data` returns in `jsonwrap` flattened labels per output dimension. These are used to identify the instances that have been aggregated into each dimension, making it possible to provide a map, like Netdata does for Kubernetes.\n* `natural-points` - return timestamps as found in the database. The result is again fixed-step, but the query engine attempts to align them with the timestamps found in the database.\n* `virtual-points` - return timestamps independent of the database alignment. This is needed aggregating data across multiple Netdata Agents, to ensure that their outputs do not need to be interpolated to be merged.\n* `selected-tier` - use data exclusively from the selected tier given with the `tier` parameter. This option is set automatically when the `tier` parameter is set.\n* `all-dimensions` - In `/api/v1` `jsonwrap` include metadata for all candidate metrics examined. In `/api/v2` this is standard behavior and no option is needed.\n* `label-quotes` - In `csv` output format, enclose each header label in quotes.\n* `objectrows` - Each row of value should be an object, not an array (only for `json` format).\n* `google_json` - Comply with google JSON/JSONP specs (only for `json` format).\n* `minimal-stats` or `minimal` - Reduce the amount of statistics returned in `jsonwrap` format to save bandwidth.\n* `long-json-keys` or `long-keys` - Use descriptive key names in JSON output instead of abbreviated ones.\n* `mcp-info` - Include additional metadata useful for the Model Context Protocol (MCP) integration.\n* `rfc3339` - Return timestamps in RFC3339 format (e.g., \"2023-01-01T00:00:00Z\") instead of Unix timestamps.\n"
+              },
+              {
+                "name": "after",
+                "value": "",
+                "type": "query",
+                "description": "`after` and `before` define the time-frame of a query. `after` can be a negative number of seconds, up to 3 years (-94608000), relative to `before`. If not set, it is usually assumed to be -600. When non-data endpoints support the `after` and `before`, they use the time-frame to limit their response for objects having data retention within the time-frame given.\n"
+              },
+              {
+                "name": "before",
+                "value": "",
+                "type": "query",
+                "description": "`after` and `before` define the time-frame of a query. `before` can be a negative number of seconds, up to 3 years (-94608000), relative to current clock. If not set, it is assumed to be the current clock time. When `before` is positive, it is assumed to be a unix epoch timestamp. When non-data endpoints support the `after` and `before`, they use the time-frame to limit their response for objects having data retention within the time-frame given.\n"
+              },
+              {
+                "name": "timeout",
+                "value": "",
+                "type": "query",
+                "description": "Specify a timeout value in milliseconds after which the Agent will abort the query and return a 503 error. A value of 0 indicates no timeout.\n"
+              },
+              {
+                "name": "cardinality_limit",
+                "value": "",
+                "type": "query",
+                "description": "Limits the number of unique items (contexts, instances, dimensions) returned in the query result. This is useful for preventing excessive memory usage and response sizes when queries match a large number of metrics. The query engine will return the most relevant items up to this limit.\n"
+              }
+            ]
+          },
+          "docs": "**⚠️ OBSOLETE API - Will be removed in future versions**\n\nThis endpoint is deprecated. Use `/api/v3/node_instances` instead, which provides the same functionality.\n\n**Migration:** Replace `/api/v2/node_instances` with `/api/v3/node_instances` in all API calls.\n\nReturns hierarchical organization of chart instances across nodes, showing relationships between\nparent and child agents and their monitored components.\n\n**Security & Access Control:**\n- 📊 **Public Data API** - Bearer token optional, IP-"
+        }
+      ]
+    }
+  ],
+  "bundled": true
+}

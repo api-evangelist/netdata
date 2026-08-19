@@ -1,0 +1,37 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "Netdata agent streaming API",
+    "version": "v1-rolling"
+  },
+  "items": [
+    {
+      "info": {
+        "name": "streaming",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "Get streaming information and statistics",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://registry.my-netdata.io/api/v3/stream_info",
+            "params": [
+              {
+                "name": "machine_guid",
+                "value": "12345678-1234-1234-1234-123456789012",
+                "type": "query",
+                "description": "Machine GUID (unique node identifier) to query streaming information for.\nIf not specified, returns streaming information for the local agent.\n\n**GUID Format:**\n- UUID format: `xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx`\n- Case-insensitive\n- Can be obtained from `/api/v3/nodes` endpoint\n\n**Use Cases:**\n- Query specific child node's streaming status\n- Check parent node's connection to specific child\n- Diagnostic queries for particular node\n\n**Examples:**\n- `12345678-1234-1234-1234-123456789012` - Specific node\n- Empty/omitted - Local agent (default)\n\n**Invalid GUIDs:**\n- Malformed UUID: May return error or empty result\n- Non-existent GUID: Returns empty or not-found response\n"
+              }
+            ]
+          },
+          "docs": "**V3 SPECIFIC ENDPOINT**\n\nReturns detailed information about Netdata's streaming connections, including sender/receiver\nstatistics, buffer usage, compression ratios, and connection health metrics.\n\n**Streaming Overview:**\nNetdata supports hierarchical streaming where:\n- **Child nodes** send metrics to **parent nodes** for centralization\n- **Parent nodes** aggregate and store metrics from multiple children\n- Streaming uses efficient binary protocol with compression\n- Connections can be TLS-encryp"
+        }
+      ]
+    }
+  ],
+  "bundled": true
+}

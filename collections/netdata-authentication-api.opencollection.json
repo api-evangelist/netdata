@@ -1,0 +1,181 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "Netdata agent authentication API",
+    "version": "v1-rolling"
+  },
+  "items": [
+    {
+      "info": {
+        "name": "authentication",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "Enable or disable bearer token authentication requirement",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://registry.my-netdata.io/api/v3/bearer_protection",
+            "params": [
+              {
+                "name": "bearer_protection",
+                "value": "",
+                "type": "query",
+                "description": "**Whether to enable or disable bearer token authentication requirement.**\n\n**Valid Values:**\n- Enable: `on`, `true`, `yes`\n- Disable: `off`, `false`, `no`\n\n**Default Behavior:**\n- If omitted, maintains current bearer protection state\n- When agent is unclaimed, defaults to disabled\n- When agent is claimed, typically enabled by Netdata Cloud\n\n**Effect:**\n- When enabled: All API requests must include valid bearer token in Authorization header\n- When disabled: API requests work without bearer tokens (less secure)\n\nExample: `bearer_protection=on`\n"
+              },
+              {
+                "name": "claim_id",
+                "value": "",
+                "type": "query",
+                "description": "**Claim ID of the agent from Netdata Cloud.**\n\nThis identifies which Netdata Cloud space the agent is claimed to.\nUsed to verify the request is for the correct agent.\n\n**Validation:**\n- Must match the agent's current claim ID\n- Request fails with HTTP 400 if claim ID doesn't match\n- Prevents accidentally enabling protection on wrong agent\n\n**Where to Find:**\n- Obtained from cloud when agent is claimed\n- Available in agent's claiming configuration\n- Included in cloud API responses\n\nExample: `claim_id=1234567890abcdef`\n"
+              },
+              {
+                "name": "machine_guid",
+                "value": "",
+                "type": "query",
+                "description": "**Machine GUID of the agent.**\n\nHardware-based unique identifier for the agent instance.\nGenerated based on machine characteristics.\n\n**Purpose:**\n- Verifies request is for the specific agent instance\n- Prevents applying protection to wrong node\n- Part of multi-factor agent identification\n\n**Characteristics:**\n- Persists across agent restarts\n- May change if hardware changes significantly\n- Matches the `machine_guid` in agent info\n\n**Where to Find:**\n- Available in `/api/v3/info` response\n- Stored in agent's state files\n- Shown in Netdata Cloud node details\n\nExample: `machine_guid=12345678-1234-1234-1234-123456789abc`\n"
+              },
+              {
+                "name": "node_id",
+                "value": "",
+                "type": "query",
+                "description": "**Node UUID of the agent.**\n\nPersistent unique identifier for the agent.\nMore stable than machine_guid.\n\n**Purpose:**\n- Provides additional verification layer\n- Ensures request targets correct node\n- Used alongside claim_id and machine_guid for security\n\n**Characteristics:**\n- Generated once and persists\n- Does not change with hardware changes\n- Unique across all Netdata installations\n\n**Where to Find:**\n- Available in `/api/v3/info` response\n- Stored in agent's persistent state\n- Used by Netdata Cloud for node identification\n\nExample: `node_id=23456789-2345-2345-2345-234567890abc`\n"
+              }
+            ],
+            "auth": {
+              "type": "bearer",
+              "token": "{{bearerToken}}"
+            }
+          },
+          "docs": "**Bearer Token Authentication Control**\n\nThis endpoint controls whether the Netdata agent requires bearer token authentication for API access. Bearer protection adds an additional security layer by requiring a valid bearer token in the Authorization header for all API requests when enabled.\n\n**Use Cases:**\n- **Cloud Integration:** Enable bearer protection when agent is claimed to Netdata Cloud\n- **Security Hardening:** Add token-based authentication to prevent unauthorized API access\n- **Multi-T"
+        },
+        {
+          "info": {
+            "name": "Obtain bearer authentication token",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://registry.my-netdata.io/api/v3/bearer_get_token",
+            "params": [
+              {
+                "name": "claim_id",
+                "value": "",
+                "type": "query",
+                "description": "**Claim ID of the agent from Netdata Cloud.**\n\nIdentifies which Netdata Cloud space the agent belongs to.\nUsed to verify the token request is for the correct agent.\n\n**Validation:**\n- Must match the agent's current claim ID\n- Request fails with HTTP 400 if claim ID doesn't match\n- Can use `claim_id_matches_any()` for multi-agent parents\n\n**Security:**\n- Prevents token generation for wrong agent\n- Ensures cloud can only get tokens for agents it manages\n- Part of multi-factor agent verification\n\nExample: `claim_id=1234567890abcdef`\n"
+              },
+              {
+                "name": "machine_guid",
+                "value": "",
+                "type": "query",
+                "description": "**Machine GUID of the target agent.**\n\nHardware-based unique identifier for the agent instance.\n\n**Purpose:**\n- Verifies request is for the specific agent instance\n- Prevents token generation for wrong node\n- Must match exactly or request fails\n\n**Where to Find:**\n- Available in `/api/v3/info` response\n- Included in cloud agent registration\n- Stored in agent state files\n\n**Validation:**\n- Compared against host->machine_guid\n- Both claim_id and machine_guid must match\n- node_id also verified for triple authentication\n\nExample: `machine_guid=12345678-1234-1234-1234-123456789abc`\n"
+              },
+              {
+                "name": "node_id",
+                "value": "",
+                "type": "query",
+                "description": "**Node UUID of the target agent.**\n\nPersistent unique identifier for the agent node.\n\n**Purpose:**\n- Additional verification layer beyond machine_guid\n- Ensures correct node identification\n- Used in combination with other identifiers\n\n**Characteristics:**\n- More stable than machine_guid\n- Persists across hardware changes\n- Unique across all Netdata installations\n\n**Validation:**\n- Must be non-zero UUID\n- Must match host->node_id exactly\n- Compared in lowercase format\n\nExample: `node_id=23456789-2345-2345-2345-234567890abc`\n"
+              }
+            ],
+            "auth": {
+              "type": "bearer",
+              "token": "{{bearerToken}}"
+            }
+          },
+          "docs": "**Bearer Token Generation**\n\nThis endpoint generates a bearer authentication token that can be used to authenticate API requests when bearer protection is enabled. Tokens are time-limited and include role-based access control information.\n\n**Use Cases:**\n- **Netdata Cloud Access:** Cloud obtains tokens to query agent metrics and execute functions\n- **API Integration:** Applications get tokens to access protected agent APIs\n- **User Authentication:** Generate tokens for users based on their roles"
+        },
+        {
+          "info": {
+            "name": "Get current authenticated user information",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://registry.my-netdata.io/api/v3/me"
+          },
+          "docs": "**Current User Authentication Info**\n\nThis endpoint returns information about the currently authenticated user or session. It provides details about the authentication method, user role, access permissions, and associated cloud account if applicable.\n\n**Use Cases:**\n- **Authentication Verification:** Verify that authentication is working and check what method was used\n- **Permission Checking:** Determine what access levels the current session has\n- **Role Discovery:** Find out the user role (adm"
+        },
+        {
+          "info": {
+            "name": "OBSOLETE: Enable/disable bearer authentication (use /api/v3/bearer_protection instead)",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://registry.my-netdata.io/api/v2/bearer_protection",
+            "params": [
+              {
+                "name": "bearer_protection",
+                "value": "",
+                "type": "query",
+                "description": "Enable or disable bearer protection"
+              },
+              {
+                "name": "claim_id",
+                "value": "",
+                "type": "query",
+                "description": "Agent's claim ID"
+              },
+              {
+                "name": "machine_guid",
+                "value": "",
+                "type": "query",
+                "description": "Agent's machine GUID"
+              },
+              {
+                "name": "node_id",
+                "value": "",
+                "type": "query",
+                "description": "Agent's node UUID"
+              }
+            ],
+            "auth": {
+              "type": "bearer",
+              "token": "{{bearerToken}}"
+            }
+          },
+          "docs": "**⚠️ OBSOLETE API - Will be removed in future versions**\n\nThis endpoint is deprecated. Use `/api/v3/bearer_protection` instead, which provides the same functionality.\n\n**Migration:** Replace `/api/v2/bearer_protection` with `/api/v3/bearer_protection` in all API calls.\n\nControls whether agent requires bearer token authentication for API access.\nUsed by Netdata Cloud to secure agents after claiming.\n\n**Security & Access Control:**\n- ⚠️ **ACLK-Only API** - Accessible only via Netdata Cloud (ACLK c"
+        },
+        {
+          "info": {
+            "name": "OBSOLETE: Get bearer authentication token (use /api/v3/bearer_get_token instead)",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://registry.my-netdata.io/api/v2/bearer_get_token",
+            "params": [
+              {
+                "name": "claim_id",
+                "value": "",
+                "type": "query",
+                "description": "Agent's claim ID"
+              },
+              {
+                "name": "machine_guid",
+                "value": "",
+                "type": "query",
+                "description": "Agent's machine GUID"
+              },
+              {
+                "name": "node_id",
+                "value": "",
+                "type": "query",
+                "description": "Agent's node UUID"
+              }
+            ],
+            "auth": {
+              "type": "bearer",
+              "token": "{{bearerToken}}"
+            }
+          },
+          "docs": "**⚠️ OBSOLETE API - Will be removed in future versions**\n\nThis endpoint is deprecated. Use `/api/v3/bearer_get_token` instead, which provides the same functionality.\n\n**Migration:** Replace `/api/v2/bearer_get_token` with `/api/v3/bearer_get_token` in all API calls.\n\nGenerates time-limited bearer token for authenticating API requests when bearer protection is enabled.\n\n**Security & Access Control:**\n- ⚠️ **ACLK-Only API** - Accessible only via Netdata Cloud (ACLK connection)\n- Same access requir"
+        }
+      ]
+    }
+  ],
+  "bundled": true
+}

@@ -1,0 +1,250 @@
+{
+  "item": [
+    {
+      "id": "ea5298c9-de8a-4ee2-82df-afab53427c68",
+      "name": "variables",
+      "description": {
+        "content": "",
+        "type": "text/plain"
+      },
+      "item": [
+        {
+          "id": "a44b8c79-3e9f-4b28-8a2c-3f8b53ba265f",
+          "name": "Retrieve the value of a specific chart variable used in alert expressions",
+          "request": {
+            "name": "Retrieve the value of a specific chart variable used in alert expressions",
+            "description": {
+              "content": "Returns the current value of a variable associated with a specific chart. Variables are used in alert expressions for dynamic threshold calculations, data transformations, and alert logic evaluation.\n\n**What are Chart Variables?**\nVariables in Netdata are named values that can be:\n- **Chart-specific metrics:** Current values from dimensions (e.g., `$used`, `$total`)\n- **Calculated values:** Derived from chart data (e.g., percentages, ratios)\n- **Statistical values:** Min, max, average values over time windows\n- **Alert-related values:** Previous alert states, thresholds\n- **System variables:** Host labels, node information\n\n**Common Use Cases:**\n- **Alert Threshold Debugging:** Understand what value triggered an alert\n- **Alert Expression Development:** Test variable values while writing alert expressions\n- **Troubleshooting:** Verify variable calculations are correct\n- **Dynamic Configuration:** Check runtime values used in alert logic\n\n**Variable Types:**\n1. **Dimension Variables:** Direct dimension values (e.g., `used`, `free`, `cached`)\n2. **Lookup Variables:** Result of lookup operations over time ranges\n3. **Calculated Variables:** Custom calculations defined in alert configs\n4. **Chart Variables:** Chart-level metadata (family, units, etc.)\n5. **Host Variables:** Host-specific values and labels\n\n**Example Variables:**\n- `$this` - The current calculated value\n- `$used` - Value of \"used\" dimension\n- `$total` - Value of \"total\" dimension\n- `$1hour_cpu_usage` - CPU usage over last hour (lookup variable)\n- `$ram_percentage` - Calculated RAM usage percentage\n\n**How Variables Work in Alerts:**\nAlert expressions like `$this > 80` use variables to dynamically evaluate conditions. This endpoint lets you see the actual runtime values of these variables.\n\n**Workflow for Alert Development:**\n1. Identify the chart: `GET /api/v1/charts` or `GET /api/v3/contexts`\n2. Get variable value: `GET /api/v3/variable?chart=system.ram&variable=$used`\n3. Test alert expression with actual values\n4. Refine alert thresholds based on variable behavior\n\n**Response Format:**\nReturns JSON with the variable value and metadata about how it was calculated, including:\n- Current value\n- Calculation trace (how the value was computed)\n- Source dimensions\n- Any transformations applied\n\n**Note:** This is a specialized endpoint primarily used for alert development and troubleshooting. For general metric values, use `/api/v3/data` instead.\n\n**Security & Access Control:**\n- 📊 **Public Data API** - Bearer token optional, IP-based ACL restrictions apply\n- **Default Access:** Public (no authentication required)\n- **Bearer Protection:** When enabled via `/api/v3/bearer_protection`, requires bearer token\n- **IP Restrictions:** Subject to `allow dashboard from` in netdata.conf\n- **Access Methods:** Direct HTTP/HTTPS, Netdata Cloud, external tools\n",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "api",
+                "v3",
+                "variable"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [
+                {
+                  "disabled": false,
+                  "key": "chart",
+                  "value": "<string>",
+                  "description": "(Required) The chart identifier (ID or name) where the variable is defined.\n\n**Chart Identifier Format:**\nCharts can be specified by either their unique ID or their name.\n\n**Chart ID Format:**\n- Format: `type.name` (e.g., `system.cpu`, `disk.sda_io`, `mysql.queries`)\n- This is the canonical identifier shown in chart metadata\n- Case-sensitive\n- More reliable as it doesn't change\n\n**Chart Name Format:**\n- Human-readable name (e.g., \"System CPU\")\n- May contain spaces\n- Less reliable as it can change\n- The API will try to find by name if ID lookup fails\n\n**How to Find Chart IDs:**\n1. **From /api/v1/charts:**\n   ```\n   GET /api/v1/charts\n   ```\n   Response includes all chart IDs in the system\n\n2. **From /api/v3/contexts:**\n   ```\n   GET /api/v3/contexts\n   ```\n   Lists contexts and their chart instances\n\n3. **From Alert Configuration:**\n   Alert configs reference charts in their `on` clause\n\n4. **From Netdata Dashboard:**\n   Chart IDs are shown in chart metadata\n\n**Examples:**\n- `chart=system.cpu` - System CPU chart\n- `chart=system.ram` - System RAM chart\n- `chart=disk.sda_io` - Disk sda I/O chart\n- `chart=mysql.queries` - MySQL queries chart\n\n**Common Chart IDs by Category:**\n- **System:** `system.cpu`, `system.load`, `system.ram`, `system.io`\n- **Disk:** `disk.space`, `disk.io`, `disk.inodes`\n- **Network:** `net.eth0`, `net.packets`\n- **Databases:** `mysql.queries`, `postgres.connections`, `redis.memory`\n\n**Important Notes:**\n- This parameter is **REQUIRED**\n- Must reference an existing chart on the specified host\n- Chart must be actively collecting data\n- Case-sensitive\n\n**Error Handling:**\n- Missing parameter → 400 Bad Request: \"A chart= and a variable= are required.\"\n- Invalid/non-existent chart → 404 Not Found: \"Chart is not found: <chart>\"\n"
+                },
+                {
+                  "disabled": false,
+                  "key": "variable",
+                  "value": "<string>",
+                  "description": "(Required) The variable name to look up within the specified chart.\n\n**Variable Name Format:**\nVariable names typically follow these conventions:\n- Start with `$` in alert expressions, but the `$` is optional in this parameter\n- Names are case-sensitive\n- Can reference dimensions, calculated values, or lookups\n\n**Variable Name Categories:**\n\n**1. Dimension Variables (most common):**\nDirect references to chart dimensions:\n- `used` - Value of \"used\" dimension\n- `free` - Value of \"free\" dimension\n- `cached` - Value of \"cached\" dimension\n- `buffers` - Value of \"buffers\" dimension\n- `read` - Read operations/bytes\n- `write` - Write operations/bytes\n\n**2. Special Variables:**\n- `this` - The calculated/evaluated value from alert expression\n- `status` - Current alert status\n- `value` - Current metric value\n\n**3. Lookup Variables:**\nVariables created via lookup operations:\n- Format: `<duration>_<dimension>_<method>`\n- Example: `1hour_cpu_avg` - Average CPU over last hour\n- Example: `5min_disk_used_max` - Max disk used in last 5 minutes\n\n**4. Calculated Variables:**\nCustom variables defined in alert configurations:\n- `ram_percentage` - (used / total) * 100\n- `disk_usage_ratio` - used / total\n- `error_rate` - errors / total_requests\n\n**5. Chart Metadata Variables:**\n- `family` - Chart family/category\n- `units` - Chart units\n- `chart_type` - Chart type\n\n**How to Discover Available Variables:**\n1. **From Alert Configuration:**\n   Alert expressions reveal which variables are available\n   ```\n   GET /api/v3/alert_config?config=<uuid>\n   ```\n\n2. **From /api/v1/alarm_variables:**\n   Lists all variables for a chart\n   ```\n   GET /api/v1/alarm_variables?chart=system.ram\n   ```\n\n3. **From Chart Dimensions:**\n   Dimension names are typically available as variables\n   ```\n   GET /api/v1/chart?chart=system.ram\n   ```\n\n**Common Variable Examples by Chart:**\n\n**For system.ram:**\n- `used`, `free`, `cached`, `buffers`\n\n**For system.cpu:**\n- `user`, `system`, `nice`, `idle`, `iowait`\n\n**For disk.space:**\n- `used`, `avail` (available), `reserved`\n\n**For disk.io:**\n- `read`, `write`\n\n**For mysql.queries:**\n- `select`, `insert`, `update`, `delete`\n\n**Important Notes:**\n- This parameter is **REQUIRED**\n- Variable name must exist in the chart's variable set\n- Case-sensitive\n- The `$` prefix is optional (both `$used` and `used` work)\n\n**Error Handling:**\n- Missing parameter → 400 Bad Request: \"A chart= and a variable= are required.\"\n- Non-existent variable → Returns trace showing variable not found\n"
+                }
+              ],
+              "variable": []
+            },
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "GET",
+            "auth": {
+              "type": "noauth"
+            }
+          },
+          "response": [
+            {
+              "id": "58281946-2166-456f-9350-cf70bd072666",
+              "name": "Success. Returns the variable value and calculation trace.\n\n**Response Structure:**\nThe response is a JSON object containing:\n\n**Variable Lookup Trace:**\nShows the step-by-step process of how the variable value was calculated:\n- Variable name being looked up\n- Source dimensions queried\n- Calculation methods applied\n- Intermediate values\n- Final calculated value\n\n**Example Response:**\n```json\n{\n  \"variable\": \"$used\",\n  \"chart\": \"system.ram\",\n  \"value\": 8589934592,\n  \"units\": \"B\",\n  \"trace\": [\n    {\n      \"step\": \"lookup_dimension\",\n      \"dimension\": \"used\",\n      \"raw_value\": 8589934592\n    },\n    {\n      \"step\": \"final_value\",\n      \"value\": 8589934592,\n      \"units\": \"B\"\n    }\n  ]\n}\n```\n\n**Response Fields:**\n- `variable`: The requested variable name\n- `chart`: The chart ID where variable was found\n- `value`: Current numeric value of the variable\n- `units`: Unit of measurement\n- `trace`: Array of calculation steps showing how value was derived\n\n**Trace Information:**\nThe trace provides transparency into variable evaluation, showing:\n- Dimension lookups performed\n- Data aggregation methods used\n- Time ranges evaluated\n- Transformations applied\n- Why certain values were selected\n\n**Use Cases for Trace:**\n- **Debugging Alerts:** Understand why an alert triggered\n- **Validating Logic:** Verify alert expressions evaluate correctly\n- **Performance Analysis:** See which dimensions contribute to variable\n- **Education:** Learn how alert variables are calculated\n\n**Response Characteristics:**\n- Content-Type: application/json\n- Not cacheable (values change constantly)\n- Real-time evaluation at query time\n- Includes calculation metadata\n\n**Note:** The exact trace format depends on the complexity of the variable lookup. Simple dimension variables have short traces, while complex calculated variables or lookups have detailed multi-step traces.\n",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "api",
+                    "v3",
+                    "variable"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "chart",
+                      "value": "system.ram"
+                    },
+                    {
+                      "key": "variable",
+                      "value": "used"
+                    }
+                  ],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "26440bdf-3c6b-4ee8-a7d8-f9dc89f8e284",
+              "name": "Bad request. Common causes:\n- Missing `chart` parameter (error: \"A chart= and a variable= are required.\")\n- Missing `variable` parameter (error: \"A chart= and a variable= are required.\")\n- Empty parameter values\n- Malformed request\n\n**Error Response:**\nReturns plain text error message explaining what went wrong.\n\n**Example Error:**\n```\nA chart= and a variable= are required.\n```\n",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "api",
+                    "v3",
+                    "variable"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "chart",
+                      "value": "system.ram"
+                    },
+                    {
+                      "key": "variable",
+                      "value": "used"
+                    }
+                  ],
+                  "variable": []
+                },
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Bad Request",
+              "code": 400,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "text/plain"
+                }
+              ],
+              "body": "",
+              "cookie": [],
+              "_postman_previewlanguage": "text"
+            },
+            {
+              "id": "93169995-ea42-40ab-9847-4485b2465bfb",
+              "name": "Chart not found. The specified chart ID or name does not exist.\n\n**Error Response:**\nReturns plain text message indicating chart was not found.\n\n**Example Error:**\n```\nChart is not found: system.nonexistent\n```\n\n**Common Reasons:**\n- Chart ID was mistyped\n- Chart doesn't exist on this host\n- Chart was removed (plugin stopped collecting)\n- Chart is on a different node (check node parameter if in multi-node setup)\n\n**Troubleshooting:**\n1. List available charts: `GET /api/v1/charts`\n2. Verify chart ID spelling and capitalization\n3. Check if chart is actively collecting data\n4. Ensure you're querying the correct node\n",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "api",
+                    "v3",
+                    "variable"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "chart",
+                      "value": "system.ram"
+                    },
+                    {
+                      "key": "variable",
+                      "value": "used"
+                    }
+                  ],
+                  "variable": []
+                },
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Not Found",
+              "code": 404,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "text/plain"
+                }
+              ],
+              "body": "",
+              "cookie": [],
+              "_postman_previewlanguage": "text"
+            },
+            {
+              "id": "c59f540f-438f-4e45-ba7a-08e4424a12cb",
+              "name": "Internal server error during variable lookup.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "api",
+                    "v3",
+                    "variable"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "chart",
+                      "value": "system.ram"
+                    },
+                    {
+                      "key": "variable",
+                      "value": "used"
+                    }
+                  ],
+                  "variable": []
+                },
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Internal Server Error",
+              "code": 500,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "text/plain"
+                }
+              ],
+              "body": "",
+              "cookie": [],
+              "_postman_previewlanguage": "text"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        }
+      ],
+      "event": []
+    }
+  ],
+  "event": [],
+  "variable": [
+    {
+      "type": "string",
+      "value": "https://registry.my-netdata.io",
+      "key": "baseUrl"
+    }
+  ],
+  "info": {
+    "_postman_id": "b6c4eaa7-f128-44a5-bd9a-9f11b2b201a0",
+    "name": "Netdata agent variables API",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "description": {
+      "content": "Real-time performance and health monitoring.\n\n## API Versions\n\nNetdata provides three API versions:\n- **v1**: The original API, focused on single-node operations\n- **v2**: Multi-node API with advanced grouping and aggregation capabilities\n- **v3**: The latest API version that combines v1 and v2 endpoints and may include additional features\n\n### v3 API Endpoints\n\nThe v3 API provides the current, actively maintained endpoints:\n- `/api/v3/data` - Multi-dimensional data queries\n- `/api/v3/weights` - Metric scoring/correlation\n- `/api/v3/contexts` - Context metadata\n- `/api/v3/nodes` - Node information\n- `/api/v3/q` - Full-text search\n- `/api/v3/alerts` - Alert information\n- `/api/v3/alert_transitions` - Alert state transitions\n- `/api/v3/alert_config` - Alert configuration\n- `/api/v3/functions` - Available functions\n- `/api/v3/function` - Execute functions\n- `/api/v3/info` - Agent information\n- `/api/v3/node_instances` - Node instance information\n- `/api/v3/stream_path` - Streaming topology\n- `/api/v3/versions` - Version information\n- `/api/v3/badge.svg` - Dynamic badges\n- `/api/v3/allmetrics` - Export metrics\n- `/api/v3/context` - Single context info\n- `/api/v3/variable` - Variable information\n- `/api/v3/config` - Dynamic configuration\n- `/api/v3/settings` - Agent settings\n- `/api/v3/me` - Current user information\n- `/api/v3/claim` - Agent claiming\n- Additional management and streaming endpoints\n\n**Note:** V1 and V2 APIs are deprecated and maintained for backwards compatibility only. New integrations should use V3 exclusively.\n\n\nContact Support:\n Name: Netdata Agent API\n Email: info@netdata.cloud",
+      "type": "text/plain"
+    }
+  }
+}

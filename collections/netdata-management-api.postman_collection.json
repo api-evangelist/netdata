@@ -1,0 +1,522 @@
+{
+  "item": [
+    {
+      "id": "62385542-e5b7-492e-84be-b893ecd1038b",
+      "name": "management",
+      "description": {
+        "content": "Everything related to managing netdata Agents",
+        "type": "text/plain"
+      },
+      "item": [
+        {
+          "id": "5dbf7536-9650-4888-94cd-79365addcaaa",
+          "name": "Accesses the health management API to control health checks and notifications at runtime.\n",
+          "request": {
+            "name": "Accesses the health management API to control health checks and notifications at runtime.\n",
+            "description": {
+              "content": "Available from Netdata v1.12 and above, protected via bearer authorization. Especially useful for maintenance periods, the API allows you to disable health checks completely, silence alarm notifications, or Disable/Silence specific alarms that match selectors on alarm/template name, chart, context, host and family. For the simple disable/silence all scenarios, only the cmd parameter is required. The other parameters are used to define alarm selectors. For more information and examples, refer to the netdata documentation.\n\n**Security & Access Control:**\n- 🔧 **Management API** - Subject to management ACL restrictions\n- **IP Restrictions:** Controlled by `allow management from` in netdata.conf (default: localhost only)\n- **Internal Permissions:** Each management action has its own permission requirements\n- **No Bearer Protection:** Not subject to bearer token authentication\n",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "api",
+                "v1",
+                "manage",
+                "health"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [
+                {
+                  "disabled": false,
+                  "key": "cmd",
+                  "value": "<string>",
+                  "description": "DISABLE ALL: No alarm criteria are evaluated, nothing is written in the alarm log. SILENCE ALL: No notifications are sent. RESET: Return to the default state. DISABLE/SILENCE: Set the mode to be used for the alarms matching the criteria of the alarm selectors. LIST: Show active configuration.\n"
+                },
+                {
+                  "disabled": false,
+                  "key": "alarm",
+                  "value": "<string>",
+                  "description": "The expression provided will match both `alarm` and `template` names."
+                },
+                {
+                  "disabled": false,
+                  "key": "chart",
+                  "value": "<string>",
+                  "description": "Chart ids/names, as shown on the dashboard. These will match the `on` entry of a configured `alarm`."
+                },
+                {
+                  "disabled": false,
+                  "key": "context",
+                  "value": "<string>",
+                  "description": "Chart context, as shown on the dashboard. These will match the `on` entry of a configured `template`."
+                },
+                {
+                  "disabled": false,
+                  "key": "hosts",
+                  "value": "<string>",
+                  "description": "The hostnames that will need to match."
+                }
+              ],
+              "variable": []
+            },
+            "method": "GET",
+            "auth": null
+          },
+          "response": [
+            {
+              "id": "00ccfef0-f40c-43e2-bea5-0b430fa8f089",
+              "name": "A plain text response based on the result of the command.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "api",
+                    "v1",
+                    "manage",
+                    "health"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "cmd",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "alarm",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "chart",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "context",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "hosts",
+                      "value": "<string>"
+                    }
+                  ],
+                  "variable": []
+                },
+                "method": "GET",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "text/plain"
+                }
+              ],
+              "body": "",
+              "cookie": [],
+              "_postman_previewlanguage": "text"
+            },
+            {
+              "id": "407c0fec-c19e-41b1-8837-5eb06384aab0",
+              "name": "Bearer authentication error.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "api",
+                    "v1",
+                    "manage",
+                    "health"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "cmd",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "alarm",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "chart",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "context",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "hosts",
+                      "value": "<string>"
+                    }
+                  ],
+                  "variable": []
+                },
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Forbidden",
+              "code": 403,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "text/plain"
+                }
+              ],
+              "body": "",
+              "cookie": [],
+              "_postman_previewlanguage": "text"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "9289102c-80d6-4c30-ad03-26d99ba1efeb",
+          "name": "Get information about current ACLK state",
+          "request": {
+            "name": "Get information about current ACLK state",
+            "description": {
+              "content": "ACLK endpoint returns detailed information about current state of ACLK (Agent to Cloud communication).\n\n**Security & Access Control:**\n- 📊 **Public Data API** - Bearer token optional, IP-based ACL restrictions apply\n- **Default Access:** Public (no authentication required)\n- **Bearer Protection:** When enabled via `/api/v3/bearer_protection`, requires bearer token\n- **IP Restrictions:** Subject to `allow dashboard from` in netdata.conf\n- **Access Methods:** Direct HTTP/HTTPS, Netdata Cloud, external tools\n",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "api",
+                "v1",
+                "aclk"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": []
+            },
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "GET",
+            "auth": {
+              "type": "noauth"
+            }
+          },
+          "response": [
+            {
+              "id": "c1fab9e9-70c1-4f04-93d6-75789fd77391",
+              "name": "JSON object with ACLK information.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "api",
+                    "v1",
+                    "aclk"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"aclk-available\": \"string\",\n  \"aclk-version\": 3137,\n  \"protocols-supported\": [\n    \"string\",\n    \"string\"\n  ],\n  \"Agent-claimed\": true,\n  \"claimed_id\": \"cf8ab773-681e-df16-7bc0-08ea9a3330bf\",\n  \"online\": false,\n  \"used-cloud-protocol\": \"Old\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "1a081514-98a4-487a-890d-f40a0d3de6bd",
+          "name": "[DEPRECATED] Get DBEngine storage statistics",
+          "request": {
+            "name": "[DEPRECATED] Get DBEngine storage statistics",
+            "description": {
+              "content": "**[DEPRECATED - Use Netdata Cloud or internal metrics for storage monitoring]**\n\n**DBEngine Storage Statistics**\n\nReturns detailed statistics about Netdata's DBEngine storage system for all configured storage tiers. DBEngine is Netdata's high-performance time-series database that stores metrics on disk.\n\n**Statistics Provided (per tier):**\n\n**Datafiles:**\n- Active datafiles count\n- Total datafiles (active + archived)\n- Datafile size limits\n\n**Extents:**\n- Number of extents (storage chunks)\n- Extent compression statistics\n- Extent allocation and fragmentation\n\n**Pages:**\n- Page cache statistics\n- Page types (hot, cold, compressed)\n- Page I/O statistics\n\n**Compression:**\n- Compression ratios achieved\n- Compression algorithm efficiency\n- Space saved by compression\n\n**Retention:**\n- Actual retention achieved\n- Retention limits and targets\n- Disk space usage\n\n**Performance:**\n- Read/write rates\n- Cache hit ratios\n- I/O wait times\n\n**Use Cases:**\n- **Capacity Planning:** Monitor disk space usage trends\n- **Performance Tuning:** Analyze cache efficiency and I/O patterns\n- **Storage Optimization:** Review compression ratios and retention\n- **Troubleshooting:** Diagnose DBEngine performance issues\n\n**Storage Tiers:**\nNetdata supports multiple storage tiers with different retention periods:\n- **Tier 0:** High resolution (1-second), short retention\n- **Tier 1:** Medium resolution, medium retention\n- **Tier 2:** Low resolution, long retention\n\n**Availability:**\nThis endpoint only works if DBEngine is enabled. Returns 404 if DBEngine is disabled.\n\n**Migration:**\nModern Netdata installations should use:\n- Netdata Cloud for storage monitoring across agents\n- Internal metrics: `netdata.dbengine_*` charts\n- System info API for aggregate statistics\n\n**Security & Access Control:**\n- 📊 **Public Data API** - Bearer token optional, IP-based ACL restrictions apply\n- **Default Access:** Public (no authentication required)\n- **Bearer Protection:** When enabled via `/api/v3/bearer_protection`, requires bearer token\n- **IP Restrictions:** Subject to `allow dashboard from` in netdata.conf\n- **Access Methods:** Direct HTTP/HTTPS, Netdata Cloud, external tools\n",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "api",
+                "v1",
+                "dbengine_stats"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": []
+            },
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "GET",
+            "auth": {
+              "type": "noauth"
+            }
+          },
+          "response": [
+            {
+              "id": "2a09e816-f8f8-426e-a60c-3268f7a32045",
+              "name": "DBEngine statistics for all tiers",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "api",
+                    "v1",
+                    "dbengine_stats"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"tier0\": {\n    \"datafiles_active\": 4,\n    \"datafiles_total\": 12,\n    \"extents_total\": 156789,\n    \"pages_total\": 8934567,\n    \"compression_ratio\": 3.2,\n    \"disk_space_bytes\": 524288000,\n    \"retention_seconds\": 86400\n  },\n  \"tier1\": {\n    \"datafiles_active\": 2,\n    \"datafiles_total\": 6,\n    \"extents_total\": 45678,\n    \"pages_total\": 1234567,\n    \"compression_ratio\": 4.1,\n    \"disk_space_bytes\": 134217728,\n    \"retention_seconds\": 604800\n  }\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "e457e475-d278-46a4-8109-af593b0b818b",
+              "name": "DBEngine is not enabled",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "api",
+                    "v1",
+                    "dbengine_stats"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Not Found",
+              "code": 404,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "text/plain"
+                }
+              ],
+              "body": "",
+              "cookie": [],
+              "_postman_previewlanguage": "text"
+            },
+            {
+              "id": "833b7b8d-48cc-4fbb-b862-238167f33f01",
+              "name": "Service unavailable - Netdata not ready",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "api",
+                    "v1",
+                    "dbengine_stats"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Service Unavailable",
+              "code": 503,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "text/plain"
+                }
+              ],
+              "body": "",
+              "cookie": [],
+              "_postman_previewlanguage": "text"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "68ffe0cb-fc6c-4f95-9cff-46e664a15dd5",
+          "name": "[DEPRECATED] Get machine learning detection information",
+          "request": {
+            "name": "[DEPRECATED] Get machine learning detection information",
+            "description": {
+              "content": "**[DEPRECATED - Use internal metrics and Netdata Cloud for ML monitoring]**\n\n**Machine Learning Detection Info**\n\nReturns information about Netdata's built-in machine learning (ML) anomaly detection system for the specified host. Netdata trains ML models on every metric to detect anomalous behavior in real-time.\n\n**Information Provided:**\n\n**Training Status:**\n- Whether ML is enabled and trained\n- Training progress and completion percentage\n- Number of models trained\n- Training time and resource usage\n\n**Detection Configuration:**\n- Detection sensitivity settings\n- Anomaly detection thresholds\n- Update frequency\n- Model parameters\n\n**Model Statistics:**\n- Number of dimensions being modeled\n- Model types in use (k-means, etc.)\n- Model accuracy metrics\n- Training data requirements\n\n**Detection State:**\n- Current anomaly detection status\n- Recent anomaly counts\n- Detection performance metrics\n\n**Use Cases:**\n- **ML Verification:** Confirm ML is trained and detecting anomalies\n- **Troubleshooting:** Diagnose why ML isn't detecting issues\n- **Configuration:** Verify ML settings are applied correctly\n- **Monitoring:** Track ML training progress on new agents\n\n**Availability:**\nThis endpoint only works if:\n- Netdata was compiled with ML support (`ENABLE_ML`)\n- ML is enabled in configuration\n- The agent has finished initial startup\n\nReturns 503 (Service Unavailable) if ML is not compiled in or not ready.\n\n**Machine Learning in Netdata:**\n- Trains individual k-means models for every metric dimension\n- Updates models continuously as new data arrives\n- Detects anomalies in real-time (within seconds)\n- No configuration required - works out of the box\n- Models stored locally, no data sent to cloud\n\n**Migration:**\nModern deployments should:\n- Use internal metrics: `netdata.ml_*` charts\n- Check Netdata Cloud for ML insights\n- Use alert transitions API to see ML-based alerts\n- Monitor anomaly rates via `/api/v2/data` with appropriate options\n\n**Security & Access Control:**\n- 📊 **Public Data API** - Bearer token optional, IP-based ACL restrictions apply\n- **Default Access:** Public (no authentication required)\n- **Bearer Protection:** When enabled via `/api/v3/bearer_protection`, requires bearer token\n- **IP Restrictions:** Subject to `allow dashboard from` in netdata.conf\n- **Access Methods:** Direct HTTP/HTTPS, Netdata Cloud, external tools\n",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "api",
+                "v1",
+                "ml_info"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": []
+            },
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "GET",
+            "auth": {
+              "type": "noauth"
+            }
+          },
+          "response": [
+            {
+              "id": "cfabf59c-1159-4e00-96d1-587dc977f525",
+              "name": "ML detection information for the host",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "api",
+                    "v1",
+                    "ml_info"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"enabled\": true,\n  \"trained\": true,\n  \"training_progress\": 100,\n  \"models_trained\": 1247,\n  \"dimensions_monitored\": 1247,\n  \"detection_enabled\": true,\n  \"anomaly_detection_running\": true\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "9e9f29ef-0805-4313-9b0a-1eb6a7657438",
+              "name": "Service unavailable - ML not compiled in, not enabled, or Netdata not ready",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "api",
+                    "v1",
+                    "ml_info"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Service Unavailable",
+              "code": 503,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "text/plain"
+                }
+              ],
+              "body": "",
+              "cookie": [],
+              "_postman_previewlanguage": "text"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        }
+      ],
+      "event": []
+    }
+  ],
+  "event": [],
+  "variable": [
+    {
+      "type": "string",
+      "value": "https://registry.my-netdata.io",
+      "key": "baseUrl"
+    }
+  ],
+  "info": {
+    "_postman_id": "a536412f-3b5a-4b70-bfbd-d0a426a16a42",
+    "name": "Netdata agent management API",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "description": {
+      "content": "Real-time performance and health monitoring.\n\n## API Versions\n\nNetdata provides three API versions:\n- **v1**: The original API, focused on single-node operations\n- **v2**: Multi-node API with advanced grouping and aggregation capabilities\n- **v3**: The latest API version that combines v1 and v2 endpoints and may include additional features\n\n### v3 API Endpoints\n\nThe v3 API provides the current, actively maintained endpoints:\n- `/api/v3/data` - Multi-dimensional data queries\n- `/api/v3/weights` - Metric scoring/correlation\n- `/api/v3/contexts` - Context metadata\n- `/api/v3/nodes` - Node information\n- `/api/v3/q` - Full-text search\n- `/api/v3/alerts` - Alert information\n- `/api/v3/alert_transitions` - Alert state transitions\n- `/api/v3/alert_config` - Alert configuration\n- `/api/v3/functions` - Available functions\n- `/api/v3/function` - Execute functions\n- `/api/v3/info` - Agent information\n- `/api/v3/node_instances` - Node instance information\n- `/api/v3/stream_path` - Streaming topology\n- `/api/v3/versions` - Version information\n- `/api/v3/badge.svg` - Dynamic badges\n- `/api/v3/allmetrics` - Export metrics\n- `/api/v3/context` - Single context info\n- `/api/v3/variable` - Variable information\n- `/api/v3/config` - Dynamic configuration\n- `/api/v3/settings` - Agent settings\n- `/api/v3/me` - Current user information\n- `/api/v3/claim` - Agent claiming\n- Additional management and streaming endpoints\n\n**Note:** V1 and V2 APIs are deprecated and maintained for backwards compatibility only. New integrations should use V3 exclusively.\n\n\nContact Support:\n Name: Netdata Agent API\n Email: info@netdata.cloud",
+      "type": "text/plain"
+    }
+  }
+}

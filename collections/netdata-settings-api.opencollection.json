@@ -1,0 +1,60 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "Netdata agent settings API",
+    "version": "v1-rolling"
+  },
+  "items": [
+    {
+      "info": {
+        "name": "settings",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "Retrieve user settings/preferences (GET)",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://registry.my-netdata.io/api/v3/settings",
+            "params": [
+              {
+                "name": "file",
+                "value": "default",
+                "type": "query",
+                "description": "Name of the settings file to retrieve.\n\n**File Naming Rules:**\n- Alphanumeric characters only\n- Dashes (-) and underscores (_) allowed\n- No spaces or special characters\n- Case-sensitive\n\n**Access Control:**\n- **Anonymous users**: Only `file=default` allowed\n- **Authenticated users (bearer token)**: Any valid file name\n\n**Examples:**\n- `default` - Default settings file\n- `my-dashboard` - Custom dashboard settings\n- `prod-alerts` - Production alert preferences\n- `mobile-view` - Mobile UI settings\n\n**Invalid File Names:**\n- Missing or empty: Returns 400 Bad Request\n- Special characters: Returns 400 Bad Request\n- Non-default for anonymous: Returns 400 Bad Request\n"
+              }
+            ]
+          },
+          "docs": "**V3 SPECIFIC ENDPOINT**\n\nRetrieves stored user settings and preferences from Netdata's settings storage.\nThe settings API provides persistent key-value storage for UI preferences, dashboard layouts,\nalert configurations, and other user-specific data.\n\n**Settings System:**\n- **Persistent storage**: Settings survive agent restarts\n- **Version-controlled**: Each update increments version for conflict detection\n- **User-scoped**: Authenticated users can have multiple named settings files\n- **Anonym"
+        },
+        {
+          "info": {
+            "name": "Create or update user settings/preferences (PUT)",
+            "type": "http"
+          },
+          "http": {
+            "method": "PUT",
+            "url": "https://registry.my-netdata.io/api/v3/settings",
+            "params": [
+              {
+                "name": "file",
+                "value": "my-dashboard",
+                "type": "query",
+                "description": "Name of the settings file to create or update.\n\n**File Naming Rules:**\n- Alphanumeric characters only\n- Dashes (-) and underscores (_) allowed\n- No spaces or special characters\n- Case-sensitive\n\n**Access Control:**\n- **Anonymous users**: Only `file=default` allowed\n- **Authenticated users (bearer token)**: Any valid file name\n\n**File Creation:**\n- If file doesn't exist: Created with initial payload\n- If file exists: Updated with new payload (version check applies)\n"
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "**V3 SPECIFIC ENDPOINT**\n\nCreates or updates user settings with optimistic locking to prevent concurrent modification conflicts.\n\n**Update Process:**\n1. Client GET current settings (to get current version)\n2. Client modifies settings locally\n3. Client PUT updated settings WITH ORIGINAL VERSION\n4. Netdata validates version matches current file\n5. If match: Update succeeds, version auto-incremented\n6. If mismatch: Returns 409 Conflict\n\n**Conflict Resolution (409 Response):**\nWhen you receive 409 C"
+        }
+      ]
+    }
+  ],
+  "bundled": true
+}

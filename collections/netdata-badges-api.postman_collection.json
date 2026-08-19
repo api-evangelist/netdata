@@ -1,0 +1,1424 @@
+{
+  "item": [
+    {
+      "id": "fb169ac4-3398-44a8-b0a3-293806d5a49e",
+      "name": "badges",
+      "description": {
+        "content": "Everything related to dynamic badges based on metric data",
+        "type": "text/plain"
+      },
+      "item": [
+        {
+          "id": "ee6c6cf8-e475-4b95-aeb4-07d7155b5fa1",
+          "name": "Generate a badge in form of SVG image for a chart (or dimension)",
+          "request": {
+            "name": "Generate a badge in form of SVG image for a chart (or dimension)",
+            "description": {
+              "content": "Successful responses are SVG images.\n**Security & Access Control:** - 📊 **Public Data API** - Bearer token optional, IP-based ACL restrictions apply - **Default Access:** Public (no authentication required) - **Bearer Protection:** When enabled via `/api/v3/bearer_protection`, requires bearer token - **IP Restrictions:** Subject to `allow badges from` in netdata.conf - **Access Methods:** Direct HTTP/HTTPS, Netdata Cloud, external tools",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "api",
+                "v1",
+                "badge.svg"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [
+                {
+                  "disabled": false,
+                  "key": "chart",
+                  "value": "<as returned by `/api/v1/charts`>",
+                  "description": "The id of the chart as returned by the `/api/v1/charts` call."
+                },
+                {
+                  "disabled": false,
+                  "key": "dimension",
+                  "value": "<as returned by /charts>",
+                  "description": "Zero, one or more dimension ids or names, as returned by the /chart call, separated with comma or pipe. Netdata simple patterns are supported."
+                },
+                {
+                  "disabled": false,
+                  "key": "dimension",
+                  "value": "<as returned by /charts>",
+                  "description": "Zero, one or more dimension ids or names, as returned by the /chart call, separated with comma or pipe. Netdata simple patterns are supported."
+                },
+                {
+                  "disabled": false,
+                  "key": "after",
+                  "value": "-600",
+                  "description": "`after` and `before` define the time-frame of a query. `after` can be a negative number of seconds, up to 3 years (-94608000), relative to `before`. If not set, it is usually assumed to be -600. When non-data endpoints support the `after` and `before`, they use the time-frame to limit their response for objects having data retention within the time-frame given.\n"
+                },
+                {
+                  "disabled": false,
+                  "key": "before",
+                  "value": "0",
+                  "description": "`after` and `before` define the time-frame of a query. `before` can be a negative number of seconds, up to 3 years (-94608000), relative to current clock. If not set, it is assumed to be the current clock time. When `before` is positive, it is assumed to be a unix epoch timestamp. When non-data endpoints support the `after` and `before`, they use the time-frame to limit their response for objects having data retention within the time-frame given.\n"
+                },
+                {
+                  "disabled": false,
+                  "key": "group",
+                  "value": "average",
+                  "description": "Time aggregation function. If multiple collected values are to be grouped in order to return fewer points, this parameters defines the method of grouping. If the `absolute` option is set, the values are turned positive before applying this calculation.\n"
+                },
+                {
+                  "disabled": false,
+                  "key": "options",
+                  "value": "seconds",
+                  "description": "Options that affect data generation.\n* `jsonwrap` - Wrap the output in a JSON object with metadata about the query.\n* `raw` - change the output so that it is aggregatable across multiple such queries. Supported by `/api/v2` data queries and `json2` format.\n* `minify` - Remove unnecessary spaces and newlines from the output.\n* `debug` - Provide additional information in `jsonwrap` output to help tracing issues.\n* `nonzero` - Do not return dimensions that all their values are zero, to improve the visual appearance of charts. They will still be returned if all the dimensions are entirely zero.\n* `null2zero` - Replace `null` values with `0`.\n* `absolute` or `abs` - Traditionally Netdata returns select dimensions negative to improve visual appearance. This option turns this feature off.\n* `display-absolute` - Only used by badges, to do color calculation using the signed value, but render the value without a sign.\n* `flip` or `reversed` - Order the timestamps array in reverse order (newest to oldest).\n* `min2max` - When flattening multi-dimensional data into a single metric format, use `max - min` instead of `sum`. This is EOL - use `/api/v2` to control aggregation across dimensions.\n* `percentage` - Convert all values into a percentage vs the row total. When enabled, Netdata will query all dimensions, even the ones that have not been selected or are hidden, to find the row total, in order to calculate the percentage of each dimension selected.\n* `seconds` - Output timestamps in seconds instead of dates.\n* `milliseconds` or `ms` - Output timestamps in milliseconds instead of dates.\n* `unaligned` - by default queries are aligned to the the view, so that as time passes past data returned do not change. When a data query will not be used for visualization, `unaligned` can be given to avoid aligning the query time-frame for visual precision.\n* `match-ids`, `match-names`. By default filters match both IDs and names when they are available. Setting either of the two options will disable the other.\n* `anomaly-bit` - query the anomaly information instead of metric values. This is EOL, use `/api/v2` and `json2` format which always returns this information and many more.\n* `jw-anomaly-rates` - return anomaly rates as a separate result set in the same `json` format response. This is EOL, use `/api/v2` and `json2` format which always returns information and many more. \n* `details` - `/api/v2/data` returns in `jsonwrap` the full tree of dimensions that have been matched by the query.\n* `group-by-labels` - `/api/v2/data` returns in `jsonwrap` flattened labels per output dimension. These are used to identify the instances that have been aggregated into each dimension, making it possible to provide a map, like Netdata does for Kubernetes.\n* `natural-points` - return timestamps as found in the database. The result is again fixed-step, but the query engine attempts to align them with the timestamps found in the database.\n* `virtual-points` - return timestamps independent of the database alignment. This is needed aggregating data across multiple Netdata Agents, to ensure that their outputs do not need to be interpolated to be merged.\n* `selected-tier` - use data exclusively from the selected tier given with the `tier` parameter. This option is set automatically when the `tier` parameter is set.\n* `all-dimensions` - In `/api/v1` `jsonwrap` include metadata for all candidate metrics examined. In `/api/v2` this is standard behavior and no option is needed.\n* `label-quotes` - In `csv` output format, enclose each header label in quotes.\n* `objectrows` - Each row of value should be an object, not an array (only for `json` format).\n* `google_json` - Comply with google JSON/JSONP specs (only for `json` format).\n* `minimal-stats` or `minimal` - Reduce the amount of statistics returned in `jsonwrap` format to save bandwidth.\n* `long-json-keys` or `long-keys` - Use descriptive key names in JSON output instead of abbreviated ones.\n* `mcp-info` - Include additional metadata useful for the Model Context Protocol (MCP) integration.\n* `rfc3339` - Return timestamps in RFC3339 format (e.g., \"2023-01-01T00:00:00Z\") instead of Unix timestamps.\n"
+                },
+                {
+                  "disabled": false,
+                  "key": "options",
+                  "value": "jsonwrap",
+                  "description": "Options that affect data generation.\n* `jsonwrap` - Wrap the output in a JSON object with metadata about the query.\n* `raw` - change the output so that it is aggregatable across multiple such queries. Supported by `/api/v2` data queries and `json2` format.\n* `minify` - Remove unnecessary spaces and newlines from the output.\n* `debug` - Provide additional information in `jsonwrap` output to help tracing issues.\n* `nonzero` - Do not return dimensions that all their values are zero, to improve the visual appearance of charts. They will still be returned if all the dimensions are entirely zero.\n* `null2zero` - Replace `null` values with `0`.\n* `absolute` or `abs` - Traditionally Netdata returns select dimensions negative to improve visual appearance. This option turns this feature off.\n* `display-absolute` - Only used by badges, to do color calculation using the signed value, but render the value without a sign.\n* `flip` or `reversed` - Order the timestamps array in reverse order (newest to oldest).\n* `min2max` - When flattening multi-dimensional data into a single metric format, use `max - min` instead of `sum`. This is EOL - use `/api/v2` to control aggregation across dimensions.\n* `percentage` - Convert all values into a percentage vs the row total. When enabled, Netdata will query all dimensions, even the ones that have not been selected or are hidden, to find the row total, in order to calculate the percentage of each dimension selected.\n* `seconds` - Output timestamps in seconds instead of dates.\n* `milliseconds` or `ms` - Output timestamps in milliseconds instead of dates.\n* `unaligned` - by default queries are aligned to the the view, so that as time passes past data returned do not change. When a data query will not be used for visualization, `unaligned` can be given to avoid aligning the query time-frame for visual precision.\n* `match-ids`, `match-names`. By default filters match both IDs and names when they are available. Setting either of the two options will disable the other.\n* `anomaly-bit` - query the anomaly information instead of metric values. This is EOL, use `/api/v2` and `json2` format which always returns this information and many more.\n* `jw-anomaly-rates` - return anomaly rates as a separate result set in the same `json` format response. This is EOL, use `/api/v2` and `json2` format which always returns information and many more. \n* `details` - `/api/v2/data` returns in `jsonwrap` the full tree of dimensions that have been matched by the query.\n* `group-by-labels` - `/api/v2/data` returns in `jsonwrap` flattened labels per output dimension. These are used to identify the instances that have been aggregated into each dimension, making it possible to provide a map, like Netdata does for Kubernetes.\n* `natural-points` - return timestamps as found in the database. The result is again fixed-step, but the query engine attempts to align them with the timestamps found in the database.\n* `virtual-points` - return timestamps independent of the database alignment. This is needed aggregating data across multiple Netdata Agents, to ensure that their outputs do not need to be interpolated to be merged.\n* `selected-tier` - use data exclusively from the selected tier given with the `tier` parameter. This option is set automatically when the `tier` parameter is set.\n* `all-dimensions` - In `/api/v1` `jsonwrap` include metadata for all candidate metrics examined. In `/api/v2` this is standard behavior and no option is needed.\n* `label-quotes` - In `csv` output format, enclose each header label in quotes.\n* `objectrows` - Each row of value should be an object, not an array (only for `json` format).\n* `google_json` - Comply with google JSON/JSONP specs (only for `json` format).\n* `minimal-stats` or `minimal` - Reduce the amount of statistics returned in `jsonwrap` format to save bandwidth.\n* `long-json-keys` or `long-keys` - Use descriptive key names in JSON output instead of abbreviated ones.\n* `mcp-info` - Include additional metadata useful for the Model Context Protocol (MCP) integration.\n* `rfc3339` - Return timestamps in RFC3339 format (e.g., \"2023-01-01T00:00:00Z\") instead of Unix timestamps.\n"
+                },
+                {
+                  "disabled": false,
+                  "key": "alarm",
+                  "value": "<any text>",
+                  "description": "The name of an alarm linked to the chart."
+                },
+                {
+                  "disabled": false,
+                  "key": "label",
+                  "value": "<any text>",
+                  "description": "A text to be used as the label."
+                },
+                {
+                  "disabled": false,
+                  "key": "units",
+                  "value": "<any text>",
+                  "description": "A text to be used as the units."
+                },
+                {
+                  "disabled": false,
+                  "key": "label_color",
+                  "value": "<string>",
+                  "description": "A color to be used for the background of the label side(left side) of the badge. One of predefined colors or specific color in hex `RGB` or `RRGGBB` format (without preceding `#` character). If value wrong or not given default color will be used.\n"
+                },
+                {
+                  "disabled": false,
+                  "key": "value_color",
+                  "value": "<any text>",
+                  "description": "A color to be used for the background of the value *(right)* part of badge. You can set multiple using a pipe with a condition each, like this: `color<value|color:null` The following operators are supported: >, <, >=, <=, =, :null (to check if no value exists). Each color can be specified in same manner as for `label_color` parameter. Currently only integers are supported as values.\n"
+                },
+                {
+                  "disabled": false,
+                  "key": "text_color_lbl",
+                  "value": "<string>",
+                  "description": "Font color for label *(left)* part of the badge. One of predefined colors or as HTML hexadecimal color without preceding `#` character. Formats allowed `RGB` or `RRGGBB`. If no or wrong value given default color will be used.\n"
+                },
+                {
+                  "disabled": false,
+                  "key": "text_color_val",
+                  "value": "<string>",
+                  "description": "Font color for value *(right)* part of the badge. One of predefined colors or as HTML hexadecimal color without preceding `#` character. Formats allowed `RGB` or `RRGGBB`. If no or wrong value given default color will be used.\n"
+                },
+                {
+                  "disabled": false,
+                  "key": "multiply",
+                  "value": "<integer>",
+                  "description": "Multiply the value with this number for rendering it at the image (integer value required)."
+                },
+                {
+                  "disabled": false,
+                  "key": "divide",
+                  "value": "<integer>",
+                  "description": "Divide the value with this number for rendering it at the image (integer value required)."
+                },
+                {
+                  "disabled": false,
+                  "key": "scale",
+                  "value": "<integer>",
+                  "description": "Set the scale of the badge (greater or equal to 100)."
+                },
+                {
+                  "disabled": false,
+                  "key": "fixed_width_lbl",
+                  "value": "<integer>",
+                  "description": "This parameter overrides auto-sizing of badge and creates it with fixed width. This parameter determines the size of the label's left side *(label/name)*. You must set this parameter together with `fixed_width_val` otherwise it will be ignored. You should set the label/value widths wide enough to provide space for all the possible values/contents of the badge you're requesting. In case the text cannot fit the space given it will be clipped. The `scale` parameter still applies on the values you give to `fixed_width_lbl` and `fixed_width_val`.\n"
+                },
+                {
+                  "disabled": false,
+                  "key": "fixed_width_val",
+                  "value": "<integer>",
+                  "description": "This parameter overrides auto-sizing of badge and creates it with fixed width. This parameter determines the size of the label's right side *(value)*. You must set this parameter together with `fixed_width_lbl` otherwise it will be ignored. You should set the label/value widths wide enough to provide space for all the possible values/contents of the badge you're requesting. In case the text cannot fit the space given it will be clipped. The `scale` parameter still applies on the values you give to `fixed_width_lbl` and `fixed_width_val`.\n"
+                },
+                {
+                  "disabled": false,
+                  "key": "points",
+                  "value": "1",
+                  "description": "The number of points to use for the calculation. Default is 1."
+                },
+                {
+                  "disabled": false,
+                  "key": "group_options",
+                  "value": "<string>",
+                  "description": "Additional options for the grouping function."
+                },
+                {
+                  "disabled": false,
+                  "key": "precision",
+                  "value": "-1",
+                  "description": "Number of decimal places to show in the value. Default is -1 (automatic)."
+                },
+                {
+                  "disabled": false,
+                  "key": "refresh",
+                  "value": "<string>",
+                  "description": "Auto-refresh interval in seconds. Use \"auto\" to automatically determine refresh interval based on the time range or alarm update frequency. For alarms, defaults to the alarm's update_every. For charts with RRDR_OPTION_NOT_ALIGNED, defaults to the chart's update_every. Otherwise calculated from the time range (before - after).\n"
+                }
+              ],
+              "variable": []
+            },
+            "method": "GET",
+            "auth": {
+              "type": "noauth"
+            }
+          },
+          "response": [
+            {
+              "id": "59e37b90-82b6-41a1-8144-bc428ac58202",
+              "name": "The call was successful. The response should be an SVG image.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "api",
+                    "v1",
+                    "badge.svg"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "chart",
+                      "value": "<as returned by `/api/v1/charts`>"
+                    },
+                    {
+                      "key": "dimension",
+                      "value": "<as returned by /charts>"
+                    },
+                    {
+                      "key": "dimension",
+                      "value": "<as returned by /charts>"
+                    },
+                    {
+                      "key": "after",
+                      "value": "-600"
+                    },
+                    {
+                      "key": "before",
+                      "value": "0"
+                    },
+                    {
+                      "key": "group",
+                      "value": "average"
+                    },
+                    {
+                      "key": "options",
+                      "value": "seconds"
+                    },
+                    {
+                      "key": "options",
+                      "value": "jsonwrap"
+                    },
+                    {
+                      "key": "alarm",
+                      "value": "<any text>"
+                    },
+                    {
+                      "key": "label",
+                      "value": "<any text>"
+                    },
+                    {
+                      "key": "units",
+                      "value": "<any text>"
+                    },
+                    {
+                      "key": "label_color",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "value_color",
+                      "value": "<any text>"
+                    },
+                    {
+                      "key": "text_color_lbl",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "text_color_val",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "multiply",
+                      "value": "<integer>"
+                    },
+                    {
+                      "key": "divide",
+                      "value": "<integer>"
+                    },
+                    {
+                      "key": "scale",
+                      "value": "<integer>"
+                    },
+                    {
+                      "key": "fixed_width_lbl",
+                      "value": "<integer>"
+                    },
+                    {
+                      "key": "fixed_width_val",
+                      "value": "<integer>"
+                    },
+                    {
+                      "key": "points",
+                      "value": "1"
+                    },
+                    {
+                      "key": "group_options",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "precision",
+                      "value": "-1"
+                    },
+                    {
+                      "key": "refresh",
+                      "value": "<string>"
+                    }
+                  ],
+                  "variable": []
+                },
+                "method": "GET",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "text/plain"
+                }
+              ],
+              "body": "",
+              "cookie": [],
+              "_postman_previewlanguage": "text"
+            },
+            {
+              "id": "b9b287a3-db32-41bc-9061-6e9b141cbbd5",
+              "name": "Bad request - the body will include a message stating what is wrong.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "api",
+                    "v1",
+                    "badge.svg"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "chart",
+                      "value": "<as returned by `/api/v1/charts`>"
+                    },
+                    {
+                      "key": "dimension",
+                      "value": "<as returned by /charts>"
+                    },
+                    {
+                      "key": "dimension",
+                      "value": "<as returned by /charts>"
+                    },
+                    {
+                      "key": "after",
+                      "value": "-600"
+                    },
+                    {
+                      "key": "before",
+                      "value": "0"
+                    },
+                    {
+                      "key": "group",
+                      "value": "average"
+                    },
+                    {
+                      "key": "options",
+                      "value": "seconds"
+                    },
+                    {
+                      "key": "options",
+                      "value": "jsonwrap"
+                    },
+                    {
+                      "key": "alarm",
+                      "value": "<any text>"
+                    },
+                    {
+                      "key": "label",
+                      "value": "<any text>"
+                    },
+                    {
+                      "key": "units",
+                      "value": "<any text>"
+                    },
+                    {
+                      "key": "label_color",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "value_color",
+                      "value": "<any text>"
+                    },
+                    {
+                      "key": "text_color_lbl",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "text_color_val",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "multiply",
+                      "value": "<integer>"
+                    },
+                    {
+                      "key": "divide",
+                      "value": "<integer>"
+                    },
+                    {
+                      "key": "scale",
+                      "value": "<integer>"
+                    },
+                    {
+                      "key": "fixed_width_lbl",
+                      "value": "<integer>"
+                    },
+                    {
+                      "key": "fixed_width_val",
+                      "value": "<integer>"
+                    },
+                    {
+                      "key": "points",
+                      "value": "1"
+                    },
+                    {
+                      "key": "group_options",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "precision",
+                      "value": "-1"
+                    },
+                    {
+                      "key": "refresh",
+                      "value": "<string>"
+                    }
+                  ],
+                  "variable": []
+                },
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Bad Request",
+              "code": 400,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "text/plain"
+                }
+              ],
+              "body": "",
+              "cookie": [],
+              "_postman_previewlanguage": "text"
+            },
+            {
+              "id": "f1e6a069-bf56-4da2-8606-9c25b2112f9a",
+              "name": "No chart with the given id is found.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "api",
+                    "v1",
+                    "badge.svg"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "chart",
+                      "value": "<as returned by `/api/v1/charts`>"
+                    },
+                    {
+                      "key": "dimension",
+                      "value": "<as returned by /charts>"
+                    },
+                    {
+                      "key": "dimension",
+                      "value": "<as returned by /charts>"
+                    },
+                    {
+                      "key": "after",
+                      "value": "-600"
+                    },
+                    {
+                      "key": "before",
+                      "value": "0"
+                    },
+                    {
+                      "key": "group",
+                      "value": "average"
+                    },
+                    {
+                      "key": "options",
+                      "value": "seconds"
+                    },
+                    {
+                      "key": "options",
+                      "value": "jsonwrap"
+                    },
+                    {
+                      "key": "alarm",
+                      "value": "<any text>"
+                    },
+                    {
+                      "key": "label",
+                      "value": "<any text>"
+                    },
+                    {
+                      "key": "units",
+                      "value": "<any text>"
+                    },
+                    {
+                      "key": "label_color",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "value_color",
+                      "value": "<any text>"
+                    },
+                    {
+                      "key": "text_color_lbl",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "text_color_val",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "multiply",
+                      "value": "<integer>"
+                    },
+                    {
+                      "key": "divide",
+                      "value": "<integer>"
+                    },
+                    {
+                      "key": "scale",
+                      "value": "<integer>"
+                    },
+                    {
+                      "key": "fixed_width_lbl",
+                      "value": "<integer>"
+                    },
+                    {
+                      "key": "fixed_width_val",
+                      "value": "<integer>"
+                    },
+                    {
+                      "key": "points",
+                      "value": "1"
+                    },
+                    {
+                      "key": "group_options",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "precision",
+                      "value": "-1"
+                    },
+                    {
+                      "key": "refresh",
+                      "value": "<string>"
+                    }
+                  ],
+                  "variable": []
+                },
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Not Found",
+              "code": 404,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "text/plain"
+                }
+              ],
+              "body": "",
+              "cookie": [],
+              "_postman_previewlanguage": "text"
+            },
+            {
+              "id": "85c6ba1e-d695-485e-80d2-2587b586c3a8",
+              "name": "Internal server error. This usually means the server is out of memory.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "api",
+                    "v1",
+                    "badge.svg"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "chart",
+                      "value": "<as returned by `/api/v1/charts`>"
+                    },
+                    {
+                      "key": "dimension",
+                      "value": "<as returned by /charts>"
+                    },
+                    {
+                      "key": "dimension",
+                      "value": "<as returned by /charts>"
+                    },
+                    {
+                      "key": "after",
+                      "value": "-600"
+                    },
+                    {
+                      "key": "before",
+                      "value": "0"
+                    },
+                    {
+                      "key": "group",
+                      "value": "average"
+                    },
+                    {
+                      "key": "options",
+                      "value": "seconds"
+                    },
+                    {
+                      "key": "options",
+                      "value": "jsonwrap"
+                    },
+                    {
+                      "key": "alarm",
+                      "value": "<any text>"
+                    },
+                    {
+                      "key": "label",
+                      "value": "<any text>"
+                    },
+                    {
+                      "key": "units",
+                      "value": "<any text>"
+                    },
+                    {
+                      "key": "label_color",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "value_color",
+                      "value": "<any text>"
+                    },
+                    {
+                      "key": "text_color_lbl",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "text_color_val",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "multiply",
+                      "value": "<integer>"
+                    },
+                    {
+                      "key": "divide",
+                      "value": "<integer>"
+                    },
+                    {
+                      "key": "scale",
+                      "value": "<integer>"
+                    },
+                    {
+                      "key": "fixed_width_lbl",
+                      "value": "<integer>"
+                    },
+                    {
+                      "key": "fixed_width_val",
+                      "value": "<integer>"
+                    },
+                    {
+                      "key": "points",
+                      "value": "1"
+                    },
+                    {
+                      "key": "group_options",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "precision",
+                      "value": "-1"
+                    },
+                    {
+                      "key": "refresh",
+                      "value": "<string>"
+                    }
+                  ],
+                  "variable": []
+                },
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Internal Server Error",
+              "code": 500,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "text/plain"
+                }
+              ],
+              "body": "",
+              "cookie": [],
+              "_postman_previewlanguage": "text"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "fef3bd18-de23-456e-81e1-71789e227521",
+          "name": "Generate a badge in form of SVG image for a chart (or dimension) - Latest API",
+          "request": {
+            "name": "Generate a badge in form of SVG image for a chart (or dimension) - Latest API",
+            "description": {
+              "content": "Generates an SVG badge displaying real-time metric values from Netdata charts or alarms.\nThis is the latest version (v3) of the badge API. It provides the same functionality as v1 but may include additional features in the future.\n\nThe badge can display:\n- Current value of a chart dimension\n- Current status and value of an alarm\n- Custom labels and units\n- Dynamic colors based on value thresholds or alarm status\n\nSuccessful responses are SVG images that can be embedded in web pages or documentation.\n\n**Security & Access Control:**\n- 📊 **Public Data API** - Bearer token optional, IP-based ACL restrictions apply\n- **Default Access:** Public (no authentication required)\n- **Bearer Protection:** When enabled via `/api/v3/bearer_protection`, requires bearer token\n- **IP Restrictions:** Subject to `allow badges from` in netdata.conf\n- **Access Methods:** Direct HTTP/HTTPS, Netdata Cloud, external tools\n",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "api",
+                "v3",
+                "badge.svg"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [
+                {
+                  "disabled": false,
+                  "key": "chart",
+                  "value": "<as returned by `/api/v1/charts`>",
+                  "description": "The id of the chart as returned by the `/api/v1/charts` call."
+                },
+                {
+                  "disabled": false,
+                  "key": "dimension",
+                  "value": "<as returned by /charts>",
+                  "description": "Zero, one or more dimension ids or names, as returned by the /chart call, separated with comma or pipe. Netdata simple patterns are supported."
+                },
+                {
+                  "disabled": false,
+                  "key": "dimension",
+                  "value": "<as returned by /charts>",
+                  "description": "Zero, one or more dimension ids or names, as returned by the /chart call, separated with comma or pipe. Netdata simple patterns are supported."
+                },
+                {
+                  "disabled": false,
+                  "key": "after",
+                  "value": "-600",
+                  "description": "`after` and `before` define the time-frame of a query. `after` can be a negative number of seconds, up to 3 years (-94608000), relative to `before`. If not set, it is usually assumed to be -600. When non-data endpoints support the `after` and `before`, they use the time-frame to limit their response for objects having data retention within the time-frame given.\n"
+                },
+                {
+                  "disabled": false,
+                  "key": "before",
+                  "value": "0",
+                  "description": "`after` and `before` define the time-frame of a query. `before` can be a negative number of seconds, up to 3 years (-94608000), relative to current clock. If not set, it is assumed to be the current clock time. When `before` is positive, it is assumed to be a unix epoch timestamp. When non-data endpoints support the `after` and `before`, they use the time-frame to limit their response for objects having data retention within the time-frame given.\n"
+                },
+                {
+                  "disabled": false,
+                  "key": "group",
+                  "value": "average",
+                  "description": "Time aggregation function. If multiple collected values are to be grouped in order to return fewer points, this parameters defines the method of grouping. If the `absolute` option is set, the values are turned positive before applying this calculation.\n"
+                },
+                {
+                  "disabled": false,
+                  "key": "options",
+                  "value": "seconds",
+                  "description": "Options that affect data generation.\n* `jsonwrap` - Wrap the output in a JSON object with metadata about the query.\n* `raw` - change the output so that it is aggregatable across multiple such queries. Supported by `/api/v2` data queries and `json2` format.\n* `minify` - Remove unnecessary spaces and newlines from the output.\n* `debug` - Provide additional information in `jsonwrap` output to help tracing issues.\n* `nonzero` - Do not return dimensions that all their values are zero, to improve the visual appearance of charts. They will still be returned if all the dimensions are entirely zero.\n* `null2zero` - Replace `null` values with `0`.\n* `absolute` or `abs` - Traditionally Netdata returns select dimensions negative to improve visual appearance. This option turns this feature off.\n* `display-absolute` - Only used by badges, to do color calculation using the signed value, but render the value without a sign.\n* `flip` or `reversed` - Order the timestamps array in reverse order (newest to oldest).\n* `min2max` - When flattening multi-dimensional data into a single metric format, use `max - min` instead of `sum`. This is EOL - use `/api/v2` to control aggregation across dimensions.\n* `percentage` - Convert all values into a percentage vs the row total. When enabled, Netdata will query all dimensions, even the ones that have not been selected or are hidden, to find the row total, in order to calculate the percentage of each dimension selected.\n* `seconds` - Output timestamps in seconds instead of dates.\n* `milliseconds` or `ms` - Output timestamps in milliseconds instead of dates.\n* `unaligned` - by default queries are aligned to the the view, so that as time passes past data returned do not change. When a data query will not be used for visualization, `unaligned` can be given to avoid aligning the query time-frame for visual precision.\n* `match-ids`, `match-names`. By default filters match both IDs and names when they are available. Setting either of the two options will disable the other.\n* `anomaly-bit` - query the anomaly information instead of metric values. This is EOL, use `/api/v2` and `json2` format which always returns this information and many more.\n* `jw-anomaly-rates` - return anomaly rates as a separate result set in the same `json` format response. This is EOL, use `/api/v2` and `json2` format which always returns information and many more. \n* `details` - `/api/v2/data` returns in `jsonwrap` the full tree of dimensions that have been matched by the query.\n* `group-by-labels` - `/api/v2/data` returns in `jsonwrap` flattened labels per output dimension. These are used to identify the instances that have been aggregated into each dimension, making it possible to provide a map, like Netdata does for Kubernetes.\n* `natural-points` - return timestamps as found in the database. The result is again fixed-step, but the query engine attempts to align them with the timestamps found in the database.\n* `virtual-points` - return timestamps independent of the database alignment. This is needed aggregating data across multiple Netdata Agents, to ensure that their outputs do not need to be interpolated to be merged.\n* `selected-tier` - use data exclusively from the selected tier given with the `tier` parameter. This option is set automatically when the `tier` parameter is set.\n* `all-dimensions` - In `/api/v1` `jsonwrap` include metadata for all candidate metrics examined. In `/api/v2` this is standard behavior and no option is needed.\n* `label-quotes` - In `csv` output format, enclose each header label in quotes.\n* `objectrows` - Each row of value should be an object, not an array (only for `json` format).\n* `google_json` - Comply with google JSON/JSONP specs (only for `json` format).\n* `minimal-stats` or `minimal` - Reduce the amount of statistics returned in `jsonwrap` format to save bandwidth.\n* `long-json-keys` or `long-keys` - Use descriptive key names in JSON output instead of abbreviated ones.\n* `mcp-info` - Include additional metadata useful for the Model Context Protocol (MCP) integration.\n* `rfc3339` - Return timestamps in RFC3339 format (e.g., \"2023-01-01T00:00:00Z\") instead of Unix timestamps.\n"
+                },
+                {
+                  "disabled": false,
+                  "key": "options",
+                  "value": "jsonwrap",
+                  "description": "Options that affect data generation.\n* `jsonwrap` - Wrap the output in a JSON object with metadata about the query.\n* `raw` - change the output so that it is aggregatable across multiple such queries. Supported by `/api/v2` data queries and `json2` format.\n* `minify` - Remove unnecessary spaces and newlines from the output.\n* `debug` - Provide additional information in `jsonwrap` output to help tracing issues.\n* `nonzero` - Do not return dimensions that all their values are zero, to improve the visual appearance of charts. They will still be returned if all the dimensions are entirely zero.\n* `null2zero` - Replace `null` values with `0`.\n* `absolute` or `abs` - Traditionally Netdata returns select dimensions negative to improve visual appearance. This option turns this feature off.\n* `display-absolute` - Only used by badges, to do color calculation using the signed value, but render the value without a sign.\n* `flip` or `reversed` - Order the timestamps array in reverse order (newest to oldest).\n* `min2max` - When flattening multi-dimensional data into a single metric format, use `max - min` instead of `sum`. This is EOL - use `/api/v2` to control aggregation across dimensions.\n* `percentage` - Convert all values into a percentage vs the row total. When enabled, Netdata will query all dimensions, even the ones that have not been selected or are hidden, to find the row total, in order to calculate the percentage of each dimension selected.\n* `seconds` - Output timestamps in seconds instead of dates.\n* `milliseconds` or `ms` - Output timestamps in milliseconds instead of dates.\n* `unaligned` - by default queries are aligned to the the view, so that as time passes past data returned do not change. When a data query will not be used for visualization, `unaligned` can be given to avoid aligning the query time-frame for visual precision.\n* `match-ids`, `match-names`. By default filters match both IDs and names when they are available. Setting either of the two options will disable the other.\n* `anomaly-bit` - query the anomaly information instead of metric values. This is EOL, use `/api/v2` and `json2` format which always returns this information and many more.\n* `jw-anomaly-rates` - return anomaly rates as a separate result set in the same `json` format response. This is EOL, use `/api/v2` and `json2` format which always returns information and many more. \n* `details` - `/api/v2/data` returns in `jsonwrap` the full tree of dimensions that have been matched by the query.\n* `group-by-labels` - `/api/v2/data` returns in `jsonwrap` flattened labels per output dimension. These are used to identify the instances that have been aggregated into each dimension, making it possible to provide a map, like Netdata does for Kubernetes.\n* `natural-points` - return timestamps as found in the database. The result is again fixed-step, but the query engine attempts to align them with the timestamps found in the database.\n* `virtual-points` - return timestamps independent of the database alignment. This is needed aggregating data across multiple Netdata Agents, to ensure that their outputs do not need to be interpolated to be merged.\n* `selected-tier` - use data exclusively from the selected tier given with the `tier` parameter. This option is set automatically when the `tier` parameter is set.\n* `all-dimensions` - In `/api/v1` `jsonwrap` include metadata for all candidate metrics examined. In `/api/v2` this is standard behavior and no option is needed.\n* `label-quotes` - In `csv` output format, enclose each header label in quotes.\n* `objectrows` - Each row of value should be an object, not an array (only for `json` format).\n* `google_json` - Comply with google JSON/JSONP specs (only for `json` format).\n* `minimal-stats` or `minimal` - Reduce the amount of statistics returned in `jsonwrap` format to save bandwidth.\n* `long-json-keys` or `long-keys` - Use descriptive key names in JSON output instead of abbreviated ones.\n* `mcp-info` - Include additional metadata useful for the Model Context Protocol (MCP) integration.\n* `rfc3339` - Return timestamps in RFC3339 format (e.g., \"2023-01-01T00:00:00Z\") instead of Unix timestamps.\n"
+                },
+                {
+                  "disabled": false,
+                  "key": "alarm",
+                  "value": "<string>",
+                  "description": "The name of an alarm linked to the chart. When specified, the badge will display the alarm's current value and use alarm status for color selection."
+                },
+                {
+                  "disabled": false,
+                  "key": "label",
+                  "value": "<string>",
+                  "description": "Custom text to use as the badge label (left side). If not specified:\n- For alarms: uses the alarm name (with underscores replaced by spaces)\n- For dimensions: uses the dimension name\n- Otherwise: uses the chart name\n"
+                },
+                {
+                  "disabled": false,
+                  "key": "units",
+                  "value": "<string>",
+                  "description": "Custom text to use as the units suffix. If not specified:\n- For alarms: uses the alarm's configured units or empty string\n- For percentage queries: uses \"%\"\n- Otherwise: uses the chart's units\n"
+                },
+                {
+                  "disabled": false,
+                  "key": "label_color",
+                  "value": "<string>",
+                  "description": "Background color for the label (left) side of the badge. Can be:\n- One of the predefined color names\n- Hex RGB format (3 digits): e.g., \"f00\" for red\n- Hex RRGGBB format (6 digits): e.g., \"ff0000\" for red\nNote: Do not include the '#' character. If value is invalid, default color will be used.\n"
+                },
+                {
+                  "disabled": false,
+                  "key": "value_color",
+                  "value": "<string>",
+                  "description": "Background color for the value (right) side of the badge. Supports conditional coloring based on the value.\n\nCan be specified as:\n- Simple color: Same format as label_color\n- Conditional: Multiple color rules separated by pipe (|), each with format: `color<operator>value`\n\nSupported operators:\n- `>`: greater than\n- `<`: less than\n- `>=`: greater than or equal\n- `<=`: less than or equal\n- `=`: equal to\n- `:null`: true when no value exists\n\nExample: `green<80|yellow<95|red` (green if value < 80, yellow if < 95, otherwise red)\n\nNote: Currently only integers are supported as values. Colors follow same format as label_color.\n"
+                },
+                {
+                  "disabled": false,
+                  "key": "text_color_lbl",
+                  "value": "<string>",
+                  "description": "Font color for the label (left) side text. Can be:\n- One of the predefined color names\n- Hex RGB or RRGGBB format without '#' character\nIf not specified or invalid, default color will be used.\n"
+                },
+                {
+                  "disabled": false,
+                  "key": "text_color_val",
+                  "value": "<string>",
+                  "description": "Font color for the value (right) side text. Can be:\n- One of the predefined color names\n- Hex RGB or RRGGBB format without '#' character\nIf not specified or invalid, default color will be used.\n"
+                },
+                {
+                  "disabled": false,
+                  "key": "multiply",
+                  "value": "1",
+                  "description": "Multiply the displayed value by this number before rendering. Integer value required.\nUseful for unit conversions or scaling. Default is 1.\n"
+                },
+                {
+                  "disabled": false,
+                  "key": "divide",
+                  "value": "1",
+                  "description": "Divide the displayed value by this number before rendering. Integer value required.\nUseful for unit conversions or scaling. Default is 1.\n"
+                },
+                {
+                  "disabled": false,
+                  "key": "scale",
+                  "value": "100",
+                  "description": "Scale factor for the badge size as a percentage. Must be >= 100.\n- 100 = normal size (default)\n- 150 = 1.5x larger\n- 200 = 2x larger\n"
+                },
+                {
+                  "disabled": false,
+                  "key": "fixed_width_lbl",
+                  "value": "<integer>",
+                  "description": "Fixed width for the label (left) side in pixels. Must be used together with `fixed_width_val`.\n\nThis overrides automatic sizing and creates a badge with fixed dimensions. Ensure the width is sufficient for your content - text that doesn't fit will be clipped.\n\nThe `scale` parameter still applies to these fixed width values.\n"
+                },
+                {
+                  "disabled": false,
+                  "key": "fixed_width_val",
+                  "value": "<integer>",
+                  "description": "Fixed width for the value (right) side in pixels. Must be used together with `fixed_width_lbl`.\n\nThis overrides automatic sizing and creates a badge with fixed dimensions. Ensure the width is sufficient for your content - text that doesn't fit will be clipped.\n\nThe `scale` parameter still applies to these fixed width values.\n"
+                },
+                {
+                  "disabled": false,
+                  "key": "points",
+                  "value": "1",
+                  "description": "Number of data points to use for the calculation. Default is 1.\nHigher values provide averaging over more samples.\n"
+                },
+                {
+                  "disabled": false,
+                  "key": "group_options",
+                  "value": "<string>",
+                  "description": "Additional options for the time-series grouping function. Format depends on the selected group method."
+                },
+                {
+                  "disabled": false,
+                  "key": "precision",
+                  "value": "-1",
+                  "description": "Number of decimal places to display in the value.\n- Positive number: exact decimal places (e.g., 2 = \"12.34\")\n- -1 (default): automatic precision based on value magnitude\n"
+                },
+                {
+                  "disabled": false,
+                  "key": "refresh",
+                  "value": "<string>",
+                  "description": "Auto-refresh interval for the badge. Can be:\n- \"auto\": Automatically determine refresh based on context\n  - For alarms: uses the alarm's update_every interval\n  - For non-aligned charts: uses the chart's update_every\n  - For time-range queries: uses the query time span\n- Integer: Specific refresh interval in seconds\n\nWhen refresh is set, the response includes a Refresh HTTP header.\n"
+                }
+              ],
+              "variable": []
+            },
+            "header": [
+              {
+                "key": "Accept",
+                "value": "image/svg+xml"
+              }
+            ],
+            "method": "GET",
+            "auth": {
+              "type": "noauth"
+            }
+          },
+          "response": [
+            {
+              "id": "f6489256-3c86-437c-b406-9b3728843361",
+              "name": "Success. The response is an SVG image that can be embedded in HTML or Markdown.\n\nWhen refresh parameter is set, the response includes:\n- Refresh header with the interval\n- Appropriate Cache-Control headers\n",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "api",
+                    "v3",
+                    "badge.svg"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "chart",
+                      "value": "<as returned by `/api/v1/charts`>"
+                    },
+                    {
+                      "key": "dimension",
+                      "value": "<as returned by /charts>"
+                    },
+                    {
+                      "key": "dimension",
+                      "value": "<as returned by /charts>"
+                    },
+                    {
+                      "key": "after",
+                      "value": "-600"
+                    },
+                    {
+                      "key": "before",
+                      "value": "0"
+                    },
+                    {
+                      "key": "group",
+                      "value": "average"
+                    },
+                    {
+                      "key": "options",
+                      "value": "seconds"
+                    },
+                    {
+                      "key": "options",
+                      "value": "jsonwrap"
+                    },
+                    {
+                      "key": "alarm",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "label",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "units",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "label_color",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "value_color",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "text_color_lbl",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "text_color_val",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "multiply",
+                      "value": "1"
+                    },
+                    {
+                      "key": "divide",
+                      "value": "1"
+                    },
+                    {
+                      "key": "scale",
+                      "value": "100"
+                    },
+                    {
+                      "key": "fixed_width_lbl",
+                      "value": "<integer>"
+                    },
+                    {
+                      "key": "fixed_width_val",
+                      "value": "<integer>"
+                    },
+                    {
+                      "key": "points",
+                      "value": "1"
+                    },
+                    {
+                      "key": "group_options",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "precision",
+                      "value": "-1"
+                    },
+                    {
+                      "key": "refresh",
+                      "value": "<string>"
+                    }
+                  ],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "image/svg+xml"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "image/svg+xml"
+                }
+              ],
+              "body": "string",
+              "cookie": [],
+              "_postman_previewlanguage": "text"
+            },
+            {
+              "id": "1a3fbdc1-596d-4715-a808-c214f94db745",
+              "name": "Bad request. The response body contains an error message explaining what is wrong.\nCommon causes:\n- Missing required 'chart' parameter\n- Invalid parameter values\n",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "api",
+                    "v3",
+                    "badge.svg"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "chart",
+                      "value": "<as returned by `/api/v1/charts`>"
+                    },
+                    {
+                      "key": "dimension",
+                      "value": "<as returned by /charts>"
+                    },
+                    {
+                      "key": "dimension",
+                      "value": "<as returned by /charts>"
+                    },
+                    {
+                      "key": "after",
+                      "value": "-600"
+                    },
+                    {
+                      "key": "before",
+                      "value": "0"
+                    },
+                    {
+                      "key": "group",
+                      "value": "average"
+                    },
+                    {
+                      "key": "options",
+                      "value": "seconds"
+                    },
+                    {
+                      "key": "options",
+                      "value": "jsonwrap"
+                    },
+                    {
+                      "key": "alarm",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "label",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "units",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "label_color",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "value_color",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "text_color_lbl",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "text_color_val",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "multiply",
+                      "value": "1"
+                    },
+                    {
+                      "key": "divide",
+                      "value": "1"
+                    },
+                    {
+                      "key": "scale",
+                      "value": "100"
+                    },
+                    {
+                      "key": "fixed_width_lbl",
+                      "value": "<integer>"
+                    },
+                    {
+                      "key": "fixed_width_val",
+                      "value": "<integer>"
+                    },
+                    {
+                      "key": "points",
+                      "value": "1"
+                    },
+                    {
+                      "key": "group_options",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "precision",
+                      "value": "-1"
+                    },
+                    {
+                      "key": "refresh",
+                      "value": "<string>"
+                    }
+                  ],
+                  "variable": []
+                },
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Bad Request",
+              "code": 400,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "text/plain"
+                }
+              ],
+              "body": "",
+              "cookie": [],
+              "_postman_previewlanguage": "text"
+            },
+            {
+              "id": "f95cfcbc-7725-4e68-92e0-619885fc84a9",
+              "name": "Not found. Possible causes:\n- Chart with the specified ID does not exist\n- Specified alarm does not exist on the chart\n",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "api",
+                    "v3",
+                    "badge.svg"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "chart",
+                      "value": "<as returned by `/api/v1/charts`>"
+                    },
+                    {
+                      "key": "dimension",
+                      "value": "<as returned by /charts>"
+                    },
+                    {
+                      "key": "dimension",
+                      "value": "<as returned by /charts>"
+                    },
+                    {
+                      "key": "after",
+                      "value": "-600"
+                    },
+                    {
+                      "key": "before",
+                      "value": "0"
+                    },
+                    {
+                      "key": "group",
+                      "value": "average"
+                    },
+                    {
+                      "key": "options",
+                      "value": "seconds"
+                    },
+                    {
+                      "key": "options",
+                      "value": "jsonwrap"
+                    },
+                    {
+                      "key": "alarm",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "label",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "units",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "label_color",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "value_color",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "text_color_lbl",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "text_color_val",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "multiply",
+                      "value": "1"
+                    },
+                    {
+                      "key": "divide",
+                      "value": "1"
+                    },
+                    {
+                      "key": "scale",
+                      "value": "100"
+                    },
+                    {
+                      "key": "fixed_width_lbl",
+                      "value": "<integer>"
+                    },
+                    {
+                      "key": "fixed_width_val",
+                      "value": "<integer>"
+                    },
+                    {
+                      "key": "points",
+                      "value": "1"
+                    },
+                    {
+                      "key": "group_options",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "precision",
+                      "value": "-1"
+                    },
+                    {
+                      "key": "refresh",
+                      "value": "<string>"
+                    }
+                  ],
+                  "variable": []
+                },
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Not Found",
+              "code": 404,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "text/plain"
+                }
+              ],
+              "body": "",
+              "cookie": [],
+              "_postman_previewlanguage": "text"
+            },
+            {
+              "id": "09a9a65d-a5f2-4923-a4cb-3b3e218751e2",
+              "name": "Internal server error. Usually indicates the server is out of memory.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "api",
+                    "v3",
+                    "badge.svg"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "chart",
+                      "value": "<as returned by `/api/v1/charts`>"
+                    },
+                    {
+                      "key": "dimension",
+                      "value": "<as returned by /charts>"
+                    },
+                    {
+                      "key": "dimension",
+                      "value": "<as returned by /charts>"
+                    },
+                    {
+                      "key": "after",
+                      "value": "-600"
+                    },
+                    {
+                      "key": "before",
+                      "value": "0"
+                    },
+                    {
+                      "key": "group",
+                      "value": "average"
+                    },
+                    {
+                      "key": "options",
+                      "value": "seconds"
+                    },
+                    {
+                      "key": "options",
+                      "value": "jsonwrap"
+                    },
+                    {
+                      "key": "alarm",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "label",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "units",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "label_color",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "value_color",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "text_color_lbl",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "text_color_val",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "multiply",
+                      "value": "1"
+                    },
+                    {
+                      "key": "divide",
+                      "value": "1"
+                    },
+                    {
+                      "key": "scale",
+                      "value": "100"
+                    },
+                    {
+                      "key": "fixed_width_lbl",
+                      "value": "<integer>"
+                    },
+                    {
+                      "key": "fixed_width_val",
+                      "value": "<integer>"
+                    },
+                    {
+                      "key": "points",
+                      "value": "1"
+                    },
+                    {
+                      "key": "group_options",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "precision",
+                      "value": "-1"
+                    },
+                    {
+                      "key": "refresh",
+                      "value": "<string>"
+                    }
+                  ],
+                  "variable": []
+                },
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Internal Server Error",
+              "code": 500,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "text/plain"
+                }
+              ],
+              "body": "",
+              "cookie": [],
+              "_postman_previewlanguage": "text"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        }
+      ],
+      "event": []
+    }
+  ],
+  "event": [],
+  "variable": [
+    {
+      "type": "string",
+      "value": "https://registry.my-netdata.io",
+      "key": "baseUrl"
+    }
+  ],
+  "info": {
+    "_postman_id": "b89dec69-5c2c-4e7b-a2e0-6e9e0246ab24",
+    "name": "Netdata agent badges API",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "description": {
+      "content": "Real-time performance and health monitoring.\n\n## API Versions\n\nNetdata provides three API versions:\n- **v1**: The original API, focused on single-node operations\n- **v2**: Multi-node API with advanced grouping and aggregation capabilities\n- **v3**: The latest API version that combines v1 and v2 endpoints and may include additional features\n\n### v3 API Endpoints\n\nThe v3 API provides the current, actively maintained endpoints:\n- `/api/v3/data` - Multi-dimensional data queries\n- `/api/v3/weights` - Metric scoring/correlation\n- `/api/v3/contexts` - Context metadata\n- `/api/v3/nodes` - Node information\n- `/api/v3/q` - Full-text search\n- `/api/v3/alerts` - Alert information\n- `/api/v3/alert_transitions` - Alert state transitions\n- `/api/v3/alert_config` - Alert configuration\n- `/api/v3/functions` - Available functions\n- `/api/v3/function` - Execute functions\n- `/api/v3/info` - Agent information\n- `/api/v3/node_instances` - Node instance information\n- `/api/v3/stream_path` - Streaming topology\n- `/api/v3/versions` - Version information\n- `/api/v3/badge.svg` - Dynamic badges\n- `/api/v3/allmetrics` - Export metrics\n- `/api/v3/context` - Single context info\n- `/api/v3/variable` - Variable information\n- `/api/v3/config` - Dynamic configuration\n- `/api/v3/settings` - Agent settings\n- `/api/v3/me` - Current user information\n- `/api/v3/claim` - Agent claiming\n- Additional management and streaming endpoints\n\n**Note:** V1 and V2 APIs are deprecated and maintained for backwards compatibility only. New integrations should use V3 exclusively.\n\n\nContact Support:\n Name: Netdata Agent API\n Email: info@netdata.cloud",
+      "type": "text/plain"
+    }
+  }
+}

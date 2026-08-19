@@ -1,0 +1,2030 @@
+{
+  "item": [
+    {
+      "id": "89e31b44-5a9e-4487-89b9-a0db1adcd2fb",
+      "name": "functions",
+      "description": {
+        "content": "Everything related to functions",
+        "type": "text/plain"
+      },
+      "item": [
+        {
+          "id": "e84eb941-40a9-4c90-ab01-dd95cbf1a664",
+          "name": "Track progress of long-running function executions",
+          "request": {
+            "name": "Track progress of long-running function executions",
+            "description": {
+              "content": "Monitors the progress of long-running Netdata function executions identified by a transaction ID.\nWhen executing functions that may take significant time (e.g., data collection, analysis, exports),\nthis endpoint allows clients to poll for progress updates and track completion status.\n\n**Function Execution Flow:**\n1. Client initiates a function execution (e.g., via `/api/v3/function`)\n2. Function returns immediately with a transaction ID\n3. Client polls `/api/v3/progress?transaction=<id>` for status updates\n4. Progress endpoint returns completion percentage and status\n5. When complete, client retrieves final results\n\n**Progress Information Includes:**\n- **Percentage complete**: 0-100% progress indicator\n- **Status**: running, completed, failed, cancelled\n- **Message**: Human-readable status description\n- **Remaining time estimate**: If available\n\n**Use Cases:**\n- **Long data exports**: Track progress of large data export operations\n- **Analysis functions**: Monitor CPU-intensive analysis tasks\n- **Batch operations**: Track multi-step batch processing\n- **User experience**: Provide progress feedback in UI applications\n\n**Polling Best Practices:**\n- Poll every 1-2 seconds for responsive updates\n- Implement exponential backoff for completed/failed states\n- Set reasonable timeouts (functions may take minutes)\n- Handle cancellation gracefully\n\n**Common Usage Patterns:**\n\n1. **Poll for function progress:**\n   ```\n   /api/v3/progress?transaction=550e8400-e29b-41d4-a716-446655440000\n   ```\n\n2. **Integration with function execution:**\n   ```javascript\n   // 1. Start function\n   const response = await fetch('/api/v3/function?...');\n   const { transaction } = await response.json();\n\n   // 2. Poll for progress\n   const interval = setInterval(async () => {\n     const progress = await fetch(`/api/v3/progress?transaction=${transaction}`);\n     const { percentage, status } = await progress.json();\n\n     if (status === 'completed') {\n       clearInterval(interval);\n       // Fetch final results\n     }\n   }, 1000);\n   ```\n\n**Transaction ID Format:**\n- UUID v4 format: `xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx`\n- Returned by function execution endpoints\n- Valid for the lifetime of the function execution\n- Expires after completion or timeout\n\n**Security & Access Control:**\n- 🔓 **Always Public API** - This endpoint is always accessible without authentication\n- **No Restrictions:** Not subject to bearer protection or IP-based ACL restrictions\n- **No Authentication:** Cannot be restricted by any configuration\n- **Access:** Available to anyone who can reach the agent's HTTP endpoint\n",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "api",
+                "v3",
+                "progress"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [
+                {
+                  "disabled": false,
+                  "key": "transaction",
+                  "value": "<uuid>",
+                  "description": "(Required) Transaction ID (UUID) of the function execution to track. This ID is returned\nwhen initiating a function execution via `/api/v3/function` or similar endpoints.\n\n**UUID Format:**\n- Standard UUID v4 format\n- Example: `550e8400-e29b-41d4-a716-446655440000`\n- Case-insensitive\n\n**Transaction Lifecycle:**\n- **Created**: When function execution starts\n- **Active**: While function is running\n- **Expired**: After completion, failure, or timeout\n- **Retention**: Transaction state kept briefly after completion for final status retrieval\n\n**Invalid Transaction Handling:**\n- Missing transaction: Returns 400 Bad Request\n- Malformed UUID: Returns 400 Bad Request\n- Expired transaction: Returns 404 Not Found\n- Unknown transaction: Returns 404 Not Found\n"
+                }
+              ],
+              "variable": []
+            },
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "GET",
+            "auth": null
+          },
+          "response": [
+            {
+              "id": "1e628071-0799-427a-a84b-34459146cea0",
+              "name": "Successfully retrieved progress information for the transaction.\n\nReturns current progress status including percentage complete, state, and optional message.\n",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "api",
+                    "v3",
+                    "progress"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "transaction",
+                      "value": "550e8400-e29b-41d4-a716-446655440000"
+                    }
+                  ],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"transaction\": \"550e8400-e29b-41d4-a716-446655440000\",\n  \"status\": \"running\",\n  \"percentage\": 45,\n  \"message\": \"Processing data...\",\n  \"done\": 450,\n  \"all\": 1000,\n  \"eta_seconds\": 30\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "a2160d27-a3aa-41c7-9cf0-c33e64af9b65",
+              "name": "Bad request. Common causes:\n- Missing transaction parameter\n- Malformed UUID format\n- Invalid transaction ID format\n",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "api",
+                    "v3",
+                    "progress"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "transaction",
+                      "value": "550e8400-e29b-41d4-a716-446655440000"
+                    }
+                  ],
+                  "variable": []
+                },
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Bad Request",
+              "code": 400,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "text/plain"
+                }
+              ],
+              "body": "",
+              "cookie": [],
+              "_postman_previewlanguage": "text"
+            },
+            {
+              "id": "ac45f366-17f2-49fe-8371-a8024349f100",
+              "name": "Transaction not found. Possible reasons:\n- Transaction ID does not exist\n- Transaction has expired (completed/failed long ago)\n- Transaction was never created\n",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "api",
+                    "v3",
+                    "progress"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "transaction",
+                      "value": "550e8400-e29b-41d4-a716-446655440000"
+                    }
+                  ],
+                  "variable": []
+                },
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Not Found",
+              "code": 404,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "text/plain"
+                }
+              ],
+              "body": "",
+              "cookie": [],
+              "_postman_previewlanguage": "text"
+            },
+            {
+              "id": "5b66d147-0d6b-4139-b7d8-13533d561c87",
+              "name": "Internal server error during progress tracking.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "api",
+                    "v3",
+                    "progress"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "transaction",
+                      "value": "550e8400-e29b-41d4-a716-446655440000"
+                    }
+                  ],
+                  "variable": []
+                },
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Internal Server Error",
+              "code": 500,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "text/plain"
+                }
+              ],
+              "body": "",
+              "cookie": [],
+              "_postman_previewlanguage": "text"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "d3eb8350-6a52-4ad3-af49-a9d54e29ba30",
+          "name": "Execute a Netdata function on a specific node",
+          "request": {
+            "name": "Execute a Netdata function on a specific node",
+            "description": {
+              "content": "Executes a named function on a Netdata agent to retrieve live information or trigger actions.\nFunctions are plugin-provided operations that can query system state, collect real-time data,\nor perform administrative tasks.\n\n**What are Netdata Functions?**\nFunctions extend Netdata beyond passive metric collection by allowing:\n- **Live data queries**: Get current system state (processes, connections, services)\n- **Interactive diagnostics**: Run on-demand checks and analysis\n- **Administrative operations**: Trigger actions like cache clearing or config reloading\n- **Plugin-specific features**: Access specialized capabilities provided by plugins\n\n**Common Functions Include:**\n- `systemd-list-units` - List systemd services and their status\n- `processes` - List currently running processes with resource usage\n- `network-connections` - Show active network connections\n- `mount-points` - Display mounted filesystems\n- `docker-containers` - List Docker containers (if Docker plugin enabled)\n- Many more plugin-specific functions\n\n**Function Discovery:**\nUse `/api/v3/functions` to discover available functions on each node.\n\n**Execution Model:**\n- Functions execute on the target node's agent\n- Results are collected and returned in real-time\n- Long-running functions return a transaction ID for progress tracking\n- Functions may require specific permissions or capabilities\n\n**Use Cases:**\n- **System diagnostics**: Query live system state for troubleshooting\n- **Capacity planning**: Get current resource utilization details\n- **Security auditing**: List processes, connections, open ports\n- **Service management**: Check service status across infrastructure\n- **Interactive dashboards**: Provide drill-down capabilities\n\n**Common Usage Patterns:**\n\n1. **List running processes:**\n   ```\n   /api/v3/function?function=processes\n   ```\n\n2. **List systemd services:**\n   ```\n   /api/v3/function?function=systemd-list-units&timeout=30\n   ```\n\n3. **Get network connections:**\n   ```\n   /api/v3/function?function=network-connections\n   ```\n\n4. **Execute with custom timeout for slow operations:**\n   ```\n   /api/v3/function?function=docker-containers&timeout=60\n   ```\n\n**Function Response Formats:**\n- Most functions return JSON data\n- Some may return plain text or formatted output\n- Check Content-Type header for response format\n- Long operations may return transaction ID for `/api/v3/progress` polling\n\n**Security Considerations:**\n- Functions respect user authentication and authorization\n- Some functions may require elevated permissions\n- Function execution is subject to ACL checks\n- Sensitive operations may be restricted by configuration\n\n**Security & Access Control:**\n- 📊 **Public Data API** - Bearer token optional, IP-based ACL restrictions apply\n- **Default Access:** Public (no authentication required)\n- **Bearer Protection:** When enabled via `/api/v3/bearer_protection`, requires bearer token\n- **IP Restrictions:** Subject to `allow dashboard from` in netdata.conf\n- **Access Methods:** Direct HTTP/HTTPS, Netdata Cloud, external tools\n",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "api",
+                "v3",
+                "function"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [
+                {
+                  "disabled": false,
+                  "key": "function",
+                  "value": "<string>",
+                  "description": "(Required) Name of the function to execute. Each Netdata plugin can provide multiple functions\nwith different capabilities.\n\n**Function Names:**\n- Kebab-case naming: `function-name-here`\n- Provided by plugins: different plugins provide different functions\n- Discoverable via `/api/v3/functions` endpoint\n- Case-sensitive\n\n**Common Built-in Functions:**\n- `systemd-list-units` - List systemd services\n- `processes` - Running processes with CPU/memory usage\n- `network-connections` - Active network connections and sockets\n- `mount-points` - Mounted filesystems and usage\n- `ipmi-sensors` - IPMI hardware sensors (if available)\n\n**Plugin-Specific Functions:**\n- Docker plugin: `docker-containers`, `docker-images`\n- Apps plugin: `apps-processes`\n- Logs plugin: `logs-query`\n- And many more depending on enabled plugins\n\n**Invalid Function Names:**\n- Missing function: Returns 400 Bad Request\n- Unknown function: Returns 404 Not Found or function-specific error\n- Disabled function: Returns 403 Forbidden\n"
+                },
+                {
+                  "disabled": false,
+                  "key": "timeout",
+                  "value": "60",
+                  "description": "Maximum time in seconds to wait for function execution before timing out.\nDifferent functions have different execution times.\n\n**Timeout Guidelines by Function Type:**\n- **Fast queries** (< 1s): processes, mount-points\n  Recommended: 10-30 seconds\n- **Medium queries** (1-5s): systemd-list-units, network-connections\n  Recommended: 30-60 seconds\n- **Slow operations** (5-30s): docker operations, log queries\n  Recommended: 60-300 seconds\n\n**Timeout Behavior:**\n- If execution completes before timeout: Returns results immediately\n- If timeout expires: Function is cancelled and error returned\n- For async functions: Returns transaction ID immediately, timeout applies to overall operation\n\n**Best Practices:**\n- Set conservative timeouts for production systems\n- Consider network latency for remote nodes\n- Monitor timeout errors and adjust accordingly\n"
+                }
+              ],
+              "variable": []
+            },
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "GET",
+            "auth": {
+              "type": "noauth"
+            }
+          },
+          "response": [
+            {
+              "id": "c7d118f2-052c-4cc0-af3d-53f61bf497c2",
+              "name": "Function executed successfully and returned results.\n\nThe response format depends on the specific function:\n- Most functions return JSON data\n- Some return plain text or formatted output\n- Check Content-Type header\n",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "api",
+                    "v3",
+                    "function"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "function",
+                      "value": "processes"
+                    },
+                    {
+                      "key": "timeout",
+                      "value": "30"
+                    }
+                  ],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"processes\": [\n    {\n      \"pid\": 1234,\n      \"name\": \"nginx\",\n      \"cpu\": 2.5,\n      \"memory\": 45678\n    },\n    {\n      \"pid\": 5678,\n      \"name\": \"postgres\",\n      \"cpu\": 15.3,\n      \"memory\": 234567\n    }\n  ]\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "17a7ac44-fedd-4798-9748-c915cd01392f",
+              "name": "Function execution started asynchronously. Use the returned transaction ID\nto poll `/api/v3/progress` for status and results.\n",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "api",
+                    "v3",
+                    "function"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "function",
+                      "value": "processes"
+                    },
+                    {
+                      "key": "timeout",
+                      "value": "30"
+                    }
+                  ],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Accepted",
+              "code": 202,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"transaction\": \"c41ecd7f-798e-cb95-1236-e65af1a36ec8\",\n  \"message\": \"string\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "04d81782-65e4-43d9-b9cc-bedbfb471c86",
+              "name": "Bad request. Common causes:\n- Missing required `function` parameter\n- Invalid function name format\n- Invalid request body for the function\n",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "api",
+                    "v3",
+                    "function"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "function",
+                      "value": "processes"
+                    },
+                    {
+                      "key": "timeout",
+                      "value": "30"
+                    }
+                  ],
+                  "variable": []
+                },
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Bad Request",
+              "code": 400,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "text/plain"
+                }
+              ],
+              "body": "",
+              "cookie": [],
+              "_postman_previewlanguage": "text"
+            },
+            {
+              "id": "d2ca5703-777d-41b8-b3ef-1d2aeb18f74e",
+              "name": "Forbidden. Possible reasons:\n- Function requires higher permissions than current user has\n- Function is disabled in configuration\n- ACL restrictions prevent execution\n",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "api",
+                    "v3",
+                    "function"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "function",
+                      "value": "processes"
+                    },
+                    {
+                      "key": "timeout",
+                      "value": "30"
+                    }
+                  ],
+                  "variable": []
+                },
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Forbidden",
+              "code": 403,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "text/plain"
+                }
+              ],
+              "body": "",
+              "cookie": [],
+              "_postman_previewlanguage": "text"
+            },
+            {
+              "id": "956a3df8-afee-451c-9292-39204a136d59",
+              "name": "Function not found. The specified function does not exist or is not available on this node.\n",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "api",
+                    "v3",
+                    "function"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "function",
+                      "value": "processes"
+                    },
+                    {
+                      "key": "timeout",
+                      "value": "30"
+                    }
+                  ],
+                  "variable": []
+                },
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Not Found",
+              "code": 404,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "text/plain"
+                }
+              ],
+              "body": "",
+              "cookie": [],
+              "_postman_previewlanguage": "text"
+            },
+            {
+              "id": "f2cf996e-9af5-46f1-8bbf-32ace19a498c",
+              "name": "Internal server error during function execution.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "api",
+                    "v3",
+                    "function"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "function",
+                      "value": "processes"
+                    },
+                    {
+                      "key": "timeout",
+                      "value": "30"
+                    }
+                  ],
+                  "variable": []
+                },
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Internal Server Error",
+              "code": 500,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "text/plain"
+                }
+              ],
+              "body": "",
+              "cookie": [],
+              "_postman_previewlanguage": "text"
+            },
+            {
+              "id": "f6f4fafa-b5df-4f2d-b93c-bcbf1fc0ba8f",
+              "name": "Service unavailable. Netdata agent is not ready or function execution system is overloaded.\n",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "api",
+                    "v3",
+                    "function"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "function",
+                      "value": "processes"
+                    },
+                    {
+                      "key": "timeout",
+                      "value": "30"
+                    }
+                  ],
+                  "variable": []
+                },
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Service Unavailable",
+              "code": 503,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "text/plain"
+                }
+              ],
+              "body": "",
+              "cookie": [],
+              "_postman_previewlanguage": "text"
+            },
+            {
+              "id": "fdced146-3460-43b8-b31b-6633258070c1",
+              "name": "Function execution timeout - operation took longer than specified timeout.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "api",
+                    "v3",
+                    "function"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "function",
+                      "value": "processes"
+                    },
+                    {
+                      "key": "timeout",
+                      "value": "30"
+                    }
+                  ],
+                  "variable": []
+                },
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Gateway Timeout",
+              "code": 504,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "text/plain"
+                }
+              ],
+              "body": "",
+              "cookie": [],
+              "_postman_previewlanguage": "text"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "007bf568-a505-40ab-b7fc-2b3cf806b3e8",
+          "name": "Execute a Netdata function with request body parameters",
+          "request": {
+            "name": "Execute a Netdata function with request body parameters",
+            "description": {
+              "content": "Same as GET /api/v3/function, but allows passing parameters via request body for functions\nthat require complex input or configuration data.\n\nUse this method when:\n- Function requires complex parameters that don't fit in query string\n- Passing sensitive data that shouldn't be in URL\n- Function accepts JSON configuration or structured data\n\nSee GET /api/v3/function for complete documentation on functions, timeouts, and responses.\n",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "api",
+                "v3",
+                "function"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [
+                {
+                  "disabled": false,
+                  "key": "function",
+                  "value": "<string>",
+                  "description": "(Required) Name of the function to execute (see GET method for details)"
+                },
+                {
+                  "disabled": false,
+                  "key": "timeout",
+                  "value": "60",
+                  "description": "Maximum time in seconds to wait for function execution (see GET method for details)"
+                }
+              ],
+              "variable": []
+            },
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "POST",
+            "auth": {
+              "type": "noauth"
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "<object>",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [
+            {
+              "id": "720edf47-25da-4539-8dd5-791cff826f7b",
+              "name": "Function executed successfully (see GET method for response details)",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "api",
+                    "v3",
+                    "function"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "function",
+                      "value": "processes"
+                    },
+                    {
+                      "key": "timeout",
+                      "value": "30"
+                    }
+                  ],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "<object>",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "f60bb3b4-a0cd-4d5c-a002-4157efca1a3f",
+              "name": "Function execution started asynchronously (see GET method for details)",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "api",
+                    "v3",
+                    "function"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "function",
+                      "value": "processes"
+                    },
+                    {
+                      "key": "timeout",
+                      "value": "30"
+                    }
+                  ],
+                  "variable": []
+                },
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "<object>",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Accepted",
+              "code": 202,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "text/plain"
+                }
+              ],
+              "body": "",
+              "cookie": [],
+              "_postman_previewlanguage": "text"
+            },
+            {
+              "id": "9e266a22-f298-47e3-a7a4-b1c7ce36636b",
+              "name": "Bad request (see GET method for details)",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "api",
+                    "v3",
+                    "function"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "function",
+                      "value": "processes"
+                    },
+                    {
+                      "key": "timeout",
+                      "value": "30"
+                    }
+                  ],
+                  "variable": []
+                },
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "<object>",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Bad Request",
+              "code": 400,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "text/plain"
+                }
+              ],
+              "body": "",
+              "cookie": [],
+              "_postman_previewlanguage": "text"
+            },
+            {
+              "id": "e6b4e336-50ac-41ca-88e8-c1812fbe61a2",
+              "name": "Forbidden (see GET method for details)",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "api",
+                    "v3",
+                    "function"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "function",
+                      "value": "processes"
+                    },
+                    {
+                      "key": "timeout",
+                      "value": "30"
+                    }
+                  ],
+                  "variable": []
+                },
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "<object>",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Forbidden",
+              "code": 403,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "text/plain"
+                }
+              ],
+              "body": "",
+              "cookie": [],
+              "_postman_previewlanguage": "text"
+            },
+            {
+              "id": "2d674a3e-6f50-464a-9a64-39696d71570a",
+              "name": "Function not found (see GET method for details)",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "api",
+                    "v3",
+                    "function"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "function",
+                      "value": "processes"
+                    },
+                    {
+                      "key": "timeout",
+                      "value": "30"
+                    }
+                  ],
+                  "variable": []
+                },
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "<object>",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Not Found",
+              "code": 404,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "text/plain"
+                }
+              ],
+              "body": "",
+              "cookie": [],
+              "_postman_previewlanguage": "text"
+            },
+            {
+              "id": "50f939f7-b215-49d9-9c99-a46b3324393f",
+              "name": "Internal server error (see GET method for details)",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "api",
+                    "v3",
+                    "function"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "function",
+                      "value": "processes"
+                    },
+                    {
+                      "key": "timeout",
+                      "value": "30"
+                    }
+                  ],
+                  "variable": []
+                },
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "<object>",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Internal Server Error",
+              "code": 500,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "text/plain"
+                }
+              ],
+              "body": "",
+              "cookie": [],
+              "_postman_previewlanguage": "text"
+            },
+            {
+              "id": "99c9764b-3e4b-4c7a-98e8-77e6961abad5",
+              "name": "Service unavailable (see GET method for details)",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "api",
+                    "v3",
+                    "function"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "function",
+                      "value": "processes"
+                    },
+                    {
+                      "key": "timeout",
+                      "value": "30"
+                    }
+                  ],
+                  "variable": []
+                },
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "<object>",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Service Unavailable",
+              "code": 503,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "text/plain"
+                }
+              ],
+              "body": "",
+              "cookie": [],
+              "_postman_previewlanguage": "text"
+            },
+            {
+              "id": "94680a70-1b6a-455c-a3ce-76809ec52c7a",
+              "name": "Function execution timeout (see GET method for details)",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "api",
+                    "v3",
+                    "function"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "function",
+                      "value": "processes"
+                    },
+                    {
+                      "key": "timeout",
+                      "value": "30"
+                    }
+                  ],
+                  "variable": []
+                },
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "<object>",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Gateway Timeout",
+              "code": 504,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "text/plain"
+                }
+              ],
+              "body": "",
+              "cookie": [],
+              "_postman_previewlanguage": "text"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "3266ca2e-2346-425b-9eff-f3935add7237",
+          "name": "List available functions across all nodes",
+          "request": {
+            "name": "List available functions across all nodes",
+            "description": {
+              "content": "Retrieves a catalog of available functions across the monitored infrastructure.\nFunctions are plugin-provided operations that extend Netdata's capabilities beyond\npassive metric collection, allowing live queries, diagnostics, and administrative actions.\n\n**What This Endpoint Returns:**\n- **Function inventory**: All functions available across your nodes\n- **Per-node availability**: Which functions each node supports\n- **Function metadata**: Descriptions, parameters, requirements\n- **Plugin information**: Which plugin provides each function\n\n**Function Categories:**\n- **System queries**: processes, mount-points, network-connections\n- **Service management**: systemd-list-units, docker-containers\n- **Hardware**: ipmi-sensors, smart-disk-info\n- **Application-specific**: mysql-queries, redis-info, nginx-status\n- **Diagnostics**: performance-analysis, log-queries\n- **Administrative**: config-reload, cache-clear\n\n**Use Cases:**\n- **Capability discovery**: Determine what operations are available\n- **Multi-node comparison**: See which nodes support which functions\n- **Plugin verification**: Confirm plugins are loaded and functional\n- **UI generation**: Build dynamic interfaces based on available functions\n- **Documentation**: Generate function reference for your infrastructure\n\n**Common Usage Patterns:**\n\n1. **List all functions across all nodes:**\n   ```\n   /api/v3/functions\n   ```\n\n2. **Functions for specific nodes:**\n   ```\n   /api/v3/functions?nodes=web-*\n   ```\n\n3. **Scope to production infrastructure:**\n   ```\n   /api/v3/functions?scope_nodes=prod-*\n   ```\n\n4. **Get detailed function information:**\n   ```\n   /api/v3/functions?options=debug\n   ```\n\n**Response Organization:**\nResults grouped by:\n- **Node**: Functions available on each node\n- **Function name**: Unique identifier\n- **Plugin**: Source plugin providing the function\n- **Capabilities**: What the function can do\n\n**Integration with /api/v3/function:**\n1. Use `/api/v3/functions` to discover available functions\n2. Use `/api/v3/function?function=<name>` to execute specific functions\n3. Results tell you which nodes support which operations\n\n**Security & Access Control:**\n- 📊 **Public Data API** - Bearer token optional, IP-based ACL restrictions apply\n- **Default Access:** Public (no authentication required)\n- **Bearer Protection:** When enabled via `/api/v3/bearer_protection`, requires bearer token\n- **IP Restrictions:** Subject to `allow dashboard from` in netdata.conf\n- **Access Methods:** Direct HTTP/HTTPS, Netdata Cloud, external tools\n",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "api",
+                "v3",
+                "functions"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [
+                {
+                  "disabled": false,
+                  "key": "scope_nodes",
+                  "value": "*",
+                  "description": "Simple pattern to match node hostnames for scope filtering. Uses Netdata's simple pattern\nmatching (not regex). Matched nodes define the scope for function discovery.\n\n**Pattern Syntax:**\n- `*` matches any number of characters\n- Use `|` to separate multiple patterns (OR logic)\n- Matches are case-insensitive\n- No regex support - only simple wildcards\n\n**Examples:**\n- `prod-*` - All production nodes\n- `*-web-*` - All web server nodes\n- `db-*|cache-*` - All database or cache nodes\n- `*` - All nodes (default)\n"
+                },
+                {
+                  "disabled": false,
+                  "key": "nodes",
+                  "value": "*",
+                  "description": "Simple pattern to filter which nodes to include in the functions list.\nAfter scope is determined, this filters the results. Uses the same pattern syntax as scope_nodes.\n\n**Difference from scope_nodes:**\n- `scope_nodes` defines what nodes to query for functions\n- `nodes` filters which nodes appear in the output\n\n**Examples:**\n- `web-*` - Only show functions from web servers\n- Specific hostnames: `node1|node2|node3`\n"
+                },
+                {
+                  "disabled": false,
+                  "key": "options",
+                  "value": "<string>",
+                  "description": "Comma-separated list of options to control response content and format.\n\n**Available Options:**\n- `minify` - Minimize JSON output (no pretty-printing)\n- `debug` - Include detailed function metadata and plugin information\n- `raw` - Include raw function definitions\n\n**Examples:**\n- `minify` - Compact JSON response\n- `debug,raw` - Full debug information\n"
+                },
+                {
+                  "disabled": false,
+                  "key": "timeout",
+                  "value": "60",
+                  "description": "Maximum time in seconds to wait for the query to complete before timing out.\n\n**Guidelines:**\n- Recommended: 10-30 seconds for most queries\n- Function listing is usually fast\n- Timeout mainly applies to very large infrastructures\n"
+                },
+                {
+                  "disabled": false,
+                  "key": "cardinality",
+                  "value": "1000",
+                  "description": "Maximum number of nodes to include in the response to prevent overwhelming large responses.\nWhen this limit is exceeded, the response will indicate how many nodes were omitted.\n\n**Purpose:**\n- Prevent memory exhaustion from very large infrastructures\n- Control response size for performance\n- Useful when exploring large node sets incrementally\n\n**Recommendations:**\n- Small infrastructures (< 100 nodes): Use default\n- Medium infrastructures (100-1000 nodes): 500-1000\n- Large infrastructures (> 1000 nodes): Use filtering or increase limit carefully\n"
+                }
+              ],
+              "variable": []
+            },
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "GET",
+            "auth": {
+              "type": "noauth"
+            }
+          },
+          "response": [
+            {
+              "id": "e089155e-86f8-47bc-9cd7-95d9966e7349",
+              "name": "Successfully retrieved functions catalog.\n\nReturns available functions organized by node, with metadata about each function\nincluding name, description, plugin source, and parameter requirements.\n",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "api",
+                    "v3",
+                    "functions"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "scope_nodes",
+                      "value": "prod-*"
+                    },
+                    {
+                      "key": "nodes",
+                      "value": "*"
+                    },
+                    {
+                      "key": "options",
+                      "value": "debug"
+                    },
+                    {
+                      "key": "timeout",
+                      "value": "10"
+                    },
+                    {
+                      "key": "cardinality",
+                      "value": "500"
+                    }
+                  ],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"nodes\": [\n    {\n      \"hostname\": \"web-server-1\",\n      \"machine_guid\": \"12345678-1234-1234-1234-123456789012\",\n      \"functions\": [\n        {\n          \"name\": \"processes\",\n          \"plugin\": \"apps.plugin\",\n          \"description\": \"List running processes with resource usage\"\n        },\n        {\n          \"name\": \"systemd-list-units\",\n          \"plugin\": \"systemd.plugin\",\n          \"description\": \"List systemd services and their status\"\n        },\n        {\n          \"name\": \"network-connections\",\n          \"plugin\": \"network.plugin\",\n          \"description\": \"Show active network connections\"\n        }\n      ]\n    }\n  ]\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "359314ee-1bc0-4ad4-b17a-899e374f3012",
+              "name": "Invalid parameters provided (e.g., invalid pattern syntax).",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "api",
+                    "v3",
+                    "functions"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "scope_nodes",
+                      "value": "prod-*"
+                    },
+                    {
+                      "key": "nodes",
+                      "value": "*"
+                    },
+                    {
+                      "key": "options",
+                      "value": "debug"
+                    },
+                    {
+                      "key": "timeout",
+                      "value": "10"
+                    },
+                    {
+                      "key": "cardinality",
+                      "value": "500"
+                    }
+                  ],
+                  "variable": []
+                },
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Bad Request",
+              "code": 400,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "text/plain"
+                }
+              ],
+              "body": "",
+              "cookie": [],
+              "_postman_previewlanguage": "text"
+            },
+            {
+              "id": "aca4c217-4fec-456d-979f-c968fd28a511",
+              "name": "Internal server error during functions listing.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "api",
+                    "v3",
+                    "functions"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "scope_nodes",
+                      "value": "prod-*"
+                    },
+                    {
+                      "key": "nodes",
+                      "value": "*"
+                    },
+                    {
+                      "key": "options",
+                      "value": "debug"
+                    },
+                    {
+                      "key": "timeout",
+                      "value": "10"
+                    },
+                    {
+                      "key": "cardinality",
+                      "value": "500"
+                    }
+                  ],
+                  "variable": []
+                },
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Internal Server Error",
+              "code": 500,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "text/plain"
+                }
+              ],
+              "body": "",
+              "cookie": [],
+              "_postman_previewlanguage": "text"
+            },
+            {
+              "id": "a12d3296-b671-4645-9f1b-9c5ef1b19ea6",
+              "name": "Query timeout - functions collection took too long.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "api",
+                    "v3",
+                    "functions"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "scope_nodes",
+                      "value": "prod-*"
+                    },
+                    {
+                      "key": "nodes",
+                      "value": "*"
+                    },
+                    {
+                      "key": "options",
+                      "value": "debug"
+                    },
+                    {
+                      "key": "timeout",
+                      "value": "10"
+                    },
+                    {
+                      "key": "cardinality",
+                      "value": "500"
+                    }
+                  ],
+                  "variable": []
+                },
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Gateway Timeout",
+              "code": 504,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "text/plain"
+                }
+              ],
+              "body": "",
+              "cookie": [],
+              "_postman_previewlanguage": "text"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "2c1cb2b7-dd1d-48f3-ac1d-f44bb8abdc79",
+          "name": "OBSOLETE: Track async operation progress (use /api/v3/progress instead)",
+          "request": {
+            "name": "OBSOLETE: Track async operation progress (use /api/v3/progress instead)",
+            "description": {
+              "content": "**⚠️ OBSOLETE API - Will be removed in future versions**\n\nThis endpoint is deprecated. Use `/api/v3/progress` instead, which provides the same functionality.\n\n**Migration:** Replace `/api/v2/progress` with `/api/v3/progress` in all API calls.\n\nTracks progress of long-running asynchronous operations using transaction UUID.\nUsed for polling function execution status and completion percentage.\n\n**Security & Access Control:**\n- 🔓 **Always Public API** - This endpoint is always accessible without authentication\n- **No Restrictions:** Not subject to bearer protection or IP-based ACL restrictions\n- **No Authentication:** Cannot be restricted by any configuration\n- **Access:** Available to anyone who can reach the agent's HTTP endpoint\n",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "api",
+                "v2",
+                "progress"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [
+                {
+                  "disabled": false,
+                  "key": "transaction",
+                  "value": "<uuid>",
+                  "description": "(Required) Transaction UUID from async operation"
+                }
+              ],
+              "variable": []
+            },
+            "method": "GET",
+            "auth": null
+          },
+          "response": [
+            {
+              "id": "af3c884d-f4c0-4e1c-ab5c-259dca225f61",
+              "name": "Progress information successfully retrieved",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "api",
+                    "v2",
+                    "progress"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "transaction",
+                      "value": "<uuid>"
+                    }
+                  ],
+                  "variable": []
+                },
+                "method": "GET",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "text/plain"
+                }
+              ],
+              "body": "",
+              "cookie": [],
+              "_postman_previewlanguage": "text"
+            },
+            {
+              "id": "c65652e5-437b-42ed-b895-3552f9a87684",
+              "name": "Missing or invalid transaction parameter",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "api",
+                    "v2",
+                    "progress"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "transaction",
+                      "value": "<uuid>"
+                    }
+                  ],
+                  "variable": []
+                },
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Bad Request",
+              "code": 400,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "text/plain"
+                }
+              ],
+              "body": "",
+              "cookie": [],
+              "_postman_previewlanguage": "text"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "541d4f4c-bb57-43be-a239-d8674e18a828",
+          "name": "OBSOLETE: List available functions (use /api/v3/functions instead)",
+          "request": {
+            "name": "OBSOLETE: List available functions (use /api/v3/functions instead)",
+            "description": {
+              "content": "**⚠️ OBSOLETE API - Will be removed in future versions**\n\nThis endpoint is deprecated. Use `/api/v3/functions` instead, which provides the same functionality.\n\n**Migration:** Replace `/api/v2/functions` with `/api/v3/functions` in all API calls.\n\nLists all functions available on agents, including their descriptions, parameters, and capabilities.\nFunctions provide live operational data and diagnostic capabilities.\n\n**Security & Access Control:**\n- 📊 **Public Data API** - Bearer token optional, IP-based ACL restrictions apply\n- **Default Access:** Public (no authentication required)\n- **Bearer Protection:** When enabled via `/api/v3/bearer_protection`, requires bearer token\n- **IP Restrictions:** Subject to `allow dashboard from` in netdata.conf\n- **Access Methods:** Direct HTTP/HTTPS, Netdata Cloud, external tools\n",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "api",
+                "v2",
+                "functions"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [
+                {
+                  "disabled": false,
+                  "key": "scope_nodes",
+                  "value": "*",
+                  "description": "A simple pattern limiting the nodes scope of the query. The scope controls both data and metadata response. The simple pattern is checked against the nodes' machine guid, node id and hostname. The default nodes scope is all nodes for which this Agent has data for. Usually the nodes scope is used to slice the entire dashboard (e.g. the Global Nodes Selector at the Netdata Cloud overview dashboard). Both positive and negative simple pattern expressions are supported.\n"
+                },
+                {
+                  "disabled": false,
+                  "key": "nodes",
+                  "value": "*",
+                  "description": "A simple pattern matching the nodes to be queried. This only controls the data response, not the metadata. The simple pattern is checked against the nodes' machine guid, node id, hostname. The default nodes selector is all the nodes matched by the nodes scope. Both positive and negative simple pattern expressions are supported.\n"
+                },
+                {
+                  "disabled": false,
+                  "key": "options",
+                  "value": "seconds",
+                  "description": "Options that affect data generation.\n* `jsonwrap` - Wrap the output in a JSON object with metadata about the query.\n* `raw` - change the output so that it is aggregatable across multiple such queries. Supported by `/api/v2` data queries and `json2` format.\n* `minify` - Remove unnecessary spaces and newlines from the output.\n* `debug` - Provide additional information in `jsonwrap` output to help tracing issues.\n* `nonzero` - Do not return dimensions that all their values are zero, to improve the visual appearance of charts. They will still be returned if all the dimensions are entirely zero.\n* `null2zero` - Replace `null` values with `0`.\n* `absolute` or `abs` - Traditionally Netdata returns select dimensions negative to improve visual appearance. This option turns this feature off.\n* `display-absolute` - Only used by badges, to do color calculation using the signed value, but render the value without a sign.\n* `flip` or `reversed` - Order the timestamps array in reverse order (newest to oldest).\n* `min2max` - When flattening multi-dimensional data into a single metric format, use `max - min` instead of `sum`. This is EOL - use `/api/v2` to control aggregation across dimensions.\n* `percentage` - Convert all values into a percentage vs the row total. When enabled, Netdata will query all dimensions, even the ones that have not been selected or are hidden, to find the row total, in order to calculate the percentage of each dimension selected.\n* `seconds` - Output timestamps in seconds instead of dates.\n* `milliseconds` or `ms` - Output timestamps in milliseconds instead of dates.\n* `unaligned` - by default queries are aligned to the the view, so that as time passes past data returned do not change. When a data query will not be used for visualization, `unaligned` can be given to avoid aligning the query time-frame for visual precision.\n* `match-ids`, `match-names`. By default filters match both IDs and names when they are available. Setting either of the two options will disable the other.\n* `anomaly-bit` - query the anomaly information instead of metric values. This is EOL, use `/api/v2` and `json2` format which always returns this information and many more.\n* `jw-anomaly-rates` - return anomaly rates as a separate result set in the same `json` format response. This is EOL, use `/api/v2` and `json2` format which always returns information and many more. \n* `details` - `/api/v2/data` returns in `jsonwrap` the full tree of dimensions that have been matched by the query.\n* `group-by-labels` - `/api/v2/data` returns in `jsonwrap` flattened labels per output dimension. These are used to identify the instances that have been aggregated into each dimension, making it possible to provide a map, like Netdata does for Kubernetes.\n* `natural-points` - return timestamps as found in the database. The result is again fixed-step, but the query engine attempts to align them with the timestamps found in the database.\n* `virtual-points` - return timestamps independent of the database alignment. This is needed aggregating data across multiple Netdata Agents, to ensure that their outputs do not need to be interpolated to be merged.\n* `selected-tier` - use data exclusively from the selected tier given with the `tier` parameter. This option is set automatically when the `tier` parameter is set.\n* `all-dimensions` - In `/api/v1` `jsonwrap` include metadata for all candidate metrics examined. In `/api/v2` this is standard behavior and no option is needed.\n* `label-quotes` - In `csv` output format, enclose each header label in quotes.\n* `objectrows` - Each row of value should be an object, not an array (only for `json` format).\n* `google_json` - Comply with google JSON/JSONP specs (only for `json` format).\n* `minimal-stats` or `minimal` - Reduce the amount of statistics returned in `jsonwrap` format to save bandwidth.\n* `long-json-keys` or `long-keys` - Use descriptive key names in JSON output instead of abbreviated ones.\n* `mcp-info` - Include additional metadata useful for the Model Context Protocol (MCP) integration.\n* `rfc3339` - Return timestamps in RFC3339 format (e.g., \"2023-01-01T00:00:00Z\") instead of Unix timestamps.\n"
+                },
+                {
+                  "disabled": false,
+                  "key": "options",
+                  "value": "jsonwrap",
+                  "description": "Options that affect data generation.\n* `jsonwrap` - Wrap the output in a JSON object with metadata about the query.\n* `raw` - change the output so that it is aggregatable across multiple such queries. Supported by `/api/v2` data queries and `json2` format.\n* `minify` - Remove unnecessary spaces and newlines from the output.\n* `debug` - Provide additional information in `jsonwrap` output to help tracing issues.\n* `nonzero` - Do not return dimensions that all their values are zero, to improve the visual appearance of charts. They will still be returned if all the dimensions are entirely zero.\n* `null2zero` - Replace `null` values with `0`.\n* `absolute` or `abs` - Traditionally Netdata returns select dimensions negative to improve visual appearance. This option turns this feature off.\n* `display-absolute` - Only used by badges, to do color calculation using the signed value, but render the value without a sign.\n* `flip` or `reversed` - Order the timestamps array in reverse order (newest to oldest).\n* `min2max` - When flattening multi-dimensional data into a single metric format, use `max - min` instead of `sum`. This is EOL - use `/api/v2` to control aggregation across dimensions.\n* `percentage` - Convert all values into a percentage vs the row total. When enabled, Netdata will query all dimensions, even the ones that have not been selected or are hidden, to find the row total, in order to calculate the percentage of each dimension selected.\n* `seconds` - Output timestamps in seconds instead of dates.\n* `milliseconds` or `ms` - Output timestamps in milliseconds instead of dates.\n* `unaligned` - by default queries are aligned to the the view, so that as time passes past data returned do not change. When a data query will not be used for visualization, `unaligned` can be given to avoid aligning the query time-frame for visual precision.\n* `match-ids`, `match-names`. By default filters match both IDs and names when they are available. Setting either of the two options will disable the other.\n* `anomaly-bit` - query the anomaly information instead of metric values. This is EOL, use `/api/v2` and `json2` format which always returns this information and many more.\n* `jw-anomaly-rates` - return anomaly rates as a separate result set in the same `json` format response. This is EOL, use `/api/v2` and `json2` format which always returns information and many more. \n* `details` - `/api/v2/data` returns in `jsonwrap` the full tree of dimensions that have been matched by the query.\n* `group-by-labels` - `/api/v2/data` returns in `jsonwrap` flattened labels per output dimension. These are used to identify the instances that have been aggregated into each dimension, making it possible to provide a map, like Netdata does for Kubernetes.\n* `natural-points` - return timestamps as found in the database. The result is again fixed-step, but the query engine attempts to align them with the timestamps found in the database.\n* `virtual-points` - return timestamps independent of the database alignment. This is needed aggregating data across multiple Netdata Agents, to ensure that their outputs do not need to be interpolated to be merged.\n* `selected-tier` - use data exclusively from the selected tier given with the `tier` parameter. This option is set automatically when the `tier` parameter is set.\n* `all-dimensions` - In `/api/v1` `jsonwrap` include metadata for all candidate metrics examined. In `/api/v2` this is standard behavior and no option is needed.\n* `label-quotes` - In `csv` output format, enclose each header label in quotes.\n* `objectrows` - Each row of value should be an object, not an array (only for `json` format).\n* `google_json` - Comply with google JSON/JSONP specs (only for `json` format).\n* `minimal-stats` or `minimal` - Reduce the amount of statistics returned in `jsonwrap` format to save bandwidth.\n* `long-json-keys` or `long-keys` - Use descriptive key names in JSON output instead of abbreviated ones.\n* `mcp-info` - Include additional metadata useful for the Model Context Protocol (MCP) integration.\n* `rfc3339` - Return timestamps in RFC3339 format (e.g., \"2023-01-01T00:00:00Z\") instead of Unix timestamps.\n"
+                },
+                {
+                  "disabled": false,
+                  "key": "timeout",
+                  "value": "0",
+                  "description": "Specify a timeout value in milliseconds after which the Agent will abort the query and return a 503 error. A value of 0 indicates no timeout.\n"
+                },
+                {
+                  "disabled": false,
+                  "key": "cardinality_limit",
+                  "value": "10000",
+                  "description": "Limits the number of unique items (contexts, instances, dimensions) returned in the query result. This is useful for preventing excessive memory usage and response sizes when queries match a large number of metrics. The query engine will return the most relevant items up to this limit.\n"
+                }
+              ],
+              "variable": []
+            },
+            "method": "GET",
+            "auth": {
+              "type": "noauth"
+            }
+          },
+          "response": [
+            {
+              "id": "913edd7e-442e-49a0-8b81-88078aa6d883",
+              "name": "Functions list successfully retrieved",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "api",
+                    "v2",
+                    "functions"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "scope_nodes",
+                      "value": "*"
+                    },
+                    {
+                      "key": "nodes",
+                      "value": "*"
+                    },
+                    {
+                      "key": "options",
+                      "value": "seconds"
+                    },
+                    {
+                      "key": "options",
+                      "value": "jsonwrap"
+                    },
+                    {
+                      "key": "timeout",
+                      "value": "0"
+                    },
+                    {
+                      "key": "cardinality_limit",
+                      "value": "10000"
+                    }
+                  ],
+                  "variable": []
+                },
+                "method": "GET",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "text/plain"
+                }
+              ],
+              "body": "",
+              "cookie": [],
+              "_postman_previewlanguage": "text"
+            },
+            {
+              "id": "5feb5776-56d9-4c1f-b688-13d40888ff5e",
+              "name": "Invalid parameters",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "api",
+                    "v2",
+                    "functions"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "scope_nodes",
+                      "value": "*"
+                    },
+                    {
+                      "key": "nodes",
+                      "value": "*"
+                    },
+                    {
+                      "key": "options",
+                      "value": "seconds"
+                    },
+                    {
+                      "key": "options",
+                      "value": "jsonwrap"
+                    },
+                    {
+                      "key": "timeout",
+                      "value": "0"
+                    },
+                    {
+                      "key": "cardinality_limit",
+                      "value": "10000"
+                    }
+                  ],
+                  "variable": []
+                },
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Bad Request",
+              "code": 400,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "text/plain"
+                }
+              ],
+              "body": "",
+              "cookie": [],
+              "_postman_previewlanguage": "text"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "e2e5f595-060d-45e1-9bb7-8607e6c69c86",
+          "name": "function1",
+          "request": {
+            "name": "function1",
+            "description": {
+              "content": "|\n\n**Security & Access Control:**\n- 📊 **Public Data API** - Bearer token optional, IP-based ACL restrictions apply\n- **Default Access:** Public (no authentication required)\n- **Bearer Protection:** When enabled via `/api/v3/bearer_protection`, requires bearer token\n- **IP Restrictions:** Subject to `allow dashboard from` in netdata.conf\n- **Access Methods:** Direct HTTP/HTTPS, Netdata Cloud, external tools\n",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "api",
+                "v1",
+                "function"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [
+                {
+                  "disabled": false,
+                  "key": "function",
+                  "value": "<string>",
+                  "description": "(Required) The name of the function, as returned by the collector."
+                },
+                {
+                  "disabled": false,
+                  "key": "timeout",
+                  "value": "0",
+                  "description": "Specify a timeout value in seconds after which the Agent will abort the query and return a 504 error. A value of 0 indicates no timeout, but some endpoints, like `weights`, do not accept infinite timeouts (they have a predefined default), so to disable the timeout it must be set to a really high value.\n"
+                }
+              ],
+              "variable": []
+            },
+            "method": "GET",
+            "auth": {
+              "type": "noauth"
+            }
+          },
+          "response": [
+            {
+              "id": "46d02545-e2a6-4bb1-9ac8-d7c87f59f3da",
+              "name": "The collector function has been executed successfully. Each collector may return a different type of content.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "api",
+                    "v1",
+                    "function"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "function",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "timeout",
+                      "value": "0"
+                    }
+                  ],
+                  "variable": []
+                },
+                "method": "GET",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "text/plain"
+                }
+              ],
+              "body": "",
+              "cookie": [],
+              "_postman_previewlanguage": "text"
+            },
+            {
+              "id": "34dbd453-dd67-41f6-bf55-4fe477abfe4c",
+              "name": "The request was rejected by the collector.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "api",
+                    "v1",
+                    "function"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "function",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "timeout",
+                      "value": "0"
+                    }
+                  ],
+                  "variable": []
+                },
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Bad Request",
+              "code": 400,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "text/plain"
+                }
+              ],
+              "body": "",
+              "cookie": [],
+              "_postman_previewlanguage": "text"
+            },
+            {
+              "id": "a079bf2c-a2a3-47cd-81ae-1420af7ba052",
+              "name": "The requested function is not found.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "api",
+                    "v1",
+                    "function"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "function",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "timeout",
+                      "value": "0"
+                    }
+                  ],
+                  "variable": []
+                },
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Not Found",
+              "code": 404,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "text/plain"
+                }
+              ],
+              "body": "",
+              "cookie": [],
+              "_postman_previewlanguage": "text"
+            },
+            {
+              "id": "365141cb-0c43-4e6a-9d0e-4e8f17efb868",
+              "name": "Other internal error, getting this error means there is a bug in Netdata.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "api",
+                    "v1",
+                    "function"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "function",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "timeout",
+                      "value": "0"
+                    }
+                  ],
+                  "variable": []
+                },
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Internal Server Error",
+              "code": 500,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "text/plain"
+                }
+              ],
+              "body": "",
+              "cookie": [],
+              "_postman_previewlanguage": "text"
+            },
+            {
+              "id": "cd63b3fd-5762-4c32-a5d8-1fda2688d2fe",
+              "name": "The collector to execute the function is not currently available.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "api",
+                    "v1",
+                    "function"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "function",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "timeout",
+                      "value": "0"
+                    }
+                  ],
+                  "variable": []
+                },
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Service Unavailable",
+              "code": 503,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "text/plain"
+                }
+              ],
+              "body": "",
+              "cookie": [],
+              "_postman_previewlanguage": "text"
+            },
+            {
+              "id": "be3fd665-b255-4438-a406-b4407bf4dbc7",
+              "name": "Timeout while waiting for the collector to execute the function.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "api",
+                    "v1",
+                    "function"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "function",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "timeout",
+                      "value": "0"
+                    }
+                  ],
+                  "variable": []
+                },
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Gateway Timeout",
+              "code": 504,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "text/plain"
+                }
+              ],
+              "body": "",
+              "cookie": [],
+              "_postman_previewlanguage": "text"
+            },
+            {
+              "id": "a33c70a0-0f46-4221-88cb-ba6afb3d09a8",
+              "name": "The collector sent a response, but it was invalid or corrupted.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "api",
+                    "v1",
+                    "function"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "function",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "timeout",
+                      "value": "0"
+                    }
+                  ],
+                  "variable": []
+                },
+                "method": "GET",
+                "body": {}
+              },
+              "code": 591,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "text/plain"
+                }
+              ],
+              "body": "",
+              "cookie": [],
+              "_postman_previewlanguage": "text"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "7178f5be-1fa4-452d-ac6a-ac2d98e72000",
+          "name": "Get a list of all registered collector functions.",
+          "request": {
+            "name": "Get a list of all registered collector functions.",
+            "description": {
+              "content": "Collector functions are programs that can be executed on demand.\n\n**Security & Access Control:**\n- 📊 **Public Data API** - Bearer token optional, IP-based ACL restrictions apply\n- **Default Access:** Public (no authentication required)\n- **Bearer Protection:** When enabled via `/api/v3/bearer_protection`, requires bearer token\n- **IP Restrictions:** Subject to `allow dashboard from` in netdata.conf\n- **Access Methods:** Direct HTTP/HTTPS, Netdata Cloud, external tools\n",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "api",
+                "v1",
+                "functions"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": []
+            },
+            "method": "GET",
+            "auth": {
+              "type": "noauth"
+            }
+          },
+          "response": [
+            {
+              "id": "75f96f47-ad9f-43f3-995a-4ab0988f378f",
+              "name": "A JSON object containing one object per supported function.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "api",
+                    "v1",
+                    "functions"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "method": "GET",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "text/plain"
+                }
+              ],
+              "body": "",
+              "cookie": [],
+              "_postman_previewlanguage": "text"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        }
+      ],
+      "event": []
+    }
+  ],
+  "event": [],
+  "variable": [
+    {
+      "type": "string",
+      "value": "https://registry.my-netdata.io",
+      "key": "baseUrl"
+    }
+  ],
+  "info": {
+    "_postman_id": "e90534da-7a3b-42f4-94af-f3d85361ba14",
+    "name": "Netdata agent functions API",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "description": {
+      "content": "Real-time performance and health monitoring.\n\n## API Versions\n\nNetdata provides three API versions:\n- **v1**: The original API, focused on single-node operations\n- **v2**: Multi-node API with advanced grouping and aggregation capabilities\n- **v3**: The latest API version that combines v1 and v2 endpoints and may include additional features\n\n### v3 API Endpoints\n\nThe v3 API provides the current, actively maintained endpoints:\n- `/api/v3/data` - Multi-dimensional data queries\n- `/api/v3/weights` - Metric scoring/correlation\n- `/api/v3/contexts` - Context metadata\n- `/api/v3/nodes` - Node information\n- `/api/v3/q` - Full-text search\n- `/api/v3/alerts` - Alert information\n- `/api/v3/alert_transitions` - Alert state transitions\n- `/api/v3/alert_config` - Alert configuration\n- `/api/v3/functions` - Available functions\n- `/api/v3/function` - Execute functions\n- `/api/v3/info` - Agent information\n- `/api/v3/node_instances` - Node instance information\n- `/api/v3/stream_path` - Streaming topology\n- `/api/v3/versions` - Version information\n- `/api/v3/badge.svg` - Dynamic badges\n- `/api/v3/allmetrics` - Export metrics\n- `/api/v3/context` - Single context info\n- `/api/v3/variable` - Variable information\n- `/api/v3/config` - Dynamic configuration\n- `/api/v3/settings` - Agent settings\n- `/api/v3/me` - Current user information\n- `/api/v3/claim` - Agent claiming\n- Additional management and streaming endpoints\n\n**Note:** V1 and V2 APIs are deprecated and maintained for backwards compatibility only. New integrations should use V3 exclusively.\n\n\nContact Support:\n Name: Netdata Agent API\n Email: info@netdata.cloud",
+      "type": "text/plain"
+    }
+  }
+}
