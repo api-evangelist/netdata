@@ -1,6 +1,6 @@
-openapi: 3.0.0
+openapi: 3.2.0
 info:
-  title: Netdata agent functions API
+  title: Netdata agent Functions API
   description: 'Real-time performance and health monitoring.
 
 
@@ -875,21 +875,32 @@ paths:
           description: A JSON object containing one object per supported function.
 components:
   parameters:
-    filterNodes:
-      name: nodes
+    timeoutSecs:
+      name: timeout
       in: query
-      description: 'A simple pattern matching the nodes to be queried. This only controls the data response, not the metadata. The simple pattern is checked against the nodes'' machine guid, node id, hostname. The default nodes selector is all the nodes matched by the nodes scope. Both positive and negative simple pattern expressions are supported.
+      description: 'Specify a timeout value in seconds after which the Agent will abort the query and return a 504 error. A value of 0 indicates no timeout, but some endpoints, like `weights`, do not accept infinite timeouts (they have a predefined default), so to disable the timeout it must be set to a really high value.
 
         '
       required: false
       schema:
-        type: string
-        format: simple pattern
-        default: '*'
-    scopeNodes:
-      name: scope_nodes
+        type: number
+        format: integer
+        default: 0
+    timeoutMS:
+      name: timeout
       in: query
-      description: 'A simple pattern limiting the nodes scope of the query. The scope controls both data and metadata response. The simple pattern is checked against the nodes'' machine guid, node id and hostname. The default nodes scope is all nodes for which this Agent has data for. Usually the nodes scope is used to slice the entire dashboard (e.g. the Global Nodes Selector at the Netdata Cloud overview dashboard). Both positive and negative simple pattern expressions are supported.
+      description: 'Specify a timeout value in milliseconds after which the Agent will abort the query and return a 503 error. A value of 0 indicates no timeout.
+
+        '
+      required: false
+      schema:
+        type: number
+        format: integer
+        default: 0
+    filterNodes:
+      name: nodes
+      in: query
+      description: 'A simple pattern matching the nodes to be queried. This only controls the data response, not the metadata. The simple pattern is checked against the nodes'' machine guid, node id, hostname. The default nodes selector is all the nodes matched by the nodes scope. Both positive and negative simple pattern expressions are supported.
 
         '
       required: false
@@ -959,28 +970,17 @@ components:
         default:
         - seconds
         - jsonwrap
-    timeoutSecs:
-      name: timeout
+    scopeNodes:
+      name: scope_nodes
       in: query
-      description: 'Specify a timeout value in seconds after which the Agent will abort the query and return a 504 error. A value of 0 indicates no timeout, but some endpoints, like `weights`, do not accept infinite timeouts (they have a predefined default), so to disable the timeout it must be set to a really high value.
+      description: 'A simple pattern limiting the nodes scope of the query. The scope controls both data and metadata response. The simple pattern is checked against the nodes'' machine guid, node id and hostname. The default nodes scope is all nodes for which this Agent has data for. Usually the nodes scope is used to slice the entire dashboard (e.g. the Global Nodes Selector at the Netdata Cloud overview dashboard). Both positive and negative simple pattern expressions are supported.
 
         '
       required: false
       schema:
-        type: number
-        format: integer
-        default: 0
-    timeoutMS:
-      name: timeout
-      in: query
-      description: 'Specify a timeout value in milliseconds after which the Agent will abort the query and return a 503 error. A value of 0 indicates no timeout.
-
-        '
-      required: false
-      schema:
-        type: number
-        format: integer
-        default: 0
+        type: string
+        format: simple pattern
+        default: '*'
   securitySchemes:
     bearerAuth:
       type: http

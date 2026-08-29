@@ -1,6 +1,6 @@
-openapi: 3.0.0
+openapi: 3.2.0
 info:
-  title: Netdata agent data API
+  title: Netdata agent Data API
   description: 'Real-time performance and health monitoring.
 
 
@@ -1107,513 +1107,263 @@ paths:
         '404':
           description: Chart or variable not found
 components:
-  parameters:
-    context:
-      name: context
-      in: query
-      description: The context of the chart as returned by the /charts call.
-      required: false
-      allowEmptyValue: false
-      schema:
-        type: string
-        format: as returned by /charts
-    dataFormat2:
-      name: format
-      in: query
-      description: The format of the data to be returned.
-      allowEmptyValue: false
-      schema:
-        type: string
-        enum:
-        - json
-        - json2
-        - jsonp
-        - csv
-        - tsv
-        - tsv-excel
-        - ssv
-        - ssvcomma
-        - datatable
-        - datasource
-        - html
-        - markdown
-        - array
-        - csvjsonarray
-        default: json2
-    dataFormat1:
-      name: format
-      in: query
-      description: The format of the data to be returned.
-      allowEmptyValue: false
-      schema:
-        type: string
-        enum:
-        - json
-        - jsonp
-        - csv
-        - tsv
-        - tsv-excel
-        - ssv
-        - ssvcomma
-        - datatable
-        - datasource
-        - html
-        - markdown
-        - array
-        - csvjsonarray
-        default: json
-    dataTimeGroupOptions1:
-      name: group_options
-      in: query
-      description: 'When the time grouping function supports additional parameters, this field can be used to pass them to it. Currently `countif`, `trimmed-mean`, `trimmed-median` and `percentile` support this. For `countif` the string may start with `<`, `<=`, `<:`, `<>`, `!=`, `>`, `>=`, `>:`. For all others just a number is expected.
-
-        '
-      required: false
-      schema:
-        type: string
-    filterLabels:
-      name: labels
-      in: query
-      description: 'A simple pattern matching the labels to be queried. The simple pattern is checked against `name:value` of all the labels of all the eligible instances (as filtered by all the above: scope nodes, scope contexts, nodes, contexts and instances). Negative simple patterns should not be used in this filter.
-
-        '
-      required: false
-      schema:
-        type: string
-        format: simple pattern
-        default: '*'
-    dataTimeGroup2:
-      name: time_group
-      in: query
-      description: 'Time aggregation function. If multiple collected values are to be grouped in order to return fewer points, this parameters defines the method of grouping. If the `absolute` option is set, the values are turned positive before applying this calculation.
-
-        '
-      required: false
-      schema:
-        type: string
-        enum:
-        - min
-        - max
-        - avg
-        - average
-        - median
-        - stddev
-        - sum
-        - incremental-sum
-        - ses
-        - des
-        - cv
-        - countif
-        - percentile
-        - percentile25
-        - percentile50
-        - percentile75
-        - percentile80
-        - percentile90
-        - percentile95
-        - percentile97
-        - percentile98
-        - percentile99
-        - trimmed-mean
-        - trimmed-mean1
-        - trimmed-mean2
-        - trimmed-mean3
-        - trimmed-mean5
-        - trimmed-mean10
-        - trimmed-mean15
-        - trimmed-mean20
-        - trimmed-mean25
-        - trimmed-median
-        - trimmed-median1
-        - trimmed-median2
-        - trimmed-median3
-        - trimmed-median5
-        - trimmed-median10
-        - trimmed-median15
-        - trimmed-median20
-        - trimmed-median25
-        - ema
-        - extremes
-        default: average
-    filename:
-      name: filename
-      in: query
-      description: 'Add `Content-Disposition: attachment; filename=` header to the response, that will instruct the browser to save the response with the given filename."
-
-        '
-      required: false
-      schema:
-        type: string
-    cardinalityLimit:
-      name: cardinality_limit
-      in: query
-      description: 'Limits the number of unique items (contexts, instances, dimensions) returned in the query result. This is useful for preventing excessive memory usage and response sizes when queries match a large number of metrics. The query engine will return the most relevant items up to this limit.
-
-        '
-      required: false
-      schema:
-        type: integer
-        format: int64
-        minimum: 1
-        default: 10000
-    dataTimeGroupOptions2:
-      name: time_group_options
-      in: query
-      description: 'When the time grouping function supports additional parameters, this field can be used to pass them to it. Currently `countif`, `trimmed-mean`, `trimmed-median` and `percentile` support this. For `countif` the string may start with `<`, `<=`, `<:`, `<>`, `!=`, `>`, `>=`, `>:`. For all others just a number is expected.
-
-        '
-      required: false
-      schema:
-        type: string
-    chart:
-      name: chart
-      in: query
-      description: The id of the chart as returned by the `/api/v1/charts` call.
-      required: false
-      allowEmptyValue: false
-      schema:
-        type: string
-        format: as returned by `/api/v1/charts`
-    tier:
-      name: tier
-      in: query
-      description: 'Use only the given dbengine tier for executing the query. Setting this parameters automatically sets the option `selected-tier` for the query.
-
-        '
-      required: false
-      schema:
-        type: number
-        format: integer
-    scopeContexts:
-      name: scope_contexts
-      in: query
-      description: 'A simple pattern limiting the contexts scope of the query. The scope controls both data and metadata response. The default contexts scope is all contexts for which this Agent has data for. Usually the contexts scope is used to slice data on the dashboard (e.g. each context based chart has its own contexts scope, limiting the chart to all the instances of the selected context). Both positive and negative simple pattern expressions are supported.
-
-        '
-      required: false
-      schema:
-        type: string
-        format: simple pattern
-        default: '*'
-    dataQueryOptions:
-      name: options
-      in: query
-      description: "Options that affect data generation.\n* `jsonwrap` - Wrap the output in a JSON object with metadata about the query.\n* `raw` - change the output so that it is aggregatable across multiple such queries. Supported by `/api/v2` data queries and `json2` format.\n* `minify` - Remove unnecessary spaces and newlines from the output.\n* `debug` - Provide additional information in `jsonwrap` output to help tracing issues.\n* `nonzero` - Do not return dimensions that all their values are zero, to improve the visual appearance of charts. They will still be returned if all the dimensions are entirely zero.\n* `null2zero` - Replace `null` values with `0`.\n* `absolute` or `abs` - Traditionally Netdata returns select dimensions negative to improve visual appearance. This option turns this feature off.\n* `display-absolute` - Only used by badges, to do color calculation using the signed value, but render the value without a sign.\n* `flip` or `reversed` - Order the timestamps array in reverse order (newest to oldest).\n* `min2max` - When flattening multi-dimensional data into a single metric format, use `max - min` instead of `sum`. This is EOL - use `/api/v2` to control aggregation across dimensions.\n* `percentage` - Convert all values into a percentage vs the row total. When enabled, Netdata will query all dimensions, even the ones that have not been selected or are hidden, to find the row total, in order to calculate the percentage of each dimension selected.\n* `seconds` - Output timestamps in seconds instead of dates.\n* `milliseconds` or `ms` - Output timestamps in milliseconds instead of dates.\n* `unaligned` - by default queries are aligned to the the view, so that as time passes past data returned do not change. When a data query will not be used for visualization, `unaligned` can be given to avoid aligning the query time-frame for visual precision.\n* `match-ids`, `match-names`. By default filters match both IDs and names when they are available. Setting either of the two options will disable the other.\n* `anomaly-bit` - query the anomaly information instead of metric values. This is EOL, use `/api/v2` and `json2` format which always returns this information and many more.\n* `jw-anomaly-rates` - return anomaly rates as a separate result set in the same `json` format response. This is EOL, use `/api/v2` and `json2` format which always returns information and many more. \n* `details` - `/api/v2/data` returns in `jsonwrap` the full tree of dimensions that have been matched by the query.\n* `group-by-labels` - `/api/v2/data` returns in `jsonwrap` flattened labels per output dimension. These are used to identify the instances that have been aggregated into each dimension, making it possible to provide a map, like Netdata does for Kubernetes.\n* `natural-points` - return timestamps as found in the database. The result is again fixed-step, but the query engine attempts to align them with the timestamps found in the database.\n* `virtual-points` - return timestamps independent of the database alignment. This is needed aggregating data across multiple Netdata Agents, to ensure that their outputs do not need to be interpolated to be merged.\n* `selected-tier` - use data exclusively from the selected tier given with the `tier` parameter. This option is set automatically when the `tier` parameter is set.\n* `all-dimensions` - In `/api/v1` `jsonwrap` include metadata for all candidate metrics examined. In `/api/v2` this is standard behavior and no option is needed.\n* `label-quotes` - In `csv` output format, enclose each header label in quotes.\n* `objectrows` - Each row of value should be an object, not an array (only for `json` format).\n* `google_json` - Comply with google JSON/JSONP specs (only for `json` format).\n* `minimal-stats` or `minimal` - Reduce the amount of statistics returned in `jsonwrap` format to save bandwidth.\n* `long-json-keys` or `long-keys` - Use descriptive key names in JSON output instead of abbreviated ones.\n* `mcp-info` - Include additional metadata useful for the Model Context Protocol (MCP) integration.\n* `rfc3339` - Return timestamps in RFC3339 format (e.g., \"2023-01-01T00:00:00Z\") instead of Unix timestamps.\n"
-      required: false
-      allowEmptyValue: false
-      schema:
-        type: array
-        items:
-          type: string
-          enum:
-          - jsonwrap
-          - raw
-          - minify
-          - debug
-          - nonzero
-          - null2zero
-          - abs
-          - absolute
-          - display-absolute
-          - flip
-          - reversed
-          - min2max
-          - percentage
-          - seconds
-          - ms
-          - milliseconds
-          - unaligned
-          - match-ids
-          - match-names
-          - anomaly-bit
-          - jw-anomaly-rates
-          - details
-          - group-by-labels
-          - natural-points
-          - virtual-points
-          - selected-tier
-          - all-dimensions
-          - label-quotes
-          - objectrows
-          - google_json
-          - minimal-stats
-          - minimal
-          - long-json-keys
-          - long-keys
-          - mcp-info
-          - rfc3339
-        default:
-        - seconds
-        - jsonwrap
-    chart_labels_filter:
-      name: chart_labels_filter
-      in: query
-      description: 'Specify the chart label keys and values to match for context queries. All keys/values need to match for the chart to be included in the query. The labels are specified as key1:value1,key2:value2
-
-        '
-      required: false
-      allowEmptyValue: false
-      schema:
-        type: string
-        format: key1:value1,key2:value2,key3:value3
-    scopeLabels:
-      name: scope_labels
-      in: query
-      description: 'A simple pattern limiting the labels scope of the query. The scope controls both data and metadata response. This limits which instances are even considered for the query based on their labels. The simple pattern is checked against `name:value` of all the labels of all the eligible instances (as filtered by scope nodes, scope contexts, and scope instances). Only instances having labels that match this pattern will be included in the query. Both positive and negative simple pattern expressions are supported.
-
-        '
-      required: false
-      schema:
-        type: string
-        format: simple pattern
-        default: '*'
-    chart_label_key:
-      name: chart_label_key
-      in: query
-      description: 'Specify the chart label keys that need to match for context queries as comma separated values. At least one matching key is needed to match the corresponding chart.
-
-        '
-      required: false
-      allowEmptyValue: false
-      schema:
-        type: string
-        format: key1,key2,key3
-    dimension:
-      name: dimension
-      in: query
-      description: Zero, one or more dimension ids or names, as returned by the /chart call, separated with comma or pipe. Netdata simple patterns are supported.
-      required: false
-      allowEmptyValue: false
-      schema:
-        type: array
-        items:
-          type: string
-          format: as returned by /charts
-    filterContexts:
-      name: contexts
-      in: query
-      description: 'A simple pattern matching the contexts to be queried. This only controls the data response, not the metadata. Both positive and negative simple pattern expressions are supported.
-
-        '
-      required: false
-      schema:
-        type: string
-        format: simple pattern
-        default: '*'
-    scopeInstances:
-      name: scope_instances
-      in: query
-      description: 'A simple pattern limiting the instances scope of the query. The scope controls both data and metadata response. This limits which instances are even considered for the query, including their visibility in the query response metadata. The simple pattern is checked against the instance `id`, the instance `name`, the fully qualified name of the instance `id` and `name`, like `instance@machine_guid`, where `instance` is either its `id` or `name`. Both positive and negative simple pattern expressions are supported.
-
-        '
-      required: false
-      schema:
-        type: string
-        format: simple pattern
-        default: '*'
-    dataTimeResampling2:
-      name: time_resampling
-      in: query
-      description: 'For incremental values that are "per second", this value is used to resample them to "per minute` (60) or "per hour" (3600). It can only be used in conjunction with group=average.
-
-        '
-      required: false
-      schema:
-        type: number
-        format: integer
-        default: 0
-    tqx:
-      name: tqx
-      in: query
-      description: '[Google Visualization API](https://developers.google.com/chart/interactive/docs/dev/implementing_data_source?hl=en) formatted parameter.
-
-        '
-      required: false
-      schema:
-        type: string
-    scopeDimensions:
-      name: scope_dimensions
-      in: query
-      description: 'A simple pattern limiting the dimensions scope of the query. The scope controls both data and metadata response. This limits which dimensions are even considered for the query, including their visibility in the query response metadata. The simple pattern is checked against both the dimension `id` and `name`. Both positive and negative simple pattern expressions are supported.
-
-        '
-      required: false
-      schema:
-        type: string
-        format: simple pattern
-        default: '*'
-    points:
-      name: points
-      in: query
-      description: 'The number of points to be returned. If not given, or it is <= 0, or it is bigger than the points stored in the database for the given duration, all the available collected values for the given duration will be returned. For `weights` endpoints that do statistical analysis, the `points` define the detail of this analysis (the default is 500).
-
-        '
-      required: false
-      schema:
-        type: number
-        format: integer
-        default: 0
-    timeoutMS:
-      name: timeout
-      in: query
-      description: 'Specify a timeout value in milliseconds after which the Agent will abort the query and return a 503 error. A value of 0 indicates no timeout.
-
-        '
-      required: false
-      schema:
-        type: number
-        format: integer
-        default: 0
-    dataTimeGroup1:
-      name: group
-      in: query
-      description: 'Time aggregation function. If multiple collected values are to be grouped in order to return fewer points, this parameters defines the method of grouping. If the `absolute` option is set, the values are turned positive before applying this calculation.
-
-        '
-      required: false
-      schema:
-        type: string
-        enum:
-        - min
-        - max
-        - avg
-        - average
-        - median
-        - stddev
-        - sum
-        - incremental-sum
-        - ses
-        - des
-        - cv
-        - countif
-        - percentile
-        - percentile25
-        - percentile50
-        - percentile75
-        - percentile80
-        - percentile90
-        - percentile95
-        - percentile97
-        - percentile98
-        - percentile99
-        - trimmed-mean
-        - trimmed-mean1
-        - trimmed-mean2
-        - trimmed-mean3
-        - trimmed-mean5
-        - trimmed-mean10
-        - trimmed-mean15
-        - trimmed-mean20
-        - trimmed-mean25
-        - trimmed-median
-        - trimmed-median1
-        - trimmed-median2
-        - trimmed-median3
-        - trimmed-median5
-        - trimmed-median10
-        - trimmed-median15
-        - trimmed-median20
-        - trimmed-median25
-        - ema
-        - extremes
-        default: average
-    filterNodes:
-      name: nodes
-      in: query
-      description: 'A simple pattern matching the nodes to be queried. This only controls the data response, not the metadata. The simple pattern is checked against the nodes'' machine guid, node id, hostname. The default nodes selector is all the nodes matched by the nodes scope. Both positive and negative simple pattern expressions are supported.
-
-        '
-      required: false
-      schema:
-        type: string
-        format: simple pattern
-        default: '*'
-    after:
-      name: after
-      in: query
-      description: '`after` and `before` define the time-frame of a query. `after` can be a negative number of seconds, up to 3 years (-94608000), relative to `before`. If not set, it is usually assumed to be -600. When non-data endpoints support the `after` and `before`, they use the time-frame to limit their response for objects having data retention within the time-frame given.
-
-        '
-      required: false
-      schema:
-        type: integer
-        default: -600
-    scopeNodes:
-      name: scope_nodes
-      in: query
-      description: 'A simple pattern limiting the nodes scope of the query. The scope controls both data and metadata response. The simple pattern is checked against the nodes'' machine guid, node id and hostname. The default nodes scope is all nodes for which this Agent has data for. Usually the nodes scope is used to slice the entire dashboard (e.g. the Global Nodes Selector at the Netdata Cloud overview dashboard). Both positive and negative simple pattern expressions are supported.
-
-        '
-      required: false
-      schema:
-        type: string
-        format: simple pattern
-        default: '*'
-    filterAlerts:
-      name: alerts
-      in: query
-      description: 'A simple pattern matching the alerts to be queried. The simple pattern is checked against the `name` of alerts and the combination of `name:status`, when status is one of `CLEAR`, `WARNING`, `CRITICAL`, `REMOVED`, `UNDEFINED`, `UNINITIALIZED`, of all the alerts of all the eligible instances (as filtered by all the above). A negative simple pattern will exclude the instances having the labels matched.
-
-        '
-      required: false
-      schema:
-        type: string
-        format: simple pattern
-        default: '*'
-    dataTimeResampling1:
-      name: gtime
-      in: query
-      description: 'The grouping number of seconds. This is used in conjunction with group=average to change the units of metrics (ie when the data is per-second, setting gtime=60 will turn them to per-minute).
-
-        '
-      required: false
-      allowEmptyValue: false
-      schema:
-        type: number
-        format: integer
-        default: 0
-    before:
-      name: before
-      in: query
-      description: '`after` and `before` define the time-frame of a query. `before` can be a negative number of seconds, up to 3 years (-94608000), relative to current clock. If not set, it is assumed to be the current clock time. When `before` is positive, it is assumed to be a unix epoch timestamp. When non-data endpoints support the `after` and `before`, they use the time-frame to limit their response for objects having data retention within the time-frame given.
-
-        '
-      required: false
-      schema:
-        type: integer
-        default: 0
-    callback:
-      name: callback
-      in: query
-      description: 'For JSONP responses, the callback function name.
-
-        '
-      required: false
-      schema:
-        type: string
-    filterDimensions:
-      name: dimensions
-      in: query
-      description: 'A simple patterns matching the dimensions to be queried. The simple pattern is checked against and `id` and the `name` of the dimensions of the eligible instances (as filtered by all the above). Both positive and negative simple pattern expressions are supported.
-
-        '
-      required: false
-      schema:
-        type: string
-        format: simple pattern
-        default: '*'
-    filterInstances:
-      name: instances
-      in: query
-      description: 'A simple pattern matching the instances to be queried. The simple pattern is checked against the instance `id`, the instance `name`, the fully qualified name of the instance `id` and `name`, like `instance@machine_guid`, where `instance` is either its `id` or `name`. Both positive and negative simple pattern expressions are supported.
-
-        '
-      required: false
-      schema:
-        type: string
-        format: simple pattern
-        default: '*'
   schemas:
+    data_json_formats1:
+      description: 'Depending on the `format` given to a data query, any of the following may be returned.
+
+        '
+      oneOf:
+      - $ref: '#/components/schemas/data_json'
+      - $ref: '#/components/schemas/data_datatable'
+      - $ref: '#/components/schemas/data_csvjsonarray'
+      - $ref: '#/components/schemas/data_array'
+      - $ref: '#/components/schemas/data_txt'
+    versions:
+      description: 'Hashes that allow the caller to detect important database changes of Netdata Agents.
+
+        '
+      type: object
+      properties:
+        nodes_hard_hash:
+          description: 'An auto-increment value that reflects the number of changes to the number of nodes maintained by the server. Everytime a node is added or removed, this number gets incremented.
+
+            '
+          type: integer
+        contexts_hard_hash:
+          description: 'An auto-increment value that reflects the number of changes to the number of contexts maintained by the server. Everytime a context is added or removed, this number gets incremented.
+
+            '
+          type: integer
+        contexts_soft_hash:
+          description: 'An auto-increment value that reflects the number of changes to the queue that sends contexts updates to Netdata Cloud. Everytime the contents of a context are updated, this number gets incremented.
+
+            '
+          type: integer
+        alerts_hard_hash:
+          description: 'An auto-increment value that reflects the number of changes to the number of alerts. Everytime an alert is added or removed, this number gets incremented.
+
+            '
+          type: integer
+        alerts_soft_hash:
+          description: 'An auto-increment value that reflects the number of alerts transitions. Everytime an alert transitions to a new state, this number gets incremented.
+
+            '
+          type: integer
+    jsonwrap2_items_count:
+      description: 'Depending on the placement of this object, `items` may be `nodes`, `contexts`, `instances`, `dimensions`, `label keys`, `label key-value pairs`. Furthermore, if the whole object is missing it should be assumed that all its members are zero.
+
+        '
+      type: object
+      properties:
+        sl:
+          description: The number of items `selected` to query. If absent it is zero.
+          type: integer
+        ex:
+          description: The number of items `excluded` from querying. If absent it is zero.
+          type: integer
+        qr:
+          description: The number of items (out of `selected`) the query successfully `queried`.  If absent it is zero.
+          type: integer
+        fl:
+          description: The number of items (from `selected`) that `failed` to be queried.  If absent it is zero.
+          type: integer
+    data_array:
+      description: Data response in `array` format.
+      type: array
+      items:
+        type: number
+    jsonwrap2_sts:
+      description: 'Statistical values
+
+        '
+      type: object
+      properties:
+        min:
+          description: The minimum value of all metrics aggregated
+          type: number
+        max:
+          description: The maximum value of all metrics aggregated
+          type: number
+        avg:
+          description: The average value of all metrics aggregated
+          type: number
+        arp:
+          description: The average anomaly rate of all metrics aggregated
+          type: number
+        con:
+          description: The contribution percentage of all the metrics aggregated
+          type: number
+    jsonwrap2_alerts_count:
+      description: 'Counters about alert statuses. If this object is missing, it is assumed that all its members are zero.
+
+        '
+      type: object
+      properties:
+        nm:
+          description: The name of the alert. Can be absent when the counters refer to more than one alert instances.
+          type: string
+        cl:
+          description: The number of CLEAR alerts. If absent, it is zero.
+          type: integer
+        wr:
+          description: The number of WARNING alerts. If absent, it is zero.
+          type: integer
+        cr:
+          description: The number of CRITICAL alerts. If absent, it is zero.
+          type: integer
+        ot:
+          description: 'The number of alerts that are not CLEAR, WARNING, CRITICAL (so, they are "other").  If absent, it is zero.
+
+            '
+          type: integer
+    data_json_formats2:
+      description: 'Depending on the `format` given to a data query, any of the following may be returned.
+
+        '
+      oneOf:
+      - $ref: '#/components/schemas/data_json2'
+      - $ref: '#/components/schemas/data_json_formats1'
+    agents:
+      description: 'An array of Agent definitions consulted to compose this response.
+
+        '
+      type: array
+      items:
+        type: object
+        properties:
+          mg:
+            description: The Agent machine GUID.
+            type: string
+            format: uuid
+          nd:
+            description: The Agent cloud node ID.
+            type: string
+            format: uuid
+          nm:
+            description: The Agent hostname.
+            type: string
+          ai:
+            description: The Agent index ID for this Agent, in this response.
+            type: integer
+          now:
+            description: The current unix epoch timestamp of this Agent.
+            type: integer
+    jsonwrap1:
+      type: object
+      discriminator:
+        propertyName: format
+      description: Response will contain the appropriate subtype, e.g. data_json depending on the requested format.
+      properties:
+        api:
+          type: number
+          description: The API version this conforms to.
+        id:
+          type: string
+          description: The unique id of the chart.
+        name:
+          type: string
+          description: The name of the chart.
+        update_every:
+          type: number
+          description: The update frequency of this chart, in seconds. One value every this amount of time is kept in the round robin database (independently of the current view).
+        view_update_every:
+          type: number
+          description: The current view appropriate update frequency of this chart, in seconds. There is no point to request chart refreshes, using the same settings, more frequently than this.
+        first_entry:
+          type: number
+          description: The UNIX timestamp of the first entry (the oldest) in the round robin database (independently of the current view).
+        last_entry:
+          type: number
+          description: The UNIX timestamp of the latest entry in the round robin database (independently of the current view).
+        after:
+          type: number
+          description: The UNIX timestamp of the first entry (the oldest) returned in this response.
+        before:
+          type: number
+          description: The UNIX timestamp of the latest entry returned in this response.
+        min:
+          type: number
+          description: The minimum value returned in the current view. This can be used to size the y-series of the chart.
+        max:
+          type: number
+          description: The maximum value returned in the current view. This can be used to size the y-series of the chart.
+        dimension_names:
+          description: The dimension names of the chart as returned in the current view.
+          type: array
+          items:
+            type: string
+        dimension_ids:
+          description: The dimension IDs of the chart as returned in the current view.
+          type: array
+          items:
+            type: string
+        latest_values:
+          description: The latest values collected for the chart (independently of the current view).
+          type: array
+          items:
+            type: string
+        view_latest_values:
+          description: The latest values returned with this response.
+          type: array
+          items:
+            type: string
+        dimensions:
+          type: number
+          description: The number of dimensions returned.
+        points:
+          type: number
+          description: The number of rows / points returned.
+        format:
+          type: string
+          description: The format of the result returned.
+        chart_variables:
+          type: object
+          additionalProperties:
+            $ref: '#/components/schemas/chart_variables'
+        result:
+          $ref: '#/components/schemas/data_json_formats1'
+    nodeBasic:
+      type: object
+      description: Basic information about a node.
+      required:
+      - ni
+      - st
+      properties:
+        mg:
+          description: The machine guid of the node. May not be available if the request is served by the Netdata Cloud.
+          type: string
+          format: UUID
+        nd:
+          description: The node id of the node. May not be available if the node is not registered to Netdata Cloud.
+          type: string
+          format: UUID
+        nm:
+          description: The name (hostname) of the node.
+          type: string
+        ni:
+          description: The node index id, a number that uniquely identifies this node for this query.
+          type: integer
+        st:
+          description: Status information about the communication with this node.
+          type: object
+          properties:
+            ai:
+              description: The Agent index id that has been contacted for this node.
+              type: integer
+            code:
+              description: The HTTP response code of the response for this node. When working directly with an Agent, this is always 200. If the `code` is missing, it should be assumed to be 200.
+              type: integer
+            msg:
+              description: A human readable description of the error, if any. If `msg` is missing, or is the empty string `""` or is `null`, there is no description associated with the current status.
+              type: string
+            ms:
+              description: The time in milliseconds this node took to respond, or if the local Agent responded for this node, the time it needed to execute the query. If `ms` is missing, the time that was required to query this node is unknown.
+              type: number
+    data_txt:
+      description: 'Data response in `csv`, `tsv`, `tsv-excel`, `ssv`, `ssv-comma`, `markdown`, `html` formats.
+
+        '
+      type: string
     data_csvjsonarray:
       description: 'The first inner array contains strings showing the labels of each column, each subsequent array contains the values for each point in time.
 
@@ -1622,71 +1372,6 @@ components:
       items:
         type: array
         items: {}
-    data_array:
-      description: Data response in `array` format.
-      type: array
-      items:
-        type: number
-    data_json2:
-      type: object
-      properties:
-        labels:
-          description: 'The IDs of the dimensions returned. The first is always `time`.
-
-            '
-          type: array
-          items:
-            type: string
-        point:
-          description: 'The format of each point returned.
-
-            '
-          type: object
-          properties:
-            value:
-              description: 'The index of the value in each point.
-
-                '
-              type: integer
-            arp:
-              description: 'The index of the anomaly rate in each point.
-
-                '
-              type: integer
-            pa:
-              description: 'The index of the point annotations in each point.
-
-                This is a bitmap. `EMPTY = 1`, `RESET = 2`, `PARTIAL = 4`.
-
-                `EMPTY` means the point has no value.
-
-                `RESET` means that at least one metric aggregated experienced an overflow (a counter that wrapped).
-
-                `PARTIAL` means that this point should have more metrics aggregated into it, but not all metrics had data.
-
-                '
-              type: integer
-            count:
-              description: 'The number of metrics aggregated into this point.
-
-                This exists only when the option `raw` is given to the query and the final aggregation point is NOT `percentage`.
-
-                '
-              type: integer
-            hidden:
-              description: 'The sum of the non-selected dimensions aggregated for this group item point.
-
-                This exists only when the option `raw` is given to the query and the final aggregation method is `percentage`.
-
-                '
-        data:
-          type: array
-          items:
-            anyOf:
-            - type: integer
-            - type: array
-              items:
-                type: number
     jsonwrap2:
       description: 'Data response with `format=json2`
 
@@ -2116,157 +1801,6 @@ components:
           $ref: '#/components/schemas/data_json_formats2'
         timings:
           type: object
-    jsonwrap2_sts_raw:
-      description: 'Statistical values when `raw` option is given.
-
-        '
-      type: object
-      properties:
-        min:
-          description: The minimum value of all metrics aggregated
-          type: number
-        max:
-          description: The maximum value of all metrics aggregated
-          type: number
-        sum:
-          description: The sum value of all metrics aggregated
-          type: number
-        ars:
-          description: The sum anomaly rate of all metrics aggregated
-          type: number
-        vol:
-          description: The volume of all the metrics aggregated
-          type: number
-        cnt:
-          description: The count of all metrics aggregated
-          type: integer
-    agents:
-      description: 'An array of Agent definitions consulted to compose this response.
-
-        '
-      type: array
-      items:
-        type: object
-        properties:
-          mg:
-            description: The Agent machine GUID.
-            type: string
-            format: uuid
-          nd:
-            description: The Agent cloud node ID.
-            type: string
-            format: uuid
-          nm:
-            description: The Agent hostname.
-            type: string
-          ai:
-            description: The Agent index ID for this Agent, in this response.
-            type: integer
-          now:
-            description: The current unix epoch timestamp of this Agent.
-            type: integer
-    data_json_formats1:
-      description: 'Depending on the `format` given to a data query, any of the following may be returned.
-
-        '
-      oneOf:
-      - $ref: '#/components/schemas/data_json'
-      - $ref: '#/components/schemas/data_datatable'
-      - $ref: '#/components/schemas/data_csvjsonarray'
-      - $ref: '#/components/schemas/data_array'
-      - $ref: '#/components/schemas/data_txt'
-    nodeWithDataStatistics:
-      allOf:
-      - $ref: '#/components/schemas/nodeBasic'
-      - type: object
-        description: '`is` stands for instances, `ds` for dimensions, `al` for alerts, `sts` for statistics.
-
-          '
-        properties:
-          is:
-            $ref: '#/components/schemas/jsonwrap2_items_count'
-          ds:
-            $ref: '#/components/schemas/jsonwrap2_items_count'
-          al:
-            $ref: '#/components/schemas/jsonwrap2_alerts_count'
-          sts:
-            oneOf:
-            - $ref: '#/components/schemas/jsonwrap2_sts'
-            - $ref: '#/components/schemas/jsonwrap2_sts_raw'
-    chart_variables:
-      type: object
-      properties:
-        varname1:
-          type: number
-          format: float
-        varname2:
-          type: number
-          format: float
-    data_txt:
-      description: 'Data response in `csv`, `tsv`, `tsv-excel`, `ssv`, `ssv-comma`, `markdown`, `html` formats.
-
-        '
-      type: string
-    nodeBasic:
-      type: object
-      description: Basic information about a node.
-      required:
-      - ni
-      - st
-      properties:
-        mg:
-          description: The machine guid of the node. May not be available if the request is served by the Netdata Cloud.
-          type: string
-          format: UUID
-        nd:
-          description: The node id of the node. May not be available if the node is not registered to Netdata Cloud.
-          type: string
-          format: UUID
-        nm:
-          description: The name (hostname) of the node.
-          type: string
-        ni:
-          description: The node index id, a number that uniquely identifies this node for this query.
-          type: integer
-        st:
-          description: Status information about the communication with this node.
-          type: object
-          properties:
-            ai:
-              description: The Agent index id that has been contacted for this node.
-              type: integer
-            code:
-              description: The HTTP response code of the response for this node. When working directly with an Agent, this is always 200. If the `code` is missing, it should be assumed to be 200.
-              type: integer
-            msg:
-              description: A human readable description of the error, if any. If `msg` is missing, or is the empty string `""` or is `null`, there is no description associated with the current status.
-              type: string
-            ms:
-              description: The time in milliseconds this node took to respond, or if the local Agent responded for this node, the time it needed to execute the query. If `ms` is missing, the time that was required to query this node is unknown.
-              type: number
-    data_json:
-      description: Data response in `json` format.
-      type: object
-      properties:
-        labels:
-          description: The dimensions retrieved from the chart.
-          type: array
-          items:
-            type: string
-        data:
-          description: 'The data requested, one element per sample with each element containing the values of the dimensions described in the labels value.
-
-            '
-          type: array
-          items:
-            type: number
-    data_json_formats2:
-      description: 'Depending on the `format` given to a data query, any of the following may be returned.
-
-        '
-      oneOf:
-      - $ref: '#/components/schemas/data_json2'
-      - $ref: '#/components/schemas/data_json_formats1'
     data_datatable:
       description: 'Data response in datatable / datasource formats (suitable for Google Charts).
 
@@ -2306,11 +1840,17 @@ components:
                       description: 'Each value in the row is represented by an object named `c` with five v fields: data, null, null, 0, the value. This format is fixed by the Google Charts API."
 
                         '
-    api:
-      description: The version of the API used.
-      type: integer
-    jsonwrap2_sts:
-      description: 'Statistical values
+    chart_variables:
+      type: object
+      properties:
+        varname1:
+          type: number
+          format: float
+        varname2:
+          type: number
+          format: float
+    jsonwrap2_sts_raw:
+      description: 'Statistical values when `raw` option is given.
 
         '
       type: object
@@ -2321,161 +1861,621 @@ components:
         max:
           description: The maximum value of all metrics aggregated
           type: number
-        avg:
-          description: The average value of all metrics aggregated
+        sum:
+          description: The sum value of all metrics aggregated
           type: number
-        arp:
-          description: The average anomaly rate of all metrics aggregated
+        ars:
+          description: The sum anomaly rate of all metrics aggregated
           type: number
-        con:
-          description: The contribution percentage of all the metrics aggregated
+        vol:
+          description: The volume of all the metrics aggregated
           type: number
-    jsonwrap2_items_count:
-      description: 'Depending on the placement of this object, `items` may be `nodes`, `contexts`, `instances`, `dimensions`, `label keys`, `label key-value pairs`. Furthermore, if the whole object is missing it should be assumed that all its members are zero.
+        cnt:
+          description: The count of all metrics aggregated
+          type: integer
+    data_json2:
+      type: object
+      properties:
+        labels:
+          description: 'The IDs of the dimensions returned. The first is always `time`.
 
-        '
-      type: object
-      properties:
-        sl:
-          description: The number of items `selected` to query. If absent it is zero.
-          type: integer
-        ex:
-          description: The number of items `excluded` from querying. If absent it is zero.
-          type: integer
-        qr:
-          description: The number of items (out of `selected`) the query successfully `queried`.  If absent it is zero.
-          type: integer
-        fl:
-          description: The number of items (from `selected`) that `failed` to be queried.  If absent it is zero.
-          type: integer
-    jsonwrap1:
-      type: object
-      discriminator:
-        propertyName: format
-      description: Response will contain the appropriate subtype, e.g. data_json depending on the requested format.
-      properties:
-        api:
-          type: number
-          description: The API version this conforms to.
-        id:
-          type: string
-          description: The unique id of the chart.
-        name:
-          type: string
-          description: The name of the chart.
-        update_every:
-          type: number
-          description: The update frequency of this chart, in seconds. One value every this amount of time is kept in the round robin database (independently of the current view).
-        view_update_every:
-          type: number
-          description: The current view appropriate update frequency of this chart, in seconds. There is no point to request chart refreshes, using the same settings, more frequently than this.
-        first_entry:
-          type: number
-          description: The UNIX timestamp of the first entry (the oldest) in the round robin database (independently of the current view).
-        last_entry:
-          type: number
-          description: The UNIX timestamp of the latest entry in the round robin database (independently of the current view).
-        after:
-          type: number
-          description: The UNIX timestamp of the first entry (the oldest) returned in this response.
-        before:
-          type: number
-          description: The UNIX timestamp of the latest entry returned in this response.
-        min:
-          type: number
-          description: The minimum value returned in the current view. This can be used to size the y-series of the chart.
-        max:
-          type: number
-          description: The maximum value returned in the current view. This can be used to size the y-series of the chart.
-        dimension_names:
-          description: The dimension names of the chart as returned in the current view.
+            '
           type: array
           items:
             type: string
-        dimension_ids:
-          description: The dimension IDs of the chart as returned in the current view.
-          type: array
-          items:
-            type: string
-        latest_values:
-          description: The latest values collected for the chart (independently of the current view).
-          type: array
-          items:
-            type: string
-        view_latest_values:
-          description: The latest values returned with this response.
-          type: array
-          items:
-            type: string
-        dimensions:
-          type: number
-          description: The number of dimensions returned.
-        points:
-          type: number
-          description: The number of rows / points returned.
-        format:
-          type: string
-          description: The format of the result returned.
-        chart_variables:
+        point:
+          description: 'The format of each point returned.
+
+            '
           type: object
-          additionalProperties:
-            $ref: '#/components/schemas/chart_variables'
-        result:
-          $ref: '#/components/schemas/data_json_formats1'
-    versions:
-      description: 'Hashes that allow the caller to detect important database changes of Netdata Agents.
+          properties:
+            value:
+              description: 'The index of the value in each point.
 
-        '
+                '
+              type: integer
+            arp:
+              description: 'The index of the anomaly rate in each point.
+
+                '
+              type: integer
+            pa:
+              description: 'The index of the point annotations in each point.
+
+                This is a bitmap. `EMPTY = 1`, `RESET = 2`, `PARTIAL = 4`.
+
+                `EMPTY` means the point has no value.
+
+                `RESET` means that at least one metric aggregated experienced an overflow (a counter that wrapped).
+
+                `PARTIAL` means that this point should have more metrics aggregated into it, but not all metrics had data.
+
+                '
+              type: integer
+            count:
+              description: 'The number of metrics aggregated into this point.
+
+                This exists only when the option `raw` is given to the query and the final aggregation point is NOT `percentage`.
+
+                '
+              type: integer
+            hidden:
+              description: 'The sum of the non-selected dimensions aggregated for this group item point.
+
+                This exists only when the option `raw` is given to the query and the final aggregation method is `percentage`.
+
+                '
+        data:
+          type: array
+          items:
+            anyOf:
+            - type: integer
+            - type: array
+              items:
+                type: number
+    api:
+      description: The version of the API used.
+      type: integer
+    nodeWithDataStatistics:
+      allOf:
+      - $ref: '#/components/schemas/nodeBasic'
+      - type: object
+        description: '`is` stands for instances, `ds` for dimensions, `al` for alerts, `sts` for statistics.
+
+          '
+        properties:
+          is:
+            $ref: '#/components/schemas/jsonwrap2_items_count'
+          ds:
+            $ref: '#/components/schemas/jsonwrap2_items_count'
+          al:
+            $ref: '#/components/schemas/jsonwrap2_alerts_count'
+          sts:
+            oneOf:
+            - $ref: '#/components/schemas/jsonwrap2_sts'
+            - $ref: '#/components/schemas/jsonwrap2_sts_raw'
+    data_json:
+      description: Data response in `json` format.
       type: object
       properties:
-        nodes_hard_hash:
-          description: 'An auto-increment value that reflects the number of changes to the number of nodes maintained by the server. Everytime a node is added or removed, this number gets incremented.
+        labels:
+          description: The dimensions retrieved from the chart.
+          type: array
+          items:
+            type: string
+        data:
+          description: 'The data requested, one element per sample with each element containing the values of the dimensions described in the labels value.
 
             '
-          type: integer
-        contexts_hard_hash:
-          description: 'An auto-increment value that reflects the number of changes to the number of contexts maintained by the server. Everytime a context is added or removed, this number gets incremented.
-
-            '
-          type: integer
-        contexts_soft_hash:
-          description: 'An auto-increment value that reflects the number of changes to the queue that sends contexts updates to Netdata Cloud. Everytime the contents of a context are updated, this number gets incremented.
-
-            '
-          type: integer
-        alerts_hard_hash:
-          description: 'An auto-increment value that reflects the number of changes to the number of alerts. Everytime an alert is added or removed, this number gets incremented.
-
-            '
-          type: integer
-        alerts_soft_hash:
-          description: 'An auto-increment value that reflects the number of alerts transitions. Everytime an alert transitions to a new state, this number gets incremented.
-
-            '
-          type: integer
-    jsonwrap2_alerts_count:
-      description: 'Counters about alert statuses. If this object is missing, it is assumed that all its members are zero.
+          type: array
+          items:
+            type: number
+  parameters:
+    chart_labels_filter:
+      name: chart_labels_filter
+      in: query
+      description: 'Specify the chart label keys and values to match for context queries. All keys/values need to match for the chart to be included in the query. The labels are specified as key1:value1,key2:value2
 
         '
-      type: object
-      properties:
-        nm:
-          description: The name of the alert. Can be absent when the counters refer to more than one alert instances.
+      required: false
+      allowEmptyValue: false
+      schema:
+        type: string
+        format: key1:value1,key2:value2,key3:value3
+    after:
+      name: after
+      in: query
+      description: '`after` and `before` define the time-frame of a query. `after` can be a negative number of seconds, up to 3 years (-94608000), relative to `before`. If not set, it is usually assumed to be -600. When non-data endpoints support the `after` and `before`, they use the time-frame to limit their response for objects having data retention within the time-frame given.
+
+        '
+      required: false
+      schema:
+        type: integer
+        default: -600
+    dataFormat2:
+      name: format
+      in: query
+      description: The format of the data to be returned.
+      allowEmptyValue: false
+      schema:
+        type: string
+        enum:
+        - json
+        - json2
+        - jsonp
+        - csv
+        - tsv
+        - tsv-excel
+        - ssv
+        - ssvcomma
+        - datatable
+        - datasource
+        - html
+        - markdown
+        - array
+        - csvjsonarray
+        default: json2
+    dataTimeGroup1:
+      name: group
+      in: query
+      description: 'Time aggregation function. If multiple collected values are to be grouped in order to return fewer points, this parameters defines the method of grouping. If the `absolute` option is set, the values are turned positive before applying this calculation.
+
+        '
+      required: false
+      schema:
+        type: string
+        enum:
+        - min
+        - max
+        - avg
+        - average
+        - median
+        - stddev
+        - sum
+        - incremental-sum
+        - ses
+        - des
+        - cv
+        - countif
+        - percentile
+        - percentile25
+        - percentile50
+        - percentile75
+        - percentile80
+        - percentile90
+        - percentile95
+        - percentile97
+        - percentile98
+        - percentile99
+        - trimmed-mean
+        - trimmed-mean1
+        - trimmed-mean2
+        - trimmed-mean3
+        - trimmed-mean5
+        - trimmed-mean10
+        - trimmed-mean15
+        - trimmed-mean20
+        - trimmed-mean25
+        - trimmed-median
+        - trimmed-median1
+        - trimmed-median2
+        - trimmed-median3
+        - trimmed-median5
+        - trimmed-median10
+        - trimmed-median15
+        - trimmed-median20
+        - trimmed-median25
+        - ema
+        - extremes
+        default: average
+    timeoutMS:
+      name: timeout
+      in: query
+      description: 'Specify a timeout value in milliseconds after which the Agent will abort the query and return a 503 error. A value of 0 indicates no timeout.
+
+        '
+      required: false
+      schema:
+        type: number
+        format: integer
+        default: 0
+    filterNodes:
+      name: nodes
+      in: query
+      description: 'A simple pattern matching the nodes to be queried. This only controls the data response, not the metadata. The simple pattern is checked against the nodes'' machine guid, node id, hostname. The default nodes selector is all the nodes matched by the nodes scope. Both positive and negative simple pattern expressions are supported.
+
+        '
+      required: false
+      schema:
+        type: string
+        format: simple pattern
+        default: '*'
+    cardinalityLimit:
+      name: cardinality_limit
+      in: query
+      description: 'Limits the number of unique items (contexts, instances, dimensions) returned in the query result. This is useful for preventing excessive memory usage and response sizes when queries match a large number of metrics. The query engine will return the most relevant items up to this limit.
+
+        '
+      required: false
+      schema:
+        type: integer
+        format: int64
+        minimum: 1
+        default: 10000
+    filterDimensions:
+      name: dimensions
+      in: query
+      description: 'A simple patterns matching the dimensions to be queried. The simple pattern is checked against and `id` and the `name` of the dimensions of the eligible instances (as filtered by all the above). Both positive and negative simple pattern expressions are supported.
+
+        '
+      required: false
+      schema:
+        type: string
+        format: simple pattern
+        default: '*'
+    tqx:
+      name: tqx
+      in: query
+      description: '[Google Visualization API](https://developers.google.com/chart/interactive/docs/dev/implementing_data_source?hl=en) formatted parameter.
+
+        '
+      required: false
+      schema:
+        type: string
+    scopeDimensions:
+      name: scope_dimensions
+      in: query
+      description: 'A simple pattern limiting the dimensions scope of the query. The scope controls both data and metadata response. This limits which dimensions are even considered for the query, including their visibility in the query response metadata. The simple pattern is checked against both the dimension `id` and `name`. Both positive and negative simple pattern expressions are supported.
+
+        '
+      required: false
+      schema:
+        type: string
+        format: simple pattern
+        default: '*'
+    points:
+      name: points
+      in: query
+      description: 'The number of points to be returned. If not given, or it is <= 0, or it is bigger than the points stored in the database for the given duration, all the available collected values for the given duration will be returned. For `weights` endpoints that do statistical analysis, the `points` define the detail of this analysis (the default is 500).
+
+        '
+      required: false
+      schema:
+        type: number
+        format: integer
+        default: 0
+    dimension:
+      name: dimension
+      in: query
+      description: Zero, one or more dimension ids or names, as returned by the /chart call, separated with comma or pipe. Netdata simple patterns are supported.
+      required: false
+      allowEmptyValue: false
+      schema:
+        type: array
+        items:
           type: string
-        cl:
-          description: The number of CLEAR alerts. If absent, it is zero.
-          type: integer
-        wr:
-          description: The number of WARNING alerts. If absent, it is zero.
-          type: integer
-        cr:
-          description: The number of CRITICAL alerts. If absent, it is zero.
-          type: integer
-        ot:
-          description: 'The number of alerts that are not CLEAR, WARNING, CRITICAL (so, they are "other").  If absent, it is zero.
+          format: as returned by /charts
+    filename:
+      name: filename
+      in: query
+      description: 'Add `Content-Disposition: attachment; filename=` header to the response, that will instruct the browser to save the response with the given filename."
 
-            '
-          type: integer
+        '
+      required: false
+      schema:
+        type: string
+    context:
+      name: context
+      in: query
+      description: The context of the chart as returned by the /charts call.
+      required: false
+      allowEmptyValue: false
+      schema:
+        type: string
+        format: as returned by /charts
+    callback:
+      name: callback
+      in: query
+      description: 'For JSONP responses, the callback function name.
+
+        '
+      required: false
+      schema:
+        type: string
+    tier:
+      name: tier
+      in: query
+      description: 'Use only the given dbengine tier for executing the query. Setting this parameters automatically sets the option `selected-tier` for the query.
+
+        '
+      required: false
+      schema:
+        type: number
+        format: integer
+    scopeContexts:
+      name: scope_contexts
+      in: query
+      description: 'A simple pattern limiting the contexts scope of the query. The scope controls both data and metadata response. The default contexts scope is all contexts for which this Agent has data for. Usually the contexts scope is used to slice data on the dashboard (e.g. each context based chart has its own contexts scope, limiting the chart to all the instances of the selected context). Both positive and negative simple pattern expressions are supported.
+
+        '
+      required: false
+      schema:
+        type: string
+        format: simple pattern
+        default: '*'
+    dataTimeResampling2:
+      name: time_resampling
+      in: query
+      description: 'For incremental values that are "per second", this value is used to resample them to "per minute` (60) or "per hour" (3600). It can only be used in conjunction with group=average.
+
+        '
+      required: false
+      schema:
+        type: number
+        format: integer
+        default: 0
+    scopeInstances:
+      name: scope_instances
+      in: query
+      description: 'A simple pattern limiting the instances scope of the query. The scope controls both data and metadata response. This limits which instances are even considered for the query, including their visibility in the query response metadata. The simple pattern is checked against the instance `id`, the instance `name`, the fully qualified name of the instance `id` and `name`, like `instance@machine_guid`, where `instance` is either its `id` or `name`. Both positive and negative simple pattern expressions are supported.
+
+        '
+      required: false
+      schema:
+        type: string
+        format: simple pattern
+        default: '*'
+    filterContexts:
+      name: contexts
+      in: query
+      description: 'A simple pattern matching the contexts to be queried. This only controls the data response, not the metadata. Both positive and negative simple pattern expressions are supported.
+
+        '
+      required: false
+      schema:
+        type: string
+        format: simple pattern
+        default: '*'
+    dataTimeGroupOptions1:
+      name: group_options
+      in: query
+      description: 'When the time grouping function supports additional parameters, this field can be used to pass them to it. Currently `countif`, `trimmed-mean`, `trimmed-median` and `percentile` support this. For `countif` the string may start with `<`, `<=`, `<:`, `<>`, `!=`, `>`, `>=`, `>:`. For all others just a number is expected.
+
+        '
+      required: false
+      schema:
+        type: string
+    chart:
+      name: chart
+      in: query
+      description: The id of the chart as returned by the `/api/v1/charts` call.
+      required: false
+      allowEmptyValue: false
+      schema:
+        type: string
+        format: as returned by `/api/v1/charts`
+    scopeLabels:
+      name: scope_labels
+      in: query
+      description: 'A simple pattern limiting the labels scope of the query. The scope controls both data and metadata response. This limits which instances are even considered for the query based on their labels. The simple pattern is checked against `name:value` of all the labels of all the eligible instances (as filtered by scope nodes, scope contexts, and scope instances). Only instances having labels that match this pattern will be included in the query. Both positive and negative simple pattern expressions are supported.
+
+        '
+      required: false
+      schema:
+        type: string
+        format: simple pattern
+        default: '*'
+    dataQueryOptions:
+      name: options
+      in: query
+      description: "Options that affect data generation.\n* `jsonwrap` - Wrap the output in a JSON object with metadata about the query.\n* `raw` - change the output so that it is aggregatable across multiple such queries. Supported by `/api/v2` data queries and `json2` format.\n* `minify` - Remove unnecessary spaces and newlines from the output.\n* `debug` - Provide additional information in `jsonwrap` output to help tracing issues.\n* `nonzero` - Do not return dimensions that all their values are zero, to improve the visual appearance of charts. They will still be returned if all the dimensions are entirely zero.\n* `null2zero` - Replace `null` values with `0`.\n* `absolute` or `abs` - Traditionally Netdata returns select dimensions negative to improve visual appearance. This option turns this feature off.\n* `display-absolute` - Only used by badges, to do color calculation using the signed value, but render the value without a sign.\n* `flip` or `reversed` - Order the timestamps array in reverse order (newest to oldest).\n* `min2max` - When flattening multi-dimensional data into a single metric format, use `max - min` instead of `sum`. This is EOL - use `/api/v2` to control aggregation across dimensions.\n* `percentage` - Convert all values into a percentage vs the row total. When enabled, Netdata will query all dimensions, even the ones that have not been selected or are hidden, to find the row total, in order to calculate the percentage of each dimension selected.\n* `seconds` - Output timestamps in seconds instead of dates.\n* `milliseconds` or `ms` - Output timestamps in milliseconds instead of dates.\n* `unaligned` - by default queries are aligned to the the view, so that as time passes past data returned do not change. When a data query will not be used for visualization, `unaligned` can be given to avoid aligning the query time-frame for visual precision.\n* `match-ids`, `match-names`. By default filters match both IDs and names when they are available. Setting either of the two options will disable the other.\n* `anomaly-bit` - query the anomaly information instead of metric values. This is EOL, use `/api/v2` and `json2` format which always returns this information and many more.\n* `jw-anomaly-rates` - return anomaly rates as a separate result set in the same `json` format response. This is EOL, use `/api/v2` and `json2` format which always returns information and many more. \n* `details` - `/api/v2/data` returns in `jsonwrap` the full tree of dimensions that have been matched by the query.\n* `group-by-labels` - `/api/v2/data` returns in `jsonwrap` flattened labels per output dimension. These are used to identify the instances that have been aggregated into each dimension, making it possible to provide a map, like Netdata does for Kubernetes.\n* `natural-points` - return timestamps as found in the database. The result is again fixed-step, but the query engine attempts to align them with the timestamps found in the database.\n* `virtual-points` - return timestamps independent of the database alignment. This is needed aggregating data across multiple Netdata Agents, to ensure that their outputs do not need to be interpolated to be merged.\n* `selected-tier` - use data exclusively from the selected tier given with the `tier` parameter. This option is set automatically when the `tier` parameter is set.\n* `all-dimensions` - In `/api/v1` `jsonwrap` include metadata for all candidate metrics examined. In `/api/v2` this is standard behavior and no option is needed.\n* `label-quotes` - In `csv` output format, enclose each header label in quotes.\n* `objectrows` - Each row of value should be an object, not an array (only for `json` format).\n* `google_json` - Comply with google JSON/JSONP specs (only for `json` format).\n* `minimal-stats` or `minimal` - Reduce the amount of statistics returned in `jsonwrap` format to save bandwidth.\n* `long-json-keys` or `long-keys` - Use descriptive key names in JSON output instead of abbreviated ones.\n* `mcp-info` - Include additional metadata useful for the Model Context Protocol (MCP) integration.\n* `rfc3339` - Return timestamps in RFC3339 format (e.g., \"2023-01-01T00:00:00Z\") instead of Unix timestamps.\n"
+      required: false
+      allowEmptyValue: false
+      schema:
+        type: array
+        items:
+          type: string
+          enum:
+          - jsonwrap
+          - raw
+          - minify
+          - debug
+          - nonzero
+          - null2zero
+          - abs
+          - absolute
+          - display-absolute
+          - flip
+          - reversed
+          - min2max
+          - percentage
+          - seconds
+          - ms
+          - milliseconds
+          - unaligned
+          - match-ids
+          - match-names
+          - anomaly-bit
+          - jw-anomaly-rates
+          - details
+          - group-by-labels
+          - natural-points
+          - virtual-points
+          - selected-tier
+          - all-dimensions
+          - label-quotes
+          - objectrows
+          - google_json
+          - minimal-stats
+          - minimal
+          - long-json-keys
+          - long-keys
+          - mcp-info
+          - rfc3339
+        default:
+        - seconds
+        - jsonwrap
+    dataTimeResampling1:
+      name: gtime
+      in: query
+      description: 'The grouping number of seconds. This is used in conjunction with group=average to change the units of metrics (ie when the data is per-second, setting gtime=60 will turn them to per-minute).
+
+        '
+      required: false
+      allowEmptyValue: false
+      schema:
+        type: number
+        format: integer
+        default: 0
+    dataTimeGroupOptions2:
+      name: time_group_options
+      in: query
+      description: 'When the time grouping function supports additional parameters, this field can be used to pass them to it. Currently `countif`, `trimmed-mean`, `trimmed-median` and `percentile` support this. For `countif` the string may start with `<`, `<=`, `<:`, `<>`, `!=`, `>`, `>=`, `>:`. For all others just a number is expected.
+
+        '
+      required: false
+      schema:
+        type: string
+    chart_label_key:
+      name: chart_label_key
+      in: query
+      description: 'Specify the chart label keys that need to match for context queries as comma separated values. At least one matching key is needed to match the corresponding chart.
+
+        '
+      required: false
+      allowEmptyValue: false
+      schema:
+        type: string
+        format: key1,key2,key3
+    dataFormat1:
+      name: format
+      in: query
+      description: The format of the data to be returned.
+      allowEmptyValue: false
+      schema:
+        type: string
+        enum:
+        - json
+        - jsonp
+        - csv
+        - tsv
+        - tsv-excel
+        - ssv
+        - ssvcomma
+        - datatable
+        - datasource
+        - html
+        - markdown
+        - array
+        - csvjsonarray
+        default: json
+    before:
+      name: before
+      in: query
+      description: '`after` and `before` define the time-frame of a query. `before` can be a negative number of seconds, up to 3 years (-94608000), relative to current clock. If not set, it is assumed to be the current clock time. When `before` is positive, it is assumed to be a unix epoch timestamp. When non-data endpoints support the `after` and `before`, they use the time-frame to limit their response for objects having data retention within the time-frame given.
+
+        '
+      required: false
+      schema:
+        type: integer
+        default: 0
+    filterInstances:
+      name: instances
+      in: query
+      description: 'A simple pattern matching the instances to be queried. The simple pattern is checked against the instance `id`, the instance `name`, the fully qualified name of the instance `id` and `name`, like `instance@machine_guid`, where `instance` is either its `id` or `name`. Both positive and negative simple pattern expressions are supported.
+
+        '
+      required: false
+      schema:
+        type: string
+        format: simple pattern
+        default: '*'
+    filterLabels:
+      name: labels
+      in: query
+      description: 'A simple pattern matching the labels to be queried. The simple pattern is checked against `name:value` of all the labels of all the eligible instances (as filtered by all the above: scope nodes, scope contexts, nodes, contexts and instances). Negative simple patterns should not be used in this filter.
+
+        '
+      required: false
+      schema:
+        type: string
+        format: simple pattern
+        default: '*'
+    filterAlerts:
+      name: alerts
+      in: query
+      description: 'A simple pattern matching the alerts to be queried. The simple pattern is checked against the `name` of alerts and the combination of `name:status`, when status is one of `CLEAR`, `WARNING`, `CRITICAL`, `REMOVED`, `UNDEFINED`, `UNINITIALIZED`, of all the alerts of all the eligible instances (as filtered by all the above). A negative simple pattern will exclude the instances having the labels matched.
+
+        '
+      required: false
+      schema:
+        type: string
+        format: simple pattern
+        default: '*'
+    dataTimeGroup2:
+      name: time_group
+      in: query
+      description: 'Time aggregation function. If multiple collected values are to be grouped in order to return fewer points, this parameters defines the method of grouping. If the `absolute` option is set, the values are turned positive before applying this calculation.
+
+        '
+      required: false
+      schema:
+        type: string
+        enum:
+        - min
+        - max
+        - avg
+        - average
+        - median
+        - stddev
+        - sum
+        - incremental-sum
+        - ses
+        - des
+        - cv
+        - countif
+        - percentile
+        - percentile25
+        - percentile50
+        - percentile75
+        - percentile80
+        - percentile90
+        - percentile95
+        - percentile97
+        - percentile98
+        - percentile99
+        - trimmed-mean
+        - trimmed-mean1
+        - trimmed-mean2
+        - trimmed-mean3
+        - trimmed-mean5
+        - trimmed-mean10
+        - trimmed-mean15
+        - trimmed-mean20
+        - trimmed-mean25
+        - trimmed-median
+        - trimmed-median1
+        - trimmed-median2
+        - trimmed-median3
+        - trimmed-median5
+        - trimmed-median10
+        - trimmed-median15
+        - trimmed-median20
+        - trimmed-median25
+        - ema
+        - extremes
+        default: average
+    scopeNodes:
+      name: scope_nodes
+      in: query
+      description: 'A simple pattern limiting the nodes scope of the query. The scope controls both data and metadata response. The simple pattern is checked against the nodes'' machine guid, node id and hostname. The default nodes scope is all nodes for which this Agent has data for. Usually the nodes scope is used to slice the entire dashboard (e.g. the Global Nodes Selector at the Netdata Cloud overview dashboard). Both positive and negative simple pattern expressions are supported.
+
+        '
+      required: false
+      schema:
+        type: string
+        format: simple pattern
+        default: '*'
   securitySchemes:
     bearerAuth:
       type: http

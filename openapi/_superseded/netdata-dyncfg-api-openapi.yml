@@ -1,6 +1,6 @@
-openapi: 3.0.0
+openapi: 3.2.0
 info:
-  title: Netdata agent dyncfg API
+  title: Netdata agent Dyncfg API
   description: 'Real-time performance and health monitoring.
 
 
@@ -230,28 +230,6 @@ paths:
                 $ref: '#/components/schemas/config_default_response'
 components:
   schemas:
-    config_default_response:
-      type: object
-      properties:
-        status:
-          type: integer
-          description: The HTTP status code of the response.
-        message:
-          type: string
-          description: A descriptive message about the response or the action taken.
-        data:
-          type: object
-          description: The data payload of the response, contents vary depending on the specific request and action.
-          additionalProperties: true
-    config_schema:
-      type: object
-      properties:
-        jsonSchema:
-          type: object
-          description: Standard JSON Schema object describing the schema of each configurable entity.
-        uiSchema:
-          type: object
-          description: Schema for react-json-schema-form to drive the UI. Provides additional UI-specific configuration.
     config_tree:
       type: object
       properties:
@@ -267,6 +245,28 @@ components:
               $ref: '#/components/schemas/config_entity'
         attention:
           $ref: '#/components/schemas/config_attention'
+    config_schema:
+      type: object
+      properties:
+        jsonSchema:
+          type: object
+          description: Standard JSON Schema object describing the schema of each configurable entity.
+        uiSchema:
+          type: object
+          description: Schema for react-json-schema-form to drive the UI. Provides additional UI-specific configuration.
+    config_default_response:
+      type: object
+      properties:
+        status:
+          type: integer
+          description: The HTTP status code of the response.
+        message:
+          type: string
+          description: A descriptive message about the response or the action taken.
+        data:
+          type: object
+          description: The data payload of the response, contents vary depending on the specific request and action.
+          additionalProperties: true
     config_entity:
       type: object
       properties:

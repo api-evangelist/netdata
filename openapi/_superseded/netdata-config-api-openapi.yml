@@ -1,6 +1,6 @@
-openapi: 3.0.0
+openapi: 3.2.0
 info:
-  title: Netdata agent config API
+  title: Netdata agent Config API
   description: 'Real-time performance and health monitoring.
 
 
