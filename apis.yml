@@ -130,8 +130,6 @@ common:
     url: vocabulary/netdata-vocabulary.yml
   - type: JSONLDContext
     url: json-ld/netdata-context.jsonld
-  - type: Blog
-    url: blogs/blogs.json
   - type: Plans
     url: plans/netdata-plans-pricing.yml
   - type: RateLimits
