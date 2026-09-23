@@ -14,28 +14,11 @@
     "sourced from openapi/_original/ (1 archived document(s)); previously refined output at the top level was skipped rather than re-split",
     "netdata-cloud-api-openapi.yml: upgraded openapi 3.0.0 -> OpenAPI 3.2.0",
     "netdata-cloud-api-openapi.yml: declared missing tag: alerts",
-    "netdata-cloud-api-openapi.yml: declared missing tag: charts"
+    "netdata-cloud-api-openapi.yml: declared missing tag: charts",
+    "apis.yml register: already-registered"
   ],
   "skipped": [
-    "netdata-agent-api-openapi.yml: previously refined output, superseded by openapi/_original/",
     "netdata-alerts-api-openapi.yml: previously refined output, superseded by openapi/_original/",
-    "netdata-authentication-api-openapi.yml: previously refined output, superseded by openapi/_original/",
-    "netdata-badges-api-openapi.yml: previously refined output, superseded by openapi/_original/",
-    "netdata-charts-api-openapi.yml: previously refined output, superseded by openapi/_original/",
-    "netdata-claiming-api-openapi.yml: previously refined output, superseded by openapi/_original/",
-    "netdata-config-api-openapi.yml: previously refined output, superseded by openapi/_original/",
-    "netdata-contexts-api-openapi.yml: previously refined output, superseded by openapi/_original/",
-    "netdata-data-api-openapi.yml: previously refined output, superseded by openapi/_original/",
-    "netdata-dyncfg-api-openapi.yml: previously refined output, superseded by openapi/_original/",
-    "netdata-functions-api-openapi.yml: previously refined output, superseded by openapi/_original/",
-    "netdata-management-api-openapi.yml: previously refined output, superseded by openapi/_original/",
-    "netdata-nodes-api-openapi.yml: previously refined output, superseded by openapi/_original/",
-    "netdata-registry-api-openapi.yml: previously refined output, superseded by openapi/_original/",
-    "netdata-settings-api-openapi.yml: previously refined output, superseded by openapi/_original/",
-    "netdata-streaming-api-openapi.yml: previously refined output, superseded by openapi/_original/",
-    "netdata-variables-api-openapi.yml: previously refined output, superseded by openapi/_original/",
-    "netdata-versions-api-openapi.yml: previously refined output, superseded by openapi/_original/",
-    "netdata-webrtc-api-openapi.yml: previously refined output, superseded by openapi/_original/",
-    "netdata-weights-api-openapi.yml: previously refined output, superseded by openapi/_original/"
+    "netdata-charts-api-openapi.yml: previously refined output, superseded by openapi/_original/"
   ]
 }

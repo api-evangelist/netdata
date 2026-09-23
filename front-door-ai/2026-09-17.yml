@@ -1,0 +1,33 @@
+# Front Door AI Index — netdata — 2026-09-17
+# AI vocabulary counted on the provider's root page. Generated; do not edit.
+# `score` is null unless ownership is `own` — see front_door_ai.py.
+front_door_ai:
+  slug: netdata
+  lexicon_version: '1.0'
+  probed_at: '2026-09-17'
+  host: www.netdata.cloud
+  final_host: www.netdata.cloud
+  ownership: own
+  owner: netdata
+  shares_host_with: null
+  inherited_from: null
+  verdict: scored
+  score: 53
+  host_score: 53
+  density: 16.33
+  words: 3245
+  tiers:
+    agentic: 6
+    core: 47
+    model: 0
+  ambiguous: 12
+  top_terms:
+    AI: 30
+    ML: 13
+    agent: 9
+    MCP: 5
+    LLMs: 2
+    intelligence: 2
+    machine learning: 2
+    automation: 1
+    chatbot: 1
