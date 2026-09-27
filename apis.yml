@@ -58,7 +58,7 @@ modified: '2026-06-12'
 specificationVersion: '0.23'
 apis:
 - aid: netdata:netdata-alerts-api
-  name: Netdata alerts API
+  name: Netdata Alerts API
   description: Everything related to alerts
   humanURL: https://learn.netdata.cloud/docs/developer-and-contributor-corner/rest-api
   baseURL: http://localhost:19999
@@ -78,7 +78,7 @@ apis:
   - type: Authentication
     url: https://learn.netdata.cloud/docs/netdata-cloud/authentication-&-authorization/api-tokens
 - aid: netdata:netdata-charts-api
-  name: Netdata charts API
+  name: Netdata Charts API
   description: Everything related to chart instances - DO NOT USE IN NEW CODE - use contexts instead
   humanURL: https://learn.netdata.cloud/docs/developer-and-contributor-corner/rest-api
   baseURL: http://localhost:19999
