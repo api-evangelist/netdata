@@ -380,25 +380,95 @@ paths:
                 $ref: '#/components/schemas/errors.Error'
 components:
   schemas:
-    github_com_netdata_cloud-alarm-processor-service_api.misconfiguredAlertsThresholds:
+    github_com_netdata_cloud-alarm-processor-service_api.MisconfiguredNode:
       type: object
       properties:
-        dispatch_none:
-          description: Thresholds for the dispatch-none category
+        id:
+          description: Node unique identifier
+          type: string
+          example: a1b2c3d4-e5f6-7890-abcd-ef1234567890
+        name:
+          description: Node hostname
+          type: string
+          example: ip-172-31-0-1
+    errors.ValidationError:
+      type: object
+      properties:
+        code:
+          type: string
+        message:
+          type: string
+    github_com_netdata_cloud-alarm-processor-service_api.stuckRaisedTotals:
+      type: object
+      properties:
+        critical:
+          description: Breakdown for critical-status alerts
           allOf:
-          - $ref: '#/components/schemas/github_com_netdata_cloud-alarm-processor-service_api.dispatchNoneThresholds'
-        firing_often:
-          description: Thresholds for the firing-often category
+          - $ref: '#/components/schemas/github_com_netdata_cloud-alarm-processor-service_api.stuckRaisedStatusTotal'
+        duration_seconds:
+          description: Sum of raised durations in seconds across all items
+          type: integer
+          example: 259200
+        items:
+          description: Number of stuck alerts
+          type: integer
+          example: 3
+        warning:
+          description: Breakdown for warning-status alerts
           allOf:
-          - $ref: '#/components/schemas/github_com_netdata_cloud-alarm-processor-service_api.firingOftenThresholds'
-        silenced_long:
-          description: Thresholds for the silenced-long category
-          allOf:
-          - $ref: '#/components/schemas/github_com_netdata_cloud-alarm-processor-service_api.silencedLongThresholds'
-        stuck_raised:
-          description: Thresholds for the stuck-raised category
-          allOf:
-          - $ref: '#/components/schemas/github_com_netdata_cloud-alarm-processor-service_api.stuckRaisedThresholds'
+          - $ref: '#/components/schemas/github_com_netdata_cloud-alarm-processor-service_api.stuckRaisedStatusTotal'
+    github_com_netdata_cloud-alarm-processor-service_api.dispatchNoneAlert:
+      type: object
+      properties:
+        chart:
+          description: Chart the alert belongs to
+          type: string
+          example: disk_space._
+        context:
+          description: Chart context
+          type: string
+          example: disk.space
+        name:
+          description: Alert name
+          type: string
+          example: disk_space_usage
+    github_com_netdata_cloud-alarm-processor-service_api.silencedLongAlert:
+      type: object
+      properties:
+        chart:
+          description: Chart the alert belongs to
+          type: string
+          example: disk_space._
+        context:
+          description: Chart context
+          type: string
+          example: disk.space
+        name:
+          description: Alert name
+          type: string
+          example: disk_space_usage
+    github_com_netdata_cloud-alarm-processor-service_api.firingOftenThresholds:
+      type: object
+      properties:
+        transitions:
+          description: Minimum number of transitions to flag an alert (default 30, max 5000)
+          type: integer
+          example: 30
+        window_seconds:
+          description: Lookback window in seconds for counting transitions (default 259200, max 7776000)
+          type: integer
+          example: 259200
+    github_com_netdata_cloud-alarm-processor-service_api.dispatchNoneThresholds:
+      type: object
+      properties:
+        count:
+          description: Minimum non-dispatched event count to flag an alert (default 10, max 5000)
+          type: integer
+          example: 10
+        window_seconds:
+          description: Lookback window in seconds for dispatch-none detection (default 2592000, max 7776000)
+          type: integer
+          example: 2592000
     github_com_netdata_cloud-api-docs_cloud-alarm-processor-service_api.evaluateRRuleReq:
       type: object
       properties:
@@ -428,25 +498,25 @@ components:
           description: The evaluation time window
           allOf:
           - $ref: '#/components/schemas/github_com_netdata_cloud-api-docs_cloud-alarm-processor-service_api.evaluateRRuleWindowReq'
-    github_com_netdata_cloud-alarm-processor-service_api.stuckRaisedTotals:
+    github_com_netdata_cloud-alarm-processor-service_api.misconfiguredAlertsThresholds:
       type: object
       properties:
-        critical:
-          description: Breakdown for critical-status alerts
+        dispatch_none:
+          description: Thresholds for the dispatch-none category
           allOf:
-          - $ref: '#/components/schemas/github_com_netdata_cloud-alarm-processor-service_api.stuckRaisedStatusTotal'
-        duration_seconds:
-          description: Sum of raised durations in seconds across all items
-          type: integer
-          example: 259200
-        items:
-          description: Number of stuck alerts
-          type: integer
-          example: 3
-        warning:
-          description: Breakdown for warning-status alerts
+          - $ref: '#/components/schemas/github_com_netdata_cloud-alarm-processor-service_api.dispatchNoneThresholds'
+        firing_often:
+          description: Thresholds for the firing-often category
           allOf:
-          - $ref: '#/components/schemas/github_com_netdata_cloud-alarm-processor-service_api.stuckRaisedStatusTotal'
+          - $ref: '#/components/schemas/github_com_netdata_cloud-alarm-processor-service_api.firingOftenThresholds'
+        silenced_long:
+          description: Thresholds for the silenced-long category
+          allOf:
+          - $ref: '#/components/schemas/github_com_netdata_cloud-alarm-processor-service_api.silencedLongThresholds'
+        stuck_raised:
+          description: Thresholds for the stuck-raised category
+          allOf:
+          - $ref: '#/components/schemas/github_com_netdata_cloud-alarm-processor-service_api.stuckRaisedThresholds'
     github_com_netdata_cloud-alarm-processor-service_api.dispatchNoneItem:
       type: object
       properties:
@@ -470,6 +540,190 @@ components:
           description: Node where this alert is not dispatched
           allOf:
           - $ref: '#/components/schemas/github_com_netdata_cloud-alarm-processor-service_api.MisconfiguredNode'
+    errors.Error:
+      type: object
+      properties:
+        details:
+          type: object
+          additionalProperties: {}
+        errorCode:
+          type: string
+        errorMessage:
+          type: string
+        errorMsgKey:
+          type: string
+        validationErrors:
+          type: object
+          additionalProperties:
+            $ref: '#/components/schemas/errors.ValidationError'
+    github_com_netdata_cloud-alarm-processor-service_api.stuckRaisedItem:
+      type: object
+      properties:
+        alert:
+          description: Alert identity and current state
+          allOf:
+          - $ref: '#/components/schemas/github_com_netdata_cloud-alarm-processor-service_api.stuckRaisedAlert'
+        node:
+          description: Node where this alert is stuck
+          allOf:
+          - $ref: '#/components/schemas/github_com_netdata_cloud-alarm-processor-service_api.MisconfiguredNode'
+    github_com_netdata_cloud-alarm-processor-service_api.silencedLongItem:
+      type: object
+      properties:
+        alert:
+          description: Alert identity
+          allOf:
+          - $ref: '#/components/schemas/github_com_netdata_cloud-alarm-processor-service_api.silencedLongAlert'
+        count:
+          description: Number of dispatch events where the alert was silenced within the lookback window
+          type: integer
+          example: 72
+        first_silenced:
+          description: Timestamp of the first silenced dispatch event, in unix milliseconds
+          type: integer
+          example: 1710892800000
+        last_silenced:
+          description: Timestamp of the last silenced dispatch event, in unix milliseconds
+          type: integer
+          example: 1711497600000
+        node:
+          description: Node where this alert is silenced
+          allOf:
+          - $ref: '#/components/schemas/github_com_netdata_cloud-alarm-processor-service_api.MisconfiguredNode'
+    github_com_netdata_cloud-alarm-processor-service_api.stuckRaisedThresholds:
+      type: object
+      properties:
+        duration_seconds:
+          description: Minimum raised duration in seconds to flag an alert (default 1209600, max 7776000)
+          type: integer
+          example: 1209600
+    github_com_netdata_cloud-alarm-processor-service_api.stuckRaisedStatusTotal:
+      type: object
+      properties:
+        duration_seconds:
+          description: Sum of raised durations in seconds for this status
+          type: integer
+          example: 172800
+        items:
+          description: Number of alerts with this status
+          type: integer
+          example: 2
+    github_com_netdata_cloud-alarm-processor-service_api.firingOftenItem:
+      type: object
+      properties:
+        alert:
+          description: Alert identity
+          allOf:
+          - $ref: '#/components/schemas/github_com_netdata_cloud-alarm-processor-service_api.firingOftenAlert'
+        node:
+          description: Node where this alert fires
+          allOf:
+          - $ref: '#/components/schemas/github_com_netdata_cloud-alarm-processor-service_api.MisconfiguredNode'
+        transitions:
+          description: Number of transitions within the lookback window
+          type: integer
+          example: 100
+    github_com_netdata_cloud-alarm-processor-service_api.stuckRaisedResponse:
+      type: object
+      properties:
+        items:
+          description: Individual alerts stuck in a raised state, sorted by duration descending
+          type: array
+          items:
+            $ref: '#/components/schemas/github_com_netdata_cloud-alarm-processor-service_api.stuckRaisedItem'
+        totals:
+          description: Aggregated counts and durations across all stuck-raised items
+          allOf:
+          - $ref: '#/components/schemas/github_com_netdata_cloud-alarm-processor-service_api.stuckRaisedTotals'
+    github_com_netdata_cloud-alarm-processor-service_api.firingOftenTotals:
+      type: object
+      properties:
+        items:
+          description: Number of alerts flagged as firing too often
+          type: integer
+          example: 5
+        transitions:
+          description: Sum of transitions across all flagged alerts
+          type: integer
+          example: 420
+    github_com_netdata_cloud-alarm-processor-service_api.dispatchNoneTotals:
+      type: object
+      properties:
+        count:
+          description: Sum of non-dispatched event counts across all flagged alerts
+          type: integer
+          example: 150
+        items:
+          description: Number of alerts flagged as never dispatched
+          type: integer
+          example: 3
+    github_com_netdata_cloud-alarm-processor-service_api.stuckRaisedAlert:
+      type: object
+      properties:
+        chart:
+          description: Chart the alert belongs to
+          type: string
+          example: system.cpu
+        context:
+          description: Chart context
+          type: string
+          example: system.cpu
+        duration_seconds:
+          description: How long the alert has been raised in seconds
+          type: integer
+          example: 86400
+        name:
+          description: Alert name
+          type: string
+          example: 10min_cpu_usage
+        status:
+          description: Current alert status
+          type: string
+          enum:
+          - critical
+          - warning
+          example: critical
+        triggered_at:
+          description: When the alert was triggered, in unix milliseconds
+          type: integer
+          example: 1710892800000
+        units:
+          description: Unit of the alert value (e.g. "%", "MB/s"); empty when the alert config has no units
+          type: string
+          example: '%'
+        value:
+          description: Current alert value
+          type: number
+          example: 95.5
+    github_com_netdata_cloud-api-docs_cloud-alarm-processor-service_api.evaluateRRuleRes:
+      type: object
+      properties:
+        has_more:
+          description: Whether there are more occurrences beyond the limit
+          type: boolean
+          example: false
+        occurrences:
+          description: List of occurrence timestamps within the window
+          type: array
+          items:
+            $ref: '#/components/schemas/github_com_netdata_cloud-api-docs_cloud-alarm-processor-service_api.occurrence'
+        rrule:
+          description: The normalized rrule string
+          type: string
+          example: 'DTSTART:20250519T134901Z
+
+            RRULE:FREQ=DAILY'
+    github_com_netdata_cloud-alarm-processor-service_api.silencedLongTotals:
+      type: object
+      properties:
+        count:
+          description: Sum of silenced dispatch counts across all flagged alerts
+          type: integer
+          example: 150
+        items:
+          description: Number of alerts flagged as silenced for too long
+          type: integer
+          example: 3
     github_com_netdata_cloud-alarm-processor-service_api.firingOftenAlert:
       type: object
       properties:
@@ -485,6 +739,120 @@ components:
           description: Alert name
           type: string
           example: 10min_cpu_usage
+    github_com_netdata_cloud-alarm-processor-service_api.misconfiguredAlertsResponse:
+      type: object
+      properties:
+        dispatch_none:
+          description: Results for alerts where no notification was dispatched; nil when category is excluded
+          allOf:
+          - $ref: '#/components/schemas/github_com_netdata_cloud-alarm-processor-service_api.dispatchNoneResponse'
+        firing_often:
+          description: Results for alerts transitioning too frequently; nil when category is excluded
+          allOf:
+          - $ref: '#/components/schemas/github_com_netdata_cloud-alarm-processor-service_api.firingOftenResponse'
+        silenced_long:
+          description: Results for alerts silenced for too long; nil when category is excluded
+          allOf:
+          - $ref: '#/components/schemas/github_com_netdata_cloud-alarm-processor-service_api.silencedLongResponse'
+        stuck_raised:
+          description: Results for alerts stuck in a raised state; nil when category is excluded
+          allOf:
+          - $ref: '#/components/schemas/github_com_netdata_cloud-alarm-processor-service_api.stuckRaisedResponse'
+        thresholds:
+          description: Thresholds used for the calculation; always present
+          allOf:
+          - $ref: '#/components/schemas/github_com_netdata_cloud-alarm-processor-service_api.misconfiguredAlertsThresholds'
+    github_com_netdata_cloud-alarm-processor-service_api.firingOftenResponse:
+      type: object
+      properties:
+        items:
+          description: Individual alerts that exceeded the transition threshold
+          type: array
+          items:
+            $ref: '#/components/schemas/github_com_netdata_cloud-alarm-processor-service_api.firingOftenItem'
+        totals:
+          description: Aggregated counts across all firing-often items
+          allOf:
+          - $ref: '#/components/schemas/github_com_netdata_cloud-alarm-processor-service_api.firingOftenTotals'
+    github_com_netdata_cloud-api-docs_cloud-alarm-processor-service_api.evaluateRRuleWindowReq:
+      type: object
+      properties:
+        end:
+          description: End of the evaluation time window
+          type: string
+          example: '2025-06-19T00:00:00Z'
+        start:
+          description: Start of the evaluation time window
+          type: string
+          example: '2025-05-19T00:00:00Z'
+    github_com_netdata_cloud-alarm-processor-service_api.dispatchNoneResponse:
+      type: object
+      properties:
+        items:
+          description: Individual alerts that exceeded the non-dispatched event threshold
+          type: array
+          items:
+            $ref: '#/components/schemas/github_com_netdata_cloud-alarm-processor-service_api.dispatchNoneItem'
+        totals:
+          description: Aggregated counts across all dispatch-none items
+          allOf:
+          - $ref: '#/components/schemas/github_com_netdata_cloud-alarm-processor-service_api.dispatchNoneTotals'
+    github_com_netdata_cloud-api-docs_cloud-alarm-processor-service_api.occurrence:
+      type: object
+      properties:
+        end:
+          description: The end time of the occurrence (only present if lasts_until was provided)
+          type: string
+          example: '2025-05-20T01:49:01.803Z'
+        start:
+          description: The start time of the occurrence
+          type: string
+          example: '2025-05-19T13:49:01.803Z'
+    github_com_netdata_cloud-alarm-processor-service_api.silencedLongThresholds:
+      type: object
+      properties:
+        count:
+          description: Minimum silenced dispatch count to flag an alert (default 20, max 5000)
+          type: integer
+          example: 20
+        window_seconds:
+          description: Lookback window in seconds for silenced-long detection (default 2592000, max 7776000)
+          type: integer
+          example: 2592000
+    github_com_netdata_cloud-alarm-processor-service_api.silencedLongResponse:
+      type: object
+      properties:
+        items:
+          description: Individual alerts that exceeded the silenced dispatch threshold
+          type: array
+          items:
+            $ref: '#/components/schemas/github_com_netdata_cloud-alarm-processor-service_api.silencedLongItem'
+        totals:
+          description: Aggregated counts across all silenced-long items
+          allOf:
+          - $ref: '#/components/schemas/github_com_netdata_cloud-alarm-processor-service_api.silencedLongTotals'
+    github_com_netdata_cloud-alarm-processor-service_api.misconfiguredAlertsRequest:
+      type: object
+      properties:
+        categories:
+          description: Filter results to specific misconfiguration categories; empty means all categories
+          type: array
+          items:
+            type: string
+            enum:
+            - firing_often
+            - stuck_raised
+            - silenced_long
+            - dispatch_none
+          example:
+          - firing_often
+          - stuck_raised
+          - silenced_long
+          - dispatch_none
+        thresholds:
+          description: Override default detection thresholds per category
+          allOf:
+          - $ref: '#/components/schemas/github_com_netdata_cloud-alarm-processor-service_api.misconfiguredAlertsThresholds'
     github_com_netdata_cloud-api-docs_cloud-alarm-processor-service_api.silencingRule:
       type: object
       properties:
@@ -613,374 +981,6 @@ components:
             recurrence, so it fires at the intended wall-clock time across DST transitions.'
           type: string
           example: Europe/Lisbon
-    github_com_netdata_cloud-alarm-processor-service_api.silencedLongAlert:
-      type: object
-      properties:
-        chart:
-          description: Chart the alert belongs to
-          type: string
-          example: disk_space._
-        context:
-          description: Chart context
-          type: string
-          example: disk.space
-        name:
-          description: Alert name
-          type: string
-          example: disk_space_usage
-    github_com_netdata_cloud-alarm-processor-service_api.stuckRaisedThresholds:
-      type: object
-      properties:
-        duration_seconds:
-          description: Minimum raised duration in seconds to flag an alert (default 1209600, max 7776000)
-          type: integer
-          example: 1209600
-    github_com_netdata_cloud-alarm-processor-service_api.stuckRaisedStatusTotal:
-      type: object
-      properties:
-        duration_seconds:
-          description: Sum of raised durations in seconds for this status
-          type: integer
-          example: 172800
-        items:
-          description: Number of alerts with this status
-          type: integer
-          example: 2
-    github_com_netdata_cloud-alarm-processor-service_api.MisconfiguredNode:
-      type: object
-      properties:
-        id:
-          description: Node unique identifier
-          type: string
-          example: a1b2c3d4-e5f6-7890-abcd-ef1234567890
-        name:
-          description: Node hostname
-          type: string
-          example: ip-172-31-0-1
-    github_com_netdata_cloud-alarm-processor-service_api.firingOftenThresholds:
-      type: object
-      properties:
-        transitions:
-          description: Minimum number of transitions to flag an alert (default 30, max 5000)
-          type: integer
-          example: 30
-        window_seconds:
-          description: Lookback window in seconds for counting transitions (default 259200, max 7776000)
-          type: integer
-          example: 259200
-    github_com_netdata_cloud-api-docs_cloud-alarm-processor-service_api.evaluateRRuleRes:
-      type: object
-      properties:
-        has_more:
-          description: Whether there are more occurrences beyond the limit
-          type: boolean
-          example: false
-        occurrences:
-          description: List of occurrence timestamps within the window
-          type: array
-          items:
-            $ref: '#/components/schemas/github_com_netdata_cloud-api-docs_cloud-alarm-processor-service_api.occurrence'
-        rrule:
-          description: The normalized rrule string
-          type: string
-          example: 'DTSTART:20250519T134901Z
-
-            RRULE:FREQ=DAILY'
-    github_com_netdata_cloud-api-docs_cloud-alarm-processor-service_api.occurrence:
-      type: object
-      properties:
-        end:
-          description: The end time of the occurrence (only present if lasts_until was provided)
-          type: string
-          example: '2025-05-20T01:49:01.803Z'
-        start:
-          description: The start time of the occurrence
-          type: string
-          example: '2025-05-19T13:49:01.803Z'
-    github_com_netdata_cloud-alarm-processor-service_api.silencedLongResponse:
-      type: object
-      properties:
-        items:
-          description: Individual alerts that exceeded the silenced dispatch threshold
-          type: array
-          items:
-            $ref: '#/components/schemas/github_com_netdata_cloud-alarm-processor-service_api.silencedLongItem'
-        totals:
-          description: Aggregated counts across all silenced-long items
-          allOf:
-          - $ref: '#/components/schemas/github_com_netdata_cloud-alarm-processor-service_api.silencedLongTotals'
-    errors.Error:
-      type: object
-      properties:
-        details:
-          type: object
-          additionalProperties: {}
-        errorCode:
-          type: string
-        errorMessage:
-          type: string
-        errorMsgKey:
-          type: string
-        validationErrors:
-          type: object
-          additionalProperties:
-            $ref: '#/components/schemas/errors.ValidationError'
-    errors.ValidationError:
-      type: object
-      properties:
-        code:
-          type: string
-        message:
-          type: string
-    github_com_netdata_cloud-alarm-processor-service_api.firingOftenTotals:
-      type: object
-      properties:
-        items:
-          description: Number of alerts flagged as firing too often
-          type: integer
-          example: 5
-        transitions:
-          description: Sum of transitions across all flagged alerts
-          type: integer
-          example: 420
-    github_com_netdata_cloud-alarm-processor-service_api.misconfiguredAlertsResponse:
-      type: object
-      properties:
-        dispatch_none:
-          description: Results for alerts where no notification was dispatched; nil when category is excluded
-          allOf:
-          - $ref: '#/components/schemas/github_com_netdata_cloud-alarm-processor-service_api.dispatchNoneResponse'
-        firing_often:
-          description: Results for alerts transitioning too frequently; nil when category is excluded
-          allOf:
-          - $ref: '#/components/schemas/github_com_netdata_cloud-alarm-processor-service_api.firingOftenResponse'
-        silenced_long:
-          description: Results for alerts silenced for too long; nil when category is excluded
-          allOf:
-          - $ref: '#/components/schemas/github_com_netdata_cloud-alarm-processor-service_api.silencedLongResponse'
-        stuck_raised:
-          description: Results for alerts stuck in a raised state; nil when category is excluded
-          allOf:
-          - $ref: '#/components/schemas/github_com_netdata_cloud-alarm-processor-service_api.stuckRaisedResponse'
-        thresholds:
-          description: Thresholds used for the calculation; always present
-          allOf:
-          - $ref: '#/components/schemas/github_com_netdata_cloud-alarm-processor-service_api.misconfiguredAlertsThresholds'
-    github_com_netdata_cloud-alarm-processor-service_api.firingOftenItem:
-      type: object
-      properties:
-        alert:
-          description: Alert identity
-          allOf:
-          - $ref: '#/components/schemas/github_com_netdata_cloud-alarm-processor-service_api.firingOftenAlert'
-        node:
-          description: Node where this alert fires
-          allOf:
-          - $ref: '#/components/schemas/github_com_netdata_cloud-alarm-processor-service_api.MisconfiguredNode'
-        transitions:
-          description: Number of transitions within the lookback window
-          type: integer
-          example: 100
-    github_com_netdata_cloud-alarm-processor-service_api.dispatchNoneResponse:
-      type: object
-      properties:
-        items:
-          description: Individual alerts that exceeded the non-dispatched event threshold
-          type: array
-          items:
-            $ref: '#/components/schemas/github_com_netdata_cloud-alarm-processor-service_api.dispatchNoneItem'
-        totals:
-          description: Aggregated counts across all dispatch-none items
-          allOf:
-          - $ref: '#/components/schemas/github_com_netdata_cloud-alarm-processor-service_api.dispatchNoneTotals'
-    github_com_netdata_cloud-alarm-processor-service_api.stuckRaisedResponse:
-      type: object
-      properties:
-        items:
-          description: Individual alerts stuck in a raised state, sorted by duration descending
-          type: array
-          items:
-            $ref: '#/components/schemas/github_com_netdata_cloud-alarm-processor-service_api.stuckRaisedItem'
-        totals:
-          description: Aggregated counts and durations across all stuck-raised items
-          allOf:
-          - $ref: '#/components/schemas/github_com_netdata_cloud-alarm-processor-service_api.stuckRaisedTotals'
-    github_com_netdata_cloud-alarm-processor-service_api.firingOftenResponse:
-      type: object
-      properties:
-        items:
-          description: Individual alerts that exceeded the transition threshold
-          type: array
-          items:
-            $ref: '#/components/schemas/github_com_netdata_cloud-alarm-processor-service_api.firingOftenItem'
-        totals:
-          description: Aggregated counts across all firing-often items
-          allOf:
-          - $ref: '#/components/schemas/github_com_netdata_cloud-alarm-processor-service_api.firingOftenTotals'
-    github_com_netdata_cloud-alarm-processor-service_api.dispatchNoneTotals:
-      type: object
-      properties:
-        count:
-          description: Sum of non-dispatched event counts across all flagged alerts
-          type: integer
-          example: 150
-        items:
-          description: Number of alerts flagged as never dispatched
-          type: integer
-          example: 3
-    github_com_netdata_cloud-alarm-processor-service_api.dispatchNoneAlert:
-      type: object
-      properties:
-        chart:
-          description: Chart the alert belongs to
-          type: string
-          example: disk_space._
-        context:
-          description: Chart context
-          type: string
-          example: disk.space
-        name:
-          description: Alert name
-          type: string
-          example: disk_space_usage
-    github_com_netdata_cloud-alarm-processor-service_api.silencedLongTotals:
-      type: object
-      properties:
-        count:
-          description: Sum of silenced dispatch counts across all flagged alerts
-          type: integer
-          example: 150
-        items:
-          description: Number of alerts flagged as silenced for too long
-          type: integer
-          example: 3
-    github_com_netdata_cloud-alarm-processor-service_api.dispatchNoneThresholds:
-      type: object
-      properties:
-        count:
-          description: Minimum non-dispatched event count to flag an alert (default 10, max 5000)
-          type: integer
-          example: 10
-        window_seconds:
-          description: Lookback window in seconds for dispatch-none detection (default 2592000, max 7776000)
-          type: integer
-          example: 2592000
-    github_com_netdata_cloud-alarm-processor-service_api.stuckRaisedItem:
-      type: object
-      properties:
-        alert:
-          description: Alert identity and current state
-          allOf:
-          - $ref: '#/components/schemas/github_com_netdata_cloud-alarm-processor-service_api.stuckRaisedAlert'
-        node:
-          description: Node where this alert is stuck
-          allOf:
-          - $ref: '#/components/schemas/github_com_netdata_cloud-alarm-processor-service_api.MisconfiguredNode'
-    github_com_netdata_cloud-alarm-processor-service_api.stuckRaisedAlert:
-      type: object
-      properties:
-        chart:
-          description: Chart the alert belongs to
-          type: string
-          example: system.cpu
-        context:
-          description: Chart context
-          type: string
-          example: system.cpu
-        duration_seconds:
-          description: How long the alert has been raised in seconds
-          type: integer
-          example: 86400
-        name:
-          description: Alert name
-          type: string
-          example: 10min_cpu_usage
-        status:
-          description: Current alert status
-          type: string
-          enum:
-          - critical
-          - warning
-          example: critical
-        triggered_at:
-          description: When the alert was triggered, in unix milliseconds
-          type: integer
-          example: 1710892800000
-        units:
-          description: Unit of the alert value (e.g. "%", "MB/s"); empty when the alert config has no units
-          type: string
-          example: '%'
-        value:
-          description: Current alert value
-          type: number
-          example: 95.5
-    github_com_netdata_cloud-api-docs_cloud-alarm-processor-service_api.evaluateRRuleWindowReq:
-      type: object
-      properties:
-        end:
-          description: End of the evaluation time window
-          type: string
-          example: '2025-06-19T00:00:00Z'
-        start:
-          description: Start of the evaluation time window
-          type: string
-          example: '2025-05-19T00:00:00Z'
-    github_com_netdata_cloud-alarm-processor-service_api.silencedLongThresholds:
-      type: object
-      properties:
-        count:
-          description: Minimum silenced dispatch count to flag an alert (default 20, max 5000)
-          type: integer
-          example: 20
-        window_seconds:
-          description: Lookback window in seconds for silenced-long detection (default 2592000, max 7776000)
-          type: integer
-          example: 2592000
-    github_com_netdata_cloud-alarm-processor-service_api.misconfiguredAlertsRequest:
-      type: object
-      properties:
-        categories:
-          description: Filter results to specific misconfiguration categories; empty means all categories
-          type: array
-          items:
-            type: string
-            enum:
-            - firing_often
-            - stuck_raised
-            - silenced_long
-            - dispatch_none
-          example:
-          - firing_often
-          - stuck_raised
-          - silenced_long
-          - dispatch_none
-        thresholds:
-          description: Override default detection thresholds per category
-          allOf:
-          - $ref: '#/components/schemas/github_com_netdata_cloud-alarm-processor-service_api.misconfiguredAlertsThresholds'
-    github_com_netdata_cloud-alarm-processor-service_api.silencedLongItem:
-      type: object
-      properties:
-        alert:
-          description: Alert identity
-          allOf:
-          - $ref: '#/components/schemas/github_com_netdata_cloud-alarm-processor-service_api.silencedLongAlert'
-        count:
-          description: Number of dispatch events where the alert was silenced within the lookback window
-          type: integer
-          example: 72
-        first_silenced:
-          description: Timestamp of the first silenced dispatch event, in unix milliseconds
-          type: integer
-          example: 1710892800000
-        last_silenced:
-          description: Timestamp of the last silenced dispatch event, in unix milliseconds
-          type: integer
-          example: 1711497600000
-        node:
-          description: Node where this alert is silenced
-          allOf:
-          - $ref: '#/components/schemas/github_com_netdata_cloud-alarm-processor-service_api.MisconfiguredNode'
   securitySchemes:
     BearerAuth:
       type: http
