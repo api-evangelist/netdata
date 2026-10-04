@@ -98,6 +98,9 @@ apis:
   - type: Authentication
     url: https://learn.netdata.cloud/docs/netdata-cloud/authentication-&-authorization/api-tokens
 common:
+  - type: CapabilityMap
+    url: capabilities/netdata-capability-edges.yml
+    name: Netdata Business Capability Map
   - type: PostmanWorkspace
     url: https://www.postman.com/kinlaneapi/netdata/overview
   - type: AgenticAccess
