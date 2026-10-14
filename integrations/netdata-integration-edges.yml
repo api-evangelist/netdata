@@ -1,7 +1,9 @@
 generated: '2026-10-13'
 method: searched
 checked:
+- grafana-com/integrations/grafana-com-integration-edges.yml
 - https://aws.amazon.com/marketplace/
+- okta/integrations/okta-integration-edges.yml
 marketplace_apps: []
 edges:
 - partner_name: AWS Marketplace
@@ -20,3 +22,51 @@ edges:
   seller_name: Netdata
   detected_by: sweep-cloud-marketplaces.py
   detected: '2026-10-13'
+- partner_name: Grafana (own)
+  partner: grafana-com
+  partner_match: mirror
+  mirror_match: domain
+  type: marketplace
+  relationship: platform-app
+  direction: third-party
+  channel: partner-built
+  marketplace: own
+  evidence: https://grafana.com/grafana/plugins/netdatacloud-netdata-datasource/
+  mirror_of: grafana-com/integrations/grafana-com-integration-edges.yml
+  apps:
+  - netdata
+  listing_count: 1
+  detected: '2026-10-14'
+  detected_by: mirror-platform-listings.py
+  category: Data Source
+  badges:
+  - signature:commercial
+- partner_name: Okta (own)
+  partner: okta
+  partner_match: mirror
+  mirror_match: domain
+  type: marketplace
+  relationship: platform-app
+  direction: third-party
+  channel: partner-built
+  marketplace: own
+  evidence: https://www.okta.com/integrations/dev-21791011_netdata_1/
+  mirror_of: okta/integrations/okta-integration-edges.yml
+  apps:
+  - Netdata
+  listing_count: 1
+  detected: '2026-10-14'
+  detected_by: mirror-platform-listings.py
+  category: Lifecycle Management
+  badges:
+  - OKTA_VERIFIED
+  features:
+  - CREATE
+  - DEACTIVATE
+  - GROUP_PUSH
+  - IDENTITY_SECURITY_POSTURE_MANAGEMENT
+  - OIDC
+  - UPDATE
+source:
+- grafana-com/integrations/grafana-com-integration-edges.yml
+- okta/integrations/okta-integration-edges.yml
