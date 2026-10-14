@@ -3,6 +3,7 @@ method: searched
 checked:
 - grafana-com/integrations/grafana-com-integration-edges.yml
 - https://aws.amazon.com/marketplace/
+- https://registry.modelcontextprotocol.io/v0/servers
 - okta/integrations/okta-integration-edges.yml
 marketplace_apps: []
 edges:
@@ -22,6 +23,37 @@ edges:
   seller_name: Netdata
   detected_by: sweep-cloud-marketplaces.py
   detected: '2026-10-13'
+- partner_name: MCP Registry
+  partner: mcp
+  partner_match: register
+  type: register
+  channel: standard-directory
+  relationship: standard-participant
+  direction: partner-built
+  evidence: https://registry.modelcontextprotocol.io/v0/servers?search=io.github.netdata
+  contract_reference:
+    register: registry.modelcontextprotocol.io
+    spec_file: null
+    role: mcp-server-listing
+    registered_name: io.github.netdata/mcp-server
+    register_id: io.github.netdata/mcp-server
+    detected_by: sweep-agent-tools.py
+    detected: '2026-10-14'
+  mcp_registry:
+    servers:
+    - io.github.netdata/mcp-server
+    hosted_remote: 1
+    local_package: 0
+    transports:
+      streamable-http: 1
+    auth_declared: 1
+    catalog_declared: false
+    namespace_domains:
+    - netdata.cloud
+  matched_by:
+  - remote-domain
+  detected_by: sweep-agent-tools.py
+  first_seen: '2026-10-14'
 - partner_name: Grafana (own)
   partner: grafana-com
   partner_match: mirror
