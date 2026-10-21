@@ -14,6 +14,7 @@ checked:
 - https://officialskills.sh/sitemap.xml
 - https://skillsmp.com/sitemap.xml
 - https://www.skills.sh/sitemap.xml
+- docker-hub/integrations/docker-hub-integration-edges.yml
 marketplace_apps: []
 edges:
 - partner_name: AWS Marketplace
@@ -32,51 +33,6 @@ edges:
   seller_name: Netdata
   detected_by: sweep-cloud-marketplaces.py
   detected: '2026-10-13'
-- partner_name: Grafana (own)
-  partner: grafana-com
-  partner_match: mirror
-  mirror_match: domain
-  type: marketplace
-  relationship: platform-app
-  direction: third-party
-  channel: partner-built
-  marketplace: own
-  evidence: https://grafana.com/grafana/plugins/netdatacloud-netdata-datasource/
-  mirror_of: grafana-com/integrations/grafana-com-integration-edges.yml
-  apps:
-  - netdata
-  listing_count: 1
-  detected: '2026-10-14'
-  detected_by: mirror-platform-listings.py
-  category: Data Source
-  badges:
-  - signature:commercial
-- partner_name: Okta (own)
-  partner: okta
-  partner_match: mirror
-  mirror_match: domain
-  type: marketplace
-  relationship: platform-app
-  direction: third-party
-  channel: partner-built
-  marketplace: own
-  evidence: https://www.okta.com/integrations/dev-21791011_netdata_1/
-  mirror_of: okta/integrations/okta-integration-edges.yml
-  apps:
-  - Netdata
-  listing_count: 1
-  detected: '2026-10-14'
-  detected_by: mirror-platform-listings.py
-  category: Lifecycle Management
-  badges:
-  - OKTA_VERIFIED
-  features:
-  - CREATE
-  - DEACTIVATE
-  - GROUP_PUSH
-  - IDENTITY_SECURITY_POSTURE_MANAGEMENT
-  - OIDC
-  - UPDATE
 - partner_name: MCP Registry
   partner: mcp
   partner_match: register
@@ -171,6 +127,76 @@ edges:
     detected: '2026-10-20'
   detected_by: sweep-agent-skills.py
   first_seen: '2026-10-20'
+- partner_name: Grafana (own)
+  partner: grafana-com
+  partner_match: mirror
+  mirror_match: domain
+  type: marketplace
+  relationship: platform-app
+  direction: third-party
+  channel: partner-built
+  marketplace: own
+  evidence: https://grafana.com/grafana/plugins/netdatacloud-netdata-datasource/
+  mirror_of: grafana-com/integrations/grafana-com-integration-edges.yml
+  apps:
+  - netdata
+  listing_count: 1
+  detected: '2026-10-14'
+  detected_by: mirror-platform-listings.py
+  category: Data Source
+  badges:
+  - signature:commercial
+- partner_name: Okta (own)
+  partner: okta
+  partner_match: mirror
+  mirror_match: domain
+  type: marketplace
+  relationship: platform-app
+  direction: third-party
+  channel: partner-built
+  marketplace: own
+  evidence: https://www.okta.com/integrations/dev-21791011_netdata_1/
+  mirror_of: okta/integrations/okta-integration-edges.yml
+  apps:
+  - Netdata
+  listing_count: 1
+  detected: '2026-10-14'
+  detected_by: mirror-platform-listings.py
+  category: Lifecycle Management
+  badges:
+  - OKTA_VERIFIED
+  features:
+  - CREATE
+  - DEACTIVATE
+  - GROUP_PUSH
+  - IDENTITY_SECURITY_POSTURE_MANAGEMENT
+  - OIDC
+  - UPDATE
+- partner_name: Docker Hub (docker-verified-publisher)
+  partner: docker-hub
+  partner_match: mirror
+  mirror_match: domain
+  type: marketplace
+  relationship: platform-app
+  direction: third-party
+  channel: partner-built
+  marketplace: docker-verified-publisher
+  evidence: https://hub.docker.com/u/netdata
+  mirror_of: docker-hub/integrations/docker-hub-integration-edges.yml
+  apps:
+  - netdata/netdata
+  - netdata/package-builders
+  - netdata/devenv
+  - netdata/builder
+  - netdata/base
+  - netdata/static-builder
+  - netdata/legacy
+  listing_count: 1
+  detected: '2026-10-20'
+  detected_by: mirror-platform-listings.py
+  category: Docker Verified Publisher
+  badges:
+  - Docker Verified Publisher
 source:
 - grafana-com/integrations/grafana-com-integration-edges.yml
 - okta/integrations/okta-integration-edges.yml

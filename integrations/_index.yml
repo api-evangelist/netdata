@@ -15,32 +15,6 @@
   relationship: distribution-channel
   status: not-a-workflow
   arazzo: null
-- slug: netdata-grafana-own
-  label: Grafana (own)
-  partner: grafana-com
-  partner_name: Grafana (own)
-  category: Data Source
-  type: marketplace
-  marketplace: own
-  channel: partner-built
-  evidence: https://grafana.com/grafana/plugins/netdatacloud-netdata-datasource/
-  source: edge
-  relationship: platform-app
-  status: not-a-workflow
-  arazzo: null
-- slug: netdata-okta-own
-  label: Okta (own)
-  partner: okta
-  partner_name: Okta (own)
-  category: Lifecycle Management
-  type: marketplace
-  marketplace: own
-  channel: partner-built
-  evidence: https://www.okta.com/integrations/dev-21791011_netdata_1/
-  source: edge
-  relationship: platform-app
-  status: not-a-workflow
-  arazzo: null
 - slug: netdata-mcp-registry
   label: MCP Registry
   partner: mcp
@@ -113,5 +87,44 @@
     sample_skills: []
     detected_by: sweep-agent-skills.py
     detected: '2026-10-20'
+  status: not-a-workflow
+  arazzo: null
+- slug: netdata-grafana-own
+  label: Grafana (own)
+  partner: grafana-com
+  partner_name: Grafana (own)
+  category: Data Source
+  type: marketplace
+  marketplace: own
+  channel: partner-built
+  evidence: https://grafana.com/grafana/plugins/netdatacloud-netdata-datasource/
+  source: edge
+  relationship: platform-app
+  status: not-a-workflow
+  arazzo: null
+- slug: netdata-okta-own
+  label: Okta (own)
+  partner: okta
+  partner_name: Okta (own)
+  category: Lifecycle Management
+  type: marketplace
+  marketplace: own
+  channel: partner-built
+  evidence: https://www.okta.com/integrations/dev-21791011_netdata_1/
+  source: edge
+  relationship: platform-app
+  status: not-a-workflow
+  arazzo: null
+- slug: netdata-docker-hub-docker-verified-publisher
+  label: Docker Hub (docker-verified-publisher)
+  partner: docker-hub
+  partner_name: Docker Hub (docker-verified-publisher)
+  category: Docker Verified Publisher
+  type: marketplace
+  marketplace: docker-verified-publisher
+  channel: partner-built
+  evidence: https://hub.docker.com/u/netdata
+  source: edge
+  relationship: platform-app
   status: not-a-workflow
   arazzo: null
