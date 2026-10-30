@@ -1,4 +1,4 @@
-# Netdata (netdata)
+# Netdata
 
 <!-- API-EVANGELIST-PROVENANCE:BEGIN -->
 > ### About this repository
@@ -64,57 +64,184 @@
 > Full detail: **[Where this data comes from](https://apievangelist.com/about/where-our-data-comes-from)**
 <!-- API-EVANGELIST-PROVENANCE:END -->
 
-Netdata is a real-time infrastructure monitoring and observability platform that collects per-second metrics from physical servers, virtual machines, cloud deployments, Kubernetes clusters, and IoT devices. It provides a REST API for querying metrics, alerts, and configuration on individual nodes (Agent API) as well as a Cloud API for programmatic access to Netdata Cloud resources including spaces, rooms, and nodes across distributed infrastructure.
+Netdata is a real-time infrastructure monitoring and observability platform that collects per-second metrics from physical servers, virtual machines, cloud deployments, Kubernetes clusters, and IoT devices. It provides a REST API for querying metrics, alerts, and configuration on individual nodes (Agent API) as well as a Cloud API for programmatic access to Netdata Cloud resources including spaces, rooms, and nodes across distributed infrastructure. Authentication uses Bearer tokens generated from the Netdata Cloud account settings, with scopes controlling access to agent UI, Grafana plugin, MCP, and full API access. The platform includes AI-powered troubleshooting, role-based access control, and supports both cloud-hosted and on-premises deployments.
 
-APIs.json: [https://raw.githubusercontent.com/api-evangelist/netdata/refs/heads/main/apis.yml](https://raw.githubusercontent.com/api-evangelist/netdata/refs/heads/main/apis.yml)
+**Areas:** Monitoring · Observability · Infrastructure · Metrics · Alerts · Real-Time · APM · DevOps
 
-Naftiko: [https://github.com/naftiko/fleet?utm_source=api-evangelist&utm_medium=readme&utm_campaign=netdata-api-evangelist&utm_content=repo](https://github.com/naftiko/fleet?utm_source=api-evangelist&utm_medium=readme&utm_campaign=netdata-api-evangelist&utm_content=repo)
+## Netdata on APIs.io
 
-## Tags
+Everything profiled for Netdata is published on APIs.io rather than in this repository. Start at the provider page — **[apis.io/providers/netdata/](https://apis.io/providers/netdata/)** — or go straight to one of the APIs or properties below.
 
-- Monitoring
-- Observability
-- Infrastructure
-- Metrics
-- Alerts
-- Real-Time
-- APM
-- DevOps
+### APIs (2)
 
-## APIs
+- [Netdata Alerts API](https://apis.io/apis/netdata/netdata-alerts-api/) — Everything related to alerts
+- [Netdata Charts API](https://apis.io/apis/netdata/netdata-charts-api/) — Everything related to chart instances - DO NOT USE IN NEW CODE - use contexts instead
 
-| Name | Description | Human URL |
-|------|-------------|-----------|
-| Netdata Agent API | REST API for accessing metrics, alerts, and configuration on individual monitoring nodes (v1/v2/v3) with OpenAPI spec | https://learn.netdata.cloud/docs/developer-and-contributor-corner/rest-api |
-| Netdata Cloud API | Programmatic access to Cloud resources including spaces, rooms, and nodes across distributed infrastructure | https://learn.netdata.cloud/docs/rest-api/api |
+### Published properties
 
-## Plans, Rate Limits, and FinOps
+Each property below is a page on APIs.io carrying the machine-readable artifact and what it says.
 
-| Resource | File |
-|----------|------|
-| Plans & Pricing | [plans/netdata-plans-pricing.yml](plans/netdata-plans-pricing.yml) |
-| Rate Limits | [rate-limits/netdata-rate-limits.yml](rate-limits/netdata-rate-limits.yml) |
-| FinOps | [finops/netdata-finops.yml](finops/netdata-finops.yml) |
+#### Agentic access (1)
 
-## Timestamps
+Which operations an agent can call, which act, and which need a human in the loop.
 
-- **Created:** 2026-06-12
-- **Modified:** 2026-06-12
+- [Netdata Agentic Access](https://apis.io/agentic-access/netdata/netdata-agentic-access/)
 
-## Common Properties
+#### JSON Schema (3)
 
-| Type | URL |
-|------|-----|
-| Website | https://www.netdata.cloud/ |
-| Documentation | https://learn.netdata.cloud/docs/developer-and-contributor-corner/rest-api |
-| GitHub Organization | https://github.com/netdata |
-| LinkedIn | https://www.linkedin.com/company/netdata-cloud |
-| X | https://x.com/netdatahq |
-| Blog | https://www.netdata.cloud/blog/ |
-| Changelog | https://learn.netdata.cloud/docs/netdata-agent/changelog |
-| Pricing | https://www.netdata.cloud/pricing/ |
-| Status Page | https://status.netdata.cloud/ |
+The data models the API reads and writes.
 
-## Maintainers
+- [Netdata Alert](https://apis.io/schemas/netdata/netdata-alert/)
+- [Netdata Chart](https://apis.io/schemas/netdata/netdata-chart/)
+- [Netdata Node](https://apis.io/schemas/netdata/netdata-node/)
 
-- **Kin Lane** — kin@apievangelist.com
+#### JSON-LD (1)
+
+Linked-data contexts for the provider's vocabulary.
+
+- [Netdata Context](https://apis.io/jsonld/netdata/netdata-context/)
+
+#### Vocabulary (1)
+
+The provider's domain terms, defined.
+
+- [Netdata Vocabulary](https://apis.io/vocabularies/netdata/netdata-vocabulary/)
+
+#### Examples (4)
+
+Example requests and responses.
+
+- [Netdata Alerts Example](https://apis.io/examples/netdata/netdata-alerts-example/)
+- [Netdata Charts List Example](https://apis.io/examples/netdata/netdata-charts-list-example/)
+- [Netdata Data Query Example](https://apis.io/examples/netdata/netdata-data-query-example/)
+- [Netdata Node Info Example](https://apis.io/examples/netdata/netdata-node-info-example/)
+
+#### Collections (40)
+
+Postman and Open Collection request collections.
+
+- [Netdata agent API](https://apis.io/collections/netdata/open-netdata-agent-api/)
+- [Netdata agent alerts API](https://apis.io/collections/netdata/open-netdata-alerts-api/)
+- [Netdata agent authentication API](https://apis.io/collections/netdata/open-netdata-authentication-api/)
+- [Netdata agent badges API](https://apis.io/collections/netdata/open-netdata-badges-api/)
+- [Netdata agent charts API](https://apis.io/collections/netdata/open-netdata-charts-api/)
+- [Netdata agent claiming API](https://apis.io/collections/netdata/open-netdata-claiming-api/)
+- [Netdata agent config API](https://apis.io/collections/netdata/open-netdata-config-api/)
+- [Netdata agent contexts API](https://apis.io/collections/netdata/open-netdata-contexts-api/)
+- [Netdata agent data API](https://apis.io/collections/netdata/open-netdata-data-api/)
+- [Netdata agent dyncfg API](https://apis.io/collections/netdata/open-netdata-dyncfg-api/)
+- [Netdata agent functions API](https://apis.io/collections/netdata/open-netdata-functions-api/)
+- [Netdata agent management API](https://apis.io/collections/netdata/open-netdata-management-api/)
+- [Netdata agent nodes API](https://apis.io/collections/netdata/open-netdata-nodes-api/)
+- [Netdata agent registry API](https://apis.io/collections/netdata/open-netdata-registry-api/)
+- [Netdata agent settings API](https://apis.io/collections/netdata/open-netdata-settings-api/)
+- [Netdata agent streaming API](https://apis.io/collections/netdata/open-netdata-streaming-api/)
+- [Netdata agent variables API](https://apis.io/collections/netdata/open-netdata-variables-api/)
+- [Netdata agent versions API](https://apis.io/collections/netdata/open-netdata-versions-api/)
+- [Netdata agent webrtc API](https://apis.io/collections/netdata/open-netdata-webrtc-api/)
+- [Netdata agent weights API](https://apis.io/collections/netdata/open-netdata-weights-api/)
+- [Netdata agent API](https://apis.io/collections/netdata/postman-netdata-agent-api/)
+- [Netdata agent alerts API](https://apis.io/collections/netdata/postman-netdata-alerts-api/)
+- [Netdata agent authentication API](https://apis.io/collections/netdata/postman-netdata-authentication-api/)
+- [Netdata agent badges API](https://apis.io/collections/netdata/postman-netdata-badges-api/)
+- [Netdata agent charts API](https://apis.io/collections/netdata/postman-netdata-charts-api/)
+- …and 15 more published on APIs.io
+
+#### Governance rules (1)
+
+Spectral rulesets for the provider's contracts.
+
+- [Netdata — jsonschema rules](https://apis.io/rules/netdata/netdata-jsonschema-spectral-rules/)
+
+#### Security (3)
+
+Authentication, trust centre, and vulnerability disclosure.
+
+- [Netdata Authentication](https://apis.io/security/netdata/netdata-authentication/)
+- [Netdata Domain Security](https://apis.io/security/netdata/netdata-domain-security/)
+- [Netdata Trust Center](https://apis.io/security/netdata/netdata-trust-center/)
+
+#### Plans and pricing (1)
+
+Published plans, tiers and prices.
+
+- [Netdata Plans Pricing](https://apis.io/plans/netdata/netdata-plans-pricing/)
+
+#### Rate limits (1)
+
+Published request limits.
+
+- [Netdata Rate Limits](https://apis.io/rate-limits/netdata/netdata-rate-limits/)
+
+#### FinOps (1)
+
+What the API costs to run, by operation.
+
+- [Netdata Finops](https://apis.io/finops/netdata/netdata-finops/)
+
+## Where to find this API
+
+Links to the company's own pages. This repository publishes no copy of their specifications — the canonical document is theirs and lives at the URLs below.
+
+- [Website](https://www.netdata.cloud/)
+- [Documentation](https://learn.netdata.cloud/docs/developer-and-contributor-corner/rest-api)
+- [Pricing](https://www.netdata.cloud/pricing/)
+- [Changelog](https://learn.netdata.cloud/docs/netdata-agent/changelog)
+- [Blog](https://www.netdata.cloud/blog/)
+- [GitHub](https://github.com/netdata)
+- [Status](https://status.netdata.cloud/)
+
+## API Evangelist rating
+
+**Kin Score 37.2** — thin · rubric 0.25.0 · scored 2026-10-23
+
+| Facet | Score |
+|---|---|
+| Discoverability | 57.1 |
+| Contract quality | 60.4 |
+| Contract governance | 23.5 |
+| Operational transparency | 23.7 |
+| Developer ergonomics | 25.0 |
+| Access clarity | 26.3 |
+
+**Agent readiness 25.6** — agent-aware
+
+| Agent-readiness dimension | Result |
+|---|---|
+| Spec Presence | yes |
+| Agentic Access | derived (partial credit) |
+| Reversibility Documented | — |
+| MCP Server | — |
+| Auth Clarity | bearer (partial credit) |
+| Idempotency | — |
+| Error Semantics | verified |
+| OpenAPI Examples | documented (partial credit) |
+| Rate Limit Signal | derived (partial credit) |
+| Event Surface Described | — |
+| Agent Skills | — |
+| Well Known Catalog | — |
+| Consent Identity | — |
+| Agent Card | — |
+| Dry Run Mode | — |
+| Delegated Identity | — |
+| Protected Resource Metadata | — |
+| Dynamic Client Registration | — |
+| Agentic Commerce | — |
+| Pagination Ratio | — |
+| Operation Distinctiveness | distinct |
+
+**Regulatory alignment 21.6** — Horizontal (data, software, accessibility, platform)
+
+The rubric is published at [github.com/api-evangelist/kin-score](https://github.com/api-evangelist/kin-score). The per-check breakdown behind these numbers — which checks were earned, partial or missed — along with score history and how this provider compares to its peers, is available at [apis.io/providers/netdata/](https://apis.io/providers/netdata/).
+
+## How this profile is made
+
+API Evangelist profiles a company's public API surface the way a developer would find it: the website, developer portal and documentation, the specifications it publishes, its public repositories, and its pricing, status and changelog pages. From that it derives the properties above — contracts split per API, workflows, schemas, collections, governance rules, plans and rate limits — and scores them against the published [Kin Score rubric](https://github.com/api-evangelist/kin-score).
+
+The artifacts are published on [APIs.io](https://apis.io), not in this repository. This repository is the public record for Netdata: the place to say something is wrong, missing or out of date, and to ask for a re-score or a removal.
+
+## Open an issue
+
+- **Something about this listing** — a wrong description, a missing API, a stale artifact or a question about the rating: [open an issue on this repository](https://github.com/api-evangelist/netdata/issues/new).
+- **A new API, or one that is not in the catalog yet** — [submit it on APIs.io](https://apis.io/add/).
+- **Anything else** — [the APIs.io inbox](https://github.com/api-search/inbox/issues/new) or [info@apievangelist.com](mailto:info@apievangelist.com).
